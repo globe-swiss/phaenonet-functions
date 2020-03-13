@@ -4,8 +4,9 @@ from typing import Union
 import dateparser
 
 
-def get_field(data, fieldname) -> Union[str, int, datetime, None]:
-    value_dict = data['value']['fields'].get(fieldname)
+def get_field(data, fieldname, old_value=False) -> Union[str, int, datetime, None]:
+    value_type = 'oldValue' if old_value else 'value'
+    value_dict = data[value_type].get('fields', {}).get(fieldname)
     if value_dict:
         value = next(iter(value_dict.values()))
         value_type = next(iter(value_dict.keys()))
