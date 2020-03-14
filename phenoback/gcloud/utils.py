@@ -69,8 +69,8 @@ def write_batch(collection: str, key: str, data: List[dict], update: bool = Fals
     batch.commit()
 
 
-def write_document(collection: str, document_id: str, data: dict) -> None:
-    get_client().collection(collection).document(document_id).set(data)
+def write_document(collection: str, document_id: str, data: dict, merge: bool = False) -> None:
+    get_client().collection(collection).document(document_id).set(data, merge=merge)
 
 
 def get_document(document_path: str) -> dict:

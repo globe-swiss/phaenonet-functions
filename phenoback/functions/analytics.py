@@ -6,9 +6,9 @@ import numpy as np
 
 
 def _process_state(ref, observation_id, observation_date, phase, source, year, species, altitude_grp=None) -> dict:
-    print('DEBUG: Process State: (observation_id: %s, observation_date: %s, phase: %s, source: %s, year: %i, '
-          'species: %s, altitude_grp: %s)' % (observation_id, observation_date, phase, source, year, species,
-                                              altitude_grp))
+    # print('DEBUG: Process State: (observation_id: %s, observation_date: %s, phase: %s, source: %s, year: %i, '
+    #      'species: %s, altitude_grp: %s)' % (observation_id, observation_date, phase, source, year, species,
+    #                                          altitude_grp))
     snapshot = ref.get()
     state = {}
     if snapshot.get('state'):
@@ -23,8 +23,8 @@ def _process_state(ref, observation_id, observation_date, phase, source, year, s
 
 
 def _process_results(ref, state: dict, phase, source, year, species, altitude_grp=None) -> None:
-    print('DEBUG: Process Results: (phase: %s, source: %s, year: %i, species: %s, altitude_grp: %s)'
-          % (phase, source, year, species, altitude_grp))
+    # print('DEBUG: Process Results: (phase: %s, source: %s, year: %i, species: %s, altitude_grp: %s)'
+    #     % (phase, source, year, species, altitude_grp))
     state_list = (list(state.values()))
     values = {phase:
               {'min': np.min(state_list),
@@ -79,8 +79,8 @@ def _get_altitude_grp(individual_id: str) -> Optional[str]:
 
 
 def process_observation(observation_id: str, observation_date: datetime, individual_id: str,
-                        source: str, year: int, species: str, phase: str):
-    print('DEBUG: Process observation: (observation_id: %s, observation_date: %s, individual_id: %s, source: %s, '
+                      source: str, year: int, species: str, phase: str):
+    print('INFO: Process observation: (observation_id: %s, observation_date: %s, individual_id: %s, source: %s, '
           'year: %i, species: %s, phase: %s)' % (observation_id, observation_date, individual_id, source, year, species,
                                                  phase))
     _update_dataset(observation_id=observation_id,
@@ -114,5 +114,5 @@ def process_observation(observation_id: str, observation_date: datetime, individ
                         altitude_grp=altitude_key)
 
 
-def remove_observation(observation_id):
+def process_remove_observation(observation_id):
     print("WARN: removing of observations not implemented")

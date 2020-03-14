@@ -1,4 +1,4 @@
-from phenoback.functions import activity, analytics, users, meteoswiss
+from phenoback.functions import activity, analytics, users, meteoswiss, observation
 import firebase_admin
 from phenoback.gcloud.utils import get_id, get_field
 
@@ -15,14 +15,18 @@ def process_observation(data, context):
     print('DEBUG: cotext: (%s)' % str(context))
     print('DEBUG: data: (%s)' % str(data))
     if len(data['value']) > 0:
+        # ANALYTICS
         if get_field(data, 'phenophase') in ('BEA', 'BLA', 'BFA', 'BVS'):
             analytics.process_observation(get_id(context), get_field(data, 'date'), get_field(data, 'individual_id'),
                                           get_field(data, 'source'), get_field(data, 'year'),
                                           get_field(data, 'species'), get_field(data, 'phenophase'))
         else:
             print('INFO: No analytic values processed for phenophase %s' % get_field(data, 'phenophase'))
+        # LAST OBSERVATION DATE
+        observation.update_last_observation(get_field(data, 'individual_id'), get_field(data, 'phenophase'),
+                                            get_field(data, 'date'))
     else:
-        analytics.remove_observation(get_id(context))
+        analytics.process_remove_observation(get_id(context))
 
 
 def process_user_nickname(data, context):
