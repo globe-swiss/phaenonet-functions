@@ -1,4 +1,4 @@
-from phenoback.functions import activity, analytics, users
+from phenoback.functions import activity, analytics, users, meteoswiss
 import firebase_admin
 from phenoback.gcloud.utils import get_id, get_field
 
@@ -37,3 +37,10 @@ def process_user_nickname(data, context):
         users.process_delete_nickname(old_nickname)
     elif not old_nickname and new_nickname:
         users.process_new_nickname(user_id, new_nickname)
+
+
+def import_meteoswiss_data(data, context):
+    print('DEBUG: cotext: (%s)' % str(context))
+    print('DEBUG: data: (%s)' % str(data))
+    meteoswiss.process_stations()
+    meteoswiss.process_observations()

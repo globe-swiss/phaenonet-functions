@@ -1,6 +1,6 @@
 import phenoback
 from datetime import datetime
-from typing import Union
+from typing import Union, List
 
 from firebase_admin import firestore
 from google.cloud.firestore_v1.client import Client
@@ -14,6 +14,7 @@ def get_client() -> Client:
     if not _db:
         _db = firestore.client()
     return _db
+
 
 def get_field(data, fieldname, old_value=False) -> Union[str, int, datetime, None]:
     value_type = 'oldValue' if old_value else 'value'
@@ -49,3 +50,28 @@ def delete_collection(coll_ref, batch_size=1000):
 
     if deleted >= batch_size:
         return delete_collection(coll_ref, batch_size)
+
+
+def write_batch(collection: str, key: str, data: List[dict], update: bool = False) -> None:
+    batch = get_client().batch()
+    cnt = 0
+    for item in data:
+        cnt += 1
+        ref = get_client().collection(collection).document(str(item[key]))
+        item.pop(key)
+        if update:
+            batch.update(ref, item)
+        else:
+            batch.set(ref, item)
+        if cnt == 500:
+            batch.commit()
+            cnt = 0
+    batch.commit()
+
+
+def write_document(collection: str, document_id: str, data: dict) -> None:
+    get_client().collection(collection).document(document_id).set(data)
+
+
+def get_document(document_path: str) -> dict:
+    return get_client().document(document_path).get().to_dict()
