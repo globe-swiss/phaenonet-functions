@@ -1,8 +1,19 @@
+import phenoback
 from datetime import datetime
 from typing import Union
 
+from firebase_admin import firestore
+from google.cloud.firestore_v1.client import Client
 import dateparser
 
+_db = None
+
+
+def get_client() -> Client:
+    global _db
+    if not _db:
+        _db = firestore.client()
+    return _db
 
 def get_field(data, fieldname, old_value=False) -> Union[str, int, datetime, None]:
     value_type = 'oldValue' if old_value else 'value'
@@ -27,7 +38,7 @@ def get_id(function_context) -> str:
     return function_context.resource.split('/')[-1]
 
 
-def delete_collection(coll_ref, batch_size):
+def delete_collection(coll_ref, batch_size=1000):
     docs = coll_ref.limit(batch_size).stream()
     deleted = 0
 

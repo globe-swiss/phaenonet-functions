@@ -1,16 +1,4 @@
-import phenoback
-from firebase_admin import firestore
-from google.cloud.firestore_v1.client import Client
-
-
-_db = None
-
-
-def get_client() -> Client:
-    global _db
-    if not _db:
-        _db = firestore.client()
-    return _db
+from phenoback.gcloud.utils import get_client
 
 
 def process_activity(activity_id, individual: str, user_id: str):

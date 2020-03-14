@@ -1,38 +1,32 @@
-from typing import List, Optional
-
-import phenoback
-from firebase_admin import firestore
-from google.cloud.firestore_v1.client import Client
-import numpy as np
+from typing import Optional
 from datetime import datetime
 
-_db = None
+from phenoback.gcloud.utils import get_client
+import numpy as np
 
 
-def get_client() -> Client:
-    global _db
-    if not _db:
-        _db = firestore.client()
-    return _db
-
-
-def _process_state(ref, observation_id, observation_date, group, source, year, species, altitude_grp=None) -> dict:
+def _process_state(ref, observation_id, observation_date, phase, source, year, species, altitude_grp=None) -> dict:
+    print('DEBUG: Process State: (observation_id: %s, observation_date: %s, phase: %s, source: %s, year: %i, '
+          'species: %s, altitude_grp: %s)' % (observation_id, observation_date, phase, source, year, species,
+                                              altitude_grp))
     snapshot = ref.get()
     state = {}
     if snapshot.get('state'):
         state = snapshot.get('state')
 
-    state.setdefault(group, dict())[observation_id] = observation_date
+    state.setdefault(phase, dict())[observation_id] = observation_date
     data = {'source': source, 'year': year, 'species': species, 'state': state}
     if altitude_grp:
         data['altitude_grp'] = altitude_grp
     ref.set(data, merge=True)
-    return state[group]
+    return state[phase]
 
 
-def _process_results(ref, state: dict, group, source, year, species, altitude_grp=None) -> None:
+def _process_results(ref, state: dict, phase, source, year, species, altitude_grp=None) -> None:
+    print('DEBUG: Process Results: (phase: %s, source: %s, year: %i, species: %s, altitude_grp: %s)'
+          % (phase, source, year, species, altitude_grp))
     state_list = (list(state.values()))
-    values = {group:
+    values = {phase:
               {'min': np.min(state_list),
                'max': np.max(state_list),
                'median': np.quantile(state_list, 0.5, interpolation='nearest'),
@@ -45,8 +39,8 @@ def _process_results(ref, state: dict, group, source, year, species, altitude_gr
     ref.set(data, merge=True)
 
 
-def _update_dataset(observation_id: str, observation_date: datetime,
-                    year: int, species: str, group: str, source: str, altitude_grp: str = None):
+def _update_dataset(observation_id: str, observation_date: datetime, year: int, species: str, phase: str, source: str,
+                    altitude_grp: str = None):
     if altitude_grp:
         doc_key = '%s_%s_%s_%s' % (str(year), species, source, altitude_grp)
     else:
@@ -54,11 +48,11 @@ def _update_dataset(observation_id: str, observation_date: datetime,
     # process state by species
     state_ref = get_client().collection('analytics_state').document(doc_key)
     state = _process_state(state_ref, observation_id, observation_date,
-                           group, source, year, species, altitude_grp)
+                           phase, source, year, species, altitude_grp)
 
     # process analytic results
     result_ref = get_client().collection('analytics_result').document(doc_key)
-    _process_results(result_ref, state, group, source, year, species, altitude_grp)
+    _process_results(result_ref, state, phase, source, year, species, altitude_grp)
 
 
 def _get_altitude_grp(individual_id: str) -> Optional[str]:
@@ -82,19 +76,20 @@ def _get_altitude_grp(individual_id: str) -> Optional[str]:
 
 def process_observation(observation_id: str, observation_date: datetime, individual_id: str,
                         source: str, year: int, species: str, phase: str):
-    group = get_client().document('definitions/individuals/species/%s/phenophases/%s'
-                                  % (species, phase)).get().get('group_id')
+    print('DEBUG: Process observation: (observation_id: %s, observation_date: %s, individual_id: %s, source: %s, '
+          'year: %i, species: %s, phase: %s)' % (observation_id, observation_date, individual_id, source, year, species,
+                                                 phase))
     _update_dataset(observation_id=observation_id,
                     observation_date=observation_date,
                     year=year,
                     species=species,
-                    group=group,
+                    phase=phase,
                     source=source)
     _update_dataset(observation_id=observation_id,
                     observation_date=observation_date,
                     year=year,
                     species=species,
-                    group=group,
+                    phase=phase,
                     source='all')
 
     altitude_key = _get_altitude_grp(individual_id)
@@ -103,14 +98,14 @@ def process_observation(observation_id: str, observation_date: datetime, individ
                         observation_date=observation_date,
                         year=year,
                         species=species,
-                        group=group,
+                        phase=phase,
                         source=source,
                         altitude_grp=altitude_key)
         _update_dataset(observation_id=observation_id,
                         observation_date=observation_date,
                         year=year,
                         species=species,
-                        group=group,
+                        phase=phase,
                         source='all',
                         altitude_grp=altitude_key)
 
