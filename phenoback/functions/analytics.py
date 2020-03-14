@@ -36,6 +36,10 @@ def _process_results(ref, state: dict, phase, source, year, species, altitude_gr
     data = {'source': source, 'year': year, 'species': species, 'values': values}
     if altitude_grp:
         data['altitude_grp'] = altitude_grp
+        data['type'] = 'altitude'
+    else:
+        data['type'] = 'species'
+
     ref.set(data, merge=True)
 
 
