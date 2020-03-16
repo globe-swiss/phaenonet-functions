@@ -35,8 +35,28 @@ def get_field(data, fieldname, old_value=False) -> Union[str, int, datetime, Non
         print("WARN: field %s not found in data %s" % (fieldname, str(data)))
 
 
-def get_id(function_context) -> str:
-    return function_context.resource.split('/')[-1]
+def get_document_id(context) -> str:
+    return context.resource.split('/')[-1]
+
+
+def get_collection_path(context) -> str:
+    return '/'.join(context.resource.split('/')[5:-1])
+
+
+def is_create_event(data: dict) -> bool:
+    return len(data['value']) > 0 and len(data['oldValue']) == 0
+
+
+def is_update_event(data: dict) -> bool:
+    return len(data['value']) > 0 and len(data['oldValue']) > 0
+
+
+def is_delete_event(data: dict) -> bool:
+    return len(data['value']) == 0 and len(data['oldValue']) > 0
+
+
+def is_field_updated(data: dict, fieldname) -> bool:
+    return fieldname in data.get('updateMask', {}).get('fieldPaths', [])
 
 
 def delete_collection(coll_ref, batch_size=1000):
@@ -71,6 +91,10 @@ def write_batch(collection: str, key: str, data: List[dict], update: bool = Fals
 
 def write_document(collection: str, document_id: str, data: dict, merge: bool = False) -> None:
     get_client().collection(collection).document(document_id).set(data, merge=merge)
+
+
+def update_document(collection: str, document_id: str, data: dict) -> None:
+    get_client().collection(collection).document(document_id).update(data)
 
 
 def get_document(document_path: str) -> dict:
