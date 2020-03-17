@@ -59,6 +59,10 @@ def is_field_updated(data: dict, fieldname) -> bool:
     return fieldname in data.get('updateMask', {}).get('fieldPaths', [])
 
 
+def delete_document(collection, document_id):
+    get_client().collection(collection).document(document_id).delete()
+
+
 def delete_collection(coll_ref, batch_size=1000):
     docs = coll_ref.limit(batch_size).stream()
     deleted = 0

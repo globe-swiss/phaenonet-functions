@@ -41,5 +41,5 @@ import main
 def test_document_ts_update(mocker, update_called, data, comment):
     update_modified_document = mocker.patch('phenoback.functions.documents.update_modified_document')
     mocker.patch('phenoback.functions.documents.update_created_document')
-    main.process_document_ts(data, mocker.MagicMock())
+    main.process_document_ts_write(data, mocker.MagicMock())
     assert update_modified_document.called == update_called, comment

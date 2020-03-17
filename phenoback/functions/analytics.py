@@ -115,4 +115,4 @@ def process_observation(observation_id: str, observation_date: datetime, individ
 
 
 def process_remove_observation(observation_id):
-    print("WARN: removing of observations not implemented")
+    raise NotImplementedError('removing of observations not implemented (id=%s)' % observation_id)
