@@ -1,8 +1,6 @@
 from datetime import datetime, timezone
 
-import dateparser
-
-from phenoback.gcloud.utils import get_client, get_document, write_document
+from phenoback.gcloud.utils import get_client
 
 
 def update_last_observation(individual_id: str, phase: str, observation_date: datetime) -> None:
