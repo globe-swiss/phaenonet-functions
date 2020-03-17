@@ -20,6 +20,8 @@ Pipfile*
 *.json
 foto_uploads/
 cli_setup/
+.idea/
+*.sh
 
 node_modules
 
