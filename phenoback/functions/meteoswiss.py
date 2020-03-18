@@ -16,7 +16,7 @@ def process_stations():
             reader = csv.DictReader(io.StringIO(response.text), delimiter=';')
             stations = _get_individuals_dict(reader)
             print('DEBUG: %i stations fetched in %s' % (len(stations), response.elapsed))
-            write_batch('individuals', 'id', stations)
+            write_batch('individuals', 'id', stations, merge=True)
             _set_hash('stations', response.text)
         else:
             print('DEBUG: Station file did not change.')
@@ -46,7 +46,7 @@ def process_observations():
             reader = csv.DictReader(io.StringIO(response.text), delimiter=';')
             observations = _get_observations_dict(reader)
             print('DEBUG: %i observations fetched in %s' % (len(observations), response.elapsed))
-            write_batch('observations', 'id', observations)
+            write_batch('observations', 'id', observations, merge=True)
             _set_hash('observations', response.text)
         else:
             print('DEBUG: Observations file did not change.')

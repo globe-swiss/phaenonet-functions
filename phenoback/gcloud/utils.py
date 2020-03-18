@@ -76,17 +76,14 @@ def delete_collection(coll_ref, batch_size=1000):
         return delete_collection(coll_ref, batch_size)
 
 
-def write_batch(collection: str, key: str, data: List[dict], update: bool = False) -> None:
+def write_batch(collection: str, key: str, data: List[dict], merge: bool = False) -> None:
     batch = get_client().batch()
     cnt = 0
     for item in data:
         cnt += 1
         ref = get_client().collection(collection).document(str(item[key]))
         item.pop(key)
-        if update:
-            batch.update(ref, item)
-        else:
-            batch.set(ref, item)
+        batch.set(ref, item, merge=merge)
         if cnt == 500:
             batch.commit()
             cnt = 0
