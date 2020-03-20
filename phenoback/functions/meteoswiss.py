@@ -61,6 +61,7 @@ def _get_observations_dict(observations: csv.DictReader):
                                observation['reference_year'],
                                mapping[observation['param_id']]['species'],
                                mapping[observation['param_id']]['phenophase']),
+        'user': 'meteoswiss',
         'date': datetime.strptime(observation['value'], '%Y%m%d'),
         'individual_id': '%s_%s' % (observation['reference_year'], observation['nat_abbr']),
         'individual': observation['nat_abbr'],
