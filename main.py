@@ -16,7 +16,7 @@ def process_observation_write(data, context):
     print('DEBUG: data: (%s)' % str(data))
     if is_create_event(data) or is_field_updated(data, 'date'):
         # ANALYTICS
-        if get_field(data, 'phenophase') in ('BEA', 'BLA', 'BFA', 'BVS'):
+        if get_field(data, 'phenophase') in ('BEA', 'BLA', 'BFA', 'BVS', 'FRA'):
             analytics.process_observation(get_document_id(context), get_field(data, 'date'),
                                           get_field(data, 'individual_id'), get_field(data, 'source'),
                                           get_field(data, 'year'), get_field(data, 'species'),
