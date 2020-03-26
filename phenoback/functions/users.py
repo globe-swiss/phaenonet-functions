@@ -13,5 +13,5 @@ def process_update_nickname(user_id: str, old_nickname: str, new_nickname: str):
 
 
 def process_delete_user(user_id: str, nickname: str):
-    get_client().collection('nicknames').document(nickname).delete()
-    get_client().collection('public_users').document(user_id).delete()
+    firestore_client().collection('nicknames').document(nickname).delete()
+    firestore_client().collection('public_users').document(user_id).delete()

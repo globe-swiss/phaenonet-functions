@@ -1,7 +1,7 @@
 from typing import Optional
 from datetime import datetime
 
-from phenoback.gcloud.utils import get_client
+from phenoback.gcloud.utils import firestore_client
 import numpy as np
 
 
@@ -50,17 +50,17 @@ def _update_dataset(observation_id: str, observation_date: datetime, year: int, 
     else:
         doc_key = '%s_%s_%s' % (str(year), species, source)
     # process state by species
-    state_ref = get_client().collection('analytics_state').document(doc_key)
+    state_ref = firestore_client().collection('analytics_state').document(doc_key)
     state = _process_state(state_ref, observation_id, observation_date,
                            phase, source, year, species, altitude_grp)
 
     # process analytic results
-    result_ref = get_client().collection('analytics_result').document(doc_key)
+    result_ref = firestore_client().collection('analytics_result').document(doc_key)
     _process_results(result_ref, state, phase, source, year, species, altitude_grp)
 
 
 def _get_altitude_grp(individual_id: str) -> Optional[str]:
-    altitude = get_client().collection('individuals').document(individual_id).get().to_dict().get('altitude', None)
+    altitude = firestore_client().collection('individuals').document(individual_id).get().to_dict().get('altitude', None)
     altitude_key = None
     if altitude is not None:
         if altitude < 500:

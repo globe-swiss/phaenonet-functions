@@ -1,10 +1,10 @@
 from datetime import datetime, timezone
 
-from phenoback.gcloud.utils import get_client
+from phenoback.gcloud.utils import firestore_client
 
 
 def update_last_observation(individual_id: str, phase: str, observation_date: datetime) -> None:
-    individual_ref = get_client().document('individuals/%s' % individual_id)
+    individual_ref = firestore_client().document('individuals/%s' % individual_id)
     individual = individual_ref.get().to_dict()
     old_observation_date = individual.get('last_observation_date', datetime.min.replace(tzinfo=timezone.utc))
     if observation_date > old_observation_date:
