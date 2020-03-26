@@ -46,4 +46,4 @@ jobs:
     - name: Update pipenv environment
       run: pipenv update --dev
     - name: Test updated environment with pytest
-           pipenv run python -m pytest
+      run: pipenv run python -m pytest
