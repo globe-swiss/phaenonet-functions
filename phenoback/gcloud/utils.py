@@ -1,19 +1,30 @@
+import tempfile
+
 import phenoback
 from datetime import datetime
-from typing import Union, List
+from typing import Union, List, Optional
 
-from firebase_admin import firestore
+from firebase_admin import firestore, storage
 from google.cloud.firestore_v1.client import Client
+from google.cloud.storage.bucket import Bucket
 import dateparser
 
 _db = None
+_storage = None
 
 
-def get_client() -> Client:
+def firestore_client() -> Client:
     global _db
     if not _db:
         _db = firestore.client()
     return _db
+
+
+def firestore_client() -> Client:
+    global _storage
+    if not _storage:
+        _storage = storage.client()
+    return _storage
 
 
 def get_field(data, fieldname, old_value=False) -> Union[str, int, datetime, None]:
@@ -60,7 +71,7 @@ def is_field_updated(data: dict, fieldname) -> bool:
 
 
 def delete_document(collection, document_id):
-    get_client().collection(collection).document(document_id).delete()
+    firestore_client().collection(collection).document(document_id).delete()
 
 
 def delete_collection(coll_ref, batch_size=1000):
@@ -77,11 +88,11 @@ def delete_collection(coll_ref, batch_size=1000):
 
 
 def write_batch(collection: str, key: str, data: List[dict], merge: bool = False) -> None:
-    batch = get_client().batch()
+    batch = firestore_client().batch()
     cnt = 0
     for item in data:
         cnt += 1
-        ref = get_client().collection(collection).document(str(item[key]))
+        ref = firestore_client().collection(collection).document(str(item[key]))
         item.pop(key)
         batch.set(ref, item, merge=merge)
         if cnt == 500:
@@ -91,12 +102,26 @@ def write_batch(collection: str, key: str, data: List[dict], merge: bool = False
 
 
 def write_document(collection: str, document_id: str, data: dict, merge: bool = False) -> None:
-    get_client().collection(collection).document(document_id).set(data, merge=merge)
+    firestore_client().collection(collection).document(document_id).set(data, merge=merge)
 
 
 def update_document(collection: str, document_id: str, data: dict) -> None:
-    get_client().collection(collection).document(document_id).update(data)
+    firestore_client().collection(collection).document(document_id).update(data)
 
 
 def get_document(document_path: str) -> dict:
-    return get_client().document(document_path).get().to_dict()
+    return firestore_client().document(document_path).get().to_dict()
+
+
+def download_file(bucket: str, path: str):
+    blob = storage.bucket(bucket).get_blob(path)
+    file = tempfile.TemporaryFile()
+    if blob:
+        blob.download_to_file(file)
+        return file
+
+
+def upload_file(bucket: str, path: str, file, content_type=None):
+    file.seek(0)
+    storage.bucket(bucket).blob(path).upload_from_file(file, content_type=content_type)
+

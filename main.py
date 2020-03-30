@@ -1,8 +1,10 @@
-from phenoback.functions import activity, analytics, users, meteoswiss, observation, documents
+from phenoback.functions import activity, analytics, users, meteoswiss, observation, documents, thumbnails
 import firebase_admin
 from phenoback.gcloud.utils import *
 
 firebase_admin.initialize_app()
+
+BUCKET = 'phaenonet.appspot.com'
 
 
 def process_activity_create(data, context):
@@ -70,3 +72,11 @@ def process_document_ts_write(data, context):
         print('INFO: document %s was deleted' % context.resource)
     else:
         print('DEBUG: Nothing to do.')
+
+
+def create_thumbnail_finalize(data, context):
+    print('DEBUG: context: (%s)' % str(context))
+    print('DEBUG: data: (%s)' % str(data))
+
+    thumbnails.process_new_image(BUCKET, data['name'])
+

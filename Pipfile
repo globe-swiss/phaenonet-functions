@@ -11,6 +11,7 @@ pytest-mock = "*"
 firebase-admin = "*"
 numpy = "*"
 dateparser = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.7"
