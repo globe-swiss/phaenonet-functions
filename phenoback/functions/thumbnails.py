@@ -1,6 +1,7 @@
 import os
 from phenoback.gcloud.utils import *
 from PIL import Image
+import tempfile
 
 
 def process_new_image(bucket: str, pathfile: str) -> bool:
@@ -12,6 +13,9 @@ def process_new_image(bucket: str, pathfile: str) -> bool:
         print('DEBUG: processing thumbnail for %s' % pathfile)
         img_in = download_file(bucket, pathfile)
         img = Image.open(img_in)
+        if img.mode in ('RGBA', 'LA'):
+            print('WARN: cannot process %s images skipping %s' % (img.mode, pathfile))
+            return False
         img.thumbnail((476, 302))
         img_out = tempfile.TemporaryFile()
         img.save(img_out, 'JPEG')
