@@ -10,7 +10,6 @@ from google.cloud.storage.bucket import Bucket
 import dateparser
 
 _db = None
-_storage = None
 
 
 def firestore_client() -> Client:
@@ -18,13 +17,6 @@ def firestore_client() -> Client:
     if not _db:
         _db = firestore.client()
     return _db
-
-
-def firestore_client() -> Client:
-    global _storage
-    if not _storage:
-        _storage = storage.client()
-    return _storage
 
 
 def get_field(data, fieldname, old_value=False) -> Union[str, int, datetime, None]:
