@@ -22,6 +22,7 @@ foto_uploads/
 cli_setup/
 .idea/
 *.sh
+env.*
 
 node_modules
 

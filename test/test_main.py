@@ -1,7 +1,7 @@
 from datetime import datetime
 import pytest
 import firebase_admin
-firebase_admin.initialize_app = lambda x = None, y = None: None  # mock calls to initialize firebase app
+firebase_admin.initialize_app = lambda credentials = None, options = None: None  # mock calls to initialize firebase app
 import main
 
 

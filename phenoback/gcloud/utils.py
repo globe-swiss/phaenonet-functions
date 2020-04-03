@@ -2,11 +2,10 @@ import tempfile
 
 import phenoback
 from datetime import datetime
-from typing import Union, List, Optional
+from typing import Union, List
 
 from firebase_admin import firestore, storage
 from google.cloud.firestore_v1.client import Client
-from google.cloud.storage.bucket import Bucket
 import dateparser
 
 _db = None

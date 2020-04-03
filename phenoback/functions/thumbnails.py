@@ -4,7 +4,7 @@ from PIL import Image, ImageOps
 import tempfile
 
 
-def process_new_image(bucket: str, pathfile: str) -> bool:
+def process_new_image(pathfile: str, bucket: str = None) -> bool:
     path = os.path.split(pathfile)[0]
     filename_base = os.path.splitext(os.path.split(pathfile)[1])[0]
     filename_ext = os.path.splitext(pathfile)[1]

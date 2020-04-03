@@ -28,21 +28,21 @@ def test_process_new_image_infinite_loop(mocker, image_rgb):
     mocker.patch('phenoback.functions.thumbnails.download_file', return_value=image_rgb)
     upload_file = mocker.patch('phenoback.functions.thumbnails.upload_file')
 
-    assert thumbnails.process_new_image('dummy', 'images/user_id/individuals/test.jpeg')
+    assert thumbnails.process_new_image('images/user_id/individuals/test.jpeg')
     upload_file.assert_called()
-    writen_file = upload_file.call_args[0][1]
-    assert not thumbnails.process_new_image('dummy', writen_file)
+    written_file = upload_file.call_args[0][1]
+    assert not thumbnails.process_new_image(written_file), written_file
 
 
 def test_process_new_image_alpha(mocker, image_rgba):
     mocker.patch('phenoback.functions.thumbnails.download_file', return_value=image_rgba)
     mocker.patch('phenoback.functions.thumbnails.upload_file')
 
-    assert not thumbnails.process_new_image('dummy', 'images/user_id/individuals/test.png')
+    assert not thumbnails.process_new_image('images/user_id/individuals/test.png')
 
 
 def test_process_new_image_noext(mocker, image_rgb):
     mocker.patch('phenoback.functions.thumbnails.download_file', return_value=image_rgb)
     mocker.patch('phenoback.functions.thumbnails.upload_file')
 
-    assert thumbnails.process_new_image('dummy', 'images/user_id/individuals/test')
+    assert thumbnails.process_new_image('images/user_id/individuals/test')

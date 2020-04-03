@@ -1,10 +1,9 @@
+import os
 from phenoback.functions import activity, analytics, users, meteoswiss, observation, documents, thumbnails
 import firebase_admin
 from phenoback.gcloud.utils import *
 
-firebase_admin.initialize_app()
-
-BUCKET = 'phaenonet.appspot.com'
+firebase_admin.initialize_app(options={'storageBucket': os.environ.get('storageBucket')})
 
 
 def process_activity_create(data, context):
@@ -78,5 +77,5 @@ def create_thumbnail_finalize(data, context):
     print('DEBUG: context: (%s)' % str(context))
     print('DEBUG: data: (%s)' % str(data))
 
-    thumbnails.process_new_image(BUCKET, data['name'])
+    thumbnails.process_new_image(data['name'])
 
