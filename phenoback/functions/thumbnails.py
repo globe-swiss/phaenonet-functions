@@ -1,6 +1,6 @@
 import os
 from phenoback.gcloud.utils import *
-from PIL import Image
+from PIL import Image, ImageOps
 import tempfile
 
 
@@ -16,6 +16,7 @@ def process_new_image(bucket: str, pathfile: str) -> bool:
         if img.mode in ('RGBA', 'LA'):
             print('WARN: cannot process %s images skipping %s' % (img.mode, pathfile))
             return False
+        img = ImageOps.exif_transpose(img)
         img.thumbnail((476, 302))
         img_out = tempfile.TemporaryFile()
         img.save(img_out, 'JPEG')
