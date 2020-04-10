@@ -12,17 +12,33 @@ def process_new_image(pathfile: str, bucket: str = None) -> bool:
     if path.startswith('images/') and not filename_base.endswith('_tn'):
         print('DEBUG: processing thumbnail for %s' % pathfile)
         img_in = download_file(bucket, pathfile)
-        img = Image.open(img_in)
-        if img.mode in ('RGBA', 'LA'):
-            print('WARN: cannot process %s images skipping %s' % (img.mode, pathfile))
-            return False
-        img = ImageOps.exif_transpose(img)
-        img.thumbnail((476, 302))
-        img_out = tempfile.TemporaryFile()
-        img.save(img_out, 'JPEG')
+        img_out = process_image(img_in)
 
         upload_file(bucket, '%s/%s_tn%s' % (path, filename_base, filename_ext), img_out, content_type='image/jpeg')
         return True
     else:
         print('DEBUG: skipping thumbnail creation for %s' % pathfile)
         return False
+
+
+def process_image(img_in):
+    img = Image.open(img_in)
+    img = _remove_unprocessable_exif_info(img)
+    img = img.convert('RGB')
+    img = ImageOps.exif_transpose(img)
+    img.thumbnail((476, 302))
+    img_out = tempfile.TemporaryFile()
+    img.save(img_out, 'JPEG')
+    return img_out
+
+
+def _remove_unprocessable_exif_info(img):
+    """
+    Workaround for a bug in Pillow failing on tag 42034.
+    https://github.com/python-pillow/Pillow/issues/4346
+    """
+    exif = img.getexif()
+    exif.pop(42034, None)
+    new_exif = exif.tobytes()
+    img.info["exif"] = new_exif
+    return img
