@@ -38,7 +38,7 @@ def test_process_new_image_alpha(mocker, image_rgba):
     mocker.patch('phenoback.functions.thumbnails.download_file', return_value=image_rgba)
     mocker.patch('phenoback.functions.thumbnails.upload_file')
 
-    assert not thumbnails.process_new_image('images/user_id/individuals/test.png')
+    assert thumbnails.process_new_image('images/user_id/individuals/test.png')
 
 
 def test_process_new_image_noext(mocker, image_rgb):
