@@ -2,6 +2,7 @@ import pytest
 from PIL import Image
 from io import BytesIO
 from phenoback.functions import thumbnails
+from test import get_resource_path
 
 
 @pytest.fixture()
@@ -46,3 +47,7 @@ def test_process_new_image_noext(mocker, image_rgb):
     mocker.patch('phenoback.functions.thumbnails.upload_file')
 
     assert thumbnails.process_new_image('images/user_id/individuals/test')
+
+
+def test_process_image_exif_tag_42034():
+    assert thumbnails.process_image(get_resource_path('exif_tag_42034.jpg'))
