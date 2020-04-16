@@ -25,7 +25,14 @@ def image_rgb():
     return file
 
 
-def test_process_new_image_infinite_loop(mocker, image_rgb):
+@pytest.mark.parametrize("filename",
+                         [("test.jpg"),
+                          ("test.png"),
+                          ("test"),
+                          ("test_tn"),
+                          ("test_tn_tn"),
+                          ])
+def test_process_new_image_infinite_loop(mocker, image_rgb, filename):
     mocker.patch('phenoback.functions.thumbnails.download_file', return_value=image_rgb)
     upload_file = mocker.patch('phenoback.functions.thumbnails.upload_file')
 
@@ -51,3 +58,7 @@ def test_process_new_image_noext(mocker, image_rgb):
 
 def test_process_image_exif_tag_42034():
     assert thumbnails.process_image(get_resource_path('exif_tag_42034.jpg'))
+
+
+def test_process_image_tuple_index_out_of_range():
+    assert thumbnails.process_image(get_resource_path('tuple_index_out_of_range.jpg'))

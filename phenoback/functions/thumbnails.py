@@ -34,11 +34,12 @@ def process_image(img_in):
 
 def _remove_unprocessable_exif_info(img):
     """
-    Workaround for a bug in Pillow failing on tag 42034.
-    https://github.com/python-pillow/Pillow/issues/4346
+    Remove all exif info except orientation needed for rotating the image.
     """
     exif = img.getexif()
-    exif.pop(42034, None)
+    for k in exif.keys():
+        if k != 0x0112:
+            exif.pop(k)
     new_exif = exif.tobytes()
     img.info["exif"] = new_exif
     return img
