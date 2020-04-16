@@ -12,12 +12,13 @@
 # below:
 .git
 .gitignore
+.github/
 .xprocess/
 test/
 ipynb/
 .vscode/
 Pipfile*
-*.json
+credentials/
 foto_uploads/
 cli_setup/
 .idea/

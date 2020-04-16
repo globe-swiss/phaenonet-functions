@@ -1,5 +1,5 @@
 .idea
-phaenonet-*.json
+credentials
 foto_uploads
 
 # general python ignores
