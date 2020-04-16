@@ -1,4 +1,8 @@
 import os
+
+from google.api_core import retry, exceptions
+from google.api_core.retry import if_exception_type
+
 from phenoback.functions import activity, analytics, users, meteoswiss, observation, documents, thumbnails
 import firebase_admin
 from phenoback.gcloud.utils import *
@@ -73,9 +77,9 @@ def process_document_ts_write(data, context):
         print('DEBUG: Nothing to do.')
 
 
+@retry.Retry(predicate=if_exception_type(exceptions.NotFound))
 def create_thumbnail_finalize(data, context):
     print('DEBUG: context: (%s)' % str(context))
     print('DEBUG: data: (%s)' % str(data))
 
     thumbnails.process_new_image(data['name'])
-
