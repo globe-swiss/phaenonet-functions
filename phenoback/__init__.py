@@ -1,6 +1,10 @@
+import logging
 import os
 import firebase_admin
 from firebase_admin import credentials
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 _PROJECT = 'phaenonet-test'
 _TYPE = 'firebase-adminsdk'
@@ -16,4 +20,4 @@ if os.path.isfile(credential_file):
         'storageBucket': '%s.appspot.com' % _PROJECT
     })
 
-    print('INFO: app initialized with local credentials %s' % credential_file)
+    log.info('app initialized with local credentials %s' % credential_file)

@@ -1,4 +1,9 @@
+import logging
+
 from phenoback.gcloud.utils import firestore_client
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 
 def process_activity(activity_id, individual: str, user_id: str):
@@ -10,7 +15,10 @@ def process_activity(activity_id, individual: str, user_id: str):
     for user in following_users_query.stream():
         followers.append(user.id)
 
-    print("Found %i followers for activity %s" % (len(followers), activity_id))
     if followers:
+        log.info('Setting %i followers on activity %s' % (len(followers), activity_id))
         activity_ref = firestore_client().collection('activities').document(activity_id)
         activity_ref.update({u'followers': followers})
+        log.debug('Set followers on %s: %s' % (activity_id, str(followers)))
+    else:
+        log.debug('No followers on activity %s' % activity_id)

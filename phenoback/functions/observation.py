@@ -1,6 +1,10 @@
+import logging
 from datetime import datetime, timezone
 
 from phenoback.gcloud.utils import firestore_client
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 
 def update_last_observation(individual_id: str, phase: str, observation_date: datetime) -> None:
@@ -13,8 +17,7 @@ def update_last_observation(individual_id: str, phase: str, observation_date: da
             data['last_phenophase'] = phase
 
         individual_ref.update(data)
-        print('INFO: updated last observation for %s (%s -> %s)'
-              % (individual_id, old_observation_date, observation_date))
+        log.info('updated last observation for %s (%s -> %s)' % (individual_id, old_observation_date, observation_date))
     else:
-        print('DEBUG: no update for last observation for %s (%s > %s)'
-              % (individual_id, old_observation_date, observation_date))
+        log.info('no update for last observation for %s (%s > %s)' % (individual_id, old_observation_date,
+                                                                      observation_date))
