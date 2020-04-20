@@ -69,7 +69,7 @@ def _get_observations_dict(observations: csv.DictReader):
         'year': int(observation['reference_year']),
         'species': mapping[observation['param_id']]['species'],
         'phenophase': mapping[observation['param_id']]['phenophase']
-    } for observation in observations]
+    } for observation in observations if observation['param_id'] in mapping]
 
 
 def _set_hash(key: str, data: str):
