@@ -1,9 +1,11 @@
 import logging
 import tempfile
 
+from google.cloud.firestore_v1 import Query
+
 import phenoback
 from datetime import datetime
-from typing import Union, List
+from typing import Union, List, Any
 
 from firebase_admin import firestore, storage
 from google.cloud.firestore_v1.client import Client
@@ -111,9 +113,14 @@ def update_document(collection: str, document_id: str, data: dict) -> None:
     firestore_client().collection(collection).document(document_id).update(data)
 
 
-def get_document(document_path: str) -> dict:
-    log.debug('Get document %s' % document_path)
-    return firestore_client().document(document_path).get().to_dict()
+def get_document(collection: str, document_id: str) -> dict:
+    log.debug('Get document %s in %s' % (document_id, collection))
+    return firestore_client().collection(collection).document(document_id).get().to_dict()
+
+
+def query_collection(collection: str, field_path: str, op_string: str, value: Any) -> Query:
+    log.debug('Query %s where %s %s %s' % (collection, field_path, op_string, value))
+    return firestore_client().collection(collection).where(field_path, op_string, value)
 
 
 def download_file(bucket: str, path: str):

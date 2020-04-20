@@ -8,7 +8,8 @@ from phenoback.functions import activity, analytics, users, meteoswiss, observat
 import firebase_admin
 
 from phenoback.gcloud import glogging
-from phenoback.gcloud.utils import *
+from phenoback.gcloud.utils import get_document_id, get_field, is_create_event, is_field_updated, is_delete_event, \
+    is_update_event, get_collection_path
 
 firebase_admin.initialize_app(options={'storageBucket': os.environ.get('storageBucket')})
 glogging.init()

@@ -1,4 +1,4 @@
-from phenoback.gcloud.utils import *
+from phenoback.gcloud.utils import write_document, update_document, delete_document
 
 
 def process_new_user(user_id: str, nickname: str):
@@ -13,5 +13,5 @@ def process_update_nickname(user_id: str, nickname_old: str, nickname_new: str):
 
 
 def process_delete_user(user_id: str, nickname: str):
-    firestore_client().collection('nicknames').document(nickname).delete()
-    firestore_client().collection('public_users').document(user_id).delete()
+    delete_document('nicknames', nickname)
+    delete_document('public_users', user_id)

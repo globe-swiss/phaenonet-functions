@@ -1,3 +1,4 @@
+__all__ = ['functions', 'gcloud']
 import logging
 import os
 import firebase_admin
@@ -12,12 +13,17 @@ _TYPE = 'firebase-adminsdk'
 credential_file = os.path.join(os.path.dirname(__file__), '..', 'credentials',
                                '%s-%s.json' % (_PROJECT, _TYPE))
 
-if os.path.isfile(credential_file):
+
+def load_credentials() -> None:
+    if os.path.isfile(credential_file):
+
+        cred = credentials.Certificate(credential_file)
+        firebase_admin.initialize_app(cred, {
+            'storageBucket': '%s.appspot.com' % _PROJECT
+        })
+
+        log.info('app initialized with local credentials %s' % credential_file)
+
+
+def sets_credential_env() -> None:
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credential_file
-
-    cred = credentials.Certificate(credential_file)
-    firebase_admin.initialize_app(cred, {
-        'storageBucket': '%s.appspot.com' % _PROJECT
-    })
-
-    log.info('app initialized with local credentials %s' % credential_file)
