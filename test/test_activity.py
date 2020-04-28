@@ -1,7 +1,7 @@
 from typing import List
 from unittest.mock import call
 import google.cloud.firestore_v1.collection
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 import pytest
 from phenoback.functions import activity
 
@@ -23,11 +23,12 @@ def test_process_activity_status(mocker, followers, expected):
 
 
 def test_process_activity_update_values(mocker):
-    mocker.patch('phenoback.functions.activity.get_followers', return_value={'a_follower', 'another_follower'})
+    mocker.patch('phenoback.functions.activity.get_followers',
+                 return_value=['a_follower', 'another_follower'])
     update_mock = mocker.patch('phenoback.functions.activity.update_document')
 
     activity.process_activity('activity_id', 'ignored', 'ignored')
-    assert update_mock.call_args == call('activities', 'activity_id', {'followers': ['another_follower', 'a_follower']})
+    assert update_mock.call_args == call('activities', 'activity_id', {'followers': ['a_follower', 'another_follower']})
 
 
 @pytest.mark.parametrize('user_following, individuals_following',

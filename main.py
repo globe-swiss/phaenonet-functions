@@ -9,7 +9,7 @@ import firebase_admin
 
 from phenoback.gcloud import glogging
 from phenoback.gcloud.utils import get_document_id, get_field, is_create_event, is_field_updated, is_delete_event, \
-    is_update_event, get_collection_path
+    is_update_event, get_collection_path, get_fields_updated
 
 firebase_admin.initialize_app(options={'storageBucket': os.environ.get('storageBucket')})
 glogging.init()
@@ -103,7 +103,7 @@ def process_document_ts_write(data, context):
         log.info('update created ts on document %s' % context.resource)
         documents.update_created_document(collection_path, document_id)
     elif is_update_event(data) and not is_field_updated(data, documents.MODIFIED_KEY):
-        log.info('update modified ts on document %s' % context.resource)
+        log.info('update modified ts on document %s %s' % (context.resource, get_fields_updated(data)))
         documents.update_modified_document(collection_path, document_id)
     elif is_delete_event(data):
         log.info('document %s was deleted' % context.resource)

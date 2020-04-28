@@ -12,7 +12,7 @@ from google.cloud.firestore_v1.client import Client
 import dateparser
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 
 _db = None
 
@@ -65,7 +65,11 @@ def is_delete_event(data: dict) -> bool:
 
 
 def is_field_updated(data: dict, fieldname) -> bool:
-    return fieldname in data.get('updateMask', {}).get('fieldPaths', [])
+    return fieldname in get_fields_updated(data)
+
+
+def get_fields_updated(data: dict) -> List[str]:
+    return data.get('updateMask', {}).get('fieldPaths', [])
 
 
 def delete_document(collection, document_id):
