@@ -1,7 +1,11 @@
+import logging
 import os
 from phenoback.gcloud.utils import *
 from PIL import Image, ImageOps
 import tempfile
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 
 def process_new_image(pathfile: str, bucket: str = None) -> bool:
@@ -10,14 +14,14 @@ def process_new_image(pathfile: str, bucket: str = None) -> bool:
     filename_ext = os.path.splitext(pathfile)[1]
 
     if path.startswith('images/') and not filename_base.endswith('_tn'):
-        print('DEBUG: processing thumbnail for %s' % pathfile)
+        log.debug('creating thumbnail for %s' % pathfile)
         img_in = download_file(bucket, pathfile)
         img_out = process_image(img_in)
 
         upload_file(bucket, '%s/%s_tn%s' % (path, filename_base, filename_ext), img_out, content_type='image/jpeg')
         return True
     else:
-        print('DEBUG: skipping thumbnail creation for %s' % pathfile)
+        log.debug('skipping thumbnail creation for %s' % pathfile)
         return False
 
 

@@ -1,20 +1,24 @@
+import logging
 from datetime import datetime, timezone
 
-from phenoback.gcloud.utils import firestore_client
+from phenoback.gcloud.utils import get_document, update_document
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 
-def update_last_observation(individual_id: str, phase: str, observation_date: datetime) -> None:
-    individual_ref = firestore_client().document('individuals/%s' % individual_id)
-    individual = individual_ref.get().to_dict()
+def update_last_observation(individual_id: str, phase: str, observation_date: datetime) -> bool:
+    individual = get_document('individuals', individual_id)
     old_observation_date = individual.get('last_observation_date', datetime.min.replace(tzinfo=timezone.utc))
     if observation_date > old_observation_date:
         data = {'last_observation_date': observation_date}
         if individual.get('type') == 'individual':
             data['last_phenophase'] = phase
 
-        individual_ref.update(data)
-        print('INFO: updated last observation for %s (%s -> %s)'
-              % (individual_id, old_observation_date, observation_date))
+        update_document('individuals', individual_id, data)
+        log.info('updated last observation for %s (%s -> %s)' % (individual_id, old_observation_date, observation_date))
+        return True
     else:
-        print('DEBUG: no update for last observation for %s (%s > %s)'
-              % (individual_id, old_observation_date, observation_date))
+        log.info('no update for last observation for %s (%s > %s)' % (individual_id, old_observation_date,
+                                                                      observation_date))
+        return False

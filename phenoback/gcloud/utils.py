@@ -1,12 +1,18 @@
+import logging
 import tempfile
+
+from google.cloud.firestore_v1 import Query
 
 import phenoback
 from datetime import datetime
-from typing import Union, List
+from typing import Union, List, Any
 
 from firebase_admin import firestore, storage
 from google.cloud.firestore_v1.client import Client
 import dateparser
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
 
 _db = None
 
@@ -31,10 +37,11 @@ def get_field(data, fieldname, old_value=False) -> Union[str, int, datetime, Non
         elif value_type == 'timestampValue':
             return dateparser.parse(value)
         else:
-            print("WARN: Unknown field type %s, returning str representation: %s" % (value_type, str(value)))
+            log.warning("Unknown field type %s, returning str representation: %s" % (value_type, str(value)))
             return str(value)
     else:
-        print("WARN: field %s not found in data %s" % (fieldname, str(data)))
+        log.warning("field %s not found in data %s, returning None" % (fieldname, str(data)))
+        return None
 
 
 def get_document_id(context) -> str:
@@ -58,10 +65,15 @@ def is_delete_event(data: dict) -> bool:
 
 
 def is_field_updated(data: dict, fieldname) -> bool:
-    return fieldname in data.get('updateMask', {}).get('fieldPaths', [])
+    return fieldname in get_fields_updated(data)
+
+
+def get_fields_updated(data: dict) -> List[str]:
+    return data.get('updateMask', {}).get('fieldPaths', [])
 
 
 def delete_document(collection, document_id):
+    log.debug('Delete document %s from %s' % (document_id, collection))
     firestore_client().collection(collection).document(document_id).delete()
 
 
@@ -70,7 +82,7 @@ def delete_collection(coll_ref, batch_size=1000):
     deleted = 0
 
     for doc in docs:
-        print(u'Deleting doc {} => {}'.format(doc.id, doc.to_dict()))
+        log.debug('Deleting doc {} => {}'.format(doc.id, doc.to_dict()))
         doc.reference.delete()
         deleted += 1
 
@@ -79,6 +91,7 @@ def delete_collection(coll_ref, batch_size=1000):
 
 
 def write_batch(collection: str, key: str, data: List[dict], merge: bool = False) -> None:
+    log.info('Batch-write %i documents to %s' % (len(data), collection))
     batch = firestore_client().batch()
     cnt = 0
     for item in data:
@@ -87,24 +100,35 @@ def write_batch(collection: str, key: str, data: List[dict], merge: bool = False
         item.pop(key)
         batch.set(ref, item, merge=merge)
         if cnt == 500:
+            log.debug('Commiting %i documents on %s' % (cnt, collection))
             batch.commit()
             cnt = 0
+    log.debug('Commiting %i documents on %s' % (cnt, collection))
     batch.commit()
 
 
 def write_document(collection: str, document_id: str, data: dict, merge: bool = False) -> None:
+    log.debug('Write document %s to %s' % (document_id, collection))
     firestore_client().collection(collection).document(document_id).set(data, merge=merge)
 
 
 def update_document(collection: str, document_id: str, data: dict) -> None:
+    log.debug('Update document %s in %s' % (document_id, collection))
     firestore_client().collection(collection).document(document_id).update(data)
 
 
-def get_document(document_path: str) -> dict:
-    return firestore_client().document(document_path).get().to_dict()
+def get_document(collection: str, document_id: str) -> dict:
+    log.debug('Get document %s in %s' % (document_id, collection))
+    return firestore_client().collection(collection).document(document_id).get().to_dict()
+
+
+def query_collection(collection: str, field_path: str, op_string: str, value: Any) -> Query:
+    log.debug('Query %s where %s %s %s' % (collection, field_path, op_string, value))
+    return firestore_client().collection(collection).where(field_path, op_string, value)
 
 
 def download_file(bucket: str, path: str):
+    log.debug('Download file %s from %s' % (path, bucket))
     blob = storage.bucket(bucket).get_blob(path)
     file = tempfile.TemporaryFile()
     if blob:
@@ -113,6 +137,6 @@ def download_file(bucket: str, path: str):
 
 
 def upload_file(bucket: str, path: str, file, content_type=None):
+    log.debug('Upload file %s of type %s to %s' % (path, content_type, bucket))
     file.seek(0)
     storage.bucket(bucket).blob(path).upload_from_file(file, content_type=content_type)
-

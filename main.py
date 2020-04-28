@@ -1,3 +1,4 @@
+import logging
 import os
 
 from google.api_core import retry, exceptions
@@ -5,81 +6,118 @@ from google.api_core.retry import if_exception_type
 
 from phenoback.functions import activity, analytics, users, meteoswiss, observation, documents, thumbnails
 import firebase_admin
-from phenoback.gcloud.utils import *
+
+from phenoback.gcloud import glogging
+from phenoback.gcloud.utils import get_document_id, get_field, is_create_event, is_field_updated, is_delete_event, \
+    is_update_event, get_collection_path, get_fields_updated
 
 firebase_admin.initialize_app(options={'storageBucket': os.environ.get('storageBucket')})
+glogging.init()
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 
 def process_activity_create(data, context):
-    print('DEBUG: context: (%s)' % str(context))
-    print('DEBUG: data: (%s)' % str(data))
+    glogging.log_id = context.event_id
+    log.debug('context: (%s)' % str(context))
+    log.debug('data: (%s)' % str(data))
+
+    log.info('Process activity %s' % get_document_id(context))
     activity.process_activity(get_document_id(context), get_field(data, 'individual'), get_field(data, 'user'))
 
 
 def process_observation_write(data, context):
-    print('DEBUG: context: (%s)' % str(context))
-    print('DEBUG: data: (%s)' % str(data))
+    glogging.log_id = context.event_id
+    log.debug('context: (%s)' % str(context))
+    log.debug('data: (%s)' % str(data))
+
+    observation_id = get_document_id(context)
+    phenophase = get_field(data, 'phenophase')
+    individual_id = get_field(data, 'individual_id')
+    source = get_field(data, 'source')
+    year = get_field(data, 'year')
+    species = get_field(data, 'species')
+    observation_date = get_field(data, 'date')
+
     if is_create_event(data) or is_field_updated(data, 'date'):
         # ANALYTICS
-        if get_field(data, 'phenophase') in ('BEA', 'BLA', 'BFA', 'BVA', 'FRA'):
-            analytics.process_observation(get_document_id(context), get_field(data, 'date'),
-                                          get_field(data, 'individual_id'), get_field(data, 'source'),
-                                          get_field(data, 'year'), get_field(data, 'species'),
-                                          get_field(data, 'phenophase'))
+        if phenophase in ('BEA', 'BLA', 'BFA', 'BVA', 'FRA'):
+            log.info('Process analytic values for %s, phenophase %s' % (observation_id, phenophase))
+            analytics.process_observation(observation_id, observation_date, individual_id, source, year, species,
+                                          phenophase)
         else:
-            print('INFO: No analytic values processed for phenophase %s' % get_field(data, 'phenophase'))
+            log.info('No analytic values processed for %s, phenophase %s' % (observation_id, phenophase))
         # LAST OBSERVATION DATE
-        observation.update_last_observation(get_field(data, 'individual_id'), get_field(data, 'phenophase'),
-                                            get_field(data, 'date'))
+        log.info('Process last observation date for %s, phenophase %s' % (observation_id, phenophase))
+        observation.update_last_observation(individual_id, phenophase, observation_date)
     elif is_delete_event(data):
-        analytics.process_remove_observation(get_document_id(context))
+        log.info('Delete observation %s, phenophase %s')
+        analytics.process_remove_observation(observation_id)
     else:
-        print('DEBUG: Nothing to do.')
+        log.debug('Nothing to do for %s, phenophase %s' % (observation_id, phenophase))
 
 
 def process_user_write(data, context):
-    print('DEBUG: context: (%s)' % str(context))
-    print('DEBUG: data: (%s)' % str(data))
+    glogging.log_id = context.event_id
+    log.debug('context: (%s)' % str(context))
+    log.debug('data: (%s)' % str(data))
+
     user_id = get_document_id(context)
+
     if is_update_event(data) and is_field_updated(data, 'nickname'):
-        print('DEBUG: process update nickname')
+        log.info('update nickname for %s', user_id)
         users.process_update_nickname(user_id,
                                       get_field(data, 'nickname', old_value=True),
                                       get_field(data, 'nickname'))
     elif is_delete_event(data):
-        print('DEBUG: process delete user')
+        log.info('delete user %s' % user_id)
         users.process_delete_user(user_id, get_field(data, 'nickname', old_value=True))
     elif is_create_event(data):
-        print('DEBUG: process create user')
+        log.info('create user %s' % user_id)
         users.process_new_user(user_id, get_field(data, 'nickname'))
     else:
-        print('DEBUG: Nothing to do.')
+        log.debug('Nothing to do for %s' % user_id)
 
 
 def import_meteoswiss_data_publish(data, context):
-    print('DEBUG: context: (%s)' % str(context))
-    print('DEBUG: data: (%s)' % str(data))
+    glogging.log_id = context.event_id
+    log.debug('context: (%s)' % str(context))
+    log.debug('data: (%s)' % str(data))
+
+    log.info('Import meteoswiss stations')
     meteoswiss.process_stations()
+    log.info('Import meteoswiss observations')
     meteoswiss.process_observations()
 
 
 def process_document_ts_write(data, context):
-    print('DEBUG: context: (%s)' % str(context))
-    print('DEBUG: data: (%s)' % str(data))
+    glogging.log_id = context.event_id
+    log.debug('context: (%s)' % str(context))
+    log.debug('data: (%s)' % str(data))
+
+    collection_path = get_collection_path(context)
+    document_id = get_document_id(context)
 
     if is_create_event(data):
-        documents.update_created_document(get_collection_path(context), get_document_id(context))
+        log.info('update created ts on document %s' % context.resource)
+        documents.update_created_document(collection_path, document_id)
     elif is_update_event(data) and not is_field_updated(data, documents.MODIFIED_KEY):
-        documents.update_modified_document(get_collection_path(context), get_document_id(context))
+        log.info('update modified ts on document %s %s' % (context.resource, get_fields_updated(data)))
+        documents.update_modified_document(collection_path, document_id)
     elif is_delete_event(data):
-        print('INFO: document %s was deleted' % context.resource)
+        log.info('document %s was deleted' % context.resource)
     else:
-        print('DEBUG: Nothing to do.')
+        log.debug('Nothing to do for document %s' % context.resource)
 
 
 @retry.Retry(predicate=if_exception_type(exceptions.NotFound))
 def create_thumbnail_finalize(data, context):
-    print('DEBUG: context: (%s)' % str(context))
-    print('DEBUG: data: (%s)' % str(data))
+    glogging.log_id = context.event_id
+    log.debug('context: (%s)' % str(context))
+    log.debug('data: (%s)' % str(data))
 
-    thumbnails.process_new_image(data['name'])
+    pathfile = data['name']
+
+    log.info('Process thumbnail for %s' % pathfile)
+    thumbnails.process_new_image(pathfile)

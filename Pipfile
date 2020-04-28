@@ -6,12 +6,14 @@ verify_ssl = true
 [dev-packages]
 pytest = "*"
 pytest-mock = "*"
+pytest-cov = "*"
 
 [packages]
 firebase-admin = "*"
 numpy = "*"
 dateparser = "*"
 pillow = "*"
+google-cloud-logging = "*"
 
 [requires]
 python_version = "3.7"
