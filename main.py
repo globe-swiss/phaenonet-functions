@@ -64,18 +64,18 @@ def process_user_write(data, context):
     log.debug('data: (%s)' % str(data))
 
     user_id = get_document_id(context)
-    nickname_old = get_field(data, 'nickname', old_value=True)
-    nickname_new = get_field(data, 'nickname')
 
     if is_update_event(data) and is_field_updated(data, 'nickname'):
         log.info('update nickname for %s', user_id)
-        users.process_update_nickname(user_id, nickname_old, nickname_new)
+        users.process_update_nickname(user_id,
+                                      get_field(data, 'nickname', old_value=True),
+                                      get_field(data, 'nickname'))
     elif is_delete_event(data):
         log.info('delete user %s' % user_id)
-        users.process_delete_user(user_id, nickname_old)
+        users.process_delete_user(user_id, get_field(data, 'nickname', old_value=True))
     elif is_create_event(data):
         log.info('create user %s' % user_id)
-        users.process_new_user(user_id, nickname_new)
+        users.process_new_user(user_id, get_field(data, 'nickname'))
     else:
         log.debug('Nothing to do for %s' % user_id)
 
