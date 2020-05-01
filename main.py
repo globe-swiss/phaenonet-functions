@@ -18,20 +18,22 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def process_activity_create(data, context):
+def _setup_logging(data, context):
     glogging.log_id = context.event_id
     log.debug('context: (%s)' % str(context))
     log.debug('data: (%s)' % str(data))
 
+
+@retry.Retry()
+def process_activity_create(data, context):
+    _setup_logging(data, context)
     log.info('Process activity %s' % get_document_id(context))
     activity.process_activity(get_document_id(context), get_field(data, 'individual'), get_field(data, 'user'))
 
 
+@retry.Retry()
 def process_observation_write(data, context):
-    glogging.log_id = context.event_id
-    log.debug('context: (%s)' % str(context))
-    log.debug('data: (%s)' % str(data))
-
+    _setup_logging(data, context)
     observation_id = get_document_id(context)
     phenophase = get_field(data, 'phenophase')
     individual_id = get_field(data, 'individual_id')
@@ -58,11 +60,9 @@ def process_observation_write(data, context):
         log.debug('Nothing to do for %s, phenophase %s' % (observation_id, phenophase))
 
 
+@retry.Retry()
 def process_user_write(data, context):
-    glogging.log_id = context.event_id
-    log.debug('context: (%s)' % str(context))
-    log.debug('data: (%s)' % str(data))
-
+    _setup_logging(data, context)
     user_id = get_document_id(context)
 
     if is_update_event(data) and is_field_updated(data, 'nickname'):
@@ -80,22 +80,18 @@ def process_user_write(data, context):
         log.debug('Nothing to do for %s' % user_id)
 
 
+@retry.Retry()
 def import_meteoswiss_data_publish(data, context):
-    glogging.log_id = context.event_id
-    log.debug('context: (%s)' % str(context))
-    log.debug('data: (%s)' % str(data))
-
+    _setup_logging(data, context)
     log.info('Import meteoswiss stations')
     meteoswiss.process_stations()
     log.info('Import meteoswiss observations')
     meteoswiss.process_observations()
 
 
+@retry.Retry()
 def process_document_ts_write(data, context):
-    glogging.log_id = context.event_id
-    log.debug('context: (%s)' % str(context))
-    log.debug('data: (%s)' % str(data))
-
+    _setup_logging(data, context)
     collection_path = get_collection_path(context)
     document_id = get_document_id(context)
 
@@ -113,10 +109,7 @@ def process_document_ts_write(data, context):
 
 @retry.Retry(predicate=if_exception_type(exceptions.NotFound))
 def create_thumbnail_finalize(data, context):
-    glogging.log_id = context.event_id
-    log.debug('context: (%s)' % str(context))
-    log.debug('data: (%s)' % str(data))
-
+    _setup_logging(data, context)
     pathfile = data['name']
 
     log.info('Process thumbnail for %s' % pathfile)
