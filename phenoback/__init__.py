@@ -14,7 +14,7 @@ credential_file = os.path.join(os.path.dirname(__file__), '..', 'credentials',
                                '%s-%s.json' % (_PROJECT, _TYPE))
 
 
-def load_credentials() -> None:
+def load_credentials() -> None:  # pragma: no cover
     if os.path.isfile(credential_file):
 
         cred = credentials.Certificate(credential_file)
@@ -25,5 +25,5 @@ def load_credentials() -> None:
         log.info('app initialized with local credentials %s' % credential_file)
 
 
-def sets_credential_env() -> None:
+def sets_credential_env() -> None:  # pragma: no cover
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credential_file
