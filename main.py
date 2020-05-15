@@ -54,8 +54,13 @@ def process_observation_write(data, context):
         log.info('Process last observation date for %s, phenophase %s' % (observation_id, phenophase))
         observation.update_last_observation(individual_id, phenophase, observation_date)
     elif is_delete_event(data):
-        log.info('Delete observation %s, phenophase %s')
-        analytics.process_remove_observation(observation_id)
+        log.info('Remove observation %s, phenophase %s')
+        analytics.process_remove_observation(observation_id,
+                                             get_field(data, 'individual_id', old_value=True),
+                                             get_field(data, 'source', old_value=True),
+                                             get_field(data, 'year', old_value=True),
+                                             get_field(data, 'species', old_value=True),
+                                             get_field(data, 'phenophase', old_value=True))
     else:
         log.debug('Nothing to do for %s, phenophase %s' % (observation_id, phenophase))
 
