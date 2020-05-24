@@ -35,14 +35,14 @@ def process_activity_create(data, context):
 def process_observation_write(data, context):
     _setup_logging(data, context)
     observation_id = get_document_id(context)
-    phenophase = get_field(data, 'phenophase')
-    individual_id = get_field(data, 'individual_id')
-    source = get_field(data, 'source')
-    year = get_field(data, 'year')
-    species = get_field(data, 'species')
-    observation_date = get_field(data, 'date')
 
     if is_create_event(data) or is_field_updated(data, 'date'):
+        phenophase = get_field(data, 'phenophase')
+        individual_id = get_field(data, 'individual_id')
+        source = get_field(data, 'source')
+        year = get_field(data, 'year')
+        species = get_field(data, 'species')
+        observation_date = get_field(data, 'date')
         # ANALYTICS
         if phenophase in ('BEA', 'BLA', 'BFA', 'BVA', 'FRA'):
             log.info('Process analytic values for %s, phenophase %s' % (observation_id, phenophase))
@@ -54,7 +54,7 @@ def process_observation_write(data, context):
         log.info('Process last observation date for %s, phenophase %s' % (observation_id, phenophase))
         observation.update_last_observation(individual_id, phenophase, observation_date)
     elif is_delete_event(data):
-        log.info('Remove observation %s, phenophase %s')
+        log.info('Remove observation %s', observation_id)
         analytics.process_remove_observation(observation_id,
                                              get_field(data, 'individual_id', old_value=True),
                                              get_field(data, 'source', old_value=True),
@@ -62,7 +62,7 @@ def process_observation_write(data, context):
                                              get_field(data, 'species', old_value=True),
                                              get_field(data, 'phenophase', old_value=True))
     else:
-        log.debug('Nothing to do for %s, phenophase %s' % (observation_id, phenophase))
+        log.debug('Nothing to do for %s' % observation_id)
 
 
 @retry.Retry()

@@ -2,7 +2,7 @@ import logging
 from typing import Optional
 from datetime import datetime
 
-from phenoback.gcloud.utils import get_document, write_document
+from phenoback.gcloud.utils import get_document, write_document, DELETE_FIELD
 import numpy as np
 
 log = logging.getLogger(__name__)
@@ -35,13 +35,16 @@ def update_result(observation_dates: list, phase: str, source: str, year: int, s
     log.debug('Write results: (phase: %s, source: %s, year: %i, species: %s, altitude_grp: %s)'
               % (phase, source, year, species, altitude_grp))
     document_id = get_analytics_document_id(year, species, source, altitude_grp)
-    values = {phase:
-              {'min': np.min(observation_dates),
-               'max': np.max(observation_dates),
-               'median': np.quantile(observation_dates, 0.5, interpolation='nearest'),
-               'quantile_25': np.quantile(observation_dates, 0.25, interpolation='nearest'),
-               'quantile_75': np.quantile(observation_dates, 0.75, interpolation='nearest')
-               }}
+    if observation_dates:
+        values = {phase:
+                  {'min': np.min(observation_dates),
+                   'max': np.max(observation_dates),
+                   'median': np.quantile(observation_dates, 0.5, interpolation='nearest'),
+                   'quantile_25': np.quantile(observation_dates, 0.25, interpolation='nearest'),
+                   'quantile_75': np.quantile(observation_dates, 0.75, interpolation='nearest')
+                   }}
+    else:  # delete phase results if has no values
+        values = {phase: DELETE_FIELD}
     result_document = {'source': source, 'year': year, 'species': species, 'values': values}
     if altitude_grp:
         result_document['altitude_grp'] = altitude_grp
@@ -59,16 +62,22 @@ def update_data(observation_id: str, observation_date: datetime, year: int, spec
 
 def remove_observation(observation_id: str, year: int, species: str, phase: str, source: str,
                        altitude_grp: str = None) -> None:
+    log.debug('Remove Observation: (observation_id: %s, phase: %s, source: %s, year: %i, '
+              'species: %s, altitude_grp: %s)' % (observation_id, phase, source, year, species, altitude_grp))
     try:
         document_id = get_analytics_document_id(year, species, source, altitude_grp)
         state_document = get_document(STATE_COLLECTION, document_id)
         state = state_document['state']
         state[phase].pop(observation_id)
+        if not state[phase]:  # remove phase if last value removed
+            state.pop(phase)
+
         write_document(STATE_COLLECTION, document_id, state_document)
 
-        update_result(list(state[phase].values()), phase, source, year, species, altitude_grp)
-    except KeyError:
-        log.error('Observation not found for removal: (observation_id: %s, source: %s, year: %i, species: %s, '
+        observation_dates = list(state.setdefault(phase, {}).values())
+        update_result(observation_dates, phase, source, year, species, altitude_grp)
+    except KeyError:  # pragma: no cover
+        log.error('Observation not found in state for removal: (observation_id: %s, source: %s, year: %i, species: %s, '
                   'phase: %s)' % (observation_id, source, year, species, phase))
 
 

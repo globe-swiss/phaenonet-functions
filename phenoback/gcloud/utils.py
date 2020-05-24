@@ -5,13 +5,16 @@ from datetime import datetime
 import dateparser
 
 from firebase_admin import firestore, storage
-from google.cloud.firestore_v1 import Query
+from google.cloud.firestore_v1 import Query, DELETE_FIELD
 from google.cloud.firestore_v1.client import Client
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 _db = None
+
+
+DELETE_FIELD = DELETE_FIELD
 
 
 def firestore_client() -> Client:

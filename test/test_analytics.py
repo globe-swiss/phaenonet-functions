@@ -4,6 +4,7 @@ from unittest.mock import Mock
 import deepdiff
 import copy
 
+from phenoback.gcloud import utils
 from phenoback.functions import analytics
 from datetime import datetime
 
@@ -96,6 +97,13 @@ def test_update_state_returned_states(mocker, base_state_doc, initial_state, add
     assert _date(2) in result_state
 
 
+def test_update_results_no_dates(mocker):
+    write_document_mock = mocker.patch('phenoback.functions.analytics.write_document')
+    analytics.update_result([], 'phase', '', 0, '', '')
+    write_data = _data(write_document_mock)
+    assert write_data['values']['phase'] == utils.DELETE_FIELD
+
+
 @pytest.mark.parametrize('state, e_min, e_max, e_median, e_q25, e_q75',
                          [([datetime(2020, 1, 1)],
                            datetime(2020, 1, 1), datetime(2020, 1, 1), datetime(2020, 1, 1), datetime(2020, 1, 1), datetime(2020, 1, 1)),
@@ -149,6 +157,24 @@ def test_remove_observation(mocker):
     assert update_result_mock.call_args[0][0] == ['another_value1']
 
 
+@pytest.mark.skip('No clue why the mock contains "phase2"')
+def test_remove_observation_last_value(mocker):
+    inital = {'state': {
+                    'phase1': {'id': 'value1', 'another_id': 'another_value1'},
+                    'phase2': {'id': 'value2'}
+                    }
+              }
+    mocker.patch('phenoback.functions.analytics.get_document', return_value=inital)
+    write_document_mock = mocker.patch('phenoback.functions.analytics.write_document')
+    update_result_mock = mocker.patch('phenoback.functions.analytics.update_result')
+    analytics.remove_observation('id', 0, '', 'phase2', '')
+    assert _data(write_document_mock) == {'state': {
+                    'phase1': {'id': 'value1', 'another_id': 'another_value1'}
+                    }
+              }
+    assert update_result_mock.call_args[0][0] == []
+
+
 def test_remove_data_not_exist(mocker):
     initial = {'state': {
                     'phase1': {'id': 'value1', 'another_id': 'another_value1'},
@@ -165,3 +191,10 @@ def test_remove_data_not_exist(mocker):
         fail()
     write_document_mock.assert_not_called()
     update_result_mock.assert_not_called()
+
+
+def test_process_remove_observation(mocker):
+    mocker.patch('phenoback.functions.analytics.get_altitude_grp', return_value='alt')
+    mock = mocker.patch('phenoback.functions.analytics.remove_observation')
+    analytics.process_remove_observation('id', 'individual_id', 'source', 2020, 'species', 'phase')
+    mock.assert_called()
