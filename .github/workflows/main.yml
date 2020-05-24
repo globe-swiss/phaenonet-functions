@@ -42,7 +42,14 @@ jobs:
     - name: Sync dev dependencies
       run: pipenv sync --dev
     - name: Run pytest
-      run: pipenv run python -m pytest
+      run: pipenv run python -m pytest --cov-report xml --cov=phenoback --cov-branch
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage.xml
+        flags: unittests
+        env_vars: OS,PYTHON
     - name: Update pipenv environment
       run: pipenv update --dev
     - name: Test updated environment with pytest
