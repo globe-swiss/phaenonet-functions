@@ -32,10 +32,10 @@ def test_update_last_observation_document_get(mocker):
                           ])
 def test_update_last_observation_phenophase(mocker, observation_type, expected):
     mocker.patch('phenoback.functions.observation.get_document',
-                 return_value={'last_observation_date': datetime.now(), 'type': observation_type})
+                 return_value={'last_observation_date': datetime(2020, 1, 1), 'type': observation_type})
     update_mock = mocker.patch('phenoback.functions.observation.update_document')
 
-    assert observation.update_last_observation('ignored', 'ignored', datetime.now())
+    assert observation.update_last_observation('ignored', 'ignored', datetime(2020, 1, 2))
     update_mock.assert_called_once()
     assert ('last_phenophase' in update_mock.call_args[0][2].keys()) == expected
 

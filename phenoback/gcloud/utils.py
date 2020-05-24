@@ -1,15 +1,12 @@
+from typing import Union, List, Any, Optional
 import logging
 import tempfile
-
-from google.cloud.firestore_v1 import Query
-
-import phenoback
 from datetime import datetime
-from typing import Union, List, Any
+import dateparser
 
 from firebase_admin import firestore, storage
+from google.cloud.firestore_v1 import Query
 from google.cloud.firestore_v1.client import Client
-import dateparser
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
@@ -24,7 +21,7 @@ def firestore_client() -> Client:
     return _db
 
 
-def get_field(data, fieldname, old_value=False) -> Union[str, int, datetime, None]:
+def get_field(data: dict, fieldname: str, old_value: bool = False) -> Union[str, int, datetime, None]:
     value_type = 'oldValue' if old_value else 'value'
     value_dict = data[value_type].get('fields', {}).get(fieldname)
     if value_dict:
@@ -72,12 +69,12 @@ def get_fields_updated(data: dict) -> List[str]:
     return data.get('updateMask', {}).get('fieldPaths', [])
 
 
-def delete_document(collection, document_id):
+def delete_document(collection: str, document_id: str) -> None:
     log.debug('Delete document %s from %s' % (document_id, collection))
     firestore_client().collection(collection).document(document_id).delete()
 
 
-def delete_collection(coll_ref, batch_size=1000):
+def _delete_collection(coll_ref, batch_size: int = 1000):
     docs = coll_ref.limit(batch_size).stream()
     deleted = 0
 
@@ -87,7 +84,11 @@ def delete_collection(coll_ref, batch_size=1000):
         deleted += 1
 
     if deleted >= batch_size:
-        return delete_collection(coll_ref, batch_size)
+        return _delete_collection(coll_ref, batch_size)
+
+
+def delete_collection(collection: str, batch_size: int = 1000) -> None:
+    _delete_collection(firestore_client().collection(collection), batch_size)
 
 
 def write_batch(collection: str, key: str, data: List[dict], merge: bool = False) -> None:
@@ -103,7 +104,7 @@ def write_batch(collection: str, key: str, data: List[dict], merge: bool = False
             log.debug('Commiting %i documents on %s' % (cnt, collection))
             batch.commit()
             cnt = 0
-    log.debug('Commiting %i documents on %s' % (cnt, collection))
+    log.debug('Committing %i documents on %s' % (cnt, collection))
     batch.commit()
 
 
@@ -117,7 +118,7 @@ def update_document(collection: str, document_id: str, data: dict) -> None:
     firestore_client().collection(collection).document(document_id).update(data)
 
 
-def get_document(collection: str, document_id: str) -> dict:
+def get_document(collection: str, document_id: str) -> Optional[dict]:
     log.debug('Get document %s in %s' % (document_id, collection))
     return firestore_client().collection(collection).document(document_id).get().to_dict()
 
@@ -136,7 +137,7 @@ def download_file(bucket: str, path: str):
         return file
 
 
-def upload_file(bucket: str, path: str, file, content_type=None):
+def upload_file(bucket: str, path: str, file, content_type:str = None) -> None:
     log.debug('Upload file %s of type %s to %s' % (path, content_type, bucket))
     file.seek(0)
     storage.bucket(bucket).blob(path).upload_from_file(file, content_type=content_type)

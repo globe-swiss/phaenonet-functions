@@ -12,35 +12,35 @@ STATE_COLLECTION = 'analytics_state'
 RESULT_COLLECTION = 'analytics_result'
 
 
-def update_state(observation_id, observation_date, phase, source, year, species, altitude_grp=None) -> dict:
+def update_state(observation_id: str, observation_date: datetime, phase: str, source: str, year: int, species: str,
+                 altitude_grp: str = None) -> list:
     log.debug('Update state: (observation_id: %s, observation_date: %s, phase: %s, source: %s, year: %i, '
               'species: %s, altitude_grp: %s)' % (observation_id, observation_date, phase, source, year, species,
                                                   altitude_grp))
     document_id = get_analytics_document_id(year, species, source, altitude_grp)
     state_document = get_document(STATE_COLLECTION, document_id)
-    state = {}
-    if state_document.get('state'):
-        state = state_document.get('state')
+    if not state_document:
+        state_document = {'source': source, 'year': year, 'species': species, 'state': {}}
+        if altitude_grp:
+            state_document['altitude_grp'] = altitude_grp
 
+    state = state_document.get('state')
     state.setdefault(phase, dict())[observation_id] = observation_date
-    state_document = {'source': source, 'year': year, 'species': species, 'state': state}
-    if altitude_grp:
-        state_document['altitude_grp'] = altitude_grp
-    write_document(STATE_COLLECTION, document_id, state_document, merge=True)
-    return state[phase]
+    write_document(STATE_COLLECTION, document_id, state_document)
+    return list(state[phase].values())
 
 
-def update_result(state: dict, phase, source, year, species, altitude_grp=None) -> None:
+def update_result(observation_dates: list, phase: str, source: str, year: int, species: str,
+                  altitude_grp: str = None) -> None:
     log.debug('Write results: (phase: %s, source: %s, year: %i, species: %s, altitude_grp: %s)'
               % (phase, source, year, species, altitude_grp))
     document_id = get_analytics_document_id(year, species, source, altitude_grp)
-    state_list = (list(state.values()))
     values = {phase:
-              {'min': np.min(state_list),
-               'max': np.max(state_list),
-               'median': np.quantile(state_list, 0.5, interpolation='nearest'),
-               'quantile_25': np.quantile(state_list, 0.25, interpolation='nearest'),
-               'quantile_75': np.quantile(state_list, 0.75, interpolation='nearest')
+              {'min': np.min(observation_dates),
+               'max': np.max(observation_dates),
+               'median': np.quantile(observation_dates, 0.5, interpolation='nearest'),
+               'quantile_25': np.quantile(observation_dates, 0.25, interpolation='nearest'),
+               'quantile_75': np.quantile(observation_dates, 0.75, interpolation='nearest')
                }}
     result_document = {'source': source, 'year': year, 'species': species, 'values': values}
     if altitude_grp:
@@ -53,21 +53,20 @@ def update_result(state: dict, phase, source, year, species, altitude_grp=None) 
 
 def update_data(observation_id: str, observation_date: datetime, year: int, species: str, phase: str, source: str,
                 altitude_grp: str = None) -> None:
-    state = update_state(observation_id, observation_date,
-                         phase, source, year, species, altitude_grp)
-    update_result(state, phase, source, year, species, altitude_grp)
+    observation_dates = update_state(observation_id, observation_date, phase, source, year, species, altitude_grp)
+    update_result(observation_dates, phase, source, year, species, altitude_grp)
 
 
-def remove_data(observation_id: str, year: int, species: str, phase: str, source: str,
-                altitude_grp: str = None) -> None:
+def remove_observation(observation_id: str, year: int, species: str, phase: str, source: str,
+                       altitude_grp: str = None) -> None:
     try:
         document_id = get_analytics_document_id(year, species, source, altitude_grp)
         state_document = get_document(STATE_COLLECTION, document_id)
         state = state_document['state']
         state[phase].pop(observation_id)
-        write_document(STATE_COLLECTION, document_id, state_document, merge=True)
+        write_document(STATE_COLLECTION, document_id, state_document)
 
-        update_result(state, phase, source, year, species, altitude_grp)
+        update_result(list(state[phase].values()), phase, source, year, species, altitude_grp)
     except KeyError:
         log.error('Observation not found for removal: (observation_id: %s, source: %s, year: %i, species: %s, '
                   'phase: %s)' % (observation_id, source, year, species, phase))
@@ -87,7 +86,7 @@ def get_altitude_grp(individual_id: str) -> Optional[str]:
             altitude_key = 'alt4'
         else:
             altitude_key = 'alt5'
-    else:
+    else:  # pragma: no cover
         log.error('no altitude found for individual %s' % individual_id)
     return altitude_key
 
@@ -140,28 +139,28 @@ def process_remove_observation(observation_id: str, individual_id: str, source: 
     log.info('Remove observation: (observation_id: %s,  individual_id: %s, source: %s, '
              'year: %i, species: %s, phase: %s)' % (observation_id, individual_id, source, year,
                                                     species, phase))
-    remove_data(observation_id=observation_id,
-                year=year,
-                species=species,
-                phase=phase,
-                source=source)
-    remove_data(observation_id=observation_id,
-                year=year,
-                species=species,
-                phase=phase,
-                source='all')
+    remove_observation(observation_id=observation_id,
+                       year=year,
+                       species=species,
+                       phase=phase,
+                       source=source)
+    remove_observation(observation_id=observation_id,
+                       year=year,
+                       species=species,
+                       phase=phase,
+                       source='all')
 
     altitude_key = get_altitude_grp(individual_id)
     if altitude_key:
-        remove_data(observation_id=observation_id,
-                    year=year,
-                    species=species,
-                    phase=phase,
-                    source=source,
-                    altitude_grp=altitude_key)
-        remove_data(observation_id=observation_id,
-                    year=year,
-                    species=species,
-                    phase=phase,
-                    source='all',
-                    altitude_grp=altitude_key)
+        remove_observation(observation_id=observation_id,
+                           year=year,
+                           species=species,
+                           phase=phase,
+                           source=source,
+                           altitude_grp=altitude_key)
+        remove_observation(observation_id=observation_id,
+                           year=year,
+                           species=species,
+                           phase=phase,
+                           source='all',
+                           altitude_grp=altitude_key)
