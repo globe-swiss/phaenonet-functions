@@ -191,10 +191,3 @@ def test_remove_data_not_exist(mocker):
         fail()
     write_document_mock.assert_not_called()
     update_result_mock.assert_not_called()
-
-
-def test_process_remove_observation(mocker):
-    mocker.patch('phenoback.functions.analytics.get_altitude_grp', return_value='alt')
-    mock = mocker.patch('phenoback.functions.analytics.remove_observation')
-    analytics.process_remove_observation('id', 'individual_id', 'source', 2020, 'species', 'phase')
-    mock.assert_called()
