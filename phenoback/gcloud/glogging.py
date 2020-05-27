@@ -10,11 +10,11 @@ from google.cloud.logging.resource import Resource
 log_id = None
 
 
-def my_enqueue(self, record, message, resource=None, labels=None, trace=None, span_id=None):
+def my_enqueue(self, record, message, resource=None, labels=None, trace=None, span_id=None):  # pragma: no cover
     resource = Resource(type='cloud_function',
                         labels={'function_name': os.getenv('FUNCTION_NAME', 'Unknown'),
-                                  'project_id': os.getenv('GCP_PROJECT', 'Unknown'),
-                                  'region': os.getenv('FUNCTION_REGION', 'Unknown')
+                                'project_id': os.getenv('GCP_PROJECT', 'Unknown'),
+                                'region': os.getenv('FUNCTION_REGION', 'Unknown')
                                 })
     if not labels:
         labels = {}
@@ -32,7 +32,7 @@ def my_enqueue(self, record, message, resource=None, labels=None, trace=None, sp
     self._queue.put_nowait(queue_entry)
 
 
-def init(log_identifier=None):
+def init(log_identifier=None):  # pragma: no cover
     global log_id
     log_id = log_identifier
     _Worker.enqueue = my_enqueue
