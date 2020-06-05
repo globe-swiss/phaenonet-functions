@@ -1,8 +1,9 @@
-from datetime import timezone
+from datetime import timezone, datetime
 from unittest.mock import PropertyMock
 import pytest
 from google.api.context_pb2 import Context
-from phenoback.gcloud.utils import *
+from phenoback.utils.gcloud import get_document_id, get_collection_path, get_field, is_create_event, is_update_event, \
+    is_delete_event
 
 
 @pytest.mark.parametrize('expected, resource',

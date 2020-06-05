@@ -7,8 +7,8 @@ from google.api_core.retry import if_exception_type
 from phenoback.functions import activity, analytics, users, meteoswiss, observation, documents, thumbnails
 import firebase_admin
 
-from phenoback.gcloud import glogging
-from phenoback.gcloud.utils import get_document_id, get_field, is_create_event, is_field_updated, is_delete_event, \
+from phenoback.utils import glogging
+from phenoback.utils.gcloud import get_document_id, get_field, is_create_event, is_field_updated, is_delete_event, \
     is_update_event, get_collection_path, get_fields_updated
 
 firebase_admin.initialize_app(options={'storageBucket': os.environ.get('storageBucket')})

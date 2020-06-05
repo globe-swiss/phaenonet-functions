@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime, timezone
 
-from phenoback.gcloud.utils import get_document, update_document
+from phenoback.utils.firestore import get_document, update_document
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)

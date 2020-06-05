@@ -2,7 +2,7 @@ import logging
 from typing import Optional
 from datetime import datetime
 
-from phenoback.gcloud.utils import get_document, write_document, DELETE_FIELD
+from phenoback.utils.firestore import get_document, write_document, DELETE_FIELD
 import numpy as np
 
 log = logging.getLogger(__name__)

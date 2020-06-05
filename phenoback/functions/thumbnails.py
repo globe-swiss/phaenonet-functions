@@ -1,6 +1,6 @@
 import logging
 import os
-from phenoback.gcloud.utils import *
+from phenoback.utils.storage import download_file, upload_file
 from PIL import Image, ImageOps
 import tempfile
 

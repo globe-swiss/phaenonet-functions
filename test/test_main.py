@@ -7,7 +7,7 @@ import firebase_admin
 from dateparser.timezone_parser import StaticTzInfo
 
 firebase_admin.initialize_app = MagicMock()
-from phenoback.gcloud import glogging
+from phenoback.utils import glogging
 glogging.init = MagicMock()
 import main
 

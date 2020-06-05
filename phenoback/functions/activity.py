@@ -1,8 +1,7 @@
 import logging
 from typing import Set
 
-import phenoback.gcloud.utils
-from phenoback.gcloud.utils import query_collection, update_document
+from phenoback.utils.firestore import query_collection, update_document
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)

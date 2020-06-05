@@ -6,7 +6,7 @@ from hashlib import md5
 import csv
 import io
 from datetime import datetime
-from phenoback.gcloud.utils import *
+from phenoback.utils.firestore import write_batch, get_document, write_document
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)

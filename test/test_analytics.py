@@ -4,7 +4,7 @@ from unittest.mock import Mock
 import deepdiff
 import copy
 
-from phenoback.gcloud import utils
+from phenoback.utils import firestore
 from phenoback.functions import analytics
 from datetime import datetime
 
@@ -101,7 +101,7 @@ def test_update_results_no_dates(mocker):
     write_document_mock = mocker.patch('phenoback.functions.analytics.write_document')
     analytics.update_result([], 'phase', '', 0, '', '')
     write_data = _data(write_document_mock)
-    assert write_data['values']['phase'] == utils.DELETE_FIELD
+    assert write_data['values']['phase'] == firestore.DELETE_FIELD
 
 
 @pytest.mark.parametrize('state, e_min, e_max, e_median, e_q25, e_q75',
