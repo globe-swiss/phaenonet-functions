@@ -8,10 +8,7 @@ from google.cloud.firestore_v1.client import Client
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
-
 _db = None
-
-
 DELETE_FIELD = DELETE_FIELD
 
 
@@ -20,6 +17,7 @@ def firestore_client() -> Client:
     if not _db:
         _db = firestore.client()
     return _db
+
 
 def delete_document(collection: str, document_id: str) -> None:
     log.debug('Delete document %s from %s' % (document_id, collection))
@@ -60,7 +58,7 @@ def write_batch(collection: str, key: str, data: List[dict], merge: bool = False
     batch.commit()
 
 
-def write_document(collection: str, document_id: str, data: dict, merge: bool = False) -> None:
+def write_document(collection: str, document_id: Optional[str], data: dict, merge: bool = False) -> None:
     log.debug('Write document %s to %s' % (document_id, collection))
     firestore_client().collection(collection).document(document_id).set(data, merge=merge)
 

@@ -3,6 +3,7 @@ from typing import Optional
 from datetime import datetime
 
 from phenoback.utils.firestore import get_document, write_document, DELETE_FIELD
+from phenoback.utils.data import get_individual
 import numpy as np
 
 log = logging.getLogger(__name__)
@@ -82,7 +83,7 @@ def remove_observation(observation_id: str, year: int, species: str, phase: str,
 
 
 def get_altitude_grp(individual_id: str) -> Optional[str]:
-    altitude = get_document('individuals', individual_id).get('altitude', None)
+    altitude = get_individual(individual_id).get('altitude', None)
     altitude_key = None
     if altitude is not None:
         if altitude < 500:

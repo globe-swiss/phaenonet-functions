@@ -4,7 +4,6 @@ import os
 from google.api_core import retry, exceptions
 from google.api_core.retry import if_exception_type
 
-from phenoback.functions import activity, analytics, users, meteoswiss, observation, documents, thumbnails
 import firebase_admin
 
 from phenoback.utils import glogging
@@ -24,49 +23,86 @@ def _setup_logging(data, context):
     log.debug('data: (%s)' % str(data))
 
 
+def _process_observation_activity(data, context, action):
+    from phenoback.functions import activity
+
+    delete_op = (action == 'delete')
+    activity.process_observation(event_id=context.event_id,
+                                 observation_id=get_document_id(context),
+                                 individual_id=get_field(data, 'individual_id', old_value=delete_op),
+                                 user_id=get_field(data, 'user', old_value=delete_op),
+                                 phenophase=get_field(data, 'phenophase', old_value=delete_op),
+                                 source=get_field(data, 'source', old_value=delete_op),
+                                 species=get_field(data, 'species', old_value=delete_op),
+                                 individual=get_field(data, 'individual', old_value=delete_op),
+                                 action=action)
+
+
 @retry.Retry()
-def process_activity_create(data, context):
+def process_observation_write_activity(data, context):
     _setup_logging(data, context)
-    log.info('Process activity %s' % get_document_id(context))
-    activity.process_activity(get_document_id(context), get_field(data, 'individual'), get_field(data, 'user'))
+    observation_id = get_document_id(context)
+    if is_create_event(data):
+        log.info('Add create activity for observation %s', observation_id)
+        _process_observation_activity(data, context, 'create')
+    elif is_field_updated(data, 'date'):
+        log.info('Add modify activity for observation %s', observation_id)
+        _process_observation_activity(data, context, 'modify')
+    elif is_delete_event(data):
+        log.info('Add delete activity for observation %s', observation_id)
+        _process_observation_activity(data, context, 'delete')
+    else:
+        log.debug('No activity to add')
 
 
 @retry.Retry()
-def process_observation_write(data, context):
+def process_observation_create_analytics(data, context):
+    from phenoback.functions import observation
+    _setup_logging(data, context)
+    observation_id = get_document_id(context)
+    phenophase = get_field(data, 'phenophase')
+    individual_id = get_field(data, 'individual_id')
+    source = get_field(data, 'source')
+    year = get_field(data, 'year')
+    species = get_field(data, 'species')
+    observation_date = get_field(data, 'date')
+
+    if phenophase in ('BEA', 'BLA', 'BFA', 'BVA', 'FRA'):
+        from phenoback.functions import analytics
+        log.info('Process analytic values for %s, phenophase %s' % (observation_id, phenophase))
+        analytics.process_observation(observation_id, observation_date, individual_id, source, year, species,
+                                      phenophase)
+    else:
+        log.debug('No analytic values processed for %s, phenophase %s' % (observation_id, phenophase))
+    # LAST OBSERVATION DATE
+    log.info('Process last observation date for %s, phenophase %s' % (observation_id, phenophase))
+    observation.update_last_observation(individual_id, phenophase, observation_date)
+
+
+@retry.Retry()
+def process_observation_update_analytics(data, context):
+    if is_field_updated(data, 'date'):
+        process_observation_create_analytics(data, context)
+
+
+@retry.Retry()
+def process_observation_delete_analytics(data, context):
+    from phenoback.functions import analytics
     _setup_logging(data, context)
     observation_id = get_document_id(context)
 
-    if is_create_event(data) or is_field_updated(data, 'date'):
-        phenophase = get_field(data, 'phenophase')
-        individual_id = get_field(data, 'individual_id')
-        source = get_field(data, 'source')
-        year = get_field(data, 'year')
-        species = get_field(data, 'species')
-        observation_date = get_field(data, 'date')
-        # ANALYTICS
-        if phenophase in ('BEA', 'BLA', 'BFA', 'BVA', 'FRA'):
-            log.info('Process analytic values for %s, phenophase %s' % (observation_id, phenophase))
-            analytics.process_observation(observation_id, observation_date, individual_id, source, year, species,
-                                          phenophase)
-        else:
-            log.info('No analytic values processed for %s, phenophase %s' % (observation_id, phenophase))
-        # LAST OBSERVATION DATE
-        log.info('Process last observation date for %s, phenophase %s' % (observation_id, phenophase))
-        observation.update_last_observation(individual_id, phenophase, observation_date)
-    elif is_delete_event(data):
-        log.info('Remove observation %s', observation_id)
-        analytics.process_remove_observation(observation_id,
-                                             get_field(data, 'individual_id', old_value=True),
-                                             get_field(data, 'source', old_value=True),
-                                             get_field(data, 'year', old_value=True),
-                                             get_field(data, 'species', old_value=True),
-                                             get_field(data, 'phenophase', old_value=True))
-    else:
-        log.debug('Nothing to do for %s' % observation_id)
+    log.info('Remove observation %s', observation_id)
+    analytics.process_remove_observation(observation_id,
+                                         get_field(data, 'individual_id', old_value=True),
+                                         get_field(data, 'source', old_value=True),
+                                         get_field(data, 'year', old_value=True),
+                                         get_field(data, 'species', old_value=True),
+                                         get_field(data, 'phenophase', old_value=True))
 
 
 @retry.Retry()
 def process_user_write(data, context):
+    from phenoback.functions import users
     _setup_logging(data, context)
     user_id = get_document_id(context)
 
@@ -87,6 +123,7 @@ def process_user_write(data, context):
 
 @retry.Retry()
 def import_meteoswiss_data_publish(data, context):
+    from phenoback.functions import meteoswiss
     _setup_logging(data, context)
     log.info('Import meteoswiss stations')
     meteoswiss.process_stations()
@@ -96,6 +133,7 @@ def import_meteoswiss_data_publish(data, context):
 
 @retry.Retry()
 def process_document_ts_write(data, context):
+    from phenoback.functions import documents
     _setup_logging(data, context)
     collection_path = get_collection_path(context)
     document_id = get_document_id(context)
@@ -114,6 +152,7 @@ def process_document_ts_write(data, context):
 
 @retry.Retry(predicate=if_exception_type(exceptions.NotFound))
 def create_thumbnail_finalize(data, context):
+    from phenoback.functions import thumbnails
     _setup_logging(data, context)
     pathfile = data['name']
 

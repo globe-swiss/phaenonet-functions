@@ -1,7 +1,6 @@
 from typing import List
-from unittest.mock import call
 import google.cloud.firestore_v1.collection
-from collections import namedtuple, OrderedDict
+from collections import namedtuple
 import pytest
 from phenoback.functions import activity
 
@@ -13,22 +12,34 @@ User = namedtuple('user', 'id')
                           ({'a_follower', 'another_follower'}, True),
                           ({}, False)
                           ])
-def test_process_activity_status(mocker, followers, expected):
+def test_process_observation__status(mocker, followers, expected):
+    mocker.patch('phenoback.functions.activity.get_individual')
+    mocker.patch('phenoback.functions.activity.get_phenophase')
+    mocker.patch('phenoback.functions.activity.get_species')
+    mocker.patch('phenoback.functions.activity.get_user')
     mocker.patch('phenoback.functions.activity.get_followers', return_value=followers)
-    update_mock = mocker.patch('phenoback.functions.activity.update_document')
+    update_mock = mocker.patch('phenoback.functions.activity.write_document')
 
-    assert expected == activity.process_activity('ignored', 'ignored', 'ignored')
-    if not expected:
-        update_mock.assert_not_called()
+    assert expected == activity.process_observation('ignored', 'ignored', 'ignored', 'ignored', 'ignored', 'ignored',
+                                                    'ignored', 'ignored', 'ignored')
+    assert update_mock.called == expected
 
 
-def test_process_activity_update_values(mocker):
+def test_process_observation__values(mocker):
+    followers = {'a_follower', 'another_follower'}
+    mocker.patch('phenoback.functions.activity.get_individual')
+    mocker.patch('phenoback.functions.activity.get_phenophase')
+    mocker.patch('phenoback.functions.activity.get_species')
+    mocker.patch('phenoback.functions.activity.get_user')
     mocker.patch('phenoback.functions.activity.get_followers',
-                 return_value=['a_follower', 'another_follower'])
-    update_mock = mocker.patch('phenoback.functions.activity.update_document')
+                 return_value=followers)
+    update_mock = mocker.patch('phenoback.functions.activity.write_document')
 
-    activity.process_activity('activity_id', 'ignored', 'ignored')
-    assert update_mock.call_args == call('activities', 'activity_id', {'followers': ['a_follower', 'another_follower']})
+    activity.process_observation('event_id', 'ignored', 'ignored', 'ignored', 'ignored', 'ignored', 'ignored',
+                                 'ignored', 'ignored')
+    assert update_mock.call_args[0][0] == 'activities'
+    assert update_mock.call_args[0][1] == 'event_id'
+    assert update_mock.call_args[0][2]['followers'] == list(followers)
 
 
 @pytest.mark.parametrize('user_following, individuals_following',
@@ -39,7 +50,7 @@ def test_process_activity_update_values(mocker):
                           (['user1'], ['user1']),
                           ([], [])
                           ])
-def test_process_activity(mocker, user_following, individuals_following):
+def test_get_followers(mocker, user_following, individuals_following):
     expected = set(user_following).union(individuals_following)
 
     # mock
@@ -49,7 +60,7 @@ def test_process_activity(mocker, user_following, individuals_following):
     individuals_following_mock.stream.return_value = _user_str_to_namedtupel(individuals_following)
     mocker.patch('phenoback.functions.activity.query_collection', side_effect=[users_following_mock,
                                                                                individuals_following_mock])
-    update_mock = mocker.patch('phenoback.functions.activity.update_document')
+    mocker.patch('phenoback.functions.activity.update_document')
 
     assert expected == activity.get_followers('ignored', 'ignored')
 
