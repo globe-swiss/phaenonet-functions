@@ -1,5 +1,5 @@
 from datetime import datetime
-from phenoback.gcloud.utils import update_document
+from phenoback.utils.firestore import update_document
 
 MODIFIED_KEY = 'modified'
 CREATED_KEY = 'created'

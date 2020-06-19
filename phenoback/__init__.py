@@ -1,4 +1,4 @@
-__all__ = ['functions', 'gcloud']
+__all__ = ['functions', 'utils']
 import logging
 import os
 import firebase_admin

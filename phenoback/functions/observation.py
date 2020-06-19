@@ -1,14 +1,15 @@
 import logging
 from datetime import datetime, timezone
 
-from phenoback.gcloud.utils import get_document, update_document
+from phenoback.utils.firestore import update_document
+from phenoback.utils.data import get_individual
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
 def update_last_observation(individual_id: str, phase: str, observation_date: datetime) -> bool:
-    individual = get_document('individuals', individual_id)
+    individual = get_individual(individual_id)
     old_observation_date = individual.get('last_observation_date', datetime.min.replace(tzinfo=timezone.utc))
     if observation_date > old_observation_date:
         data = {'last_observation_date': observation_date}

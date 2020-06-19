@@ -1,4 +1,4 @@
-from phenoback.gcloud.utils import write_document, update_document, delete_document
+from phenoback.utils.firestore import write_document, update_document, delete_document
 
 
 def process_new_user(user_id: str, nickname: str):

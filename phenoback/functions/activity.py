@@ -1,23 +1,40 @@
 import logging
+from datetime import datetime
 from typing import Set
 
-import phenoback.gcloud.utils
-from phenoback.gcloud.utils import query_collection, update_document
+from phenoback.utils.firestore import query_collection, update_document, write_document
+from phenoback.utils.data import get_phenophase, get_species, get_individual, get_user
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def process_activity(activity_id, individual: str, user_id: str) -> bool:
+def process_observation(event_id: str, observation_id: str, individual_id: str, user_id: str,
+                        phenophase: str, source: str, species: str, individual: str,
+                        action: str) -> bool:
     followers = get_followers(individual, user_id)
-
     if followers:
-        log.info('Setting %i followers on activity %s' % (len(followers), activity_id))
-        update_document('activities', activity_id, {u'followers': list(followers)})
-        log.debug('Set followers on %s: %s' % (activity_id, str(followers)))
+        log.info('write activity %s for observation %s' % (event_id, observation_id))
+        data = {
+            'type': 'observation',
+            'observation_id': observation_id,
+            'individual_id': individual_id,
+            'user': user_id,
+            'phenophase': phenophase,
+            'source': source,
+            'species': species,
+            'activity_date': datetime.now(),
+            'individual_name': get_individual(individual_id)['name'],
+            'phenophase_name': get_phenophase(species, phenophase)['name_de'],
+            'species_name': get_species(species)['de'],
+            'user_name': get_user(user_id)['nickname'],
+            'action': action,
+            'followers': list(followers)
+        }
+        write_document('activities', event_id, data)
         return True
     else:
-        log.debug('No followers on activity %s' % activity_id)
+        log.debug('no activity written for observation %s, no followers' % (observation_id))
         return False
 
 
@@ -25,7 +42,7 @@ def get_followers(individual: str, user_id: str) -> Set[str]:
     following_users_query = query_collection('users', 'following_users', 'array_contains', user_id)
     following_individuals_query = query_collection('users', 'following_individuals', 'array_contains', individual)
 
-    followers = {user.id for user in following_individuals_query.stream()}
-    for user in following_users_query.stream():
-        followers.add(user.id)
-    return followers
+    followers_user = {user.id for user in following_users_query.stream()}
+    followers_individual = {user.id for user in following_individuals_query.stream()}
+
+    return followers_user.union(followers_individual)
