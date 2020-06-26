@@ -40,6 +40,10 @@ def _process_observation_activity(data, context, action):
 
 @retry.Retry()
 def process_observation_write_activity(data, context):
+    """
+    Creates an activity when an observation is created, modified or deleted in
+    Firestore **and** the user or individual of that observation is being followed.
+    """
     _setup_logging(data, context)
     observation_id = get_document_id(context)
     if is_create_event(data):
@@ -57,6 +61,9 @@ def process_observation_write_activity(data, context):
 
 @retry.Retry()
 def process_observation_create_analytics(data, context):
+    """
+    Updates analytic values in Firestore when an observation is created in Firestore.
+    """
     from phenoback.functions import observation
     _setup_logging(data, context)
     observation_id = get_document_id(context)
@@ -81,12 +88,18 @@ def process_observation_create_analytics(data, context):
 
 @retry.Retry()
 def process_observation_update_analytics(data, context):
+    """
+    Updates analytical values in Firestore if the observation date was modified on a observation document.
+    """
     if is_field_updated(data, 'date'):
         process_observation_create_analytics(data, context)
 
 
 @retry.Retry()
 def process_observation_delete_analytics(data, context):
+    """
+    Updates analytical values in Firestore if an observation was deleted.
+    """
     from phenoback.functions import analytics
     _setup_logging(data, context)
     observation_id = get_document_id(context)
@@ -102,6 +115,9 @@ def process_observation_delete_analytics(data, context):
 
 @retry.Retry()
 def process_user_write(data, context):
+    """
+    Processes user related documents if a user is created, modified or deleted.
+    """
     from phenoback.functions import users
     _setup_logging(data, context)
     user_id = get_document_id(context)
@@ -123,6 +139,9 @@ def process_user_write(data, context):
 
 @retry.Retry()
 def import_meteoswiss_data_publish(data, context):
+    """
+    Imports meteoswiss stations and observations.
+    """
     from phenoback.functions import meteoswiss
     _setup_logging(data, context)
     log.info('Import meteoswiss stations')
@@ -133,6 +152,9 @@ def import_meteoswiss_data_publish(data, context):
 
 @retry.Retry()
 def process_document_ts_write(data, context):
+    """
+    Updates create and modified timestamps on documents.
+    """
     from phenoback.functions import documents
     _setup_logging(data, context)
     collection_path = get_collection_path(context)
@@ -152,6 +174,9 @@ def process_document_ts_write(data, context):
 
 @retry.Retry(predicate=if_exception_type(exceptions.NotFound))
 def create_thumbnail_finalize(data, context):
+    """
+    Creates thumbnails for images uploaded to google cloud storage.
+    """
     from phenoback.functions import thumbnails
     _setup_logging(data, context)
     pathfile = data['name']
