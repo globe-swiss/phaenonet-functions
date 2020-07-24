@@ -34,7 +34,7 @@ def process_observation(event_id: str, observation_id: str, individual_id: str, 
         write_document('activities', event_id, data)
         return True
     else:
-        log.debug('no activity written for observation %s, no followers' % (observation_id))
+        log.debug('no activity written for observation %s, no followers' % observation_id)
         return False
 
 

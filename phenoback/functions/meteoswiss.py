@@ -56,7 +56,7 @@ def process_observations() -> bool:
         if old_hash != new_hash:
             reader = csv.DictReader(io.StringIO(response.text), delimiter=';')
             observations = _get_observations_dicts(reader)
-            log.info('Update %i stations fetched in %s' % (len(observations), response.elapsed))
+            log.info('Update %i observations fetched in %s' % (len(observations), response.elapsed))
             write_batch('observations', 'id', observations, merge=True)
             _set_hash('observations', response.text)
             return True

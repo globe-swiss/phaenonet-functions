@@ -1,6 +1,7 @@
 export PROJECT=phaenonet-test
 
 echo "Deploying $PROJECT"
+pipenv lock --requirements > requirements.txt
 
 if [ "$1" = 'all' ] || [ -z "$1" ]; then
   gcloud functions deploy process_observation_activity --project $PROJECT --entry-point process_observation_write_activity --runtime python37 --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{observation_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write --timeout 540s --region europe-west1 --quiet --env-vars-file env.$PROJECT.yaml

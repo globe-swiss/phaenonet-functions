@@ -4,6 +4,7 @@ import logging
 from firebase_admin import firestore
 from google.cloud.firestore_v1 import Query, DELETE_FIELD
 from google.cloud.firestore_v1.client import Client
+from google.cloud.firestore_v1.collection import CollectionReference
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
@@ -76,3 +77,8 @@ def get_document(collection: str, document_id: str) -> Optional[dict]:
 def query_collection(collection: str, field_path: str, op_string: str, value: Any) -> Query:
     log.debug('Query %s where %s %s %s' % (collection, field_path, op_string, value))
     return firestore_client().collection(collection).where(field_path, op_string, value)
+
+
+def get_collection(collection: str) -> CollectionReference:
+    log.debug('Query collection %s' % collection)
+    return firestore_client().collection(collection)
