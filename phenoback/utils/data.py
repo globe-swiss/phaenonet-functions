@@ -2,11 +2,11 @@ from phenoback.utils.firestore import get_document
 
 
 def get_phenophase(species: str, phenophase: str) -> dict:
-    return get_document('definitions/individuals/species/%s/phenophases' % species, phenophase)
+    return get_document('definitions', 'config_static')['species'][species]['phenophases'][phenophase]
 
 
 def get_species(species: str) -> dict:
-    return get_document('definitions/individuals/species', species)
+    return get_document('definitions', 'config_static')['species'][species]
 
 
 def get_individual(individual_id: str) -> dict:
