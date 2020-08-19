@@ -17,6 +17,8 @@ glogging.init()
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
+ANALYTIC_PHENOPHASES = ('BEA', 'BLA', 'BFA', 'BVA', 'FRA')
+
 
 @contextmanager  # workaround as stackdriver fails to capture stackstraces
 def setup(data, context):
@@ -81,7 +83,7 @@ def process_observation_create_analytics(data, context):
         species = get_field(data, 'species')
         observation_date = get_field(data, 'date')
 
-        if phenophase in ('BEA', 'BLA', 'BFA', 'BVA', 'FRA'):
+        if phenophase in ANALYTIC_PHENOPHASES:
             from phenoback.functions import analytics
             log.info('Process analytic values for %s, phenophase %s' % (observation_id, phenophase))
             analytics.process_observation(observation_id, observation_date, individual_id, source, year, species,
@@ -109,16 +111,20 @@ def process_observation_delete_analytics(data, context):
     Updates analytical values in Firestore if an observation was deleted.
     """
     with setup(data, context):
-        from phenoback.functions import analytics
         observation_id = get_document_id(context)
+        phenophase = get_field(data, 'phenophase', old_value=True)
+        if phenophase in ANALYTIC_PHENOPHASES:
+            from phenoback.functions import analytics
 
-        log.info('Remove observation %s', observation_id)
-        analytics.process_remove_observation(observation_id,
-                                             get_field(data, 'individual_id', old_value=True),
-                                             get_field(data, 'source', old_value=True),
-                                             get_field(data, 'year', old_value=True),
-                                             get_field(data, 'species', old_value=True),
-                                             get_field(data, 'phenophase', old_value=True))
+            log.info('Remove observation %s', observation_id)
+            analytics.process_remove_observation(observation_id,
+                                                 get_field(data, 'individual_id', old_value=True),
+                                                 get_field(data, 'source', old_value=True),
+                                                 get_field(data, 'year', old_value=True),
+                                                 get_field(data, 'species', old_value=True),
+                                                 phenophase)
+        else:
+            log.debug('No analytic values processed for %s, phenophase %s' % (observation_id, phenophase))
 
 
 @retry.Retry()

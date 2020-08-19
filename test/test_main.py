@@ -65,7 +65,7 @@ def test_process_observation_update_analytics__process_observation_called(mocker
                           ('BFA', True),
                           ('BVA', True),
                           ('FRA', True),
-                          ('XXX', True)])
+                          ('XXX', False)])
 def test_process_observation_delete_analytics__process_remove_observation(mocker, phenophase, expected):
     mocker.patch('phenoback.functions.analytics.process_observation')
     mock = mocker.patch('phenoback.functions.analytics.process_remove_observation')
