@@ -197,3 +197,13 @@ def create_thumbnail_finalize(data, context):
 
         log.info('Process thumbnail for %s' % pathfile)
         thumbnails.process_new_image(pathfile)
+
+
+@retry.Retry()
+def rollover_manual(data, context):
+    """
+    Rollover the phenoyear. Rollover is based on the year defined in the dynamic configuration definition in firestore.
+    """
+    with setup(data, context):
+        from phenoback.functions import rollover
+        rollover.rollover()

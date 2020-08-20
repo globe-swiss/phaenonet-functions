@@ -16,6 +16,8 @@ if [ "$1" = 'all' ] || [ -z "$1" ]; then
   gcloud scheduler jobs update pubsub import_meteoswiss_data --project $PROJECT --schedule="5 1 * * *" --topic="import_meteoswiss_data" --message-body="none" --time-zone="Europe/Zurich" --description="Trigger cloud function to import meteoswiss data" --quiet & sleep 2
 
   gcloud functions deploy create_thumbnails --project $PROJECT --entry-point create_thumbnail_finalize --runtime python37 --trigger-resource "$PROJECT.appspot.com" --trigger-event google.storage.object.finalize --timeout 540s --region europe-west1 --quiet --env-vars-file env.$PROJECT.yaml & sleep 2
+
+  gcloud functions deploy rollover_phenoyear --project $PROJECT --entry-point rollover_manual --runtime python37 --trigger-resource rollover_phenoyear --trigger-event google.pubsub.topic.publish --timeout 540s --region europe-west1 --quiet --env-vars-file env.$PROJECT.yaml & sleep 2
 fi
 
 # these function MUST NOT be deployed when initially importing data

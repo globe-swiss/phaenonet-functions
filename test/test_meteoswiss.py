@@ -18,6 +18,7 @@ station_collection = 'individuals'
 
 Response = namedtuple('response', 'ok text elapsed status_code')
 
+
 def test_get_hash():
     assert meteoswiss._get_hash('string1') == meteoswiss._get_hash('string1')
     assert meteoswiss._get_hash('string1') != meteoswiss._get_hash('string2')
@@ -32,7 +33,6 @@ def test_set_hash(mocker):
     meteoswiss._set_hash('a_key', 'some_data')
     write_mock.assert_called_once()
     call = write_mock.call_args[0]
-    print(call)
     assert call[0] == hash_collection  # collection
     assert call[1] == hash_document  # document
     assert len(call[2]) == 1

@@ -136,3 +136,9 @@ def test_document_ts_update(mocker, update_called, data, comment):
     mocker.patch('phenoback.functions.documents.update_created_document')
     main.process_document_ts_write(data, mocker.MagicMock())
     assert update_modified_document.called == update_called, comment
+
+
+def test_rollover(mocker):
+    rollover_mock = mocker.patch('phenoback.functions.rollover.rollover')
+    main.rollover_manual('ignored', default_context)
+    rollover_mock.assert_called_once()

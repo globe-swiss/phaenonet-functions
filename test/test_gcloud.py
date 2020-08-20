@@ -40,7 +40,8 @@ def activity_data():
                          [(datetime(2020, 3, 8, 14, 33, 30, 162000, tzinfo=timezone.utc), 'date1'),
                           (datetime(2020, 3, 18, 23, 0, tzinfo=timezone.utc), 'date2'),
                           ('EDt26K5YIGoPe36z64vy', 'individual'),
-                          (2020, 'year')])
+                          (2020, 'year'),
+                          (None, 'not_present')])
 def test_get_field_activity(expected, fieldname, activity_data):
     assert get_field(activity_data, fieldname) == expected
 

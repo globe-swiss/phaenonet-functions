@@ -19,7 +19,7 @@ def get_field(data: dict, fieldname: str, old_value: bool = False) -> Union[str,
             return int(value)
         elif value_type == 'timestampValue':
             return dateparser.parse(value)
-        else:
+        else:  # pragma: no cover
             log.warning("Unknown field type %s, returning str representation: %s" % (value_type, str(value)))
             return str(value)
     else:

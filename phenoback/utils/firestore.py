@@ -15,7 +15,7 @@ DELETE_FIELD = DELETE_FIELD
 
 def firestore_client() -> Client:
     global _db
-    if not _db:
+    if not _db:  # pragma: no cover
         _db = firestore.client()
     return _db
 
@@ -42,7 +42,7 @@ def delete_collection(collection: str, batch_size: int = 1000) -> None:
     _delete_collection(firestore_client().collection(collection), batch_size)
 
 
-def write_batch(collection: str, key: str, data: List[dict], merge: bool = False) -> None:
+def write_batch(collection: str, key: str, data: List[dict], merge: bool = False, batch_size: int = 500) -> None:
     log.info('Batch-write %i documents to %s' % (len(data), collection))
     batch = firestore_client().batch()
     cnt = 0
@@ -51,7 +51,7 @@ def write_batch(collection: str, key: str, data: List[dict], merge: bool = False
         ref = firestore_client().collection(collection).document(str(item[key]))
         item.pop(key)
         batch.set(ref, item, merge=merge)
-        if cnt == 500:
+        if cnt == batch_size:
             log.debug('Commiting %i documents on %s' % (cnt, collection))
             batch.commit()
             cnt = 0
