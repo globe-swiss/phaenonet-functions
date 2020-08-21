@@ -88,7 +88,7 @@ def test_update_document__non_existing(collection, id, doc, doc2):
     try:
         f.update_document(collection, id, doc2)
     except google.api_core.exceptions.NotFound:
-        pass
+        pass  # expected
 
 
 def test_get_collection(collection, id, id2, doc, doc2):
