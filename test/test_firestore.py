@@ -136,9 +136,29 @@ def test_delete_collection(collection):
     batch = []
     for i in range(size):
         batch.append({'id': i, 'value': i})
-
     f.write_batch(collection, 'id', batch)
 
     f.delete_collection(collection, 5)
 
     assert len(list(f.get_collection(collection).stream())) == 0
+
+
+def test_delete_batch(collection):
+    properties = 3
+    properties_size = 10
+
+    batch = []
+    for p in range(properties):
+        for ps in range(properties_size):
+            batch.append({'id': (p * properties_size + ps), 'property': p})
+    f.write_batch(collection, 'id', batch)
+
+    assert len(list(f.get_collection(collection).stream())) == properties * properties_size
+
+    f.delete_batch(collection, 'property', '==', 2, batch_size=3)
+
+    results = list(f.get_collection(collection).stream())
+    assert len(results) == (properties - 1) * properties_size, f.docs2str(results)
+    for result in results:
+        assert result.to_dict().get('property') is not None
+        assert result.to_dict()['property'] != 2

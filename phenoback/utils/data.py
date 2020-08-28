@@ -1,7 +1,7 @@
 from typing import Any, List
 
 from phenoback.utils.firestore import get_document, update_document, query_collection, write_batch, delete_document, \
-    write_document
+    write_document, delete_batch
 from google.cloud.firestore_v1 import Query
 
 
@@ -37,6 +37,10 @@ def delete_individual(individual_id: str) -> None:
     delete_document('individuals', individual_id)
 
 
+def delete_individuals(field_path: str, op_string: str, value: Any) -> None:
+    delete_batch('individuals', field_path, op_string, value)
+
+
 def query_individuals(field_path: str, op_string: str, value: Any) -> Query:
     return query_collection('individuals', field_path, op_string, value)
 
@@ -49,9 +53,9 @@ def write_individual(individual_id: str, data: dict) -> None:
     write_document('individuals', individual_id, data)
 
 
-def has_observations(individual_id: str) -> bool:
-    q: Query = query_observation('individual_id', '==', individual_id).limit(1)
-    return len(list(q.stream())) != 1
+def has_observations(individual: dict) -> bool:
+    # last observation date is set for individuals and stations
+    return individual.get('last_observation_date') is not None
 
 
 def get_observation(observation_id: str) -> dict:

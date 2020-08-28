@@ -25,7 +25,7 @@ def delete_document(collection: str, document_id: str) -> None:
     firestore_client().collection(collection).document(document_id).delete()
 
 
-def _delete_collection(coll_ref, batch_size: int = 1000):
+def _delete_batch(coll_ref, batch_size: int = 1000):
     docs = coll_ref.limit(batch_size).stream()
     deleted = 0
 
@@ -35,11 +35,16 @@ def _delete_collection(coll_ref, batch_size: int = 1000):
         deleted += 1
 
     if deleted >= batch_size:
-        return _delete_collection(coll_ref, batch_size)
+        return _delete_batch(coll_ref, batch_size)
 
 
 def delete_collection(collection: str, batch_size: int = 1000) -> None:
-    _delete_collection(firestore_client().collection(collection), batch_size)
+    _delete_batch(get_collection(collection), batch_size)
+
+
+def delete_batch(collection: str, field_path: str, op_string: str, value: Any, batch_size: int = 1000) -> None:
+    query = query_collection(collection, field_path, op_string, value)
+    _delete_batch(query, batch_size=batch_size)
 
 
 def write_batch(collection: str, key: str, data: List[dict], merge: bool = False, batch_size: int = 500) -> None:
@@ -82,3 +87,7 @@ def query_collection(collection: str, field_path: str, op_string: str, value: An
 def get_collection(collection: str) -> CollectionReference:
     log.debug('Query collection %s' % collection)
     return firestore_client().collection(collection)
+
+
+def docs2str(docs):  # pragma: no cover
+    return ['(%s, %s)' % (doc.id, doc.to_dict()) for doc in docs]

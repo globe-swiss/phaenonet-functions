@@ -1,35 +1,49 @@
 import logging
 
-from phenoback.utils.data import query_individuals, write_individuals, has_observations, delete_individual, \
-    get_phenoyear, update_phenoyear, write_individual
+from phenoback.utils.data import query_individuals, write_individuals, delete_individual, \
+    get_phenoyear, update_phenoyear, has_observations
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def rollover_individuals(old_year, new_year):
-    log.info("Rollover individuals of %i to %i" % (old_year, new_year))
+def rollover_individuals(source_phenoyear, target_phenoyear):
+    """
+    Copy individuals to a new phenoyear, removing all fields that are specific for the phenoyear.
+    :param source_phenoyear:
+    :param target_phenoyear:
+    :return:
+    """
+    log.info("Rollover individuals of %i to %i" % (source_phenoyear, target_phenoyear))
     new_individuals = []
-    for individual_doc in query_individuals('year', '==', old_year).where('source', '==', 'globe').stream():
+    for individual_doc in query_individuals('year', '==', source_phenoyear).where('source', '==', 'globe').stream():
         individual = individual_doc.to_dict()
-        individual['id'] = '%i_%s' % (new_year, individual['individual'])
-        individual['year'] = new_year
+        individual['id'] = '%i_%s' % (target_phenoyear, individual['individual'])
+        individual['year'] = target_phenoyear
         for key in ['last_phenophase', 'last_observation_date', 'created', 'modified']:
             individual.pop(key, None)
         new_individuals.append(individual)
-    log.debug("Creating %i new individuals")
+        log.debug('rolling over individual %s' % individual)
+    log.info("Creating %i new individuals in %i" % (len(new_individuals), target_phenoyear))
     write_individuals(new_individuals, 'id')
 
 
 def remove_stale_individuals(year: int):
+    """
+    Remove all individuals in Firestore that have no observations for all
+    sources (globe and meteoswiss) for the given phenoyear year.
+    :param year: the phenoyear
+    """
     log.info("Remove stale individuals for %i" % year)
-    del_cnt = 0
+    del_list = []
+    # split querying and deleting to avoid stream timeouts
     for individual_doc in query_individuals('year', '==', year).stream():
-        if has_observations(individual_doc.id):
-            log.debug('Remove individual %s' % individual_doc.id)
-            delete_individual(individual_doc.id)
-            del_cnt += 1
-    log.info("Removed %i stale individuals for %i" % (del_cnt, year))
+        if not has_observations(individual_doc.to_dict()):
+            del_list.append(individual_doc.id)
+    for individual_id in del_list:
+        log.debug('Remove individual %s' % individual_id)
+        delete_individual(individual_id)
+    log.info("Removed %i stale individuals for %i" % (len(del_list), year))
 
 
 def rollover():
@@ -37,5 +51,5 @@ def rollover():
     next_year = phenoyear + 1
     rollover_individuals(phenoyear, next_year)
     remove_stale_individuals(phenoyear)
-    log.info('Set current year to %i' % next_year)
+    log.info('Setting current year to %i' % next_year)
     update_phenoyear(next_year)
