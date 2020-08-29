@@ -12,6 +12,10 @@ log.setLevel(logging.DEBUG)
 def process_observation(event_id: str, observation_id: str, individual_id: str, user_id: str,
                         phenophase: str, source: str, species: str, individual: str,
                         action: str) -> bool:
+    individual_dict = get_individual(individual_id)
+    if not individual_dict:
+        log.error('Individual %s not found. Was it deleted in the meantime?' % individual_id)
+        return
     followers = get_followers(individual, user_id)
     if followers:
         log.info('write activity %s for observation %s' % (event_id, observation_id))
@@ -24,7 +28,7 @@ def process_observation(event_id: str, observation_id: str, individual_id: str, 
             'source': source,
             'species': species,
             'activity_date': datetime.now(),
-            'individual_name': get_individual(individual_id)['name'],
+            'individual_name': individual_dict['name'],
             'phenophase_name': get_phenophase(species, phenophase)['de'],
             'species_name': get_species(species)['de'],
             'user_name': get_user(user_id)['nickname'],

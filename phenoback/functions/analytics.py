@@ -68,6 +68,10 @@ def remove_observation(observation_id: str, year: int, species: str, phase: str,
     try:
         document_id = get_analytics_document_id(year, species, source, altitude_grp)
         state_document = get_document(STATE_COLLECTION, document_id)
+        if not state_document:
+            log.error('State document %s not found for observation removal: (observation_id: %s, source: %s, '
+                      'year: %i, species: %s, phase: %s)' % (document_id, observation_id, source, year, species, phase))
+            return
         state = state_document['state']
         state[phase].pop(observation_id)
         if not state[phase]:  # remove phase if last value removed
@@ -77,13 +81,17 @@ def remove_observation(observation_id: str, year: int, species: str, phase: str,
 
         observation_dates = list(state.setdefault(phase, {}).values())
         update_result(observation_dates, phase, source, year, species, altitude_grp)
-    except KeyError:  # pragma: no cover
+    except KeyError:
         log.error('Observation not found in state for removal: (observation_id: %s, source: %s, year: %i, species: %s, '
                   'phase: %s)' % (observation_id, source, year, species, phase))
 
 
 def get_altitude_grp(individual_id: str) -> Optional[str]:
-    altitude = get_individual(individual_id).get('altitude', None)
+    individual = get_individual(individual_id)
+    if not individual:
+        log.error('Individual %s not found to lookup altitude group' % individual_id)
+        return
+    altitude = individual.get('altitude', None)
     altitude_key = None
     if altitude is not None:
         if altitude < 500:
@@ -96,7 +104,7 @@ def get_altitude_grp(individual_id: str) -> Optional[str]:
             altitude_key = 'alt4'
         else:
             altitude_key = 'alt5'
-    else:  # pragma: no cover
+    else:
         log.error('no altitude found for individual %s' % individual_id)
     return altitude_key
 
