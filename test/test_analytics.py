@@ -1,5 +1,4 @@
 import pytest
-from pytest import fail
 from unittest.mock import Mock
 import deepdiff
 import copy
@@ -175,19 +174,41 @@ def test_remove_observation_last_value(mocker):
     assert update_result_mock.call_args[0][0] == []
 
 
-def test_remove_data_not_exist(mocker):
-    initial = {'state': {
-                    'phase1': {'id': 'value1', 'another_id': 'another_value1'},
-                    'phase2': {'id': 'value2', 'another_id': 'another_value2'}
-                    }
-              }
+@pytest.mark.parametrize('initial',
+                         [{},
+                          None,
+                          {'state': {
+                              'phase1': {'id': 'value1', 'another_id': 'another_value1'},
+                              'phase2': {'id': 'value2', 'another_id': 'another_value2'}
+                          }}
+                          ])
+def test_remove_data_not_exist(mocker, initial):
     mocker.patch('phenoback.functions.analytics.get_document', return_value=initial)
     write_document_mock = mocker.patch('phenoback.functions.analytics.write_document')
     update_result_mock = mocker.patch('phenoback.functions.analytics.update_result')
-    # noinspection PyBroadException
-    try:
-        analytics.remove_observation('id_not_exits', 0, '', 'phase1', '')
-    except Exception:
-        fail()
+    analytics.log = mocker.Mock()
+
+    analytics.remove_observation('id_not_exits', 0, '', 'phase1', '')
+
+    analytics.log.error.assert_called()
     write_document_mock.assert_not_called()
     update_result_mock.assert_not_called()
+
+
+@pytest.mark.parametrize('altitude, expected',
+                         [(100, 'alt1'),
+                          (500, 'alt2'),
+                          (800, 'alt3'),
+                          (1000, 'alt4'),
+                          (1200, 'alt5')])
+def test_get_altitude_grp(mocker, altitude, expected):
+    mocker.patch('phenoback.functions.analytics.get_individual', return_value={'altitude': altitude})
+    assert analytics.get_altitude_grp('ignored') == expected
+
+
+@pytest.mark.parametrize('individual', [{}, None])
+def test_get_altitude_grp_failure(mocker, individual):
+    mocker.patch('phenoback.functions.analytics.get_individual', return_value=individual)
+    analytics.log = mocker.Mock()
+    analytics.get_altitude_grp('ignored')
+    analytics.log.error.assert_called()

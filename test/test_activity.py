@@ -42,6 +42,16 @@ def test_process_observation__values(mocker):
     assert update_mock.call_args[0][2]['followers'] == list(followers)
 
 
+def test_process_observation__no_individual_found(mocker):
+    mocker.patch('phenoback.functions.activity.get_individual', return_value=None)
+    activity.log = mocker.Mock()
+
+    activity.process_observation('ignored', 'ignored', 'ignored', 'ignored', 'ignored', 'ignored', 'ignored',
+                                 'ignored', 'ignored')
+
+    activity.log.error.assert_called()
+
+
 @pytest.mark.parametrize('user_following, individuals_following',
                          [(['user1'], []),
                           ([], ['user1']),
