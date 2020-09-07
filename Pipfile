@@ -10,7 +10,7 @@ pytest-cov = "*"
 codecov = "*"
 deepdiff = "*"
 pylint = "*"
-black = "*"
+black = "==20.8b1"
 flake8 = "*"
 bandit = "*"
 
