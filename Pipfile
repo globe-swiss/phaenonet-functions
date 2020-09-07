@@ -9,6 +9,10 @@ pytest-mock = "*"
 pytest-cov = "*"
 codecov = "*"
 deepdiff = "*"
+pylint = "*"
+black = "*"
+flake8 = "*"
+bandit = "*"
 
 [packages]
 firebase-admin = "*"
