@@ -2,13 +2,13 @@
 
 name: CI
 
-# Controls when the action will run. Triggers the workflow on push or pull request 
+# Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -16,41 +16,41 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    container: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
     strategy:
       matrix:
         python-version: [3.7]
 
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pytest pipenv
-    - name: Lint with flake8
-      run: |
-        pip install flake8
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Sync dev dependencies
-      run: pipenv sync --dev
-    - name: Run pytest
-      run: pipenv run python -m pytest --cov-report xml --cov=phenoback --cov-branch
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        file: ./coverage.xml
-        flags: unittests
-        env_vars: OS,PYTHON
-    - name: Update pipenv environment
-      run: pipenv update --dev
-    - name: Test updated environment with pytest
-      run: pipenv run python -m pytest
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pipenv
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      - name: Sync dev dependencies
+        run: pipenv sync --dev
+      - name: Run pytest
+        run: pipenv run python -m pytest --cov-report xml --cov=phenoback --cov-branch
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          flags: unittests
+          env_vars: OS,PYTHON
+      - name: Update pipenv environment
+        run: pipenv update --dev
+      - name: Test updated environment with pytest
+        run: pipenv run python -m pytest
