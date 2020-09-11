@@ -13,6 +13,8 @@ pylint = "*"
 black = "==20.8b1"
 flake8 = "*"
 bandit = "*"
+pytest-xprocess = "*"
+mock = "*"
 
 [packages]
 firebase-admin = "*"
@@ -22,4 +24,4 @@ pillow = "*"
 google-cloud-logging = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"

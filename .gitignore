@@ -2,6 +2,7 @@
 .idea
 credentials
 foto_uploads
+.xprocess
 
 # general python ignores
 # Byte-compiled / optimized / DLL files

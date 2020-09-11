@@ -7,6 +7,7 @@ import csv
 import io
 from datetime import datetime
 from phenoback.utils.firestore import write_batch, get_document, write_document
+from phenoback.utils.data import get_phenoyear
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -36,15 +37,16 @@ def process_stations() -> bool:
 
 
 def _get_individuals_dicts(stations: csv.DictReader):
+    phenoyear = get_phenoyear()
     return [{
-        'id': '%i_%s' % (datetime.now().year, station['Abbr.']),
+        'id': '%i_%s' % (phenoyear, station['Abbr.']),
         'altitude': int(station['Station height m. a. sea level']),
         'geopos': {'lat': float(station['Latitude']), 'lng': float(station['Longitude'])},
         'individual': station['Abbr.'],
         'name': station['Station'],
         'source': 'meteoswiss',
         'user': 'meteoswiss',
-        'year': datetime.now().year,
+        'year': phenoyear,
     } for station in stations if len(station['Abbr.']) == 3]
 
 
