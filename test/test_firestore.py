@@ -10,7 +10,7 @@ import google.api_core.exceptions
 def get_random_string(length) -> str:
     # Random string with the combination of lower and upper case
     letters = string.ascii_letters
-    result_str = ''.join(random.choice(letters) for i in range(length))
+    result_str = "".join(random.choice(letters) for i in range(length))
     return result_str
 
 
@@ -103,11 +103,11 @@ def test_get_collection__empty(collection):
 
 
 def test_query_collection(collection, id, id2, doc):
-    doc2 = {'key': 'value'}
+    doc2 = {"key": "value"}
     assert doc != doc2
     f.write_document(collection, id, doc)
     f.write_document(collection, id2, doc2)
-    result = list(f.query_collection(collection, 'key', '==', 'value').stream())
+    result = list(f.query_collection(collection, "key", "==", "value").stream())
     assert len(result) == 1
     assert result[0].to_dict() == doc2
 
@@ -115,8 +115,8 @@ def test_query_collection(collection, id, id2, doc):
 def test_query_collection__no_result(collection, id, id2, doc):
     assert doc != doc2
     f.write_document(collection, id, doc)
-    f.write_document(collection, id2, {'key': 'value'})
-    result = list(f.query_collection(collection, 'key', '==', 'miss').stream())
+    f.write_document(collection, id2, {"key": "value"})
+    result = list(f.query_collection(collection, "key", "==", "miss").stream())
     assert len(result) == 0
 
 
@@ -124,9 +124,9 @@ def test_write_batch(collection):
     size = 30
     batch = []
     for i in range(size):
-        batch.append({'id': i, 'value': i})
+        batch.append({"id": i, "value": i})
 
-    f.write_batch(collection, 'id', batch, batch_size=5)
+    f.write_batch(collection, "id", batch, batch_size=5)
 
     assert len(list(f.get_collection(collection).stream())) == size
 
@@ -135,8 +135,8 @@ def test_delete_collection(collection):
     size = 30
     batch = []
     for i in range(size):
-        batch.append({'id': i, 'value': i})
-    f.write_batch(collection, 'id', batch)
+        batch.append({"id": i, "value": i})
+    f.write_batch(collection, "id", batch)
 
     f.delete_collection(collection, 5)
 
@@ -150,15 +150,17 @@ def test_delete_batch(collection):
     batch = []
     for p in range(properties):
         for ps in range(properties_size):
-            batch.append({'id': (p * properties_size + ps), 'property': p})
-    f.write_batch(collection, 'id', batch)
+            batch.append({"id": (p * properties_size + ps), "property": p})
+    f.write_batch(collection, "id", batch)
 
-    assert len(list(f.get_collection(collection).stream())) == properties * properties_size
+    assert (
+        len(list(f.get_collection(collection).stream())) == properties * properties_size
+    )
 
-    f.delete_batch(collection, 'property', '==', 2, batch_size=3)
+    f.delete_batch(collection, "property", "==", 2, batch_size=3)
 
     results = list(f.get_collection(collection).stream())
     assert len(results) == (properties - 1) * properties_size, f.docs2str(results)
     for result in results:
-        assert result.to_dict().get('property') is not None
-        assert result.to_dict()['property'] != 2
+        assert result.to_dict().get("property") is not None
+        assert result.to_dict()["property"] != 2

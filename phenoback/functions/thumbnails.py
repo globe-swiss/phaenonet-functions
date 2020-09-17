@@ -13,26 +13,31 @@ def process_new_image(pathfile: str, bucket: str = None) -> bool:
     filename_base = os.path.splitext(os.path.split(pathfile)[1])[0]
     filename_ext = os.path.splitext(pathfile)[1]
 
-    if path.startswith('images/') and not filename_base.endswith('_tn'):
-        log.debug('creating thumbnail for %s' % pathfile)
+    if path.startswith("images/") and not filename_base.endswith("_tn"):
+        log.debug("creating thumbnail for %s" % pathfile)
         img_in = download_file(bucket, pathfile)
         img_out = process_image(img_in)
 
-        upload_file(bucket, '%s/%s_tn%s' % (path, filename_base, filename_ext), img_out, content_type='image/jpeg')
+        upload_file(
+            bucket,
+            "%s/%s_tn%s" % (path, filename_base, filename_ext),
+            img_out,
+            content_type="image/jpeg",
+        )
         return True
     else:
-        log.debug('skipping thumbnail creation for %s' % pathfile)
+        log.debug("skipping thumbnail creation for %s" % pathfile)
         return False
 
 
 def process_image(img_in):
     img = Image.open(img_in)
     img = _remove_unprocessable_exif_info(img)
-    img = img.convert('RGB')
+    img = img.convert("RGB")
     img = ImageOps.exif_transpose(img)
     img.thumbnail((476, 302))
     img_out = tempfile.TemporaryFile()
-    img.save(img_out, 'JPEG')
+    img.save(img_out, "JPEG")
     return img_out
 
 

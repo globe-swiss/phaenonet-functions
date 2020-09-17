@@ -19,85 +19,114 @@ class ResourceNotFoundException(Exception):
 
 def process_stations() -> bool:
     response = get(
-        'https://data.geo.admin.ch/ch.meteoschweiz.messnetz-phaenologie/ch.meteoschweiz.messnetz-phaenologie_en.csv')
+        "https://data.geo.admin.ch/ch.meteoschweiz.messnetz-phaenologie/ch.meteoschweiz.messnetz-phaenologie_en.csv"
+    )
     if response.ok:
-        if _load_hash('stations') != _get_hash(response.text):
-            reader = csv.DictReader(io.StringIO(response.text), delimiter=';')
+        if _load_hash("stations") != _get_hash(response.text):
+            reader = csv.DictReader(io.StringIO(response.text), delimiter=";")
             stations = _get_individuals_dicts(reader)
-            log.info('Update %i stations fetched in %s' % (len(stations), response.elapsed))
-            write_batch('individuals', 'id', stations, merge=True)
-            _set_hash('stations', response.text)
+            log.info(
+                "Update %i stations fetched in %s" % (len(stations), response.elapsed)
+            )
+            write_batch("individuals", "id", stations, merge=True)
+            _set_hash("stations", response.text)
             return True
         else:
-            log.debug('Station file did not change.')
+            log.debug("Station file did not change.")
             return False
     else:
-        log.error('Could not fetch station data (%s)' % response.status_code)
-        raise ResourceNotFoundException('Could not fetch station data (%s)' % response.status_code)
+        log.error("Could not fetch station data (%s)" % response.status_code)
+        raise ResourceNotFoundException(
+            "Could not fetch station data (%s)" % response.status_code
+        )
 
 
 def _get_individuals_dicts(stations: csv.DictReader):
     phenoyear = get_phenoyear()
-    return [{
-        'id': '%i_%s' % (phenoyear, station['Abbr.']),
-        'altitude': int(station['Station height m. a. sea level']),
-        'geopos': {'lat': float(station['Latitude']), 'lng': float(station['Longitude'])},
-        'individual': station['Abbr.'],
-        'name': station['Station'],
-        'source': 'meteoswiss',
-        'user': 'meteoswiss',
-        'year': phenoyear,
-    } for station in stations if len(station['Abbr.']) == 3]
+    return [
+        {
+            "id": "%i_%s" % (phenoyear, station["Abbr."]),
+            "altitude": int(station["Station height m. a. sea level"]),
+            "geopos": {
+                "lat": float(station["Latitude"]),
+                "lng": float(station["Longitude"]),
+            },
+            "individual": station["Abbr."],
+            "name": station["Station"],
+            "source": "meteoswiss",
+            "user": "meteoswiss",
+            "year": phenoyear,
+        }
+        for station in stations
+        if len(station["Abbr."]) == 3
+    ]
 
 
 def process_observations() -> bool:
-    response = get('https://data.geo.admin.ch/ch.meteoschweiz.klima/phaenologie/phaeno_current.csv')
+    response = get(
+        "https://data.geo.admin.ch/ch.meteoschweiz.klima/phaenologie/phaeno_current.csv"
+    )
     if response.ok:
         new_hash = _get_hash(response.text)
-        old_hash = _load_hash('observations')
+        old_hash = _load_hash("observations")
         if old_hash != new_hash:
-            reader = csv.DictReader(io.StringIO(response.text), delimiter=';')
+            reader = csv.DictReader(io.StringIO(response.text), delimiter=";")
             observations = _get_observations_dicts(reader)
-            log.info('Update %i observations fetched in %s' % (len(observations), response.elapsed))
-            write_batch('observations', 'id', observations, merge=True)
-            _set_hash('observations', response.text)
+            log.info(
+                "Update %i observations fetched in %s"
+                % (len(observations), response.elapsed)
+            )
+            write_batch("observations", "id", observations, merge=True)
+            _set_hash("observations", response.text)
             return True
         else:
-            log.debug('Observations file did not change.')
+            log.debug("Observations file did not change.")
             return False
     else:
-        log.error('Could not fetch observation data (%s)' % response.status_code)
-        raise ResourceNotFoundException('Could not fetch observation data (%s)' % response.status_code)
+        log.error("Could not fetch observation data (%s)" % response.status_code)
+        raise ResourceNotFoundException(
+            "Could not fetch observation data (%s)" % response.status_code
+        )
 
 
 def _get_observations_dicts(observations: csv.DictReader):
-    mapping = get_document('definitions', 'meteoswiss_mapping')
-    return [{
-        'id': '%s_%s_%s_%s' % (observation['nat_abbr'],
-                               observation['reference_year'],
-                               mapping[observation['param_id']]['species'],
-                               mapping[observation['param_id']]['phenophase']),
-        'user': 'meteoswiss',
-        'date': datetime.strptime(observation['value'], '%Y%m%d'),
-        'individual_id': '%s_%s' % (observation['reference_year'], observation['nat_abbr']),
-        'individual': observation['nat_abbr'],
-        'source': 'meteoswiss',
-        'year': int(observation['reference_year']),
-        'species': mapping[observation['param_id']]['species'],
-        'phenophase': mapping[observation['param_id']]['phenophase']
-    } for observation in observations if observation['param_id'] in mapping]
+    mapping = get_document("definitions", "meteoswiss_mapping")
+    return [
+        {
+            "id": "%s_%s_%s_%s"
+            % (
+                observation["nat_abbr"],
+                observation["reference_year"],
+                mapping[observation["param_id"]]["species"],
+                mapping[observation["param_id"]]["phenophase"],
+            ),
+            "user": "meteoswiss",
+            "date": datetime.strptime(observation["value"], "%Y%m%d"),
+            "individual_id": "%s_%s"
+            % (observation["reference_year"], observation["nat_abbr"]),
+            "individual": observation["nat_abbr"],
+            "source": "meteoswiss",
+            "year": int(observation["reference_year"]),
+            "species": mapping[observation["param_id"]]["species"],
+            "phenophase": mapping[observation["param_id"]]["phenophase"],
+        }
+        for observation in observations
+        if observation["param_id"] in mapping
+    ]
 
 
 def _set_hash(key: str, data: str):
     hashed_data = _get_hash(data)
-    write_document('definitions', 'meteoswiss_import', {'hash_%s' % key: hashed_data}, merge=True)
-    log.debug('set hash for %s to %s' % (key, hashed_data))
+    write_document(
+        "definitions", "meteoswiss_import", {"hash_%s" % key: hashed_data}, merge=True
+    )
+    log.debug("set hash for %s to %s" % (key, hashed_data))
 
 
 def _load_hash(key: str) -> Optional[str]:
-    doc = get_document('definitions', 'meteoswiss_import')
-    loaded_hash = doc.get('hash_%s' % key) if doc else None
-    log.debug('loaded hash for %s to %s' % (key, loaded_hash))
+    doc = get_document("definitions", "meteoswiss_import")
+    loaded_hash = doc.get("hash_%s" % key) if doc else None
+    log.debug("loaded hash for %s to %s" % (key, loaded_hash))
     return loaded_hash
 
 

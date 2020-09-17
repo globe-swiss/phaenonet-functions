@@ -1,8 +1,8 @@
 from datetime import datetime
 from phenoback.utils.firestore import update_document
 
-MODIFIED_KEY = 'modified'
-CREATED_KEY = 'created'
+MODIFIED_KEY = "modified"
+CREATED_KEY = "created"
 
 
 def update_created_document(collection: str, document_id: str):  # pragma: no cover

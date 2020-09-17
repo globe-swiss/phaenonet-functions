@@ -10,15 +10,20 @@ from google.cloud.logging.resource import Resource
 log_id = None
 
 
-def my_enqueue(self, record, message, resource=None, labels=None, trace=None, span_id=None):  # pragma: no cover
-    resource = Resource(type='cloud_function',
-                        labels={'function_name': os.getenv('FUNCTION_NAME', 'Unknown'),
-                                'project_id': os.getenv('GCP_PROJECT', 'Unknown'),
-                                'region': os.getenv('FUNCTION_REGION', 'Unknown')
-                                })
+def my_enqueue(
+    self, record, message, resource=None, labels=None, trace=None, span_id=None
+):  # pragma: no cover
+    resource = Resource(
+        type="cloud_function",
+        labels={
+            "function_name": os.getenv("FUNCTION_NAME", "Unknown"),
+            "project_id": os.getenv("GCP_PROJECT", "Unknown"),
+            "region": os.getenv("FUNCTION_REGION", "Unknown"),
+        },
+    )
     if not labels:
         labels = {}
-    labels.update({'log_id': log_id})
+    labels.update({"log_id": log_id})
     queue_entry = {
         "info": {"message": message, "python_logger": record.name},
         "severity": _helpers._normalize_severity(record.levelno),
@@ -41,4 +46,3 @@ def init(log_identifier=None):  # pragma: no cover
     logging.getLogger().handlers = []
     handler = client.get_default_handler()
     logging.getLogger().addHandler(handler)
-
