@@ -2,7 +2,7 @@ from typing import List, Any, Optional
 import logging
 
 from firebase_admin import firestore
-from google.cloud.firestore_v1 import Query, DELETE_FIELD
+from google.cloud.firestore_v1 import Query, DELETE_FIELD, ArrayUnion
 from google.cloud.firestore_v1.client import Client
 from google.cloud.firestore_v1.collection import CollectionReference
 

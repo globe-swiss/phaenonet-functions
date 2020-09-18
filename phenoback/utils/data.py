@@ -56,8 +56,12 @@ def write_individuals(individuals: List[dict], key: str) -> None:
     write_batch("individuals", key, individuals)
 
 
-def write_individual(individual_id: str, data: dict) -> None:
-    write_document("individuals", individual_id, data)
+def write_individual(individual_id: str, data: dict, merge=False) -> None:
+    write_document("individuals", individual_id, data, merge=merge)
+
+
+def update_individual(individual_id: str, data: dict) -> None:
+    update_document("individuals", individual_id, data)
 
 
 def has_observations(individual: dict) -> bool:
