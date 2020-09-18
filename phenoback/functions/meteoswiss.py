@@ -1,13 +1,18 @@
 import logging
-from typing import Optional
+from typing import Optional, List, Dict
 
 from requests import get
 from hashlib import md5
 import csv
 import io
 from datetime import datetime
-from phenoback.utils.firestore import write_batch, get_document, write_document
-from phenoback.utils.data import get_phenoyear
+from phenoback.utils.firestore import (
+    write_batch,
+    get_document,
+    write_document,
+    ArrayUnion,
+)
+from phenoback.utils.data import get_phenoyear, update_individual
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -41,7 +46,7 @@ def process_stations() -> bool:
         )
 
 
-def _get_individuals_dicts(stations: csv.DictReader):
+def _get_individuals_dicts(stations: csv.DictReader) -> List[Dict]:
     phenoyear = get_phenoyear()
     return [
         {
@@ -76,7 +81,10 @@ def process_observations() -> bool:
                 "Update %i observations fetched in %s"
                 % (len(observations), response.elapsed)
             )
+            # write observations
             write_batch("observations", "id", observations, merge=True)
+            # update stations
+            _update_station_species(_get_station_species(observations))
             _set_hash("observations", response.text)
             return True
         else:
@@ -89,7 +97,7 @@ def process_observations() -> bool:
         )
 
 
-def _get_observations_dicts(observations: csv.DictReader):
+def _get_observations_dicts(observations: csv.DictReader) -> List[Dict]:
     mapping = get_document("definitions", "meteoswiss_mapping")
     return [
         {
@@ -113,6 +121,21 @@ def _get_observations_dicts(observations: csv.DictReader):
         for observation in observations
         if observation["param_id"] in mapping
     ]
+
+
+def _get_station_species(observations: List[dict]) -> Dict[str, Optional[List[str]]]:
+    station_species: dict = {}
+    for observation in observations:
+        station_species.setdefault(observation["individual_id"], []).append(
+            observation["species"]
+        )
+    return station_species
+
+
+def _update_station_species(station_species: dict) -> None:
+    for key in station_species.keys():
+        data = {"station_species": ArrayUnion(station_species[key])}
+        update_individual(key, data)
 
 
 def _set_hash(key: str, data: str):

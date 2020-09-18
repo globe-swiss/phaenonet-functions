@@ -6,6 +6,7 @@ import test
 import pytest
 
 from phenoback.functions import meteoswiss
+from phenoback.utils.data import write_individual, get_individual
 
 hash_collection = "definitions"
 hash_document = "meteoswiss_import"
@@ -225,3 +226,38 @@ def test_process_stations_nok(mocker):
         meteoswiss.process_stations()
     except meteoswiss.ResourceNotFoundException:
         pass  # expected
+
+
+def test_get_station_species():
+    result = meteoswiss._get_station_species(
+        # output of meteoswiss._get_observations_dict
+        [
+            {"individual_id": "individual_1", "species": "species_1"},
+            {"individual_id": "individual_1", "species": "species_2"},
+            {"individual_id": "individual_2", "species": "species_1"},
+        ]
+    )
+    assert result == {
+        "individual_1": ["species_1", "species_2"],
+        "individual_2": ["species_1"],
+    }
+
+
+@pytest.mark.parametrize(
+    "old_species, new_species, expected",
+    [
+        ("None", ["s1", "s2"], ["s1", "s2"]),
+        ([], ["s1", "s2"], ["s1", "s2"]),
+        (["s1", "s2"], ["s2", "s3"], ["s1", "s2", "s3"]),
+    ],
+)
+def test_update_station_species(old_species, new_species, expected):
+    individual_id = "individual_1"
+    write_individual(
+        individual_id, {"attribute": "should stay", "station_species": old_species}
+    )
+    meteoswiss._update_station_species({individual_id: new_species})
+    result = get_individual(individual_id)
+    assert result["attribute"]
+    assert len(result["station_species"]) == len(expected)
+    assert set(result["station_species"]) == set(expected)
