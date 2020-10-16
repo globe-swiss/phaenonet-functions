@@ -8,24 +8,34 @@ from google.api_core.retry import if_exception_type
 import firebase_admin
 
 from phenoback.utils import glogging
-from phenoback.utils.gcloud import get_document_id, get_field, is_create_event, is_field_updated, is_delete_event, \
-    is_update_event, get_collection_path, get_fields_updated
+from phenoback.utils.gcloud import (
+    get_document_id,
+    get_field,
+    is_create_event,
+    is_field_updated,
+    is_delete_event,
+    is_update_event,
+    get_collection_path,
+    get_fields_updated,
+)
 
-firebase_admin.initialize_app(options={'storageBucket': os.environ.get('storageBucket')})
+firebase_admin.initialize_app(
+    options={"storageBucket": os.environ.get("storageBucket")}
+)
 glogging.init()
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
-ANALYTIC_PHENOPHASES = ('BEA', 'BLA', 'BFA', 'BVA', 'FRA')
+ANALYTIC_PHENOPHASES = ("BEA", "BLA", "BFA", "BVA", "FRA")
 
 
 @contextmanager  # workaround as stackdriver fails to capture stackstraces
 def setup(data, context):
     try:
         glogging.log_id = context.event_id
-        log.debug('context: (%s)' % str(context))
-        log.debug('data: (%s)' % str(data))
+        log.debug("context: (%s)" % str(context))
+        log.debug("data: (%s)" % str(data))
         yield
     except Exception:
         log.exception("Fatal error in cloud function")
@@ -35,16 +45,18 @@ def setup(data, context):
 def _process_observation_activity(data, context, action):
     from phenoback.functions import activity
 
-    delete_op = (action == 'delete')
-    activity.process_observation(event_id=context.event_id,
-                                 observation_id=get_document_id(context),
-                                 individual_id=get_field(data, 'individual_id', old_value=delete_op),
-                                 user_id=get_field(data, 'user', old_value=delete_op),
-                                 phenophase=get_field(data, 'phenophase', old_value=delete_op),
-                                 source=get_field(data, 'source', old_value=delete_op),
-                                 species=get_field(data, 'species', old_value=delete_op),
-                                 individual=get_field(data, 'individual', old_value=delete_op),
-                                 action=action)
+    delete_op = action == "delete"
+    activity.process_observation(
+        event_id=context.event_id,
+        observation_id=get_document_id(context),
+        individual_id=get_field(data, "individual_id", old_value=delete_op),
+        user_id=get_field(data, "user", old_value=delete_op),
+        phenophase=get_field(data, "phenophase", old_value=delete_op),
+        source=get_field(data, "source", old_value=delete_op),
+        species=get_field(data, "species", old_value=delete_op),
+        individual=get_field(data, "individual", old_value=delete_op),
+        action=action,
+    )
 
 
 @retry.Retry()
@@ -56,16 +68,16 @@ def process_observation_write_activity(data, context):
     with setup(data, context):
         observation_id = get_document_id(context)
         if is_create_event(data):
-            log.info('Add create activity for observation %s', observation_id)
-            _process_observation_activity(data, context, 'create')
-        elif is_field_updated(data, 'date'):
-            log.info('Add modify activity for observation %s', observation_id)
-            _process_observation_activity(data, context, 'modify')
+            log.info("Add create activity for observation %s", observation_id)
+            _process_observation_activity(data, context, "create")
+        elif is_field_updated(data, "date"):
+            log.info("Add modify activity for observation %s", observation_id)
+            _process_observation_activity(data, context, "modify")
         elif is_delete_event(data):
-            log.info('Add delete activity for observation %s', observation_id)
-            _process_observation_activity(data, context, 'delete')
+            log.info("Add delete activity for observation %s", observation_id)
+            _process_observation_activity(data, context, "delete")
         else:
-            log.debug('No activity to add')
+            log.debug("No activity to add")
 
 
 @retry.Retry()
@@ -75,23 +87,41 @@ def process_observation_create_analytics(data, context):
     """
     with setup(data, context):
         from phenoback.functions import observation
+
         observation_id = get_document_id(context)
-        phenophase = get_field(data, 'phenophase')
-        individual_id = get_field(data, 'individual_id')
-        source = get_field(data, 'source')
-        year = get_field(data, 'year')
-        species = get_field(data, 'species')
-        observation_date = get_field(data, 'date')
+        phenophase = get_field(data, "phenophase")
+        individual_id = get_field(data, "individual_id")
+        source = get_field(data, "source")
+        year = get_field(data, "year")
+        species = get_field(data, "species")
+        observation_date = get_field(data, "date")
 
         if phenophase in ANALYTIC_PHENOPHASES:
             from phenoback.functions import analytics
-            log.info('Process analytic values for %s, phenophase %s' % (observation_id, phenophase))
-            analytics.process_observation(observation_id, observation_date, individual_id, source, year, species,
-                                          phenophase)
+
+            log.info(
+                "Process analytic values for %s, phenophase %s"
+                % (observation_id, phenophase)
+            )
+            analytics.process_observation(
+                observation_id,
+                observation_date,
+                individual_id,
+                source,
+                year,
+                species,
+                phenophase,
+            )
         else:
-            log.debug('No analytic values processed for %s, phenophase %s' % (observation_id, phenophase))
+            log.debug(
+                "No analytic values processed for %s, phenophase %s"
+                % (observation_id, phenophase)
+            )
         # LAST OBSERVATION DATE
-        log.info('Process last observation date for %s, phenophase %s' % (observation_id, phenophase))
+        log.info(
+            "Process last observation date for %s, phenophase %s"
+            % (observation_id, phenophase)
+        )
         observation.update_last_observation(individual_id, phenophase, observation_date)
 
 
@@ -101,7 +131,7 @@ def process_observation_update_analytics(data, context):
     Updates analytical values in Firestore if the observation date was modified on a observation document.
     """
     with setup(data, context):
-        if is_field_updated(data, 'date'):
+        if is_field_updated(data, "date"):
             process_observation_create_analytics(data, context)
 
 
@@ -112,19 +142,24 @@ def process_observation_delete_analytics(data, context):
     """
     with setup(data, context):
         observation_id = get_document_id(context)
-        phenophase = get_field(data, 'phenophase', old_value=True)
+        phenophase = get_field(data, "phenophase", old_value=True)
         if phenophase in ANALYTIC_PHENOPHASES:
             from phenoback.functions import analytics
 
-            log.info('Remove observation %s', observation_id)
-            analytics.process_remove_observation(observation_id,
-                                                 get_field(data, 'individual_id', old_value=True),
-                                                 get_field(data, 'source', old_value=True),
-                                                 get_field(data, 'year', old_value=True),
-                                                 get_field(data, 'species', old_value=True),
-                                                 phenophase)
+            log.info("Remove observation %s", observation_id)
+            analytics.process_remove_observation(
+                observation_id,
+                get_field(data, "individual_id", old_value=True),
+                get_field(data, "source", old_value=True),
+                get_field(data, "year", old_value=True),
+                get_field(data, "species", old_value=True),
+                phenophase,
+            )
         else:
-            log.debug('No analytic values processed for %s, phenophase %s' % (observation_id, phenophase))
+            log.debug(
+                "No analytic values processed for %s, phenophase %s"
+                % (observation_id, phenophase)
+            )
 
 
 @retry.Retry()
@@ -134,21 +169,26 @@ def process_user_write(data, context):
     """
     with setup(data, context):
         from phenoback.functions import users
+
         user_id = get_document_id(context)
 
-        if is_update_event(data) and is_field_updated(data, 'nickname'):
-            log.info('update nickname for %s', user_id)
-            users.process_update_nickname(user_id,
-                                          get_field(data, 'nickname', old_value=True),
-                                          get_field(data, 'nickname'))
+        if is_update_event(data) and is_field_updated(data, "nickname"):
+            log.info("update nickname for %s", user_id)
+            users.process_update_nickname(
+                user_id,
+                get_field(data, "nickname", old_value=True),
+                get_field(data, "nickname"),
+            )
         elif is_delete_event(data):
-            log.info('delete user %s' % user_id)
-            users.process_delete_user(user_id, get_field(data, 'nickname', old_value=True))
+            log.info("delete user %s" % user_id)
+            users.process_delete_user(
+                user_id, get_field(data, "nickname", old_value=True)
+            )
         elif is_create_event(data):
-            log.info('create user %s' % user_id)
-            users.process_new_user(user_id, get_field(data, 'nickname'))
+            log.info("create user %s" % user_id)
+            users.process_new_user(user_id, get_field(data, "nickname"))
         else:
-            log.debug('Nothing to do for %s' % user_id)
+            log.debug("Nothing to do for %s" % user_id)
 
 
 @retry.Retry()
@@ -158,9 +198,10 @@ def import_meteoswiss_data_publish(data, context):
     """
     with setup(data, context):
         from phenoback.functions import meteoswiss
-        log.info('Import meteoswiss stations')
+
+        log.info("Import meteoswiss stations")
         meteoswiss.process_stations()
-        log.info('Import meteoswiss observations')
+        log.info("Import meteoswiss observations")
         meteoswiss.process_observations()
 
 
@@ -171,19 +212,25 @@ def process_document_ts_write(data, context):
     """
     with setup(data, context):
         from phenoback.functions import documents
+
         collection_path = get_collection_path(context)
         document_id = get_document_id(context)
 
         if is_create_event(data):
-            log.info('update created ts on document %s' % context.resource)
+            log.info("update created ts on document %s" % context.resource)
             documents.update_created_document(collection_path, document_id)
-        elif is_update_event(data) and not is_field_updated(data, documents.MODIFIED_KEY):
-            log.info('update modified ts on document %s %s' % (context.resource, get_fields_updated(data)))
+        elif is_update_event(data) and not is_field_updated(
+            data, documents.MODIFIED_KEY
+        ):
+            log.info(
+                "update modified ts on document %s %s"
+                % (context.resource, get_fields_updated(data))
+            )
             documents.update_modified_document(collection_path, document_id)
         elif is_delete_event(data):
-            log.info('document %s was deleted' % context.resource)
+            log.info("document %s was deleted" % context.resource)
         else:
-            log.debug('Nothing to do for document %s' % context.resource)
+            log.debug("Nothing to do for document %s" % context.resource)
 
 
 @retry.Retry(predicate=if_exception_type(exceptions.NotFound))
@@ -193,9 +240,10 @@ def create_thumbnail_finalize(data, context):
     """
     with setup(data, context):
         from phenoback.functions import thumbnails
-        pathfile = data['name']
 
-        log.info('Process thumbnail for %s' % pathfile)
+        pathfile = data["name"]
+
+        log.info("Process thumbnail for %s" % pathfile)
         thumbnails.process_new_image(pathfile)
 
 
@@ -206,4 +254,5 @@ def rollover_manual(data, context):
     """
     with setup(data, context):
         from phenoback.functions import rollover
+
         rollover.rollover()
