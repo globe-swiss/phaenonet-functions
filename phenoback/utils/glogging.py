@@ -7,7 +7,7 @@ import google.cloud.logging
 from google.cloud.logging.resource import Resource
 
 
-log_id = None
+log_id = "Unknown"
 
 
 def my_enqueue(
@@ -37,7 +37,7 @@ def my_enqueue(
     self._queue.put_nowait(queue_entry)
 
 
-def init(log_identifier=None):  # pragma: no cover
+def init(log_identifier="Unknown"):  # pragma: no cover
     global log_id
     log_id = log_identifier
     _Worker.enqueue = my_enqueue
