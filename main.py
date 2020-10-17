@@ -33,7 +33,7 @@ ANALYTIC_PHENOPHASES = ("BEA", "BLA", "BFA", "BVA", "FRA")
 @contextmanager  # workaround as stackdriver fails to capture stackstraces
 def setup(data, context):
     try:
-        glogging.log_id = context.event_id
+        glogging.log_id = str(context.event_id)
         log.debug("context: (%s)" % str(context))
         log.debug("data: (%s)" % str(data))
         yield
@@ -256,3 +256,20 @@ def rollover_manual(data, context):
         from phenoback.functions import rollover
 
         rollover.rollover()
+
+
+@retry.Retry()
+def e2e_clear_user_individuals_http(request):
+    """
+    Clear all individuals for the e2e test user. This is used for assuring the firestore state before running e2e tests.
+    """
+    from collections import namedtuple
+    import time
+
+    Context = namedtuple("context", "event_id")
+    context = Context(event_id=time.time())
+
+    with setup(request, context):
+        from phenoback.functions import e2e
+
+        e2e.delete_user_individuals("q7lgBm5nm7PUkof20UdZ9D4d0CV2")
