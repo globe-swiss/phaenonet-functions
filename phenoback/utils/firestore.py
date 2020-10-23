@@ -41,6 +41,8 @@ def _delete_batch(coll_ref, batch_size: int = 1000):
 
     if deleted >= batch_size:
         return _delete_batch(coll_ref, batch_size)
+    else:
+        return None
 
 
 def delete_collection(collection: str, batch_size: int = 1000) -> None:

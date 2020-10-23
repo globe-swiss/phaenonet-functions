@@ -25,7 +25,7 @@ def process_observation(
         log.error(
             "Individual %s not found. Was it deleted in the meantime?", individual_id
         )
-        return
+        return False
     followers = get_followers(individual, user_id)
     if followers:
         log.info("write activity %s for observation %s", event_id, observation_id)

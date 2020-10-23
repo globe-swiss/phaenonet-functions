@@ -64,7 +64,8 @@ disable=redefined-outer-name,
         missing-function-docstring,
         missing-module-docstring,
         missing-class-docstring,
-        line-too-long
+        line-too-long,
+        no-else-return
 
 
 

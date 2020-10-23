@@ -12,7 +12,7 @@ log_id = "Unknown"  # pylint: disable=invalid-name
 
 def my_enqueue(
     self, record, message, resource=None, labels=None, trace=None, span_id=None
-):  # pragma: no cover
+):  # pragma: no cover, pylint: disable=too-many-arguments
     # pylint: disable=protected-access
     resource = Resource(
         type="cloud_function",

@@ -172,7 +172,7 @@ def get_altitude_grp(individual_id: str) -> Optional[str]:
     individual = get_individual(individual_id)
     if not individual:
         log.error("Individual %s not found to lookup altitude group", individual_id)
-        return
+        return None
     altitude = individual.get("altitude", None)
     altitude_key = None
     if altitude is not None:
