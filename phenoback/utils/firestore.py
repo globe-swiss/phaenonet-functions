@@ -2,15 +2,23 @@ from typing import List, Any, Optional
 import logging
 
 from firebase_admin import firestore
-from google.cloud.firestore_v1 import Query, DELETE_FIELD, ArrayUnion
+from google.cloud.firestore_v1 import (
+    Query,
+    DELETE_FIELD as _DELETE_FIELD,
+    ArrayUnion as _ArrayUnion,
+)
 from google.cloud.firestore_v1.client import Client
 from google.cloud.firestore_v1.collection import CollectionReference
+
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 _db = None
-DELETE_FIELD = DELETE_FIELD
+
+# exported
+DELETE_FIELD = _DELETE_FIELD
+ArrayUnion = _ArrayUnion
 
 
 def firestore_client() -> Client:

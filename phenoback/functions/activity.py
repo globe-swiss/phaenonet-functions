@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 from typing import Set
 
-from phenoback.utils.firestore import query_collection, update_document, write_document
+from phenoback.utils.firestore import query_collection, write_document
 from phenoback.utils.data import get_phenophase, get_species, get_individual, get_user
 
 log = logging.getLogger(__name__)

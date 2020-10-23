@@ -1,10 +1,8 @@
 import os
 import re
-import signal
 import sys
 
 from google.cloud import firestore
-from requests import post
 from xprocess import ProcessStarter
 
 import google.auth.credentials

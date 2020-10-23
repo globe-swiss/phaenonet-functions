@@ -104,7 +104,6 @@ def test_get_followers(mocker, user_following, individuals_following):
         "phenoback.functions.activity.query_collection",
         side_effect=[users_following_mock, individuals_following_mock],
     )
-    mocker.patch("phenoback.functions.activity.update_document")
 
     assert expected == activity.get_followers("ignored", "ignored")
 
