@@ -3,6 +3,8 @@ import pytest
 from phenoback.utils import data as d, firestore as f
 from phenoback.functions import rollover
 
+# pylint: disable=unused-argument
+
 
 @pytest.fixture()
 def setup() -> None:

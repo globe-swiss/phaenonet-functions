@@ -25,23 +25,15 @@ def image_rgb():
     return file
 
 
-@pytest.mark.parametrize(
-    "filename",
-    [
-        ("test.jpg"),
-        ("test.png"),
-        ("test"),
-        ("test_tn"),
-        ("test_tn_tn"),
-    ],
-)
-def test_process_new_image_infinite_loop(mocker, image_rgb, filename):
+def test_process_new_image_infinite_loop(mocker, image_rgb):
     mocker.patch("phenoback.functions.thumbnails.download_file", return_value=image_rgb)
     upload_file = mocker.patch("phenoback.functions.thumbnails.upload_file")
 
+    # process a image
     assert thumbnails.process_new_image("images/user_id/individuals/test.jpeg")
     upload_file.assert_called()
     written_file = upload_file.call_args[0][1]
+    # assert the output of the function is not processed again
     assert not thumbnails.process_new_image(written_file), written_file
 
 
