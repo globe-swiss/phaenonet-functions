@@ -4,7 +4,6 @@ from typing import Dict
 
 import google.api_core.exceptions
 import pytest
-
 from phenoback.utils import firestore as f
 
 
@@ -114,7 +113,6 @@ def test_query_collection(collection, doc_id, doc_id2, doc):
 
 
 def test_query_collection__no_result(collection, doc_id, doc_id2, doc):
-    assert doc != doc2
     f.write_document(collection, doc_id, doc)
     f.write_document(collection, doc_id2, {"key": "value"})
     result = list(f.query_collection(collection, "key", "==", "miss").stream())
