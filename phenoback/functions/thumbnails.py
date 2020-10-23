@@ -14,7 +14,7 @@ def process_new_image(pathfile: str, bucket: str = None) -> bool:
     filename_ext = os.path.splitext(pathfile)[1]
 
     if path.startswith("images/") and not filename_base.endswith("_tn"):
-        log.debug("creating thumbnail for %s" % pathfile)
+        log.debug("creating thumbnail for %s", pathfile)
         img_in = download_file(bucket, pathfile)
         img_out = process_image(img_in)
 
@@ -26,7 +26,7 @@ def process_new_image(pathfile: str, bucket: str = None) -> bool:
         )
         return True
     else:
-        log.debug("skipping thumbnail creation for %s" % pathfile)
+        log.debug("skipping thumbnail creation for %s", pathfile)
         return False
 
 

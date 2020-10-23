@@ -22,13 +22,17 @@ def update_last_observation(
 
         update_document("individuals", individual_id, data)
         log.info(
-            "updated last observation for %s (%s -> %s)"
-            % (individual_id, old_observation_date, observation_date)
+            "updated last observation for %s (%s -> %s)",
+            individual_id,
+            old_observation_date,
+            observation_date,
         )
         return True
     else:
         log.info(
-            "no update for last observation for %s (%s > %s)"
-            % (individual_id, old_observation_date, observation_date)
+            "no update for last observation for %s (%s > %s)",
+            individual_id,
+            old_observation_date,
+            observation_date,
         )
         return False

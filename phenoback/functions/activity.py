@@ -23,12 +23,12 @@ def process_observation(
     individual_dict = get_individual(individual_id)
     if not individual_dict:
         log.error(
-            "Individual %s not found. Was it deleted in the meantime?" % individual_id
+            "Individual %s not found. Was it deleted in the meantime?", individual_id
         )
         return
     followers = get_followers(individual, user_id)
     if followers:
-        log.info("write activity %s for observation %s" % (event_id, observation_id))
+        log.info("write activity %s for observation %s", event_id, observation_id)
         data = {
             "type": "observation",
             "observation_id": observation_id,
@@ -49,7 +49,7 @@ def process_observation(
         return True
     else:
         log.debug(
-            "no activity written for observation %s, no followers" % observation_id
+            "no activity written for observation %s, no followers", observation_id
         )
         return False
 
