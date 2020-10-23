@@ -156,4 +156,4 @@ def _load_hash(key: str) -> Optional[str]:
 
 
 def _get_hash(data) -> str:
-    return md5(data.encode()).hexdigest()
+    return md5(data.encode()).hexdigest()  # nosec (B303)
