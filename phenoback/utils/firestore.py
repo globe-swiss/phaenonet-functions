@@ -14,7 +14,7 @@ from google.cloud.firestore_v1.collection import CollectionReference
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
-_db = None
+_db = None  # pylint: disable=invalid-name
 
 # exported
 DELETE_FIELD = _DELETE_FIELD
@@ -22,7 +22,7 @@ ArrayUnion = _ArrayUnion
 
 
 def firestore_client() -> Client:
-    global _db
+    global _db  # pylint: disable=invalid-name
     if not _db:  # pragma: no cover
         _db = firestore.client()
     return _db

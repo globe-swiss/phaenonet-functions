@@ -7,7 +7,7 @@ import google.cloud.logging
 from google.cloud.logging.resource import Resource
 
 
-log_id = "Unknown"
+log_id = "Unknown"  # pylint: disable=invalid-name
 
 
 def my_enqueue(
@@ -39,7 +39,7 @@ def my_enqueue(
 
 
 def init(log_identifier="Unknown"):  # pragma: no cover
-    global log_id
+    global log_id  # pylint: disable=invalid-name
     log_id = log_identifier
     _Worker.enqueue = my_enqueue
 
