@@ -19,6 +19,8 @@ station_collection = "individuals"
 
 Response = namedtuple("response", "ok text elapsed status_code")
 
+# pylint: disable=protected-access
+
 
 def test_get_hash():
     assert meteoswiss._get_hash("string1") == meteoswiss._get_hash("string1")

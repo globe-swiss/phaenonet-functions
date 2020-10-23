@@ -13,6 +13,7 @@ log_id = "Unknown"
 def my_enqueue(
     self, record, message, resource=None, labels=None, trace=None, span_id=None
 ):  # pragma: no cover
+    # pylint: disable=protected-access
     resource = Resource(
         type="cloud_function",
         labels={
