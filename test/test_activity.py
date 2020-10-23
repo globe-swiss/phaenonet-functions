@@ -1,7 +1,9 @@
-from typing import List
-import google.cloud.firestore_v1.collection
 from collections import namedtuple
+from typing import List
+
+import google.cloud.firestore_v1.collection
 import pytest
+
 from phenoback.functions import activity
 
 User = namedtuple("user", "id")

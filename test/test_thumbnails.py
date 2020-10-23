@@ -1,8 +1,10 @@
+from io import BytesIO
+from test import get_resource_path
+
 import pytest
 from PIL import Image
-from io import BytesIO
+
 from phenoback.functions import thumbnails
-from test import get_resource_path
 
 
 @pytest.fixture()

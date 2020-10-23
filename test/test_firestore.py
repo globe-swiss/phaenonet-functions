@@ -1,10 +1,11 @@
-from typing import Dict
-
-import pytest
-from phenoback.utils import firestore as f
 import random
 import string
+from typing import Dict
+
 import google.api_core.exceptions
+import pytest
+
+from phenoback.utils import firestore as f
 
 
 def get_random_string(length) -> str:

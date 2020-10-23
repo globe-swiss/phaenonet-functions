@@ -1,7 +1,8 @@
+from datetime import datetime
+
 import pytest
 
 from phenoback.functions import observation
-from datetime import datetime
 
 
 @pytest.mark.parametrize(

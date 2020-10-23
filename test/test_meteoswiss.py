@@ -1,12 +1,11 @@
 import csv
-from collections import namedtuple
-
 import test
+from collections import namedtuple
 
 import pytest
 
 from phenoback.functions import meteoswiss
-from phenoback.utils.data import write_individual, get_individual
+from phenoback.utils.data import get_individual, write_individual
 
 HASH_COLLECTION = "definitions"
 HASH_DOCUMENT = "meteoswiss_import"

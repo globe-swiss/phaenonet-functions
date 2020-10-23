@@ -2,21 +2,20 @@ import logging
 import os
 from contextlib import contextmanager
 
-from google.api_core import retry, exceptions
-from google.api_core.retry import if_exception_type
-
 import firebase_admin
+from google.api_core import exceptions, retry
+from google.api_core.retry import if_exception_type
 
 from phenoback.utils import glogging
 from phenoback.utils.gcloud import (
+    get_collection_path,
     get_document_id,
     get_field,
-    is_create_event,
-    is_field_updated,
-    is_delete_event,
-    is_update_event,
-    get_collection_path,
     get_fields_updated,
+    is_create_event,
+    is_delete_event,
+    is_field_updated,
+    is_update_event,
 )
 
 # allow import outside toplevel as not all modules need to be loaded for every function
@@ -271,8 +270,8 @@ def e2e_clear_user_individuals_http(request):
     """
     Clear all individuals for the e2e test user. This is used for assuring the firestore state before running e2e tests.
     """
-    from collections import namedtuple
     import time
+    from collections import namedtuple
 
     Context = namedtuple("context", "event_id")
     context = Context(event_id=time.time())

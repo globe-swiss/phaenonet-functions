@@ -1,12 +1,12 @@
 import logging
 
 from phenoback.utils.data import (
-    query_individuals,
-    write_individuals,
     delete_individual,
     get_phenoyear,
-    update_phenoyear,
     has_observations,
+    query_individuals,
+    update_phenoyear,
+    write_individuals,
 )
 
 log = logging.getLogger(__name__)

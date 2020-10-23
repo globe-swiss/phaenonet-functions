@@ -1,6 +1,7 @@
-from typing import Union, List
 import logging
 from datetime import datetime
+from typing import List, Union
+
 import dateparser
 
 log = logging.getLogger(__name__)

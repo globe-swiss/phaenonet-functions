@@ -1,10 +1,11 @@
 import logging
-from typing import Optional
 from datetime import datetime
+from typing import Optional
 
-from phenoback.utils.firestore import get_document, write_document, DELETE_FIELD
-from phenoback.utils.data import get_individual
 import numpy as np
+
+from phenoback.utils.data import get_individual
+from phenoback.utils.firestore import DELETE_FIELD, get_document, write_document
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)

@@ -1,11 +1,12 @@
-import pytest
-from unittest.mock import Mock
-import deepdiff
 import copy
-
-from phenoback.utils import firestore
-from phenoback.functions import analytics
 from datetime import datetime
+from unittest.mock import Mock
+
+import deepdiff
+import pytest
+
+from phenoback.functions import analytics
+from phenoback.utils import firestore
 
 
 def _date(i: int) -> datetime:

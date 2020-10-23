@@ -1,8 +1,10 @@
 import logging
 import os
-from phenoback.utils.storage import download_file, upload_file
-from PIL import Image, ImageOps
 import tempfile
+
+from PIL import Image, ImageOps
+
+from phenoback.utils.storage import download_file, upload_file
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)

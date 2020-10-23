@@ -2,11 +2,11 @@ import os
 import re
 import sys
 
+import google.auth.credentials
+import mock
 from google.cloud import firestore
 from xprocess import ProcessStarter
 
-import google.auth.credentials
-import mock
 import phenoback.utils.firestore
 
 

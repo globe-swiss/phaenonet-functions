@@ -1,14 +1,16 @@
-from datetime import timezone, datetime
+from datetime import datetime, timezone
 from unittest.mock import PropertyMock
+
 import pytest
 from google.api.context_pb2 import Context
+
 from phenoback.utils.gcloud import (
-    get_document_id,
     get_collection_path,
+    get_document_id,
     get_field,
     is_create_event,
-    is_update_event,
     is_delete_event,
+    is_update_event,
 )
 
 

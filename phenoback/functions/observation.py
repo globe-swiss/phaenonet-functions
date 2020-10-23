@@ -1,8 +1,8 @@
 import logging
 from datetime import datetime, timezone
 
-from phenoback.utils.firestore import update_document
 from phenoback.utils.data import get_individual
+from phenoback.utils.firestore import update_document
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)

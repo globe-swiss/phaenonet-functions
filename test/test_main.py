@@ -1,16 +1,15 @@
-import pytest
-from unittest.mock import MagicMock
-
 from collections import namedtuple
 from datetime import datetime
+from unittest.mock import MagicMock
+
 import firebase_admin
+import pytest
 
 firebase_admin.initialize_app = MagicMock()
 from phenoback.utils import glogging
 
 glogging.init = MagicMock()
 import main
-
 
 Context = namedtuple("context", "event_id, resource")
 default_context = Context(event_id="ignored", resource="document_path/document_id")

@@ -1,11 +1,11 @@
+import logging
 import os
 from datetime import datetime
-import logging
+
+import google.cloud.logging
 from google.cloud.logging import _helpers
 from google.cloud.logging.handlers.transports.background_thread import _Worker
-import google.cloud.logging
 from google.cloud.logging.resource import Resource
-
 
 log_id = "Unknown"  # pylint: disable=invalid-name
 

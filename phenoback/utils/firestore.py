@@ -1,15 +1,12 @@
-from typing import List, Any, Optional
 import logging
+from typing import Any, List, Optional
 
 from firebase_admin import firestore
-from google.cloud.firestore_v1 import (
-    Query,
-    DELETE_FIELD as _DELETE_FIELD,
-    ArrayUnion as _ArrayUnion,
-)
+from google.cloud.firestore_v1 import DELETE_FIELD as _DELETE_FIELD
+from google.cloud.firestore_v1 import ArrayUnion as _ArrayUnion
+from google.cloud.firestore_v1 import Query
 from google.cloud.firestore_v1.client import Client
 from google.cloud.firestore_v1.collection import CollectionReference
-
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)

@@ -1,18 +1,19 @@
-import logging
-from typing import Optional, List, Dict
-
-from requests import get
-from hashlib import md5
 import csv
 import io
+import logging
 from datetime import datetime
-from phenoback.utils.firestore import (
-    write_batch,
-    get_document,
-    write_document,
-    ArrayUnion,
-)
+from hashlib import md5
+from typing import Dict, List, Optional
+
+from requests import get
+
 from phenoback.utils.data import get_phenoyear, update_individual
+from phenoback.utils.firestore import (
+    ArrayUnion,
+    get_document,
+    write_batch,
+    write_document,
+)
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
