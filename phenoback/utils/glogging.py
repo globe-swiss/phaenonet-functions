@@ -39,7 +39,7 @@ def my_enqueue(
 
 
 def init(log_identifier="Unknown"):  # pragma: no cover
-    global log_id  # pylint: disable=invalid-name
+    global log_id  # pylint: disable=invalid-name,global-statement
     log_id = log_identifier
     _Worker.enqueue = my_enqueue
 

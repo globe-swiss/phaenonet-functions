@@ -19,7 +19,7 @@ ArrayUnion = _ArrayUnion
 
 
 def firestore_client() -> Client:
-    global _db  # pylint: disable=invalid-name
+    global _db  # pylint: disable=invalid-name,global-statement
     if not _db:  # pragma: no cover
         _db = firestore.client()
     return _db
