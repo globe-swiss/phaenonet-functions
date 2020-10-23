@@ -1,10 +1,11 @@
 import logging
-from typing import Optional
 from datetime import datetime
+from typing import Optional
 
-from phenoback.utils.firestore import get_document, write_document, DELETE_FIELD
-from phenoback.utils.data import get_individual
 import numpy as np
+
+from phenoback.utils.data import get_individual
+from phenoback.utils.firestore import DELETE_FIELD, get_document, write_document
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
@@ -24,8 +25,14 @@ def update_state(
 ) -> list:
     log.debug(
         "Update state: (observation_id: %s, observation_date: %s, phase: %s, source: %s, year: %i, "
-        "species: %s, altitude_grp: %s)"
-        % (observation_id, observation_date, phase, source, year, species, altitude_grp)
+        "species: %s, altitude_grp: %s)",
+        observation_id,
+        observation_date,
+        phase,
+        source,
+        year,
+        species,
+        altitude_grp,
     )
     document_id = get_analytics_document_id(year, species, source, altitude_grp)
     state_document = get_document(STATE_COLLECTION, document_id)
@@ -54,8 +61,12 @@ def update_result(
     altitude_grp: str = None,
 ) -> None:
     log.debug(
-        "Write results: (phase: %s, source: %s, year: %i, species: %s, altitude_grp: %s)"
-        % (phase, source, year, species, altitude_grp)
+        "Write results: (phase: %s, source: %s, year: %i, species: %s, altitude_grp: %s)",
+        phase,
+        source,
+        year,
+        species,
+        altitude_grp,
     )
     document_id = get_analytics_document_id(year, species, source, altitude_grp)
     if observation_dates:
@@ -113,8 +124,13 @@ def remove_observation(
 ) -> None:
     log.debug(
         "Remove Observation: (observation_id: %s, phase: %s, source: %s, year: %i, "
-        "species: %s, altitude_grp: %s)"
-        % (observation_id, phase, source, year, species, altitude_grp)
+        "species: %s, altitude_grp: %s)",
+        observation_id,
+        phase,
+        source,
+        year,
+        species,
+        altitude_grp,
     )
     try:
         document_id = get_analytics_document_id(year, species, source, altitude_grp)
@@ -122,8 +138,13 @@ def remove_observation(
         if not state_document:
             log.error(
                 "State document %s not found for observation removal: (observation_id: %s, source: %s, "
-                "year: %i, species: %s, phase: %s)"
-                % (document_id, observation_id, source, year, species, phase)
+                "year: %i, species: %s, phase: %s)",
+                document_id,
+                observation_id,
+                source,
+                year,
+                species,
+                phase,
             )
             return
         state = state_document["state"]
@@ -138,15 +159,20 @@ def remove_observation(
     except KeyError:
         log.error(
             "Observation not found in state for removal: (observation_id: %s, source: %s, year: %i, species: %s, "
-            "phase: %s)" % (observation_id, source, year, species, phase)
+            "phase: %s)",
+            observation_id,
+            source,
+            year,
+            species,
+            phase,
         )
 
 
 def get_altitude_grp(individual_id: str) -> Optional[str]:
     individual = get_individual(individual_id)
     if not individual:
-        log.error("Individual %s not found to lookup altitude group" % individual_id)
-        return
+        log.error("Individual %s not found to lookup altitude group", individual_id)
+        return None
     altitude = individual.get("altitude", None)
     altitude_key = None
     if altitude is not None:
@@ -161,7 +187,7 @@ def get_altitude_grp(individual_id: str) -> Optional[str]:
         else:
             altitude_key = "alt5"
     else:
-        log.error("no altitude found for individual %s" % individual_id)
+        log.error("no altitude found for individual %s", individual_id)
     return altitude_key
 
 
@@ -185,16 +211,14 @@ def process_observation(
 ):
     log.info(
         "Process observation: (observation_id: %s, observation_date: %s, individual_id: %s, source: %s, "
-        "year: %i, species: %s, phase: %s)"
-        % (
-            observation_id,
-            observation_date,
-            individual_id,
-            source,
-            year,
-            species,
-            phase,
-        )
+        "year: %i, species: %s, phase: %s)",
+        observation_id,
+        observation_date,
+        individual_id,
+        source,
+        year,
+        species,
+        phase,
     )
     update_data(
         observation_id=observation_id,
@@ -245,8 +269,13 @@ def process_remove_observation(
 ):
     log.info(
         "Remove observation: (observation_id: %s,  individual_id: %s, source: %s, "
-        "year: %i, species: %s, phase: %s)"
-        % (observation_id, individual_id, source, year, species, phase)
+        "year: %i, species: %s, phase: %s)",
+        observation_id,
+        individual_id,
+        source,
+        year,
+        species,
+        phase,
     )
     remove_observation(
         observation_id=observation_id,

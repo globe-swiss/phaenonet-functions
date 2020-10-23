@@ -1,22 +1,23 @@
+# allow import outside toplevel as not all modules need to be loaded for every function
+# pylint: disable=import-outside-toplevel
 import logging
 import os
 from contextlib import contextmanager
 
-from google.api_core import retry, exceptions
-from google.api_core.retry import if_exception_type
-
 import firebase_admin
+from google.api_core import exceptions, retry
+from google.api_core.retry import if_exception_type
 
 from phenoback.utils import glogging
 from phenoback.utils.gcloud import (
+    get_collection_path,
     get_document_id,
     get_field,
-    is_create_event,
-    is_field_updated,
-    is_delete_event,
-    is_update_event,
-    get_collection_path,
     get_fields_updated,
+    is_create_event,
+    is_delete_event,
+    is_field_updated,
+    is_update_event,
 )
 
 firebase_admin.initialize_app(
@@ -34,8 +35,8 @@ ANALYTIC_PHENOPHASES = ("BEA", "BLA", "BFA", "BVA", "FRA")
 def setup(data, context):
     try:
         glogging.log_id = str(context.event_id)
-        log.debug("context: (%s)" % str(context))
-        log.debug("data: (%s)" % str(data))
+        log.debug("context: (%s)", str(context))
+        log.debug("data: (%s)", str(data))
         yield
     except Exception:
         log.exception("Fatal error in cloud function")
@@ -100,8 +101,9 @@ def process_observation_create_analytics(data, context):
             from phenoback.functions import analytics
 
             log.info(
-                "Process analytic values for %s, phenophase %s"
-                % (observation_id, phenophase)
+                "Process analytic values for %s, phenophase %s",
+                observation_id,
+                phenophase,
             )
             analytics.process_observation(
                 observation_id,
@@ -114,13 +116,15 @@ def process_observation_create_analytics(data, context):
             )
         else:
             log.debug(
-                "No analytic values processed for %s, phenophase %s"
-                % (observation_id, phenophase)
+                "No analytic values processed for %s, phenophase %s",
+                observation_id,
+                phenophase,
             )
         # LAST OBSERVATION DATE
         log.info(
-            "Process last observation date for %s, phenophase %s"
-            % (observation_id, phenophase)
+            "Process last observation date for %s, phenophase %s",
+            observation_id,
+            phenophase,
         )
         observation.update_last_observation(individual_id, phenophase, observation_date)
 
@@ -157,8 +161,9 @@ def process_observation_delete_analytics(data, context):
             )
         else:
             log.debug(
-                "No analytic values processed for %s, phenophase %s"
-                % (observation_id, phenophase)
+                "No analytic values processed for %s, phenophase %s",
+                observation_id,
+                phenophase,
             )
 
 
@@ -180,15 +185,15 @@ def process_user_write(data, context):
                 get_field(data, "nickname"),
             )
         elif is_delete_event(data):
-            log.info("delete user %s" % user_id)
+            log.info("delete user %s", user_id)
             users.process_delete_user(
                 user_id, get_field(data, "nickname", old_value=True)
             )
         elif is_create_event(data):
-            log.info("create user %s" % user_id)
+            log.info("create user %s", user_id)
             users.process_new_user(user_id, get_field(data, "nickname"))
         else:
-            log.debug("Nothing to do for %s" % user_id)
+            log.debug("Nothing to do for %s", user_id)
 
 
 @retry.Retry()
@@ -217,20 +222,21 @@ def process_document_ts_write(data, context):
         document_id = get_document_id(context)
 
         if is_create_event(data):
-            log.info("update created ts on document %s" % context.resource)
+            log.info("update created ts on document %s", context.resource)
             documents.update_created_document(collection_path, document_id)
         elif is_update_event(data) and not is_field_updated(
             data, documents.MODIFIED_KEY
         ):
             log.info(
-                "update modified ts on document %s %s"
-                % (context.resource, get_fields_updated(data))
+                "update modified ts on document %s %s",
+                context.resource,
+                get_fields_updated(data),
             )
             documents.update_modified_document(collection_path, document_id)
         elif is_delete_event(data):
-            log.info("document %s was deleted" % context.resource)
+            log.info("document %s was deleted", context.resource)
         else:
-            log.debug("Nothing to do for document %s" % context.resource)
+            log.debug("Nothing to do for document %s", context.resource)
 
 
 @retry.Retry(predicate=if_exception_type(exceptions.NotFound))
@@ -243,7 +249,7 @@ def create_thumbnail_finalize(data, context):
 
         pathfile = data["name"]
 
-        log.info("Process thumbnail for %s" % pathfile)
+        log.info("Process thumbnail for %s", pathfile)
         thumbnails.process_new_image(pathfile)
 
 
@@ -263,8 +269,8 @@ def e2e_clear_user_individuals_http(request):
     """
     Clear all individuals for the e2e test user. This is used for assuring the firestore state before running e2e tests.
     """
-    from collections import namedtuple
     import time
+    from collections import namedtuple
 
     Context = namedtuple("context", "event_id")
     context = Context(event_id=time.time())

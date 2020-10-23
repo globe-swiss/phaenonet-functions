@@ -1,6 +1,7 @@
 __all__ = ["functions", "utils"]
 import logging
 import os
+
 import firebase_admin
 from firebase_admin import credentials
 
@@ -25,7 +26,7 @@ def load_credentials(
             cred, {"storageBucket": "%s.appspot.com" % cred.project_id}
         )
 
-        log.info("app initialized with local credentials %s" % credential_file)
+        log.info("app initialized with local credentials %s", credential_file)
 
 
 def sets_credential_env(

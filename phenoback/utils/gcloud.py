@@ -1,6 +1,7 @@
-from typing import Union, List
 import logging
 from datetime import datetime
+from typing import List, Union
+
 import dateparser
 
 log = logging.getLogger(__name__)
@@ -23,13 +24,14 @@ def get_field(
             return dateparser.parse(value)
         else:  # pragma: no cover
             log.warning(
-                "Unknown field type %s, returning str representation: %s"
-                % (value_type, str(value))
+                "Unknown field type %s, returning str representation: %s",
+                value_type,
+                str(value),
             )
             return str(value)
     else:
         log.warning(
-            "field %s not found in data %s, returning None" % (fieldname, str(data))
+            "field %s not found in data %s, returning None", fieldname, str(data)
         )
         return None
 

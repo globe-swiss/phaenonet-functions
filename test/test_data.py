@@ -2,7 +2,8 @@ from datetime import datetime
 
 import pytest
 
-from phenoback.utils import data as d, firestore as f
+from phenoback.utils import data as d
+from phenoback.utils import firestore as f
 
 
 def test_update_get_phenoyear():

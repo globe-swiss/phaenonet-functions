@@ -1,18 +1,19 @@
+import logging
 import os
 from datetime import datetime
-import logging
+
+import google.cloud.logging
 from google.cloud.logging import _helpers
 from google.cloud.logging.handlers.transports.background_thread import _Worker
-import google.cloud.logging
 from google.cloud.logging.resource import Resource
 
-
-log_id = "Unknown"
+log_id = "Unknown"  # pylint: disable=invalid-name
 
 
 def my_enqueue(
     self, record, message, resource=None, labels=None, trace=None, span_id=None
-):  # pragma: no cover
+):  # pragma: no cover, pylint: disable=too-many-arguments
+    # pylint: disable=protected-access
     resource = Resource(
         type="cloud_function",
         labels={
@@ -38,7 +39,7 @@ def my_enqueue(
 
 
 def init(log_identifier="Unknown"):  # pragma: no cover
-    global log_id
+    global log_id  # pylint: disable=invalid-name,global-statement
     log_id = log_identifier
     _Worker.enqueue = my_enqueue
 

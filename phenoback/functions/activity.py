@@ -2,8 +2,8 @@ import logging
 from datetime import datetime
 from typing import Set
 
-from phenoback.utils.firestore import query_collection, update_document, write_document
-from phenoback.utils.data import get_phenophase, get_species, get_individual, get_user
+from phenoback.utils.data import get_individual, get_phenophase, get_species, get_user
+from phenoback.utils.firestore import query_collection, write_document
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -23,12 +23,12 @@ def process_observation(
     individual_dict = get_individual(individual_id)
     if not individual_dict:
         log.error(
-            "Individual %s not found. Was it deleted in the meantime?" % individual_id
+            "Individual %s not found. Was it deleted in the meantime?", individual_id
         )
-        return
+        return False
     followers = get_followers(individual, user_id)
     if followers:
-        log.info("write activity %s for observation %s" % (event_id, observation_id))
+        log.info("write activity %s for observation %s", event_id, observation_id)
         data = {
             "type": "observation",
             "observation_id": observation_id,
@@ -49,7 +49,7 @@ def process_observation(
         return True
     else:
         log.debug(
-            "no activity written for observation %s, no followers" % observation_id
+            "no activity written for observation %s, no followers", observation_id
         )
         return False
 

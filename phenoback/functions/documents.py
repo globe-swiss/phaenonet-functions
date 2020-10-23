@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from phenoback.utils.firestore import update_document
 
 MODIFIED_KEY = "modified"

@@ -1,15 +1,16 @@
 from typing import Any, List
 
-from phenoback.utils.firestore import (
-    get_document,
-    update_document,
-    query_collection,
-    write_batch,
-    delete_document,
-    write_document,
-    delete_batch,
-)
 from google.cloud.firestore_v1 import Query
+
+from phenoback.utils.firestore import (
+    delete_batch,
+    delete_document,
+    get_document,
+    query_collection,
+    update_document,
+    write_batch,
+    write_document,
+)
 
 
 def _get_static_config() -> dict:

@@ -1,5 +1,6 @@
-import pytest
 from test import emulator
+
+import pytest
 from requests import delete
 
 

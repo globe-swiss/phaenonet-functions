@@ -1,18 +1,19 @@
-import logging
-from typing import Optional, List, Dict
-
-from requests import get
-from hashlib import md5
 import csv
 import io
+import logging
 from datetime import datetime
-from phenoback.utils.firestore import (
-    write_batch,
-    get_document,
-    write_document,
-    ArrayUnion,
-)
+from hashlib import md5
+from typing import Dict, List, Optional
+
+from requests import get
+
 from phenoback.utils.data import get_phenoyear, update_individual
+from phenoback.utils.firestore import (
+    ArrayUnion,
+    get_document,
+    write_batch,
+    write_document,
+)
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -31,7 +32,7 @@ def process_stations() -> bool:
             reader = csv.DictReader(io.StringIO(response.text), delimiter=";")
             stations = _get_individuals_dicts(reader)
             log.info(
-                "Update %i stations fetched in %s" % (len(stations), response.elapsed)
+                "Update %i stations fetched in %s", len(stations), response.elapsed
             )
             write_batch("individuals", "id", stations, merge=True)
             _set_hash("stations", response.text)
@@ -40,7 +41,7 @@ def process_stations() -> bool:
             log.debug("Station file did not change.")
             return False
     else:
-        log.error("Could not fetch station data (%s)" % response.status_code)
+        log.error("Could not fetch station data (%s)", response.status_code)
         raise ResourceNotFoundException(
             "Could not fetch station data (%s)" % response.status_code
         )
@@ -78,8 +79,9 @@ def process_observations() -> bool:
             reader = csv.DictReader(io.StringIO(response.text), delimiter=";")
             observations = _get_observations_dicts(reader)
             log.info(
-                "Update %i observations fetched in %s"
-                % (len(observations), response.elapsed)
+                "Update %i observations fetched in %s",
+                len(observations),
+                response.elapsed,
             )
             # write observations
             write_batch("observations", "id", observations, merge=True)
@@ -91,7 +93,7 @@ def process_observations() -> bool:
             log.debug("Observations file did not change.")
             return False
     else:
-        log.error("Could not fetch observation data (%s)" % response.status_code)
+        log.error("Could not fetch observation data (%s)", response.status_code)
         raise ResourceNotFoundException(
             "Could not fetch observation data (%s)" % response.status_code
         )
@@ -143,15 +145,15 @@ def _set_hash(key: str, data: str):
     write_document(
         "definitions", "meteoswiss_import", {"hash_%s" % key: hashed_data}, merge=True
     )
-    log.debug("set hash for %s to %s" % (key, hashed_data))
+    log.debug("set hash for %s to %s", key, hashed_data)
 
 
 def _load_hash(key: str) -> Optional[str]:
     doc = get_document("definitions", "meteoswiss_import")
     loaded_hash = doc.get("hash_%s" % key) if doc else None
-    log.debug("loaded hash for %s to %s" % (key, loaded_hash))
+    log.debug("loaded hash for %s to %s", key, loaded_hash)
     return loaded_hash
 
 
 def _get_hash(data) -> str:
-    return md5(data.encode()).hexdigest()
+    return md5(data.encode()).hexdigest()  # nosec (B303)

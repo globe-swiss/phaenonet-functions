@@ -1,21 +1,21 @@
+# pylint: disable=protected-access
 import csv
-from collections import namedtuple
-
 import test
+from collections import namedtuple
 
 import pytest
 
 from phenoback.functions import meteoswiss
-from phenoback.utils.data import write_individual, get_individual
+from phenoback.utils.data import get_individual, write_individual
 
-hash_collection = "definitions"
-hash_document = "meteoswiss_import"
-hash_key_prefix = "hash_"
+HASH_COLLECTION = "definitions"
+HASH_DOCUMENT = "meteoswiss_import"
+HASH_KEY_PREFIX = "hash_"
 
-observation_id_key = "id"
-observation_collection = "observations"
-station_id_key = "id"
-station_collection = "individuals"
+OBSERVATION_ID_KEY = "id"
+OBSERVATION_COLLECTION = "observations"
+STATION_ID_KEY = "id"
+STATION_COLLECTION = "individuals"
 
 Response = namedtuple("response", "ok text elapsed status_code")
 
@@ -34,10 +34,10 @@ def test_set_hash(mocker):
     meteoswiss._set_hash("a_key", "some_data")
     write_mock.assert_called_once()
     call = write_mock.call_args[0]
-    assert call[0] == hash_collection  # collection
-    assert call[1] == hash_document  # document
+    assert call[0] == HASH_COLLECTION  # collection
+    assert call[1] == HASH_DOCUMENT  # document
     assert len(call[2]) == 1
-    assert call[2].get("%sa_key" % hash_key_prefix) == (
+    assert call[2].get("%sa_key" % HASH_KEY_PREFIX) == (
         meteoswiss._get_hash("some_data")
     )
 
@@ -45,13 +45,13 @@ def test_set_hash(mocker):
 @pytest.mark.parametrize(
     "key, document, expected",
     [
-        ("mykey", {"%smykey" % hash_key_prefix: "myhash"}, "myhash"),
-        ("otherkey", {"%smykey" % hash_key_prefix: "myhash"}, None),
+        ("mykey", {"%smykey" % HASH_KEY_PREFIX: "myhash"}, "myhash"),
+        ("otherkey", {"%smykey" % HASH_KEY_PREFIX: "myhash"}, None),
         (
             "akey",
             {
-                "%smykey" % hash_key_prefix: "myhash",
-                "%sakey" % hash_key_prefix: "ahash",
+                "%smykey" % HASH_KEY_PREFIX: "myhash",
+                "%sakey" % HASH_KEY_PREFIX: "ahash",
             },
             "ahash",
         ),
@@ -70,7 +70,7 @@ def test_get_observation_dicts(mocker):
     # assert all keys are generated
     for result in results:
         assert {
-            observation_id_key,
+            OBSERVATION_ID_KEY,
             "user",
             "date",
             "individual_id",
@@ -114,8 +114,8 @@ def test_process_observations_ok(mocker, new_hash, old_hash, is_processed_expect
         # check write
         write_batch_mock.assert_called_once()
         call = write_batch_mock.call_args
-        assert call[0][0] == observation_collection  # collection
-        assert call[0][1] == observation_id_key  # document id key
+        assert call[0][0] == OBSERVATION_COLLECTION  # collection
+        assert call[0][1] == OBSERVATION_ID_KEY  # document id key
         assert call[1] == {"merge": True}
         # check hash
         set_hash_mock.assert_called_once()
@@ -148,7 +148,7 @@ def test_get_individuals_dicts(mocker):
     # assert all keys are generated
     for result in results:
         assert {
-            station_id_key,
+            STATION_ID_KEY,
             "altitude",
             "geopos",
             "individual",
@@ -158,7 +158,7 @@ def test_get_individuals_dicts(mocker):
             "year",
         } == result.keys()
         assert result["year"] == 2011
-        assert result[station_id_key].startswith("2011_")
+        assert result[STATION_ID_KEY].startswith("2011_")
     phenoyear_mock.assert_called_once()
 
 
@@ -204,8 +204,8 @@ def test_process_stations_ok(mocker, new_hash, old_hash, is_processed_expected):
         # check write
         write_batch_mock.assert_called_once()
         call = write_batch_mock.call_args
-        assert call[0][0] == station_collection  # collection
-        assert call[0][1] == station_id_key  # document id key
+        assert call[0][0] == STATION_COLLECTION  # collection
+        assert call[0][1] == STATION_ID_KEY  # document id key
         assert call[1] == {"merge": True}
         # check hash
         set_hash_mock.assert_called_once()

@@ -1,14 +1,12 @@
 import os
 import re
-import signal
 import sys
-
-from google.cloud import firestore
-from requests import post
-from xprocess import ProcessStarter
 
 import google.auth.credentials
 import mock
+from google.cloud import firestore
+from xprocess import ProcessStarter
+
 import phenoback.utils.firestore
 
 
@@ -45,8 +43,8 @@ def start(xprocess, name):
     assert check(), "Connecting to the live environment?"
 
     credentials = mock.Mock(spec=google.auth.credentials.Credentials)
-    phenoback.utils.firestore._db = firestore.Client(
-        project="test", credentials=credentials
+    phenoback.utils.firestore._db = (  # pylint: disable=protected-access
+        firestore.Client(project="test", credentials=credentials)
     )
 
     yield logfile
