@@ -1,10 +1,9 @@
+# pylint: disable=unused-argument
 import pytest
 
 from phenoback.functions import rollover
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
-
-# pylint: disable=unused-argument
 
 
 @pytest.fixture()

@@ -1,3 +1,5 @@
+# allow import outside toplevel as not all modules need to be loaded for every function
+# pylint: disable=import-outside-toplevel
 import logging
 import os
 from contextlib import contextmanager
@@ -17,9 +19,6 @@ from phenoback.utils.gcloud import (
     is_field_updated,
     is_update_event,
 )
-
-# allow import outside toplevel as not all modules need to be loaded for every function
-# pylint: disable=import-outside-toplevel
 
 firebase_admin.initialize_app(
     options={"storageBucket": os.environ.get("storageBucket")}

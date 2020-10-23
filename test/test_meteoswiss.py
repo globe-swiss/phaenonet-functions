@@ -1,3 +1,4 @@
+# pylint: disable=protected-access
 import csv
 import test
 from collections import namedtuple
@@ -17,8 +18,6 @@ STATION_ID_KEY = "id"
 STATION_COLLECTION = "individuals"
 
 Response = namedtuple("response", "ok text elapsed status_code")
-
-# pylint: disable=protected-access
 
 
 def test_get_hash():

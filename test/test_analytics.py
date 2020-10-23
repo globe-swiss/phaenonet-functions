@@ -1,3 +1,4 @@
+# pylint: disable=too-many-arguments
 import copy
 from datetime import datetime
 from unittest.mock import Mock
