@@ -6,10 +6,10 @@ import firebase_admin
 import pytest
 
 firebase_admin.initialize_app = MagicMock()
-from phenoback.utils import glogging
+from phenoback.utils import glogging  # pylint: disable=wrong-import-position
 
 glogging.init = MagicMock()
-import main
+import main  # pylint: disable=wrong-import-position
 
 Context = namedtuple("context", "event_id, resource")
 default_context = Context(event_id="ignored", resource="document_path/document_id")
