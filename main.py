@@ -19,6 +19,9 @@ from phenoback.utils.gcloud import (
     get_fields_updated,
 )
 
+# allow import outside toplevel as not all modules need to be loaded for every function
+# pylint: disable=import-outside-toplevel
+
 firebase_admin.initialize_app(
     options={"storageBucket": os.environ.get("storageBucket")}
 )
