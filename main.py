@@ -202,7 +202,7 @@ def import_meteoswiss_data_publish(data, context):
     Imports meteoswiss stations and observations.
     """
     with setup(data, context):
-        from phenoback.functions import meteoswiss
+        from phenoback.functions import meteoswiss_import as meteoswiss
 
         log.info("Import meteoswiss stations")
         meteoswiss.process_stations()
