@@ -10,6 +10,7 @@ if [ "$1" = 'all' ] || [ -z "$1" ]; then
   gcloud functions delete process_user --project $PROJECT --region europe-west1 --quiet
 
   gcloud functions delete import_meteoswiss_data --project $PROJECT --region europe-west1 --quiet
+  gcloud functions delete export_meteoswiss_data --project $PROJECT --region europe-west1 --quiet
 
   gcloud functions delete create_thumbnails --project $PROJECT --region europe-west1 --quiet
 

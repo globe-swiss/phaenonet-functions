@@ -13,6 +13,7 @@ if [ "$1" = 'all' ] || [ -z "$1" ]; then
   gcloud functions deploy process_user --project $PROJECT --entry-point process_user_write --runtime python37 --trigger-resource "projects/$PROJECT/databases/(default)/documents/users/{user_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write --timeout 540s --region europe-west1 --quiet --env-vars-file env.$PROJECT.yaml & sleep 2
 
   gcloud functions deploy import_meteoswiss_data --project $PROJECT --entry-point import_meteoswiss_data_publish --runtime python37 --trigger-resource import_meteoswiss_data --trigger-event google.pubsub.topic.publish --timeout 540s --region europe-west1 --quiet --env-vars-file env.$PROJECT.yaml & sleep 2
+  gcloud functions deploy export_meteoswiss_data --project $PROJECT --entry-point export_meteoswiss_data_manual --runtime python37 --trigger-resource export_meteoswiss_data --trigger-event google.pubsub.topic.publish --timeout 540s --region europe-west1 --quiet --env-vars-file env.$PROJECT.yaml & sleep 2
 
   gcloud functions deploy create_thumbnails --project $PROJECT --entry-point create_thumbnail_finalize --runtime python37 --trigger-resource "$PROJECT.appspot.com" --trigger-event google.storage.object.finalize --timeout 540s --region europe-west1 --quiet --env-vars-file env.$PROJECT.yaml & sleep 2
 
