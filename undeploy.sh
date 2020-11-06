@@ -25,4 +25,5 @@ if [ "$1" = 'all' ] || [ "$1" = 'ts' ]; then
   gcloud functions delete process_ts_user --project $PROJECT --region europe-west1 --quiet
   gcloud functions delete process_ts_observation --project $PROJECT --region europe-west1 --quiet
   gcloud functions delete process_ts_individual --project $PROJECT --region europe-west1 --quiet
+  gcloud functions delete process_ts_definitions --project $PROJECT --region europe-west1 --quiet
 fi
