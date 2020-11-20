@@ -5,7 +5,7 @@ from collections import namedtuple
 
 import pytest
 
-from phenoback.functions import meteoswiss
+from phenoback.functions import meteoswiss_import as meteoswiss
 from phenoback.utils.data import get_individual, write_individual
 
 HASH_COLLECTION = "definitions"
@@ -30,7 +30,7 @@ def test_get_hash():
 
 
 def test_set_hash(mocker):
-    write_mock = mocker.patch("phenoback.functions.meteoswiss.write_document")
+    write_mock = mocker.patch("phenoback.functions.meteoswiss_import.write_document")
     meteoswiss._set_hash("a_key", "some_data")
     write_mock.assert_called_once()
     call = write_mock.call_args[0]
@@ -58,12 +58,14 @@ def test_set_hash(mocker):
     ],
 )
 def test_load_hash(mocker, key, document, expected):
-    mocker.patch("phenoback.functions.meteoswiss.get_document", return_value=document)
+    mocker.patch(
+        "phenoback.functions.meteoswiss_import.get_document", return_value=document
+    )
     assert meteoswiss._load_hash(key) == expected
 
 
 def test_get_observation_dicts(mocker):
-    mocker.patch("phenoback.functions.meteoswiss.get_document")
+    mocker.patch("phenoback.functions.meteoswiss_import.get_document")
     csv_file = open(test.get_resource_path("meteoswiss_observations.csv"))
     dict_reader = csv.DictReader(csv_file, delimiter=";")
     results = meteoswiss._get_observations_dicts(dict_reader)
@@ -93,20 +95,23 @@ def test_get_observation_dicts(mocker):
 def test_process_observations_ok(mocker, new_hash, old_hash, is_processed_expected):
     response_text = "some response text"
     mocker.patch(
-        "phenoback.functions.meteoswiss.get",
+        "phenoback.functions.meteoswiss_import.get",
         return_value=Response(
             ok=True, text=response_text, elapsed=None, status_code=None
         ),
     )
-    mocker.patch("phenoback.functions.meteoswiss._get_hash", return_value=new_hash)
+    mocker.patch(
+        "phenoback.functions.meteoswiss_import._get_hash", return_value=new_hash
+    )
     load_hash_mock = mocker.patch(
-        "phenoback.functions.meteoswiss._load_hash", return_value=old_hash
+        "phenoback.functions.meteoswiss_import._load_hash", return_value=old_hash
     )
     mocker.patch(
-        "phenoback.functions.meteoswiss._get_observations_dicts", return_value=[]
+        "phenoback.functions.meteoswiss_import._get_observations_dicts",
+        return_value=[],
     )
-    write_batch_mock = mocker.patch("phenoback.functions.meteoswiss.write_batch")
-    set_hash_mock = mocker.patch("phenoback.functions.meteoswiss._set_hash")
+    write_batch_mock = mocker.patch("phenoback.functions.meteoswiss_import.write_batch")
+    set_hash_mock = mocker.patch("phenoback.functions.meteoswiss_import._set_hash")
 
     assert is_processed_expected == meteoswiss.process_observations()
 
@@ -129,7 +134,7 @@ def test_process_observations_ok(mocker, new_hash, old_hash, is_processed_expect
 
 def test_process_observations_nok(mocker):
     mocker.patch(
-        "phenoback.functions.meteoswiss.get",
+        "phenoback.functions.meteoswiss_import.get",
         return_value=Response(ok=False, text=None, elapsed=None, status_code="5xx"),
     )
     try:
@@ -140,7 +145,7 @@ def test_process_observations_nok(mocker):
 
 def test_get_individuals_dicts(mocker):
     phenoyear_mock = mocker.patch(
-        "phenoback.functions.meteoswiss.get_phenoyear", return_value=2011
+        "phenoback.functions.meteoswiss_import.get_phenoyear", return_value=2011
     )
     csv_file = open(test.get_resource_path("meteoswiss_stations.csv"))
     dict_reader = csv.DictReader(csv_file, delimiter=";")
@@ -163,7 +168,9 @@ def test_get_individuals_dicts(mocker):
 
 
 def test_get_individuals_dicts_footer(mocker):
-    mocker.patch("phenoback.functions.meteoswiss.get_phenoyear", return_value=2011)
+    mocker.patch(
+        "phenoback.functions.meteoswiss_import.get_phenoyear", return_value=2011
+    )
     csv_file = open(test.get_resource_path("meteoswiss_stations.csv"))
     dict_reader = csv.DictReader(csv_file, delimiter=";")
     results = meteoswiss._get_individuals_dicts(dict_reader)
@@ -180,23 +187,27 @@ def test_get_individuals_dicts_footer(mocker):
     ],
 )
 def test_process_stations_ok(mocker, new_hash, old_hash, is_processed_expected):
-    mocker.patch("phenoback.functions.meteoswiss.get_phenoyear", return_value=2011)
+    mocker.patch(
+        "phenoback.functions.meteoswiss_import.get_phenoyear", return_value=2011
+    )
     response_text = "some response text"
     mocker.patch(
-        "phenoback.functions.meteoswiss.get",
+        "phenoback.functions.meteoswiss_import.get",
         return_value=Response(
             ok=True, text=response_text, elapsed=None, status_code=None
         ),
     )
-    mocker.patch("phenoback.functions.meteoswiss._get_hash", return_value=new_hash)
+    mocker.patch(
+        "phenoback.functions.meteoswiss_import._get_hash", return_value=new_hash
+    )
     load_hash_mock = mocker.patch(
-        "phenoback.functions.meteoswiss._load_hash", return_value=old_hash
+        "phenoback.functions.meteoswiss_import._load_hash", return_value=old_hash
     )
     mocker.patch(
-        "phenoback.functions.meteoswiss._get_observations_dicts", return_value=[]
+        "phenoback.functions.meteoswiss_import._get_observations_dicts", return_value=[]
     )
-    write_batch_mock = mocker.patch("phenoback.functions.meteoswiss.write_batch")
-    set_hash_mock = mocker.patch("phenoback.functions.meteoswiss._set_hash")
+    write_batch_mock = mocker.patch("phenoback.functions.meteoswiss_import.write_batch")
+    set_hash_mock = mocker.patch("phenoback.functions.meteoswiss_import._set_hash")
 
     assert is_processed_expected == meteoswiss.process_stations()
 
@@ -219,7 +230,7 @@ def test_process_stations_ok(mocker, new_hash, old_hash, is_processed_expected):
 
 def test_process_stations_nok(mocker):
     mocker.patch(
-        "phenoback.functions.meteoswiss.get",
+        "phenoback.functions.meteoswiss_import.get",
         return_value=Response(ok=False, text=None, elapsed=None, status_code="5xx"),
     )
     try:

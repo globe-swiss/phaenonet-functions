@@ -202,7 +202,7 @@ def import_meteoswiss_data_publish(data, context):
     Imports meteoswiss stations and observations.
     """
     with setup(data, context):
-        from phenoback.functions import meteoswiss
+        from phenoback.functions import meteoswiss_import as meteoswiss
 
         log.info("Import meteoswiss stations")
         meteoswiss.process_stations()
@@ -256,12 +256,26 @@ def create_thumbnail_finalize(data, context):
 @retry.Retry()
 def rollover_manual(data, context):
     """
-    Rollover the phenoyear. Rollover is based on the year defined in the dynamic configuration definition in firestore.
+    Rollover the phenoyear and creates data for meteoswiss export.
+    Rollover is based on the year defined in the dynamic configuration
+    definition in firestore.
     """
     with setup(data, context):
-        from phenoback.functions import rollover
+        from phenoback.functions import meteoswiss_export, rollover
 
+        meteoswiss_export.process()
         rollover.rollover()
+
+
+@retry.Retry()
+def export_meteoswiss_data_manual(data, context):
+    """
+    Manually trigger a meteoswiss export for a given year.
+    """
+    with setup(data, context):
+        from phenoback.functions import meteoswiss_export
+
+        meteoswiss_export.process(data.get("year"))
 
 
 @retry.Retry()

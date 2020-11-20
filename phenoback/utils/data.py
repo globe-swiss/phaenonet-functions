@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import Any, List
 
 from google.cloud.firestore_v1 import Query
@@ -13,10 +14,12 @@ from phenoback.utils.firestore import (
 )
 
 
+@lru_cache()
 def _get_static_config() -> dict:
     return get_document("definitions", "config_static")
 
 
+@lru_cache()
 def _get_dynamic_config() -> dict:
     return get_document("definitions", "config_dynamic")
 

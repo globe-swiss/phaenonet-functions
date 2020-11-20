@@ -182,8 +182,17 @@ def test_document_ts_update(mocker, update_called, data, comment):
 
 def test_rollover(mocker):
     rollover_mock = mocker.patch("phenoback.functions.rollover.rollover")
+    export_mock = mocker.patch("phenoback.functions.meteoswiss_export.process")
     main.rollover_manual("ignored", default_context)
     rollover_mock.assert_called_once()
+    export_mock.assert_called_once()
+
+
+@pytest.mark.parametrize("data, expected", [({"year": 2020}, 2020), ({}, None)])
+def test_meteoswiss_export(mocker, data, expected):
+    export_mock = mocker.patch("phenoback.functions.meteoswiss_export.process")
+    main.export_meteoswiss_data_manual(data, default_context)
+    export_mock.assert_called_once_with(expected)
 
 
 def test_e2e_clear_user_individuals_http(mocker):
