@@ -18,13 +18,13 @@ def _date(i: int) -> datetime:
     return datetime(i, i, i, i, tzinfo=timezone.utc)
 
 
-observation_id = "id"
-source = "src"
-species = "species"
-phase = "phase"
-year = 2000
-altitude_grp = "grp"
-date = _date(1)
+OBSERVATION_ID = "id"
+SOURCE = "src"
+SPECIES = "species"
+PHASE = "phase"
+YEAR = 2000
+ALTITUDE_GRP = "grp"
+DATE = _date(1)
 
 
 def _data(write_document_mock: Mock) -> dict:
@@ -35,11 +35,11 @@ def _data(write_document_mock: Mock) -> dict:
     return write_document_mock.call_args[0][2]
 
 
-def _get_base_state_doc(
-    source: str = source,
-    species: str = species,
-    year: int = year,
-    altitude_grp: str = altitude_grp,
+def get_state_doc(
+    source: str = SOURCE,
+    species: str = SPECIES,
+    year: int = YEAR,
+    altitude_grp: str = ALTITUDE_GRP,
 ) -> dict:
     result = {"source": source, "species": species, "year": year, "state": {}}
     if altitude_grp:
@@ -47,7 +47,7 @@ def _get_base_state_doc(
     return result
 
 
-def _add_observation_to_state_doc(
+def add_state(
     state_doc: dict, phase: str, observation_id: str, date: datetime
 ) -> dict:
     state_doc["state"].setdefault(phase, {})[observation_id] = date
@@ -55,8 +55,8 @@ def _add_observation_to_state_doc(
 
 
 @pytest.fixture()
-def base_state_doc():
-    return _get_base_state_doc()
+def state_doc():
+    return get_state_doc()
 
 
 @contextmanager
@@ -67,7 +67,7 @@ def transaction():
 
 
 def read_state(
-    year=year, species=species, source=source, altitude_grp=altitude_grp
+    year=YEAR, species=SPECIES, source=SOURCE, altitude_grp=ALTITUDE_GRP
 ) -> dict:
     return get_document(
         analytics.STATE_COLLECTION,
@@ -76,7 +76,7 @@ def read_state(
 
 
 def read_result(
-    year=year, species=species, source=source, altitude_grp=altitude_grp
+    year=YEAR, species=SPECIES, source=SOURCE, altitude_grp=ALTITUDE_GRP
 ) -> dict:
     return get_document(
         analytics.RESULT_COLLECTION,
@@ -84,7 +84,7 @@ def read_result(
     )
 
 
-def write_state_doc(state_doc):
+def write_state(state_doc):
     write_document(
         analytics.STATE_COLLECTION,
         analytics.get_analytics_document_id(
@@ -102,21 +102,21 @@ def test_update_state_initalized(altitude_grp):
     transactional_update_state = transactional(analytics.update_state)
     with transaction() as t:
         result_state = transactional_update_state(
-            t, observation_id, date, phase, source, year, species, altitude_grp
+            t, OBSERVATION_ID, DATE, PHASE, SOURCE, YEAR, SPECIES, altitude_grp
         )
 
     # check written document
-    write_data = read_state(year, species, source, altitude_grp)
+    data = read_state(altitude_grp=altitude_grp)
     if altitude_grp is None:
-        assert "altitude_grp" not in write_data
+        assert "altitude_grp" not in data
     else:
-        assert write_data["altitude_grp"] == altitude_grp
-    assert write_data["source"] == source
-    assert write_data["year"] == year
-    assert write_data["species"] == species
-    assert write_data["state"]["phase"][observation_id].date() == date.date()
+        assert data["altitude_grp"] == altitude_grp
+    assert data["source"] == SOURCE
+    assert data["year"] == YEAR
+    assert data["species"] == SPECIES
+    assert data["state"]["phase"][OBSERVATION_ID] == DATE
     # check returned state
-    assert result_state[0] == date
+    assert result_state[0] == DATE
 
 
 @pytest.mark.parametrize(
@@ -139,22 +139,22 @@ def test_update_state_initalized(altitude_grp):
         ("id1", 1, "phase3", {"dictionary_item_added": ["root['state']['phase3']"]}),
     ],
 )
-def test_update_state_write(base_state_doc, obs_id, obs_date, phase, expected):
-    _add_observation_to_state_doc(base_state_doc, "phase1", "id1", _date(1))
-    _add_observation_to_state_doc(base_state_doc, "phase2", "id1", _date(2))
-    _add_observation_to_state_doc(base_state_doc, "phase1", "id2", _date(3))
-    _add_observation_to_state_doc(base_state_doc, "phase2", "id3", _date(4))
-    base_state_ref = copy.deepcopy(base_state_doc)
+def test_update_state_write(state_doc, obs_id, obs_date, phase, expected):
+    add_state(state_doc, "phase1", "id1", _date(1))
+    add_state(state_doc, "phase2", "id1", _date(2))
+    add_state(state_doc, "phase1", "id2", _date(3))
+    add_state(state_doc, "phase2", "id3", _date(4))
+    base_state_ref = copy.deepcopy(state_doc)
 
     write_document(
         analytics.STATE_COLLECTION,
         analytics.get_analytics_document_id(
-            base_state_doc["year"],
-            base_state_doc["species"],
-            base_state_doc["source"],
-            base_state_doc.get("altitude_grp"),
+            state_doc["year"],
+            state_doc["species"],
+            state_doc["source"],
+            state_doc.get("altitude_grp"),
         ),
-        base_state_doc,
+        state_doc,
     )
     transactional_update_state = transactional(analytics.update_state)
     with transaction() as t:
@@ -163,27 +163,27 @@ def test_update_state_write(base_state_doc, obs_id, obs_date, phase, expected):
             obs_id,
             _date(obs_date),
             phase,
-            base_state_doc["source"],
-            base_state_doc["year"],
-            base_state_doc["species"],
-            base_state_doc.get("altitude_grp"),
+            state_doc["source"],
+            state_doc["year"],
+            state_doc["species"],
+            state_doc.get("altitude_grp"),
         )
 
-    write_data = read_state(
-        base_state_doc["year"],
-        base_state_doc["species"],
-        base_state_doc["source"],
-        base_state_doc.get("altitude_grp"),
+    data = read_state(
+        state_doc["year"],
+        state_doc["species"],
+        state_doc["source"],
+        state_doc.get("altitude_grp"),
     )
 
-    assert deepdiff.DeepDiff(base_state_ref, write_data) == expected, (
+    assert deepdiff.DeepDiff(base_state_ref, data) == expected, (
         base_state_ref,
-        write_data,
+        data,
     )
 
 
 @pytest.mark.parametrize(
-    "initial_state, add_state, expected",
+    "initial_state, next_state, expected",
     [
         (("id1", "phase1"), ("id1", "phase1"), 1),
         (("id1", "phase1"), ("id2", "phase1"), 2),
@@ -192,30 +192,30 @@ def test_update_state_write(base_state_doc, obs_id, obs_date, phase, expected):
     ],
 )
 def test_update_state_returned_states(
-    base_state_doc, initial_state, add_state, expected
+    state_doc, initial_state, next_state, expected
 ):
     initial_id = initial_state[0]
     initial_phase = initial_state[1]
-    add_id = add_state[0]
-    add_phase = add_state[1]
-    _add_observation_to_state_doc(base_state_doc, initial_phase, initial_id, _date(1))
+    next_id = next_state[0]
+    next_phase = next_state[1]
+    add_state(state_doc, initial_phase, initial_id, DATE)
 
-    write_state_doc(base_state_doc)
+    write_state(state_doc)
 
     transactional_update_state = transactional(analytics.update_state)
     with transaction() as t:
         result_state = transactional_update_state(
             t,
-            add_id,
+            next_id,
             _date(2),
-            add_phase,
-            base_state_doc["source"],
-            base_state_doc["year"],
-            base_state_doc["species"],
-            base_state_doc.get("altitude_grp"),
+            next_phase,
+            state_doc["source"],
+            state_doc["year"],
+            state_doc["species"],
+            state_doc.get("altitude_grp"),
         )
 
-    assert len(result_state) == expected, (base_state_doc, result_state)
+    assert len(result_state) == expected, (state_doc, result_state)
     assert _date(2) in result_state
 
 
@@ -223,23 +223,23 @@ def test_update_results_no_dates():
     with transaction() as t:
         analytics.update_data(
             t,
-            observation_id,
+            OBSERVATION_ID,
             _date(2),
-            year,
-            species,
-            phase,
-            source,
-            altitude_grp,
+            YEAR,
+            SPECIES,
+            PHASE,
+            SOURCE,
+            ALTITUDE_GRP,
         )
 
     # check the phase is present
-    assert read_result()["values"][phase]
+    assert read_result()["values"][PHASE]
 
     with transaction() as t:
-        analytics.update_result(t, [], phase, source, year, species, altitude_grp)
+        analytics.update_result(t, [], PHASE, SOURCE, YEAR, SPECIES, ALTITUDE_GRP)
 
     # assert phase was deleted with the last value
-    assert not read_result()["values"].get(phase)
+    assert not read_result()["values"].get(PHASE)
 
 
 @pytest.mark.parametrize(
@@ -290,49 +290,49 @@ def test_update_results_calculation(state, e_min, e_max, e_median, e_q25, e_q75)
             t, state, phase, source, year, species, altitude_grp
         )
 
-    write_data = read_result()
+    data = read_result()
 
-    assert write_data["values"]["phase"]["min"] == e_min
-    assert write_data["values"]["phase"]["max"] == e_max
-    assert write_data["values"]["phase"]["median"] == e_median
-    assert write_data["values"]["phase"]["quantile_25"] == e_q25
-    assert write_data["values"]["phase"]["quantile_75"] == e_q75
+    assert data["values"]["phase"]["min"] == e_min
+    assert data["values"]["phase"]["max"] == e_max
+    assert data["values"]["phase"]["median"] == e_median
+    assert data["values"]["phase"]["quantile_25"] == e_q25
+    assert data["values"]["phase"]["quantile_75"] == e_q75
 
 
 @pytest.mark.parametrize("altitude_grp", [None, "alt_grp"])
 def test_update_results_written(altitude_grp):
     with transaction() as t:
         analytics.update_result(
-            t, [datetime.now()], phase, source, year, species, altitude_grp
+            t, [datetime.now()], PHASE, SOURCE, YEAR, SPECIES, altitude_grp
         )
 
-    write_data = read_result(altitude_grp=altitude_grp)
+    data = read_result(altitude_grp=altitude_grp)
 
     if altitude_grp is None:
-        assert "altitude_grp" not in write_data
+        assert "altitude_grp" not in data
     else:
-        assert write_data["altitude_grp"] == altitude_grp
-    assert write_data["source"] == source
-    assert write_data["year"] == year
-    assert write_data["species"] == species
+        assert data["altitude_grp"] == altitude_grp
+    assert data["source"] == SOURCE
+    assert data["year"] == YEAR
+    assert data["species"] == SPECIES
     assert (
-        k in write_data["values"]["phase"]
+        k in data["values"]["phase"]
         for k in ["min", "max", "median", "quantile_25", "quantile_75"]
     )
 
 
-def test_remove_observation(mocker, base_state_doc):
+def test_remove_observation(mocker, state_doc):
     update_result_mock = mocker.patch("phenoback.functions.analytics.update_result")
 
-    base_state_doc["state"] = {
+    state_doc["state"] = {
         "phase1": {"id": "value1", "another_id": "another_value1"},
         "phase2": {"id": "value2", "another_id": "another_value2"},
     }
-    write_state_doc(base_state_doc)
+    write_state(state_doc)
 
     with transaction() as t:
         analytics.remove_observation(
-            t, "id", year, species, "phase1", source, altitude_grp
+            t, "id", YEAR, SPECIES, "phase1", SOURCE, ALTITUDE_GRP
         )
 
     assert read_state()["state"] == {
@@ -344,18 +344,18 @@ def test_remove_observation(mocker, base_state_doc):
     assert update_result_mock.call_args[0][1] == ["another_value1"]
 
 
-def test_remove_observation_last_value(mocker, base_state_doc):
+def test_remove_observation_last_value(mocker, state_doc):
     update_result_mock = mocker.patch("phenoback.functions.analytics.update_result")
 
-    base_state_doc["state"] = {
+    state_doc["state"] = {
         "phase1": {"id": "value1", "another_id": "another_value1"},
         "phase2": {"id": "value2"},
     }
-    write_state_doc(base_state_doc)
+    write_state(state_doc)
 
     with transaction() as t:
         analytics.remove_observation(
-            t, "id", year, species, "phase2", source, altitude_grp
+            t, "id", YEAR, SPECIES, "phase2", SOURCE, ALTITUDE_GRP
         )
     assert read_state()["state"] == {
         "phase1": {"id": "value1", "another_id": "another_value1"}
@@ -375,13 +375,13 @@ def test_remove_observation_last_value(mocker, base_state_doc):
         },
     ],
 )
-def test_remove_data_not_exist(mocker, initial, base_state_doc):
+def test_remove_data_not_exist(mocker, initial, state_doc):
     analytics.log = mocker.Mock()
     update_result_mock = mocker.patch("phenoback.functions.analytics.update_result")
 
     if initial:
-        base_state_doc["state"] = initial
-        write_state_doc(base_state_doc)
+        state_doc["state"] = initial
+        write_state(state_doc)
 
     with transaction() as t:
         analytics.remove_observation(t, "id_not_exits", 0, "", "phase1", "")
