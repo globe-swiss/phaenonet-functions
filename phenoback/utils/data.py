@@ -77,6 +77,14 @@ def get_observation(observation_id: str) -> dict:
     return get_document("observations", observation_id)
 
 
+def update_observation(observation_id: str, data: dict) -> None:
+    update_document("observations", observation_id, data)
+
+
+def delete_observation(observation_id: str) -> None:
+    delete_document("observations", observation_id)
+
+
 def write_observation(observation_id: str, data: dict) -> None:
     write_document("observations", observation_id, data)
 
