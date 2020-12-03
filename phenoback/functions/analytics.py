@@ -3,9 +3,10 @@ from datetime import datetime
 from typing import Optional
 
 import numpy as np
+from google.cloud import firestore
 
 from phenoback.utils.data import get_individual
-from phenoback.utils.firestore import DELETE_FIELD, get_document, write_document
+from phenoback.utils.firestore import DELETE_FIELD, firestore_client
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
@@ -15,6 +16,7 @@ RESULT_COLLECTION = "analytics_result"
 
 
 def update_state(
+    transaction,
     observation_id: str,
     observation_date: datetime,
     phase: str,
@@ -23,6 +25,10 @@ def update_state(
     species: str,
     altitude_grp: str = None,
 ) -> list:
+    """
+    Updates the phenodate in the state collection. Needs to be done in a transactions as the state document
+    might be changed simultaniously, e.g. importing many documents from meteoswiss.
+    """
     log.debug(
         "Update state: (observation_id: %s, observation_date: %s, phase: %s, source: %s, year: %i, "
         "species: %s, altitude_grp: %s)",
@@ -35,7 +41,8 @@ def update_state(
         altitude_grp,
     )
     document_id = get_analytics_document_id(year, species, source, altitude_grp)
-    state_document = get_document(STATE_COLLECTION, document_id)
+    state_ref = firestore_client().collection(STATE_COLLECTION).document(document_id)
+    state_document = state_ref.get(transaction=transaction).to_dict()
     if not state_document:
         state_document = {
             "source": source,
@@ -48,11 +55,14 @@ def update_state(
 
     state = state_document.get("state")
     state.setdefault(phase, dict())[observation_id] = observation_date
-    write_document(STATE_COLLECTION, document_id, state_document)
+    transaction.set(
+        state_ref, state_document
+    )  # optimize: set->update if document existed
     return list(state[phase].values())
 
 
 def update_result(
+    transaction,
     observation_dates: list,
     phase: str,
     source: str,
@@ -96,10 +106,14 @@ def update_result(
         result_document["type"] = "altitude"
     else:
         result_document["type"] = "species"
-    write_document(RESULT_COLLECTION, document_id, result_document, merge=True)
+
+    result_ref = firestore_client().collection(RESULT_COLLECTION).document(document_id)
+    transaction.set(result_ref, result_document, merge=True)
 
 
+@firestore.transactional
 def update_data(
+    transaction,
     observation_id: str,
     observation_date: datetime,
     year: int,
@@ -109,12 +123,23 @@ def update_data(
     altitude_grp: str = None,
 ) -> None:
     observation_dates = update_state(
-        observation_id, observation_date, phase, source, year, species, altitude_grp
+        transaction,
+        observation_id,
+        observation_date,
+        phase,
+        source,
+        year,
+        species,
+        altitude_grp,
     )
-    update_result(observation_dates, phase, source, year, species, altitude_grp)
+    update_result(
+        transaction, observation_dates, phase, source, year, species, altitude_grp
+    )
 
 
+@firestore.transactional
 def remove_observation(
+    transaction,
     observation_id: str,
     year: int,
     species: str,
@@ -134,7 +159,10 @@ def remove_observation(
     )
     try:
         document_id = get_analytics_document_id(year, species, source, altitude_grp)
-        state_document = get_document(STATE_COLLECTION, document_id)
+        state_ref = (
+            firestore_client().collection(STATE_COLLECTION).document(document_id)
+        )
+        state_document = state_ref.get(transaction=transaction).to_dict()
         if not state_document:
             log.error(
                 "State document %s not found for observation removal: (observation_id: %s, source: %s, "
@@ -152,10 +180,14 @@ def remove_observation(
         if not state[phase]:  # remove phase if last value removed
             state.pop(phase)
 
-        write_document(STATE_COLLECTION, document_id, state_document)
+        transaction.set(
+            state_ref, state_document
+        )  # optimize: set->update if document existed
 
         observation_dates = list(state.setdefault(phase, {}).values())
-        update_result(observation_dates, phase, source, year, species, altitude_grp)
+        update_result(
+            transaction, observation_dates, phase, source, year, species, altitude_grp
+        )
     except KeyError:
         log.error(
             "Observation not found in state for removal: (observation_id: %s, source: %s, year: %i, species: %s, "
@@ -221,6 +253,7 @@ def process_observation(
         phase,
     )
     update_data(
+        transaction=firestore_client().transaction(),
         observation_id=observation_id,
         observation_date=observation_date,
         year=year,
@@ -229,6 +262,7 @@ def process_observation(
         source=source,
     )
     update_data(
+        transaction=firestore_client().transaction(),
         observation_id=observation_id,
         observation_date=observation_date,
         year=year,
@@ -240,6 +274,7 @@ def process_observation(
     altitude_key = get_altitude_grp(individual_id)
     if altitude_key:
         update_data(
+            transaction=firestore_client().transaction(),
             observation_id=observation_id,
             observation_date=observation_date,
             year=year,
@@ -249,6 +284,7 @@ def process_observation(
             altitude_grp=altitude_key,
         )
         update_data(
+            transaction=firestore_client().transaction(),
             observation_id=observation_id,
             observation_date=observation_date,
             year=year,
@@ -278,6 +314,7 @@ def process_remove_observation(
         phase,
     )
     remove_observation(
+        transaction=firestore_client().transaction(),
         observation_id=observation_id,
         year=year,
         species=species,
@@ -285,6 +322,7 @@ def process_remove_observation(
         source=source,
     )
     remove_observation(
+        transaction=firestore_client().transaction(),
         observation_id=observation_id,
         year=year,
         species=species,
@@ -295,6 +333,7 @@ def process_remove_observation(
     altitude_key = get_altitude_grp(individual_id)
     if altitude_key:
         remove_observation(
+            transaction=firestore_client().transaction(),
             observation_id=observation_id,
             year=year,
             species=species,
@@ -303,6 +342,7 @@ def process_remove_observation(
             altitude_grp=altitude_key,
         )
         remove_observation(
+            transaction=firestore_client().transaction(),
             observation_id=observation_id,
             year=year,
             species=species,

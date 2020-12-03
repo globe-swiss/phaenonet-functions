@@ -25,6 +25,10 @@ def firestore_client() -> Client:
     return _db
 
 
+def get_transaction():
+    return firestore_client().transaction()
+
+
 def delete_document(collection: str, document_id: str) -> None:
     log.debug("Delete document %s from %s", document_id, collection)
     firestore_client().collection(collection).document(document_id).delete()
