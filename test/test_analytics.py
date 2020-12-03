@@ -47,9 +47,7 @@ def get_state_doc(
     return result
 
 
-def add_state(
-    state_doc: dict, phase: str, observation_id: str, date: datetime
-) -> dict:
+def add_state(state_doc: dict, phase: str, observation_id: str, date: datetime) -> dict:
     state_doc["state"].setdefault(phase, {})[observation_id] = date
     return state_doc
 
@@ -191,9 +189,7 @@ def test_update_state_write(state_doc, obs_id, obs_date, phase, expected):
         (("id1", "phase1"), ("id1", "phase2"), 1),
     ],
 )
-def test_update_state_returned_states(
-    state_doc, initial_state, next_state, expected
-):
+def test_update_state_returned_states(state_doc, initial_state, next_state, expected):
     initial_id = initial_state[0]
     initial_phase = initial_state[1]
     next_id = next_state[0]
