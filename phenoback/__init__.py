@@ -29,7 +29,7 @@ def load_credentials(
         log.info("app initialized with local credentials %s", credential_file)
 
 
-def sets_credential_env(
+def set_credential_env(
     credential_file: str = default_credential_file,
 ) -> None:  # pragma: no cover
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credential_file

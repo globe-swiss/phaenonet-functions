@@ -6,9 +6,6 @@
 # For more information, run:
 #   $ gcloud topic gcloudignore
 #
-maintenance/
-
-.gcloudignore
 # If you would like to upload your .git directory, .gitignore file or files
 # from your .gitignore file, remove the corresponding line
 # below:
@@ -26,6 +23,13 @@ cli_setup/
 .idea/
 *.sh
 env.*
+maintenance/
+.gcloudignore
+.devcontainer/
+.pylintrc
+.flake8
+pyproject.toml
+.bandid
 
 node_modules
 
