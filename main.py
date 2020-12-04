@@ -5,10 +5,10 @@ import os
 from contextlib import contextmanager
 
 import firebase_admin
+import google.cloud.logging
 from google.api_core import exceptions, retry
 from google.api_core.retry import if_exception_type
 
-from phenoback.utils import glogging
 from phenoback.utils.gcloud import (
     get_collection_path,
     get_document_id,
@@ -23,7 +23,7 @@ from phenoback.utils.gcloud import (
 firebase_admin.initialize_app(
     options={"storageBucket": os.environ.get("storageBucket")}
 )
-glogging.init()
+google.cloud.logging.Client().setup_logging()
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -34,7 +34,6 @@ ANALYTIC_PHENOPHASES = ("BEA", "BLA", "BFA", "BVA", "FRA")
 @contextmanager  # workaround as stackdriver fails to capture stackstraces
 def setup(data, context):
     try:
-        glogging.log_id = str(context.event_id)
         log.debug("context: (%s)", str(context))
         log.debug("data: (%s)", str(data))
         yield

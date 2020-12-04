@@ -4,12 +4,12 @@ from datetime import datetime
 from unittest.mock import MagicMock
 
 import firebase_admin
+import google.cloud.logging
 import pytest
 
+google.cloud.logging.Client = MagicMock()
 firebase_admin.initialize_app = MagicMock()
-from phenoback.utils import glogging
 
-glogging.init = MagicMock()
 import main
 
 Context = namedtuple("context", "event_id, resource")
