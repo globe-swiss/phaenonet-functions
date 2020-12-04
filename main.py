@@ -283,7 +283,6 @@ def e2e_clear_user_individuals_http(request):
     """
     Clear all individuals for the e2e test user. This is used for assuring the firestore state before running e2e tests.
     """
-    import time
     from collections import namedtuple
 
     Context = namedtuple("context", "event_id")

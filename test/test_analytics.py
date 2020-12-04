@@ -98,9 +98,9 @@ def write_state(state_doc):
 @pytest.mark.parametrize("altitude_grp", [None, "alt_grp"])
 def test_update_state_initalized(altitude_grp):
     transactional_update_state = transactional(analytics.update_state)
-    with transaction() as t:
+    with transaction() as txn:
         result_state = transactional_update_state(
-            t, OBSERVATION_ID, DATE, PHASE, SOURCE, YEAR, SPECIES, altitude_grp
+            txn, OBSERVATION_ID, DATE, PHASE, SOURCE, YEAR, SPECIES, altitude_grp
         )
 
     # check written document
@@ -155,9 +155,9 @@ def test_update_state_write(state_doc, obs_id, obs_date, phase, expected):
         state_doc,
     )
     transactional_update_state = transactional(analytics.update_state)
-    with transaction() as t:
+    with transaction() as txn:
         transactional_update_state(
-            t,
+            txn,
             obs_id,
             _date(obs_date),
             phase,
@@ -199,9 +199,9 @@ def test_update_state_returned_states(state_doc, initial_state, next_state, expe
     write_state(state_doc)
 
     transactional_update_state = transactional(analytics.update_state)
-    with transaction() as t:
+    with transaction() as txn:
         result_state = transactional_update_state(
-            t,
+            txn,
             next_id,
             _date(2),
             next_phase,
@@ -216,9 +216,9 @@ def test_update_state_returned_states(state_doc, initial_state, next_state, expe
 
 
 def test_update_results_no_dates():
-    with transaction() as t:
+    with transaction() as txn:
         analytics.update_data(
-            t,
+            txn,
             OBSERVATION_ID,
             _date(2),
             YEAR,
@@ -231,8 +231,8 @@ def test_update_results_no_dates():
     # check the phase is present
     assert read_result()["values"][PHASE]
 
-    with transaction() as t:
-        analytics.update_result(t, [], PHASE, SOURCE, YEAR, SPECIES, ALTITUDE_GRP)
+    with transaction() as txn:
+        analytics.update_result(txn, [], PHASE, SOURCE, YEAR, SPECIES, ALTITUDE_GRP)
 
     # assert phase was deleted with the last value
     assert not read_result()["values"].get(PHASE)
@@ -281,9 +281,9 @@ def test_update_results_calculation(state, e_min, e_max, e_median, e_q25, e_q75)
     year = 2000
     altitude_grp = "grp"
     transactional_update_result = transactional(analytics.update_result)
-    with transaction() as t:
+    with transaction() as txn:
         transactional_update_result(
-            t, state, phase, source, year, species, altitude_grp
+            txn, state, phase, source, year, species, altitude_grp
         )
 
     data = read_result()
@@ -297,9 +297,9 @@ def test_update_results_calculation(state, e_min, e_max, e_median, e_q25, e_q75)
 
 @pytest.mark.parametrize("altitude_grp", [None, "alt_grp"])
 def test_update_results_written(altitude_grp):
-    with transaction() as t:
+    with transaction() as txn:
         analytics.update_result(
-            t, [datetime.now()], PHASE, SOURCE, YEAR, SPECIES, altitude_grp
+            txn, [datetime.now()], PHASE, SOURCE, YEAR, SPECIES, altitude_grp
         )
 
     data = read_result(altitude_grp=altitude_grp)
@@ -326,9 +326,9 @@ def test_remove_observation(mocker, state_doc):
     }
     write_state(state_doc)
 
-    with transaction() as t:
+    with transaction() as txn:
         analytics.remove_observation(
-            t, "id", YEAR, SPECIES, "phase1", SOURCE, ALTITUDE_GRP
+            txn, "id", YEAR, SPECIES, "phase1", SOURCE, ALTITUDE_GRP
         )
 
     assert read_state()["state"] == {
@@ -349,9 +349,9 @@ def test_remove_observation_last_value(mocker, state_doc):
     }
     write_state(state_doc)
 
-    with transaction() as t:
+    with transaction() as txn:
         analytics.remove_observation(
-            t, "id", YEAR, SPECIES, "phase2", SOURCE, ALTITUDE_GRP
+            txn, "id", YEAR, SPECIES, "phase2", SOURCE, ALTITUDE_GRP
         )
     assert read_state()["state"] == {
         "phase1": {"id": "value1", "another_id": "another_value1"}
@@ -379,8 +379,8 @@ def test_remove_data_not_exist(mocker, initial, state_doc):
         state_doc["state"] = initial
         write_state(state_doc)
 
-    with transaction() as t:
-        analytics.remove_observation(t, "id_not_exits", 0, "", "phase1", "")
+    with transaction() as txn:
+        analytics.remove_observation(txn, "id_not_exits", 0, "", "phase1", "")
 
     analytics.log.error.assert_called()
     update_result_mock.assert_not_called()
