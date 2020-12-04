@@ -2,6 +2,7 @@
 # pylint: disable=import-outside-toplevel
 import logging
 import os
+import time
 from contextlib import contextmanager
 
 import firebase_admin
@@ -23,7 +24,7 @@ from phenoback.utils.gcloud import (
 firebase_admin.initialize_app(
     options={"storageBucket": os.environ.get("storageBucket")}
 )
-glogging.init()
+glogging.init(time.time())
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -34,7 +35,6 @@ ANALYTIC_PHENOPHASES = ("BEA", "BLA", "BFA", "BVA", "FRA")
 @contextmanager  # workaround as stackdriver fails to capture stackstraces
 def setup(data, context):
     try:
-        glogging.log_id = str(context.event_id)
         log.debug("context: (%s)", str(context))
         log.debug("data: (%s)", str(data))
         yield
