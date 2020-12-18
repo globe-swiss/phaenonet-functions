@@ -2,9 +2,13 @@
 
 ## Deploy Cloud Functions
 
-Use `deploy.sh` and `undeploy.sh` to install and remove cloud functions for the
-_phaenonet-test_ project. For production deployment change the `PROJECT`
-environment variable within these scripts.
+Use [Github Actions](https://github.com/globe-swiss/phaenonet-functions/actions?query=workflow%3A%22deploy+cloud+functions%22) to manage cloud functions. Deployment actions are configured in `.github/workflows/deploy.yml`.
+
+### Set export scheduer
+
+```commandline
+gcloud scheduler jobs update pubsub import_meteoswiss_data --project $PROJECT --schedule="5 1 * * *" --topic="import_meteoswiss_data" --message-body="none" --time-zone="Europe/Zurich" --description="Trigger cloud function to import meteoswiss data"
+```
 
 ## Update Data for Testing/Development
 
@@ -26,7 +30,6 @@ gcloud --project=phaenonet auth activate-service-account firestore-backup@phaeno
 **Remove all functions** before proceeding to limit unnecessary executions. Be careful to specify the correct project as it will wipe all data!
 
 ```commandline
-undeploy.sh all
 firebase firestore:delete --all-collections --project phaenonet-test
 ```
 
@@ -37,12 +40,10 @@ Make sure `phaenonet-test@appspot.gserviceaccount.com` has following permissions
 - `Storage Legacy Bucket Reader`
 - `Storage Object Viewer`
 
-Also make sure that the **cloud functions are not deployed** when importing the data.
+Also make sure that the **cloud functions are not deployed** when importing the data!
 
 ```commandline
-undeploy.sh all
 gcloud --project=phaenonet-test --account=firestore-backup@phaenonet-test.iam.gserviceaccount.com firestore import gs://[backup-daily|backup-weekly]/[backup-folder]
-deploy.sh all
 ```
 
 ### Copy data partial to test instance

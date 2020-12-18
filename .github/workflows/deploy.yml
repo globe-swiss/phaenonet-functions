@@ -1,0 +1,102 @@
+name: deploy cloud functions
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: "Which project to target? [phaenonet/phaenonet-test]"
+        required: true
+        default: phaenonet-test
+      function:
+        description: "Which function to deploy? (empty for all)"
+      action:
+        description: "Action? [deploy/undeploy/redeploy]"
+        required: true
+        default: deploy 
+
+env:
+  RUNTIME: python37
+  REGION: europe-west1
+  TIMEOUT: 540s
+  PROJECT: ${{ github.event.inputs.project }}
+  FUNCTION: ${{ github.event.inputs.function }}
+  ACTION: ${{ github.event.inputs.action }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    container: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: process_observation_activity
+            entrypoint: process_observation_write_activity
+            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{observation_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+          - name: process_observation_create_analytics
+            entrypoint: process_observation_create_analytics
+            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{observation_id}" --trigger-event providers/cloud.firestore/eventTypes/document.create
+          - name: process_observation_update_analytics
+            entrypoint: process_observation_update_analytics
+            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{observation_id}" --trigger-event providers/cloud.firestore/eventTypes/document.update
+          - name: process_observation_delete_analytics
+            entrypoint: process_observation_delete_analytics
+            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{observation_id}" --trigger-event providers/cloud.firestore/eventTypes/document.delete
+          - name: process_user
+            entrypoint: process_user_write
+            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/users/{user_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+          - name: import_meteoswiss_data
+            entrypoint: import_meteoswiss_data_publish
+            trigger: --trigger-resource import_meteoswiss_data --trigger-event google.pubsub.topic.publish
+          - name: export_meteoswiss_data
+            entrypoint: export_meteoswiss_data_manual
+            trigger: --trigger-resource export_meteoswiss_data --trigger-event google.pubsub.topic.publish
+          - name: create_thumbnails
+            entrypoint: create_thumbnail_finalize
+            trigger: --trigger-resource "$PROJECT.appspot.com" --trigger-event google.storage.object.finalize
+          - name: rollover_phenoyear
+            entrypoint: rollover_manual
+            trigger: --trigger-resource rollover_phenoyear --trigger-event google.pubsub.topic.publish
+          - name: process_ts_user
+            entrypoint: process_document_ts_write
+            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/users/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+          - name: process_ts_observation
+            entrypoint: process_document_ts_write
+            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+          - name: process_ts_individual
+            entrypoint: process_document_ts_write
+            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/individuals/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+          - name: process_ts_definitions
+            entrypoint: process_document_ts_write
+            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/definitions/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+          - name: e2e_clear_individuals
+            entrypoint: e2e_clear_user_individuals_http
+            trigger: --trigger-http --allow-unauthenticated
+            project: phaenonet-test
+    steps:
+      - uses: actions/checkout@v2
+        
+      - name: Set up Cloud SDK (phaenonet)
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ env.PROJECT }}
+          service_account_key: ${{ secrets.GCP_SA_KEY_PROD }}
+          export_default_credentials: true  
+        if: ${{ env.PROJECT == 'phaenonet' }}
+        
+      - name: Set up Cloud SDK (phaenonet-test)
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ env.PROJECT }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true  
+        if: ${{ env.PROJECT == 'phaenonet-test' }}
+        
+      - name: undeploy
+        run: gcloud functions delete ${{ matrix.name }} --region ${{ env.REGION }} --quiet
+        if: ${{ (env.ACTION == 'undeploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == null) && (matrix.project == env.PROJECT || matrix.project == null) }}
+
+      - name: deploy
+        run: gcloud functions deploy ${{ matrix.name }} --entry-point ${{ matrix.entrypoint }} --runtime ${{ env.RUNTIME }} ${{ matrix.trigger }} --timeout ${{ env.TIMEOUT }} --region ${{ env.REGION }} --quiet --env-vars-file env.${{ env.PROJECT }}.yaml
+        if: ${{ (env.ACTION == 'deploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == null) && (matrix.project == env.PROJECT || matrix.project == null) }}
