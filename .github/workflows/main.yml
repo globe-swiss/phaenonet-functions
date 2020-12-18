@@ -20,7 +20,7 @@ jobs:
       - name: Sync dev dependencies
         run: pipenv sync --dev
       - name: Check requirements file
-        run: "diff -w <(pipenv lock --requirements | grep '==') <(grep '==' requirements.txt)"
+        run: diff -w <(pipenv lock --requirements | grep '==') <(grep '==' requirements.txt)
       - name: Check black
         run: pipenv run black --check phenoback test main.py
         if: ${{ always() }}
