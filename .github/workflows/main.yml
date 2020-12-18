@@ -5,18 +5,22 @@ on: push
 env:
   LANG: en_US.UTF-8
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   test:
     runs-on: ubuntu-latest
     container: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
     steps:
       - uses: actions/checkout@v2
-      - name: install dependencies
+      - name: Install dependencies
         run: pip3 install pipenv
       - name: Sync dev dependencies
         run: pipenv sync --dev
-      - name: check requirements file
-        run: "diff <(pipenv lock --requirements | grep '==') <(grep '==' requirements.txt)"
+      - name: Check requirements file
+        run: "diff -w <(pipenv lock --requirements | grep '==') <(grep '==' requirements.txt)"
       - name: Check black
         run: pipenv run black --check phenoback test main.py
         if: ${{ always() }}
