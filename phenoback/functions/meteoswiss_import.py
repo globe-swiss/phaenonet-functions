@@ -28,23 +28,28 @@ def process_stations() -> bool:
         "https://data.geo.admin.ch/ch.meteoschweiz.messnetz-phaenologie/ch.meteoschweiz.messnetz-phaenologie_en.csv"
     )
     if response.ok:
-        if _load_hash("stations") != _get_hash(response.text):
-            reader = csv.DictReader(io.StringIO(response.text), delimiter=";")
+        csv_string = _clean_station_csv(response.text)
+        if _load_hash("stations") != _get_hash(csv_string):
+            reader = csv.DictReader(io.StringIO(csv_string), delimiter=";")
             stations = _get_individuals_dicts(reader)
             log.info(
                 "Update %i stations fetched in %s", len(stations), response.elapsed
             )
             write_batch("individuals", "id", stations, merge=True)
-            _set_hash("stations", response.text)
+            _set_hash("stations", csv_string)
             return True
         else:
-            log.debug("Station file did not change.")
+            log.info("Station file did not change.")
             return False
     else:
         log.error("Could not fetch station data (%s)", response.status_code)
         raise ResourceNotFoundException(
             "Could not fetch station data (%s)" % response.status_code
         )
+
+
+def _clean_station_csv(text):
+    return text.split("\n\n")[0]
 
 
 def _get_individuals_dicts(stations: csv.DictReader) -> List[Dict]:
@@ -64,7 +69,6 @@ def _get_individuals_dicts(stations: csv.DictReader) -> List[Dict]:
             "year": phenoyear,
         }
         for station in stations
-        if len(station["Abbr."]) == 3
     ]
 
 
@@ -90,7 +94,7 @@ def process_observations() -> bool:
             _set_hash("observations", response.text)
             return True
         else:
-            log.debug("Observations file did not change.")
+            log.info("Observations file did not change.")
             return False
     else:
         log.error("Could not fetch observation data (%s)", response.status_code)

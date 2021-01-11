@@ -2,6 +2,7 @@
 import csv
 import test
 from collections import namedtuple
+from io import StringIO
 
 import pytest
 
@@ -18,6 +19,12 @@ STATION_ID_KEY = "id"
 STATION_COLLECTION = "individuals"
 
 Response = namedtuple("response", "ok text elapsed status_code")
+
+
+@pytest.fixture
+def station_data():
+    with open(test.get_resource_path("meteoswiss_stations.csv"), "r") as csv_file:
+        return csv_file.read()
 
 
 def test_get_hash():
@@ -143,12 +150,17 @@ def test_process_observations_nok(mocker):
         pass  # expected
 
 
-def test_get_individuals_dicts(mocker):
+def test_clean_station_csv(station_data):
+    clean_data = meteoswiss._clean_station_csv(station_data)
+    assert len(clean_data.splitlines()) == 4
+
+
+def test_get_individuals_dicts(mocker, station_data):
     phenoyear_mock = mocker.patch(
         "phenoback.functions.meteoswiss_import.get_phenoyear", return_value=2011
     )
-    csv_file = open(test.get_resource_path("meteoswiss_stations.csv"))
-    dict_reader = csv.DictReader(csv_file, delimiter=";")
+    clean_data = meteoswiss._clean_station_csv(station_data)
+    dict_reader = csv.DictReader(StringIO(clean_data), delimiter=";")
     results = meteoswiss._get_individuals_dicts(dict_reader)
     # assert all keys are generated
     for result in results:
@@ -167,12 +179,12 @@ def test_get_individuals_dicts(mocker):
     phenoyear_mock.assert_called_once()
 
 
-def test_get_individuals_dicts_footer(mocker):
+def test_get_individuals_dicts_footer(mocker, station_data):
     mocker.patch(
         "phenoback.functions.meteoswiss_import.get_phenoyear", return_value=2011
     )
-    csv_file = open(test.get_resource_path("meteoswiss_stations.csv"))
-    dict_reader = csv.DictReader(csv_file, delimiter=";")
+    clean_data = meteoswiss._clean_station_csv(station_data)
+    dict_reader = csv.DictReader(StringIO(clean_data), delimiter=";")
     results = meteoswiss._get_individuals_dicts(dict_reader)
     # assert the footer is ignored
     assert len(results) == 3
