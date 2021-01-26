@@ -5,11 +5,14 @@ from unittest.mock import MagicMock
 
 import firebase_admin
 import pytest
+import sentry_sdk
 
-firebase_admin.initialize_app = MagicMock()
 from phenoback.utils import glogging
 
+firebase_admin.initialize_app = MagicMock()
 glogging.init = MagicMock()
+sentry_sdk.init = MagicMock()
+
 import main
 
 Context = namedtuple("context", "event_id, resource")
