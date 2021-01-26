@@ -6,8 +6,10 @@ import time
 from contextlib import contextmanager
 
 import firebase_admin
+import sentry_sdk
 from google.api_core import exceptions, retry
 from google.api_core.retry import if_exception_type
+from sentry_sdk.integrations.gcp import GcpIntegration
 
 from phenoback.utils import glogging
 from phenoback.utils.gcloud import (
@@ -19,6 +21,12 @@ from phenoback.utils.gcloud import (
     is_delete_event,
     is_field_updated,
     is_update_event,
+)
+
+sentry_sdk.init(
+    dsn="https://2f043e3c7dd54efa831b9d44b20cf742@o510696.ingest.sentry.io/5606957",
+    integrations=[GcpIntegration()],
+    traces_sample_rate=1.0,
 )
 
 firebase_admin.initialize_app(
