@@ -1,4 +1,5 @@
 import logging
+import os
 from datetime import datetime
 from typing import List, Union
 
@@ -62,3 +63,15 @@ def is_field_updated(data: dict, fieldname) -> bool:
 
 def get_fields_updated(data: dict) -> List[str]:
     return data.get("updateMask", {}).get("fieldPaths", [])
+
+
+def get_function_name() -> str:  # pragma: no cover
+    return os.getenv("FUNCTION_NAME", "Unknown")
+
+
+def get_project() -> str:  # pragma: no cover
+    return os.getenv("GCP_PROJECT", "Unknown")
+
+
+def get_function_region() -> str:  # pragma: no cover
+    return os.getenv("FUNCTION_REGION", "Unknown")
