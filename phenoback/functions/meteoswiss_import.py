@@ -66,6 +66,7 @@ def _get_individuals_dicts(stations: csv.DictReader) -> List[Dict]:
             "name": station["Station"],
             "source": "meteoswiss",
             "user": "meteoswiss",
+            "type": "station",
             "year": phenoyear,
         }
         for station in stations
