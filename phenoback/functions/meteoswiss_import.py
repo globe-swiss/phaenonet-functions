@@ -24,6 +24,7 @@ class ResourceNotFoundException(Exception):
 
 
 def process_stations() -> bool:
+    phenoyear = get_phenoyear()
     response = get(
         "https://data.geo.admin.ch/ch.meteoschweiz.messnetz-phaenologie/ch.meteoschweiz.messnetz-phaenologie_en.csv"
     )
@@ -31,12 +32,14 @@ def process_stations() -> bool:
         csv_string = _clean_station_csv(response.text)
         if _load_hash("stations") != _get_hash(csv_string):
             reader = csv.DictReader(io.StringIO(csv_string), delimiter=";")
-            stations = _get_individuals_dicts(reader)
+            stations = _get_individuals_dicts(phenoyear, reader)
             log.info(
                 "Update %i stations fetched in %s", len(stations), response.elapsed
             )
             write_batch("individuals", "id", stations, merge=True)
-            _set_hash("stations", csv_string)
+            _set_hash(
+                "stations", str(phenoyear) + csv_string
+            )  # trigger re-import in new phenoyear
             return True
         else:
             log.info("Station file did not change.")
@@ -52,8 +55,7 @@ def _clean_station_csv(text):
     return text.split("\n\n")[0]
 
 
-def _get_individuals_dicts(stations: csv.DictReader) -> List[Dict]:
-    phenoyear = get_phenoyear()
+def _get_individuals_dicts(phenoyear: int, stations: csv.DictReader) -> List[Dict]:
     return [
         {
             "id": "%i_%s" % (phenoyear, station["Abbr."]),

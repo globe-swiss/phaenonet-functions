@@ -7,7 +7,7 @@ from io import StringIO
 import pytest
 
 from phenoback.functions import meteoswiss_import as meteoswiss
-from phenoback.utils.data import get_individual, write_individual
+from phenoback.utils.data import get_individual, write_individual, get_phenophase
 
 HASH_COLLECTION = "definitions"
 HASH_DOCUMENT = "meteoswiss_import"
@@ -155,13 +155,10 @@ def test_clean_station_csv(station_data):
     assert len(clean_data.splitlines()) == 4
 
 
-def test_get_individuals_dicts(mocker, station_data):
-    phenoyear_mock = mocker.patch(
-        "phenoback.functions.meteoswiss_import.get_phenoyear", return_value=2011
-    )
+def test_get_individuals_dicts(station_data):
     clean_data = meteoswiss._clean_station_csv(station_data)
     dict_reader = csv.DictReader(StringIO(clean_data), delimiter=";")
-    results = meteoswiss._get_individuals_dicts(dict_reader)
+    results = meteoswiss._get_individuals_dicts(2011, dict_reader)
     # assert all keys are generated
     for result in results:
         assert {
@@ -177,16 +174,12 @@ def test_get_individuals_dicts(mocker, station_data):
         } == result.keys()
         assert result["year"] == 2011
         assert result[STATION_ID_KEY].startswith("2011_")
-    phenoyear_mock.assert_called_once()
 
 
-def test_get_individuals_dicts_footer(mocker, station_data):
-    mocker.patch(
-        "phenoback.functions.meteoswiss_import.get_phenoyear", return_value=2011
-    )
+def test_get_individuals_dicts_footer(station_data):
     clean_data = meteoswiss._clean_station_csv(station_data)
     dict_reader = csv.DictReader(StringIO(clean_data), delimiter=";")
-    results = meteoswiss._get_individuals_dicts(dict_reader)
+    results = meteoswiss._get_individuals_dicts(2011, dict_reader)
     # assert the footer is ignored
     assert len(results) == 3
 
@@ -200,8 +193,9 @@ def test_get_individuals_dicts_footer(mocker, station_data):
     ],
 )
 def test_process_stations_ok(mocker, new_hash, old_hash, is_processed_expected):
+    phenoyear = 2011
     mocker.patch(
-        "phenoback.functions.meteoswiss_import.get_phenoyear", return_value=2011
+        "phenoback.functions.meteoswiss_import.get_phenoyear", return_value=phenoyear
     )
     response_text = "some response text"
     mocker.patch(
@@ -235,13 +229,16 @@ def test_process_stations_ok(mocker, new_hash, old_hash, is_processed_expected):
         set_hash_mock.assert_called_once()
         # test hash loading and writing use the same key
         assert load_hash_mock.call_args[0][0] == set_hash_mock.call_args[0][0]
-        assert set_hash_mock.call_args[0][1] == response_text
+        assert set_hash_mock.call_args[0][1] == str(phenoyear) + response_text
     else:
         write_batch_mock.assert_not_called()
         set_hash_mock.assert_not_called()
 
 
 def test_process_stations_nok(mocker):
+    mocker.patch(
+        "phenoback.functions.meteoswiss_import.get_phenoyear", return_value=2011
+    )
     mocker.patch(
         "phenoback.functions.meteoswiss_import.get",
         return_value=Response(ok=False, text=None, elapsed=None, status_code="5xx"),
