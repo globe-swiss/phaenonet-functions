@@ -172,6 +172,7 @@ def test_get_individuals_dicts(mocker, station_data):
             "name",
             "source",
             "user",
+            "type",
             "year",
         } == result.keys()
         assert result["year"] == 2011
