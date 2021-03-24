@@ -1,6 +1,5 @@
 import os
 import re
-import subprocess  # nosec
 import sys
 
 import google.auth.credentials
@@ -49,11 +48,9 @@ def start(xprocess, name):
     )
 
     yield logfile
-    # shutdown emulator
-    # post('http://localhost:8001/shutdown')
-    # shutdown via post request doesn't work anymore with firestore emulator, process needs to be killed
     try:
-        subprocess.call(["pkill", "-f", "java"])  # nosec
+        # shutdown emulator
+        xprocess.getinfo(name).terminate()
     except FileNotFoundError:
         print(
             "WARNING: procps not installed. you may need to manually kill the firestore emulator"
