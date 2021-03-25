@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def rollover_individuals(source_phenoyear, target_phenoyear):
+def rollover_individuals(source_phenoyear, target_phenoyear, individual=None):
     """
     Copy individuals to a new phenoyear, removing all fields that are specific for the phenoyear.
     :param source_phenoyear:
@@ -22,11 +22,12 @@ def rollover_individuals(source_phenoyear, target_phenoyear):
     """
     log.info("Rollover individuals of %i to %i", source_phenoyear, target_phenoyear)
     new_individuals = []
-    for individual_doc in (
-        query_individuals("year", "==", source_phenoyear)
-        .where("source", "==", "globe")
-        .stream()
-    ):
+    query = query_individuals("year", "==", source_phenoyear).where(
+        "source", "==", "globe"
+    )
+    if individual:
+        query = query.where("individual", "==", individual)
+    for individual_doc in query.stream():
         individual = individual_doc.to_dict()
         individual["id"] = "%i_%s" % (target_phenoyear, individual["individual"])
         individual["year"] = target_phenoyear
