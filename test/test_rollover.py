@@ -111,6 +111,13 @@ def test_rollover_individuals__documents(setup):
         ), individual_doc.to_dict()
 
 
+def test_rollover_individuals__single_individual(setup):
+    rollover.rollover_individuals(2012, 2020, "3")
+    for individual_doc in d.query_individuals("year", "==", 2020).stream():
+        assert individual_doc.id == "2020_" + individual_doc.to_dict()["individual"]
+        assert individual_doc.to_dict()["individual"] == "3"
+
+
 def test_remove_stale_individuals__removed_amt(setup):
     individual_amt = len(list(f.get_collection("individuals").stream()))
     removed_amt = len(list(d.query_individuals("removed", "==", True).stream()))
