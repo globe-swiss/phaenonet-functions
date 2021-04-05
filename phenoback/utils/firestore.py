@@ -3,7 +3,9 @@ from typing import Any, List, Optional
 
 from firebase_admin import firestore
 from google.cloud.firestore_v1 import DELETE_FIELD as _DELETE_FIELD
+from google.cloud.firestore_v1 import SERVER_TIMESTAMP as _SERVER_TIMESTAMP
 from google.cloud.firestore_v1 import ArrayUnion as _ArrayUnion
+from google.cloud.firestore_v1 import Increment as _Increment
 from google.cloud.firestore_v1 import Query
 from google.cloud.firestore_v1.client import Client
 from google.cloud.firestore_v1.collection import CollectionReference
@@ -15,7 +17,9 @@ _db = None  # pylint: disable=invalid-name
 
 # exported
 DELETE_FIELD = _DELETE_FIELD
+SERVER_TIMESTAMP = _SERVER_TIMESTAMP
 ArrayUnion = _ArrayUnion
+Increment = _Increment
 
 
 def firestore_client() -> Client:

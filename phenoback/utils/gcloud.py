@@ -10,7 +10,7 @@ log.setLevel(logging.INFO)
 
 
 def get_field(
-    data: dict, fieldname: str, old_value: bool = False
+    data: dict, fieldname: str, old_value: bool = False, expected=True
 ) -> Union[str, int, datetime, None]:
     value_type = "oldValue" if old_value else "value"
     value_dict = data[value_type].get("fields", {}).get(fieldname)
@@ -23,6 +23,8 @@ def get_field(
             return int(value)
         elif value_type == "timestampValue":
             return dateparser.parse(value)
+        elif value_type == "booleanValue":
+            return bool(value)
         else:  # pragma: no cover
             log.warning(
                 "Unknown field type %s, returning str representation: %s",
@@ -31,9 +33,10 @@ def get_field(
             )
             return str(value)
     else:
-        log.warning(
-            "field %s not found in data %s, returning None", fieldname, str(data)
-        )
+        if expected:
+            log.warning(
+                "field %s not found in data %s, returning None", fieldname, str(data)
+            )
         return None
 
 

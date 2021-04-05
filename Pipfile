@@ -24,6 +24,9 @@ dateparser = "*"
 pillow = "*"
 google-cloud-logging = "*"
 sentry-sdk = "*"
+jinja2 = "*"
+envelopes = "*"
+google-cloud-secret-manager = "*"
 
 [requires]
 python_version = "3.7"
