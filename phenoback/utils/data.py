@@ -1,6 +1,7 @@
 from functools import lru_cache
 from typing import Any, List
 
+from firebase_admin import auth
 from google.cloud.firestore_v1 import Query
 
 from phenoback.utils.firestore import (
@@ -95,3 +96,15 @@ def query_observation(field_path: str, op_string: str, value: Any) -> Query:
 
 def get_user(user_id: str) -> dict:
     return get_document("users", user_id)
+
+
+def get_email(user_id: str) -> str:
+    return auth.get_user(user_id).email
+
+
+def user_exists(email: str) -> str:
+    try:
+        auth.get_user_by_email(email)
+        return True
+    except auth.UserNotFoundError:
+        return False
