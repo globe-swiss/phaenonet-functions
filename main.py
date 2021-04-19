@@ -219,6 +219,32 @@ def process_user_write(data, context):
 
 
 @retry.Retry()
+def process_user_write_update_invite(data, context):
+    """
+    Processes invite related documents if a user is created, modified or deleted.
+    """
+    with setup(data, context):
+        from phenoback.functions.invite import register
+
+        user_id = get_document_id(context)
+        nickname = get_field(
+            data, "nickname", expected=False
+        )  # don't warn on delete event
+
+        if is_update_event(data) and is_field_updated(data, "nickname"):
+            log.debug("update nickname on invites for user %s", user_id)
+            register.change_nickname(user_id, nickname)
+        elif is_delete_event(data):
+            log.debug("delete invites for user %s", user_id)
+            register.delete_user(user_id)
+        elif is_create_event(data):
+            log.debug("update invites for user %s", user_id)
+            register.register_user(user_id, nickname)
+        else:
+            log.debug("Nothing to do for %s", user_id)
+
+
+@retry.Retry()
 def import_meteoswiss_data_publish(data, context):
     """
     Imports meteoswiss stations and observations.

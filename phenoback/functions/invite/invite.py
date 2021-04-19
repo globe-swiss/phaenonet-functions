@@ -2,12 +2,16 @@ import logging
 from datetime import datetime, timezone
 
 from phenoback.functions.invite import envelopesmail as mailer
+from phenoback.functions.invite import register
 from phenoback.functions.invite.content import InviteMail
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
+
+INVITE_COLLECTION = "invites"
+LOOKUP_COLLECTION = "invites_lookup"
 
 
 def process(
@@ -20,7 +24,9 @@ def process(
             doc_id,
             user_id,
             to_mail,
-        )  # fixme: check what to do here
+        )
+        user = d.get_user_by_email(to_mail)
+        register.register_user(user_id, user.get("nickname"))
     else:
         if sent:
             delta = datetime.now().replace(tzinfo=timezone.utc) - sent
@@ -57,7 +63,7 @@ def send_invite(doc_id: str, to_mail: str, locale: str, user_id: str) -> None:
 
 def update_documents(doc_id: str, to_mail: str) -> None:
     f.update_document(
-        "invites",
+        INVITE_COLLECTION,
         doc_id,
         {
             "sent": f.SERVER_TIMESTAMP,
@@ -66,13 +72,13 @@ def update_documents(doc_id: str, to_mail: str) -> None:
         },
     )
     f.write_document(
-        "invites_lookup", to_mail, {"invites": f.ArrayUnion([doc_id])}, merge=True
+        LOOKUP_COLLECTION, to_mail, {"invites": f.ArrayUnion([doc_id])}, merge=True
     )
 
 
 def clear_resend(doc_id: str) -> None:
     f.update_document(
-        "invites",
+        INVITE_COLLECTION,
         doc_id,
         {
             "resend": f.DELETE_FIELD,

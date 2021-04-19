@@ -102,9 +102,13 @@ def get_email(user_id: str) -> str:
     return auth.get_user(user_id).email
 
 
-def user_exists(email: str) -> str:
+def user_exists(email: str) -> bool:
     try:
         auth.get_user_by_email(email)
         return True
     except auth.UserNotFoundError:
         return False
+
+
+def get_user_by_email(email: str):
+    return get_user(auth.get_user_by_email(email))

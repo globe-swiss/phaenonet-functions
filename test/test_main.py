@@ -340,3 +340,8 @@ def test_process_invite_sent(mocker, data, expected):
     main.process_invite_write(data, default_context)
     invite_mock.assert_called()
     assert invite_mock.call_args[0][4] == expected
+
+
+@pytest.mark.skip(reason="todo: refactor context and data handling -> helpers")
+def test_process_user_write_update_invite():
+    pass
