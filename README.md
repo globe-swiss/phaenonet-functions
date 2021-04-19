@@ -1,4 +1,4 @@
-# Phaenonet Cloud Functions [![build](https://img.shields.io/github/workflow/status/globe-swiss/phaenonet-functions/Build%20and%20test)](undefined) [![codecov](https://codecov.io/gh/globe-swiss/phaenonet-functions/branch/master/graph/badge.svg?token=K45OXCML80)](undefined)
+# Phaenonet Cloud Functions [![build](https://img.shields.io/github/workflow/status/globe-swiss/phaenonet-functions/Build%20and%20test)](undefined) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/7b5dbeaf574e431290a40c35c8c25207)](https://www.codacy.com/gh/globe-swiss/phaenonet-functions/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=globe-swiss/phaenonet-functions&amp;utm_campaign=Badge_Grade) [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/7b5dbeaf574e431290a40c35c8c25207)](https://www.codacy.com/gh/globe-swiss/phaenonet-functions/dashboard?utm_source=github.com&utm_medium=referral&utm_content=globe-swiss/phaenonet-functions&utm_campaign=Badge_Coverage)
 
 ## Deploy Cloud Functions
 
