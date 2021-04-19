@@ -1,7 +1,10 @@
+from dataclasses import dataclass
+
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 
-class InviteMail(object):
+@dataclass
+class InviteMail:
     def __init__(self, to_mail, from_mail, nickname, language) -> None:
         self.from_name = "PhaenoNet"
         self.from_mail = "info@phaenonet.ch"

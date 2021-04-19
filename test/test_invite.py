@@ -1,9 +1,11 @@
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use, protected-access
+import os
 from datetime import datetime, timezone
+from unittest.mock import MagicMock
 
 import pytest
 
-from phenoback.functions.invite import invite, register
+from phenoback.functions.invite import content, envelopesmail, invite, register
 from phenoback.utils import firestore as f
 
 INVITE_COLLECTION = "invites"
@@ -238,3 +240,82 @@ class TestRegister:
             f.get_document(INVITE_COLLECTION, new_invite).get("register_nick")
             == new_nickname
         )
+
+
+class TestMail:
+    @pytest.fixture(autouse=True)
+    def env(self, mocker):
+        mocker.patch("phenoback.utils.gsecrets.get_mailer_pw")
+        mocker.patch("phenoback.utils.gsecrets.get_mailer_user")
+        os.environ["mailer_host"] = "host"
+        os.environ["mailer_port"] = "1111"
+
+    @pytest.fixture()
+    def invite_mail(self):
+        return MagicMock().create_autospec(content.InviteMail)
+
+    def test__sendmail(self, mocker, invite_mail):
+        send_mock = mocker.patch(
+            "envelopes.Envelope.send", return_value=["ignored", "return_value"]
+        )
+        assert envelopesmail._sendmail(invite_mail) == "return_value"
+        send_mock.assert_called()
+
+    def test_sendmail__good_credentials(self, mocker, invite_mail):
+        send_mock = mocker.patch(
+            "phenoback.functions.invite.envelopesmail._sendmail",
+            return_value={},
+        )
+        reset_mock = mocker.patch("phenoback.utils.gsecrets.reset")
+        assert envelopesmail.sendmail(invite_mail) == dict()
+        assert send_mock.call_count == 1
+        assert reset_mock.not_called()
+
+    def test_sendmail__refresh_credentials(self, mocker, invite_mail):
+        send_mock = mocker.patch(
+            "phenoback.functions.invite.envelopesmail._sendmail",
+            side_effect=[Exception("invalid credentials"), {}],
+        )
+        reset_mock = mocker.patch("phenoback.utils.gsecrets.reset")
+        assert envelopesmail.sendmail(invite_mail) == dict()
+        assert send_mock.call_count == 2
+        assert reset_mock.called_once()
+
+    def test_sendmail__refresh_credentials_failed(self, mocker, invite_mail):
+        send_mock = mocker.patch(
+            "phenoback.functions.invite.envelopesmail._sendmail",
+            side_effect=[
+                Exception("invalid credentials"),
+                Exception("invalid credentials"),
+            ],
+        )
+        reset_mock = mocker.patch("phenoback.utils.gsecrets.reset")
+        with pytest.raises(Exception):
+            envelopesmail.sendmail(invite_mail)
+        assert send_mock.call_count == 2
+        assert reset_mock.called_once()
+
+
+class TestContent:
+    @pytest.fixture(params=["de", "fr", "it"])
+    def language(self, request):
+        return request.param
+
+    # @pytest.mark.parametrize("language", ["de", "fr", "it"])
+    def test_subject(self, language):
+        assert content.subject(language) is not None
+
+    def test_text_body(self, language):
+        nick = "mynickname"
+        email = "myemail"
+        body = content.text_body(language, nick, email)
+        assert nick in body
+        assert email in body
+
+    @pytest.mark.skip(reason="Not implemented yet.")
+    def test_html_body(self, language):
+        nick = "mynickname"
+        email = "myemail"
+        body = content.html_body(language, nick, email)
+        assert nick in body
+        assert email in body

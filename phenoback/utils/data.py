@@ -98,11 +98,11 @@ def get_user(user_id: str) -> dict:
     return get_document("users", user_id)
 
 
-def get_email(user_id: str) -> str:
+def get_email(user_id: str) -> str:  # pragma: no cover
     return auth.get_user(user_id).email
 
 
-def user_exists(email: str) -> bool:
+def user_exists(email: str) -> bool:  # pragma: no cover
     try:
         auth.get_user_by_email(email)
         return True
@@ -110,5 +110,5 @@ def user_exists(email: str) -> bool:
         return False
 
 
-def get_user_by_email(email: str):
+def get_user_by_email(email: str):  # pragma: no cover
     return get_user(auth.get_user_by_email(email))
