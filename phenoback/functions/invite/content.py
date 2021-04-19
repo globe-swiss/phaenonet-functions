@@ -1,7 +1,12 @@
+from dataclasses import dataclass
+
 from jinja2 import Environment, PackageLoader, select_autoescape
 
+from phenoback.utils import gcloud
 
-class InviteMail(object):
+
+@dataclass
+class InviteMail:
     def __init__(self, to_mail, from_mail, nickname, language) -> None:
         self.from_name = "PhaenoNet"
         self.from_mail = "no-reply@phaenonet.ch"
@@ -10,7 +15,7 @@ class InviteMail(object):
         self.to_name = None
         self.subject = subject(language)
         self.text_body = text_body(language, nickname, from_mail)
-        self.html_body = None  # content.html_body(language, nickname, from_mail)
+        self.html_body = html_body(language, nickname, from_mail)
 
 
 subjects = {
@@ -34,7 +39,12 @@ def text_body(language: str, nickname: str, email: str):
 
 
 def html_body(language: str, nickname: str, email: str):
-    return _render(language + ".html.j2", nickname=nickname, email=email)
+    return _render(
+        language + ".html.j2",
+        nickname=nickname,
+        email=email,
+        url="https://%s" % gcloud.get_app_host(),
+    )
 
 
 def _render(filename: str, **kwargs):

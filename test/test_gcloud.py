@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timezone
 from unittest.mock import PropertyMock
 
@@ -5,6 +6,7 @@ import pytest
 from google.api.context_pb2 import Context
 
 from phenoback.utils.gcloud import (
+    get_app_host,
     get_collection_path,
     get_document_id,
     get_field,
@@ -122,3 +124,14 @@ def test_is_update_event(expected, data):
 )
 def test_is_delete_event(expected, data):
     assert is_delete_event(data) == expected
+
+
+def test_get_app_host__project(mocker):
+    mocker.patch("phenoback.utils.gcloud.get_project", return_value="myprojectname")
+    assert get_app_host() == "myprojectname.web.app"
+
+
+def test_get_app_host__env(mocker):
+    mocker.patch("phenoback.utils.gcloud.get_project", return_value="myprojectname")
+    os.environ["appHost"] = "specifichost.com"
+    assert get_app_host() == "specifichost.com"

@@ -78,3 +78,10 @@ def get_project() -> str:  # pragma: no cover
 
 def get_function_region() -> str:  # pragma: no cover
     return os.getenv("FUNCTION_REGION", "Unknown")
+
+
+def get_app_host() -> str:
+    host = os.getenv("appHost")
+    if not host:
+        host = "%s.web.app" % get_project()
+    return host
