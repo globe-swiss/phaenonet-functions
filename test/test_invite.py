@@ -301,7 +301,6 @@ class TestContent:
     def language(self, request):
         return request.param
 
-    # @pytest.mark.parametrize("language", ["de", "fr", "it"])
     def test_subject(self, language):
         assert content.subject(language) is not None
 
