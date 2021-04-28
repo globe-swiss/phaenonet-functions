@@ -110,5 +110,5 @@ def user_exists(email: str) -> bool:  # pragma: no cover
         return False
 
 
-def get_user_by_email(email: str):  # pragma: no cover
-    return get_user(auth.get_user_by_email(email).uid)
+def get_user_id_by_email(email: str) -> str:  # pragma: no cover
+    return auth.get_user_by_email(email).uid

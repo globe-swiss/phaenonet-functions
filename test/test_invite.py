@@ -123,8 +123,12 @@ class TestInvite:
 
     def test_process__user_exists(self, mocker):
         mocker.patch("phenoback.utils.data.user_exists", return_value=True)
-        mocker.patch(
-            "phenoback.utils.data.get_user_by_email",
+        get_user_id_by_email_mock = mocker.patch(
+            "phenoback.utils.data.get_user_id_by_email",
+            return_value=INVITEE_USER_ID,
+        )
+        get_user_mock = mocker.patch(
+            "phenoback.utils.data.get_user",
             return_value={"nickname": INVITEE_NICKNAME},
         )
         mocker.patch("phenoback.functions.invite.invite.clear_resend")
@@ -132,8 +136,13 @@ class TestInvite:
             "phenoback.functions.invite.register.register_user"
         )
 
-        assert invite.process("invite_id", "to_mail", "locale", "user_id") is False
+        assert (
+            invite.process("invite_id", INVITEE_EMAIL, "locale", INVITER_USER_ID)
+            is False
+        )
         assert register_user_mock.called_once_with(INVITEE_USER_ID, INVITEE_NICKNAME)
+        assert get_user_id_by_email_mock.called_once_with(INVITEE_EMAIL)
+        assert get_user_mock.called_once_with(INVITEE_USER_ID)
 
     def test_process__send_delta_fail(self, mocker, resend_invite):
         send_invite_mock = mocker.patch("phenoback.functions.invite.invite.send_invite")

@@ -25,8 +25,9 @@ def process(
             user_id,
             to_mail,
         )
-        user = d.get_user_by_email(to_mail)
-        register.register_user(user_id, user.get("nickname"))
+        invitee_user_id = d.get_user_id_by_email(to_mail)
+        invitee_nickname = d.get_user(invitee_user_id).get("nickname")
+        register.register_user(invitee_user_id, invitee_nickname)
     else:
         if sent:
             delta = datetime.now().replace(tzinfo=timezone.utc) - sent
