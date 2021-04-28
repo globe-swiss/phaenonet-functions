@@ -237,7 +237,7 @@ def test_e2e_clear_user_individuals_http(mocker):
                         "email": {"stringValue": "email@example.com"},
                         "user": {"stringValue": "user_id"},
                         "locale": {"stringValue": "locale"},
-                        "resend": {"booleanValue": True},
+                        "resend": {"numberValue": 1},
                     }
                 },
             },
@@ -251,7 +251,7 @@ def test_e2e_clear_user_individuals_http(mocker):
                         "email": {"stringValue": "email@example.com"},
                         "user": {"stringValue": "user_id"},
                         "locale": {"stringValue": "locale"},
-                        "resend": {"booleanValue": True},
+                        "resend": {"numberValue": 1},
                     }
                 },
                 "value": {
@@ -306,7 +306,7 @@ def test_process_invite_sending(mocker, data, expected):
                         "user": {"stringValue": "user_id"},
                         "locale": {"stringValue": "locale"},
                         "sent": {"timestampValue": str(datetime(2021, 1, 1))},
-                        "resend": {"booleanValue": True},
+                        "resend": {"numberValue": 1},
                     }
                 },
             },
@@ -327,7 +327,7 @@ def test_process_invite_sending(mocker, data, expected):
                         "email": {"stringValue": "email@example.com"},
                         "user": {"stringValue": "user_id"},
                         "locale": {"stringValue": "locale"},
-                        "resend": {"booleanValue": True},
+                        "resend": {"numberValue": 1},
                     }
                 },
             },

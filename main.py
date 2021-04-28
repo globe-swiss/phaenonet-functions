@@ -334,9 +334,10 @@ def process_invite_write(data, context):
     with setup(data, context):
         from phenoback.functions.invite import invite
 
+        # process if new invite or resend was changed but not deleted
         if is_create_event(data) or (
             is_field_updated(data, "resend")
-            and get_field(data, "resend", expected=False) is True
+            and get_field(data, "resend", expected=False)
         ):
             invite.process(
                 get_document_id(context),

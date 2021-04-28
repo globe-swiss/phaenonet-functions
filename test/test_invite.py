@@ -46,7 +46,7 @@ def resend_invite():
             "locale": "de-CH",
             "user": INVITER_USER_ID,
             "sent": str(datetime(2021, 1, 1)),
-            "resend": True,
+            "resend": 1,
         },
     )
     return iid
@@ -83,7 +83,7 @@ class TestInvite:
         assert invite.get_language(locale) == expected
 
     def test_clear_resend(self, resend_invite):  # noqa: F811
-        assert get_invite(resend_invite)["resend"]
+        assert get_invite(resend_invite)["resend"] is not None
         invite.clear_resend(resend_invite)
         assert get_invite(resend_invite).get("resend") is None
 
