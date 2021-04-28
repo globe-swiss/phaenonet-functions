@@ -20,14 +20,14 @@ def process(
     send = False
     if d.user_exists(to_mail):
         log.info(
-            "Invite %s by %s to %s failed: User already exists",
+            "Invite %s by %s to %s: User already exists, registering",
             doc_id,
             user_id,
             to_mail,
         )
         invitee_user_id = d.get_user_id_by_email(to_mail)
         invitee_nickname = d.get_user(invitee_user_id).get("nickname")
-        register.register_user(invitee_user_id, invitee_nickname)
+        register.register_user_invite(doc_id, invitee_user_id, invitee_nickname)
     else:
         if sent:
             delta = datetime.now().replace(tzinfo=timezone.utc) - sent

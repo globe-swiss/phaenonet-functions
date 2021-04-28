@@ -16,23 +16,36 @@ def invite_id(user_id: str, email: str) -> str:
 
 
 def get_invite_ids(user_id: str) -> List[str]:
+    """
+    Get all invite ids that invited the given user.
+    """
     email = d.get_email(user_id)
     lookup = f.get_document(LOOKUP_COLLECTION, email)
     return lookup["invites"] if lookup else []
 
 
 def register_user(user_id: str, nickname: str) -> None:
+    """
+    Register the given user on all invites pointing to him.
+    """
     for invite_id in get_invite_ids(user_id):
-        log.info("Register user %s (%s) on invite %s", user_id, nickname, invite_id)
-        f.update_document(
-            INVITE_COLLECTION,
-            invite_id,
-            {
-                "register_user": user_id,
-                "register_nick": nickname,
-                "register_date": f.SERVER_TIMESTAMP,
-            },
-        )
+        register_user_invite(invite_id, user_id, nickname)
+
+
+def register_user_invite(invite_id: str, user_id: str, nickname: str) -> None:
+    """
+    Register an user on a specific invite.
+    """
+    log.info("Register user %s (%s) on invite %s", user_id, nickname, invite_id)
+    f.update_document(
+        INVITE_COLLECTION,
+        invite_id,
+        {
+            "register_user": user_id,
+            "register_nick": nickname,
+            "register_date": f.SERVER_TIMESTAMP,
+        },
+    )
 
 
 def change_nickname(user_id: str, nickname: str) -> None:

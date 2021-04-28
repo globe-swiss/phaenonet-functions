@@ -121,28 +121,29 @@ class TestInvite:
         invite.send_invite("invite_id", INVITEE_EMAIL, "de_CH", inviter_user)
         mailer_mock.assert_called()
 
-    def test_process__user_exists(self, mocker):
+    def test_process__user_exists(self, mocker, new_invite):
         mocker.patch("phenoback.utils.data.user_exists", return_value=True)
         get_user_id_by_email_mock = mocker.patch(
             "phenoback.utils.data.get_user_id_by_email",
             return_value=INVITEE_USER_ID,
+            autospec=True,
         )
         get_user_mock = mocker.patch(
             "phenoback.utils.data.get_user",
             return_value={"nickname": INVITEE_NICKNAME},
+            autospec=True,
         )
         mocker.patch("phenoback.functions.invite.invite.clear_resend")
-        register_user_mock = mocker.patch(
-            "phenoback.functions.invite.register.register_user"
+        register_user_invite_mock = mocker.patch(
+            "phenoback.functions.invite.register.register_user_invite", autospec=True
         )
 
-        assert (
-            invite.process("invite_id", INVITEE_EMAIL, "locale", INVITER_USER_ID)
-            is False
+        assert not invite.process(new_invite, INVITEE_EMAIL, "locale", INVITER_USER_ID)
+        get_user_id_by_email_mock.assert_called_once_with(INVITEE_EMAIL)
+        get_user_mock.assert_called_once_with(INVITEE_USER_ID)
+        register_user_invite_mock.assert_called_once_with(
+            new_invite, INVITEE_USER_ID, INVITEE_NICKNAME
         )
-        assert register_user_mock.called_once_with(INVITEE_USER_ID, INVITEE_NICKNAME)
-        assert get_user_id_by_email_mock.called_once_with(INVITEE_EMAIL)
-        assert get_user_mock.called_once_with(INVITEE_USER_ID)
 
     def test_process__send_delta_fail(self, mocker, resend_invite):
         send_invite_mock = mocker.patch("phenoback.functions.invite.invite.send_invite")
@@ -288,7 +289,7 @@ class TestMail:
         reset_mock = mocker.patch("phenoback.utils.gsecrets.reset")
         assert envelopesmail.sendmail(invite_mail) == dict()
         assert send_mock.call_count == 2
-        assert reset_mock.called_once()
+        reset_mock.assert_called_once()
 
     def test_sendmail__refresh_credentials_failed(self, mocker, invite_mail):
         send_mock = mocker.patch(
@@ -302,7 +303,7 @@ class TestMail:
         with pytest.raises(Exception):
             envelopesmail.sendmail(invite_mail)
         assert send_mock.call_count == 2
-        assert reset_mock.called_once()
+        reset_mock.assert_called_once()
 
 
 class TestContent:
