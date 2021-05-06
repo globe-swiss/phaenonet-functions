@@ -54,3 +54,8 @@ Check if cloud functions should be deployed or not depending on the use-case and
 gcloud --project=phaenonet --account=firestore-backup@phaenonet.iam.gserviceaccount.com firestore export gs://staging.phaenonet-test.appspot.com --collection-ids=[collection_ids]
 gcloud --project=phaenonet-test --account=firestore-backup@phaenonet-test.iam.gserviceaccount.com firestore import gs://staging.phaenonet-test.appspot.com/[folder] --collection-ids=[collection_ids]
 ```
+
+## Related resources
+
+- [phaenonet-client](https://github.com/globe-swiss/phaenonet-client)
+- [data model documentation](https://dbdocs.io/pgoellnitz/phaenonet)
