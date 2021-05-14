@@ -71,6 +71,7 @@ def activity_data():
                 "date2": {"timestampValue": "2020-03-18T23:00:00Z"},
                 "individual": {"stringValue": "EDt26K5YIGoPe36z64vy"},
                 "year": {"integerValue": "2020"},
+                "boolTrue": {"booleanValue": True},
             }
         }
     }
@@ -84,6 +85,7 @@ def activity_data():
         ("EDt26K5YIGoPe36z64vy", "individual"),
         (2020, "year"),
         (None, "not_present"),
+        (True, "boolTrue"),
     ],
 )
 def test_get_field_activity(expected, fieldname, activity_data):
