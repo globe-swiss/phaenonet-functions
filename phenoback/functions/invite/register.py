@@ -46,6 +46,8 @@ def register_user_invite(invite_id: str, user_id: str, nickname: str) -> None:
             "register_date": f.SERVER_TIMESTAMP,
         },
     )
+    inviter_id = f.get_document(INVITE_COLLECTION, invite_id)["user"]
+    d.follow_user(inviter_id, user_id)
 
 
 def change_nickname(user_id: str, nickname: str) -> None:

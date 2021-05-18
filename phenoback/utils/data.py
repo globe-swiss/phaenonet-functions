@@ -5,6 +5,7 @@ from firebase_admin import auth
 from google.cloud.firestore_v1 import Query
 
 from phenoback.utils.firestore import (
+    ArrayUnion,
     delete_batch,
     delete_document,
     get_document,
@@ -112,3 +113,16 @@ def user_exists(email: str) -> bool:  # pragma: no cover
 
 def get_user_id_by_email(email: str) -> str:  # pragma: no cover
     return auth.get_user_by_email(email).uid
+
+
+def follow_user(follower_id: str, followee_id: str) -> bool:
+    user = get_user(follower_id)
+    if not user:
+        raise ValueError("User not found %s" % follower_id)
+    if followee_id not in user.get("following_users", []):
+        update_document(
+            "users", follower_id, {"following_users": ArrayUnion([followee_id])}
+        )
+        return True
+    else:
+        return False

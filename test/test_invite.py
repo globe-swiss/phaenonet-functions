@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from phenoback.functions.invite import content, envelopesmail, invite, register
+from phenoback.utils import data as d
 from phenoback.utils import firestore as f
 
 INVITE_COLLECTION = "invites"
@@ -214,7 +215,7 @@ class TestRegister:
         "nickname",
         ["some_nickname", None],
     )
-    def test_register_user(self, mocker, new_invite, nickname):
+    def test_register_user(self, mocker, new_invite, nickname, inviter_user):
         get_invites_mock = mocker.patch(
             "phenoback.functions.invite.register.get_invite_ids",
             return_value=[new_invite],
@@ -234,6 +235,7 @@ class TestRegister:
             f.get_document(INVITE_COLLECTION, new_invite).get("register_date")
             is not None
         )
+        assert INVITEE_USER_ID in d.get_user(inviter_user).get("following_users")
 
     def test_change_nickname(self, mocker, new_invite):
         new_nickname = "a_new_nickname"
