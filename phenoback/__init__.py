@@ -33,3 +33,4 @@ def set_credential_env(
     credential_file: str = default_credential_file,
 ) -> None:  # pragma: no cover
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credential_file
+    os.environ["GCP_PROJECT"] = _PROJECT

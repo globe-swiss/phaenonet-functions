@@ -21,11 +21,11 @@ isort = "*"
 firebase-admin = "*"
 numpy = "*"
 dateparser = "*"
-pillow = "*"
 google-cloud-logging = "*"
 sentry-sdk = "*"
 jinja2 = "*"
 envelopes = "*"
+tinify = "*"
 google-cloud-secret-manager = "*"
 
 [requires]

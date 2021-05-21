@@ -1,63 +1,38 @@
-from io import BytesIO
-from test import get_resource_path
-
 import pytest
-from PIL import Image
 
 from phenoback.functions import thumbnails
 
 
-@pytest.fixture()
-def image_rgba():
-    file = BytesIO()
-    image = Image.new("RGBA", size=(50, 50), color=(155, 0, 0))
-    image.save(file, "png")
-    file.name = "test.png"
-    file.seek(0)
-    return file
+def url(path: str):
+    return (
+        "https://firebasestorage.googleapis.com/v0/b/bucket/o/"
+        + path.replace("/", "%2f")
+        + "?alt=media"
+    )
 
 
-@pytest.fixture()
-def image_rgb():
-    file = BytesIO()
-    image = Image.new("RGB", size=(50, 50), color=(155, 0, 0))
-    image.save(file, "png")
-    file.name = "test.png"
-    file.seek(0)
-    return file
-
-
-def test_process_new_image_infinite_loop(mocker, image_rgb):
-    mocker.patch("phenoback.functions.thumbnails.download_file", return_value=image_rgb)
-    upload_file = mocker.patch("phenoback.functions.thumbnails.upload_file")
+@pytest.mark.parametrize(
+    "image_path",
+    ["images/user_id/individuals/test.jpeg", "images/user_id/individuals/test"],
+)
+def test_process_new_image_infinite_loop(mocker, image_path):
+    setkey_mock = mocker.patch("phenoback.functions.thumbnails.setkey")
+    get_thumbnail_mock = mocker.patch(
+        "phenoback.functions.thumbnails.get_thumbnail", return_value=""
+    )
+    get_public_firebase_url_mock = mocker.patch(
+        "phenoback.functions.thumbnails.get_public_firebase_url"
+    )
+    upload_file_mock = mocker.patch("phenoback.functions.thumbnails.upload_file")
 
     # process a image
-    assert thumbnails.process_new_image("images/user_id/individuals/test.jpeg")
-    upload_file.assert_called()
-    written_file = upload_file.call_args[0][1]
+    assert thumbnails.process_new_image(image_path, url(image_path))
+    setkey_mock.assert_called()
+    get_thumbnail_mock.assert_called()
+    get_public_firebase_url_mock.assert_called()
+    upload_file_mock.assert_called()
+    written_file = upload_file_mock.call_args[0][1]
     # assert the output of the function is not processed again
-    assert not thumbnails.process_new_image(written_file), written_file
-
-
-def test_process_new_image_alpha(mocker, image_rgba):
-    mocker.patch(
-        "phenoback.functions.thumbnails.download_file", return_value=image_rgba
-    )
-    mocker.patch("phenoback.functions.thumbnails.upload_file")
-
-    assert thumbnails.process_new_image("images/user_id/individuals/test.png")
-
-
-def test_process_new_image_noext(mocker, image_rgb):
-    mocker.patch("phenoback.functions.thumbnails.download_file", return_value=image_rgb)
-    mocker.patch("phenoback.functions.thumbnails.upload_file")
-
-    assert thumbnails.process_new_image("images/user_id/individuals/test")
-
-
-def test_process_image_exif_tag_42034():
-    assert thumbnails.process_image(get_resource_path("exif_tag_42034.jpg"))
-
-
-def test_process_image_tuple_index_out_of_range():
-    assert thumbnails.process_image(get_resource_path("tuple_index_out_of_range.jpg"))
+    assert not thumbnails.process_new_image(
+        written_file, url(written_file)
+    ), written_file
