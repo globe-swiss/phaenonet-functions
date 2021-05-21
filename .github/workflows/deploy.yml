@@ -12,7 +12,7 @@ on:
       action:
         description: "Action? [deploy/undeploy/redeploy]"
         required: true
-        default: deploy 
+        default: deploy
 
 env:
   RUNTIME: python37
@@ -46,6 +46,12 @@ jobs:
           - name: process_user
             entrypoint: process_user_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/users/{user_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+          - name: process_invite
+            entrypoint: process_invite_write
+            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/invites/{invite_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+          - name: process_invite_register
+            entrypoint: process_user_write_update_invite
+            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/users/{user_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
           - name: import_meteoswiss_data
             entrypoint: import_meteoswiss_data_publish
             trigger: --trigger-resource import_meteoswiss_data --trigger-event google.pubsub.topic.publish
@@ -70,29 +76,32 @@ jobs:
           - name: process_ts_definitions
             entrypoint: process_document_ts_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/definitions/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+          - name: process_ts_invite
+            entrypoint: process_document_ts_write
+            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/invites/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
           - name: e2e_clear_individuals
             entrypoint: e2e_clear_user_individuals_http
             trigger: --trigger-http --allow-unauthenticated
             project: phaenonet-test
     steps:
       - uses: actions/checkout@v2
-        
+
       - name: Set up Cloud SDK (phaenonet)
         uses: google-github-actions/setup-gcloud@master
         with:
           project_id: ${{ env.PROJECT }}
           service_account_key: ${{ secrets.GCP_SA_KEY_PROD }}
-          export_default_credentials: true  
+          export_default_credentials: true
         if: ${{ env.PROJECT == 'phaenonet' }}
-        
+
       - name: Set up Cloud SDK (phaenonet-test)
         uses: google-github-actions/setup-gcloud@master
         with:
           project_id: ${{ env.PROJECT }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true  
+          export_default_credentials: true
         if: ${{ env.PROJECT == 'phaenonet-test' }}
-        
+
       - name: undeploy
         run: gcloud functions delete ${{ matrix.name }} --region ${{ env.REGION }} --quiet
         if: ${{ (env.ACTION == 'undeploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == null) && (matrix.project == env.PROJECT || matrix.project == null) }}

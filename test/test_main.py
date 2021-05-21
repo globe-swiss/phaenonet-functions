@@ -203,3 +203,145 @@ def test_e2e_clear_user_individuals_http(mocker):
     main.e2e_clear_user_individuals_http("ignored")
     e2e_mock.assert_called_once()
     e2e_mock.assert_called_with("q7lgBm5nm7PUkof20UdZ9D4d0CV2")
+
+
+@pytest.mark.parametrize(
+    "data, expected",
+    [
+        (
+            {
+                "updateMask": {},
+                "oldValue": {},
+                "value": {
+                    "fields": {
+                        "email": {"stringValue": "email@example.com"},
+                        "user": {"stringValue": "user_id"},
+                        "locale": {"stringValue": "locale"},
+                    }
+                },
+            },
+            True,
+        ),
+        (
+            {
+                "updateMask": {"fieldPaths": ["resend"]},
+                "oldValue": {
+                    "fields": {
+                        "email": {"stringValue": "email@example.com"},
+                        "user": {"stringValue": "user_id"},
+                        "locale": {"stringValue": "locale"},
+                    }
+                },
+                "value": {
+                    "fields": {
+                        "email": {"stringValue": "email@example.com"},
+                        "user": {"stringValue": "user_id"},
+                        "locale": {"stringValue": "locale"},
+                        "resend": {"numberValue": 1},
+                    }
+                },
+            },
+            True,
+        ),
+        (
+            {
+                "updateMask": {"fieldPaths": ["resend"]},
+                "oldValue": {
+                    "fields": {
+                        "email": {"stringValue": "email@example.com"},
+                        "user": {"stringValue": "user_id"},
+                        "locale": {"stringValue": "locale"},
+                        "resend": {"numberValue": 1},
+                    }
+                },
+                "value": {
+                    "fields": {
+                        "email": {"stringValue": "email@example.com"},
+                        "user": {"stringValue": "user_id"},
+                        "locale": {"stringValue": "locale"},
+                    }
+                },
+            },
+            False,
+        ),
+        (
+            {
+                "updateMask": {},
+                "oldValue": {
+                    "fields": {
+                        "email": {"stringValue": "email@example.com"},
+                        "user": {"stringValue": "user_id"},
+                        "locale": {"stringValue": "locale"},
+                    }
+                },
+                "value": {},
+            },
+            False,
+        ),
+    ],
+)
+def test_process_invite_sending(mocker, data, expected):
+    invite_mock = mocker.patch("phenoback.functions.invite.invite.process")
+    main.process_invite_write(data, default_context)
+    assert invite_mock.called == expected
+
+
+@pytest.mark.parametrize(
+    "data, expected",
+    [
+        (
+            {
+                "updateMask": {"fieldPaths": ["resend"]},
+                "oldValue": {
+                    "fields": {
+                        "email": {"stringValue": "email@example.com"},
+                        "user": {"stringValue": "user_id"},
+                        "locale": {"stringValue": "locale"},
+                        "sent": {"timestampValue": str(datetime(2021, 1, 1))},
+                    }
+                },
+                "value": {
+                    "fields": {
+                        "email": {"stringValue": "email@example.com"},
+                        "user": {"stringValue": "user_id"},
+                        "locale": {"stringValue": "locale"},
+                        "sent": {"timestampValue": str(datetime(2021, 1, 1))},
+                        "resend": {"numberValue": 1},
+                    }
+                },
+            },
+            datetime(2021, 1, 1),
+        ),
+        (
+            {
+                "updateMask": {"fieldPaths": ["resend"]},
+                "oldValue": {
+                    "fields": {
+                        "email": {"stringValue": "email@example.com"},
+                        "user": {"stringValue": "user_id"},
+                        "locale": {"stringValue": "locale"},
+                    }
+                },
+                "value": {
+                    "fields": {
+                        "email": {"stringValue": "email@example.com"},
+                        "user": {"stringValue": "user_id"},
+                        "locale": {"stringValue": "locale"},
+                        "resend": {"numberValue": 1},
+                    }
+                },
+            },
+            None,
+        ),
+    ],
+)
+def test_process_invite_sent(mocker, data, expected):
+    invite_mock = mocker.patch("phenoback.functions.invite.invite.process")
+    main.process_invite_write(data, default_context)
+    invite_mock.assert_called()
+    assert invite_mock.call_args[0][4] == expected
+
+
+@pytest.mark.skip(reason="todo: refactor context and data handling -> helpers")
+def test_process_user_write_update_invite():
+    pass

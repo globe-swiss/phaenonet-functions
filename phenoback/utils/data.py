@@ -1,9 +1,11 @@
 from functools import lru_cache
 from typing import Any, List
 
+from firebase_admin import auth
 from google.cloud.firestore_v1 import Query
 
 from phenoback.utils.firestore import (
+    ArrayUnion,
     delete_batch,
     delete_document,
     get_document,
@@ -95,3 +97,32 @@ def query_observation(field_path: str, op_string: str, value: Any) -> Query:
 
 def get_user(user_id: str) -> dict:
     return get_document("users", user_id)
+
+
+def get_email(user_id: str) -> str:  # pragma: no cover
+    return auth.get_user(user_id).email
+
+
+def user_exists(email: str) -> bool:  # pragma: no cover
+    try:
+        auth.get_user_by_email(email)
+        return True
+    except auth.UserNotFoundError:
+        return False
+
+
+def get_user_id_by_email(email: str) -> str:  # pragma: no cover
+    return auth.get_user_by_email(email).uid
+
+
+def follow_user(follower_id: str, followee_id: str) -> bool:
+    user = get_user(follower_id)
+    if not user:
+        raise ValueError("User not found %s" % follower_id)
+    if followee_id not in user.get("following_users", []):
+        update_document(
+            "users", follower_id, {"following_users": ArrayUnion([followee_id])}
+        )
+        return True
+    else:
+        return False

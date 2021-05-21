@@ -219,6 +219,32 @@ def process_user_write(data, context):
 
 
 @retry.Retry()
+def process_user_write_update_invite(data, context):
+    """
+    Processes invite related documents if a user is created, modified or deleted.
+    """
+    with setup(data, context):
+        from phenoback.functions.invite import register
+
+        user_id = get_document_id(context)
+        nickname = get_field(
+            data, "nickname", expected=False
+        )  # don't warn on delete event
+
+        if is_update_event(data) and is_field_updated(data, "nickname"):
+            log.debug("update nickname on invites for user %s", user_id)
+            register.change_nickname(user_id, nickname)
+        elif is_delete_event(data):
+            log.debug("delete invites for user %s", user_id)
+            register.delete_user(user_id)
+        elif is_create_event(data):
+            log.debug("update invites for user %s", user_id)
+            register.register_user(user_id, nickname)
+        else:
+            log.debug("Nothing to do for %s", user_id)
+
+
+@retry.Retry()
 def import_meteoswiss_data_publish(data, context):
     """
     Imports meteoswiss stations and observations.
@@ -298,6 +324,28 @@ def export_meteoswiss_data_manual(data, context):
         from phenoback.functions import meteoswiss_export
 
         meteoswiss_export.process(data.get("year"))
+
+
+@retry.Retry()
+def process_invite_write(data, context):
+    """
+    Send email invites if invite is created or resend is set
+    """
+    with setup(data, context):
+        from phenoback.functions.invite import invite
+
+        # process if new invite or resend was changed but not deleted
+        if is_create_event(data) or (
+            is_field_updated(data, "resend")
+            and get_field(data, "resend", expected=False)
+        ):
+            invite.process(
+                get_document_id(context),
+                get_field(data, "email"),
+                get_field(data, "locale"),
+                get_field(data, "user"),
+                get_field(data, "sent", expected=False),
+            )
 
 
 @retry.Retry()

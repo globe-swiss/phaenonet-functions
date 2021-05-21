@@ -77,6 +77,39 @@ def test_get_phenoyear__cache(mocker, dynamic_config):
     spy.assert_called_once()  # assert results are cached
 
 
+def test_follow_user__not_found():
+    try:
+        d.follow_user("follower_id", "followee_id")
+    except ValueError:
+        pass  # expected
+
+
+def test_follow_user__no_array():
+    follower = "follower_id"
+    followee = "followee_id"
+    f.write_document("users", follower, {"some_data": "data"})
+    assert d.follow_user(follower, followee)
+    assert followee in d.get_user(follower).get("following_users")
+
+
+def test_follow_user__already_following():
+    follower = "follower_id"
+    followee = "followee_id"
+    f.write_document("users", follower, {"following_users": [followee, "some_id"]})
+    assert not d.follow_user(follower, followee)
+    assert followee in d.get_user(follower).get("following_users")
+    assert len(d.get_user(follower).get("following_users")) == 2
+
+
+def test_follow_user():
+    follower = "follower_id"
+    followee = "followee_id"
+    f.write_document("users", follower, {"following_users": ["some_id"]})
+    assert d.follow_user(follower, followee)
+    assert followee in d.get_user(follower).get("following_users")
+    assert len(d.get_user(follower).get("following_users")) == 2
+
+
 def update_resources():
     """
     Updates resource files needed for tests from phenonet test instance.
