@@ -22,26 +22,26 @@ def static_config():
 
 @pytest.fixture
 def dynamic_config():
-    d._get_dynamic_config.cache_clear()
     with open(CONFIG_DYNAMIC_RESOURCE, "r") as file:
         data = json.loads(file.read())
         f.write_document("definitions", "config_dynamic", data)
         return data
 
 
-def test_update_get_phenoyear():
-    data = {"important": "stuff is not removed"}
-    f.write_document("definitions", "config_dynamic", data)
-    d.update_phenoyear(2013)
-    assert d.get_phenoyear() == 2013
+def test_update_phenoyear(dynamic_config):
+    current_year = dynamic_config["phenoyear"]
+    assert d.get_phenoyear() == current_year
+    d.update_phenoyear(current_year + 1)
+    assert d.get_phenoyear() == current_year + 1
 
 
-def test_update_phenoyear__preserve_data():
-    data = {"important": "stuff is not removed"}
-    f.write_document("definitions", "config_dynamic", data)
+def test_update_phenoyear__preserve_data(dynamic_config):
+    assert dynamic_config["first_year"] is not None
     d.update_phenoyear(2013)
-    result = f.get_document("definitions", "config_dynamic")
-    assert result["important"] == "stuff is not removed"
+    assert (
+        f.get_document("definitions", "config_dynamic")["first_year"]
+        == dynamic_config["first_year"]
+    )
 
 
 @pytest.mark.parametrize(
@@ -67,13 +67,6 @@ def test_get_species__cache(mocker, static_config):
     spy = mocker.spy(d, "get_document")
     assert d.get_species("HS")
     assert d.get_species("BA")
-    spy.assert_called_once()  # assert results are cached
-
-
-def test_get_phenoyear__cache(mocker, dynamic_config):
-    spy = mocker.spy(d, "get_document")
-    phenoyear = d.get_phenoyear()
-    assert d.get_phenoyear() == phenoyear
     spy.assert_called_once()  # assert results are cached
 
 

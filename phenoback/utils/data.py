@@ -21,7 +21,6 @@ def _get_static_config() -> dict:
     return get_document("definitions", "config_static")
 
 
-@lru_cache()
 def _get_dynamic_config() -> dict:
     return get_document("definitions", "config_dynamic")
 
