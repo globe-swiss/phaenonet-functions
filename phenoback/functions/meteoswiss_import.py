@@ -24,31 +24,33 @@ class ResourceNotFoundException(Exception):
 
 
 def process_stations() -> bool:
-    phenoyear = get_phenoyear()
     response = get(
         "https://data.geo.admin.ch/ch.meteoschweiz.messnetz-phaenologie/ch.meteoschweiz.messnetz-phaenologie_en.csv"
     )
     if response.ok:
-        csv_string = _clean_station_csv(response.text)
-        if _load_hash("stations") != _get_hash(csv_string):
-            reader = csv.DictReader(io.StringIO(csv_string), delimiter=";")
-            stations = _get_individuals_dicts(phenoyear, reader)
-            log.info(
-                "Update %i stations fetched in %s", len(stations), response.elapsed
-            )
-            write_batch("individuals", "id", stations, merge=True)
-            _set_hash(
-                "stations", str(phenoyear) + csv_string
-            )  # trigger re-import in new phenoyear
-            return True
-        else:
-            log.info("Station file did not change.")
-            return False
+        return process_stations_response(response.text, response.elapsed)
     else:
         log.error("Could not fetch station data (%s)", response.status_code)
         raise ResourceNotFoundException(
             "Could not fetch station data (%s)" % response.status_code
         )
+
+
+def process_stations_response(response_text: str, response_elapsed: float) -> bool:
+    phenoyear = get_phenoyear()
+    csv_string = _clean_station_csv(response_text)
+    if _load_hash("stations") != _get_hash(str(phenoyear) + csv_string):
+        reader = csv.DictReader(io.StringIO(csv_string), delimiter=";")
+        stations = _get_individuals_dicts(phenoyear, reader)
+        log.info("Update %i stations fetched in %s", len(stations), response_elapsed)
+        write_batch("individuals", "id", stations, merge=True)
+        _set_hash(
+            "stations", str(phenoyear) + csv_string
+        )  # trigger re-import in new phenoyear
+        return True
+    else:
+        log.info("Station file did not change.")
+        return False
 
 
 def _clean_station_csv(text):
@@ -80,30 +82,32 @@ def process_observations() -> bool:
         "https://data.geo.admin.ch/ch.meteoschweiz.klima/phaenologie/phaeno_current.csv"
     )
     if response.ok:
-        new_hash = _get_hash(response.text)
-        old_hash = _load_hash("observations")
-        if old_hash != new_hash:
-            reader = csv.DictReader(io.StringIO(response.text), delimiter=";")
-            observations = _get_observations_dicts(reader)
-            log.info(
-                "Update %i observations fetched in %s",
-                len(observations),
-                response.elapsed,
-            )
-            # write observations
-            write_batch("observations", "id", observations, merge=True)
-            # update stations
-            _update_station_species(_get_station_species(observations))
-            _set_hash("observations", response.text)
-            return True
-        else:
-            log.info("Observations file did not change.")
-            return False
+        return process_observations_response(response.text, response.elapsed)
     else:
         log.error("Could not fetch observation data (%s)", response.status_code)
         raise ResourceNotFoundException(
             "Could not fetch observation data (%s)" % response.status_code
         )
+
+
+def process_observations_response(response_text: str, response_elapsed: float) -> bool:
+    if _load_hash("observations") != _get_hash(response_text):
+        reader = csv.DictReader(io.StringIO(response_text), delimiter=";")
+        observations = _get_observations_dicts(reader)
+        log.info(
+            "Update %i observations fetched in %s",
+            len(observations),
+            response_elapsed,
+        )
+        # write observations
+        write_batch("observations", "id", observations, merge=True)
+        # update stations
+        _update_station_species(_get_station_species(observations))
+        _set_hash("observations", response_text)
+        return True
+    else:
+        log.info("Observations file did not change.")
+        return False
 
 
 def _get_observations_dicts(observations: csv.DictReader) -> List[Dict]:
@@ -162,5 +166,5 @@ def _load_hash(key: str) -> Optional[str]:
     return loaded_hash
 
 
-def _get_hash(data) -> str:
+def _get_hash(data: str) -> str:
     return md5(data.encode()).hexdigest()  # nosec (B303)

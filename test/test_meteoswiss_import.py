@@ -1,4 +1,4 @@
-# pylint: disable=protected-access
+# pylint: disable=no-self-use, protected-access
 import csv
 import test
 from collections import namedtuple
@@ -6,8 +6,10 @@ from io import StringIO
 
 import pytest
 
+import phenoback
 from phenoback.functions import meteoswiss_import as meteoswiss
-from phenoback.utils.data import get_individual, write_individual, get_phenophase
+from phenoback.utils import data as d
+from phenoback.utils import firestore as f
 
 HASH_COLLECTION = "definitions"
 HASH_DOCUMENT = "meteoswiss_import"
@@ -21,264 +23,242 @@ STATION_COLLECTION = "individuals"
 Response = namedtuple("response", "ok text elapsed status_code")
 
 
+@pytest.fixture(autouse=True)
+def set_phenoyear():
+    f.write_document("definitions", "config_dynamic", {"phenoyear": 2000})
+
+
 @pytest.fixture
-def station_data():
+def station_data() -> str:
     with open(test.get_resource_path("meteoswiss_stations.csv"), "r") as csv_file:
         return csv_file.read()
 
 
-def test_get_hash():
-    assert meteoswiss._get_hash("string1") == meteoswiss._get_hash("string1")
-    assert meteoswiss._get_hash("string1") != meteoswiss._get_hash("string2")
-    try:
-        meteoswiss._get_hash(None)
-    except AttributeError:
-        pass  # expected
+@pytest.fixture
+def observation_data() -> str:
+    with open(test.get_resource_path("meteoswiss_observations.csv")) as csv_file:
+        return csv_file.read()
 
 
-def test_set_hash(mocker):
-    write_mock = mocker.patch("phenoback.functions.meteoswiss_import.write_document")
-    meteoswiss._set_hash("a_key", "some_data")
-    write_mock.assert_called_once()
-    call = write_mock.call_args[0]
-    assert call[0] == HASH_COLLECTION  # collection
-    assert call[1] == HASH_DOCUMENT  # document
-    assert len(call[2]) == 1
-    assert call[2].get("%sa_key" % HASH_KEY_PREFIX) == (
-        meteoswiss._get_hash("some_data")
-    )
+class TestCommon:
+    def test_get_hash(self):
+        assert meteoswiss._get_hash("string1") == meteoswiss._get_hash("string1")
+        assert meteoswiss._get_hash("string1") != meteoswiss._get_hash("string2")
+        try:
+            meteoswiss._get_hash(None)
+        except AttributeError:
+            pass  # expected
+
+    def test_set_hash(self, mocker):
+        hash_key = "a_key"
+        data = "some_data"
+        write_mock = mocker.spy(phenoback.functions.meteoswiss_import, "write_document")
+        meteoswiss._set_hash(hash_key, data)
+        write_mock.assert_called_once()
+        assert f.get_document(HASH_COLLECTION, HASH_DOCUMENT).get(
+            "%s%s" % (HASH_KEY_PREFIX, hash_key)
+        ) == meteoswiss._get_hash(data)
+
+    def test_load_hash(self):
+        meteoswiss._set_hash("key1", "data1")
+        meteoswiss._set_hash("key2", "overridden")
+        meteoswiss._set_hash("key2", "data2")
+        assert meteoswiss._load_hash("key1") == meteoswiss._get_hash("data1")
+        assert meteoswiss._load_hash("key2") == meteoswiss._get_hash("data2")
 
 
-@pytest.mark.parametrize(
-    "key, document, expected",
-    [
-        ("mykey", {"%smykey" % HASH_KEY_PREFIX: "myhash"}, "myhash"),
-        ("otherkey", {"%smykey" % HASH_KEY_PREFIX: "myhash"}, None),
-        (
-            "akey",
-            {
-                "%smykey" % HASH_KEY_PREFIX: "myhash",
-                "%sakey" % HASH_KEY_PREFIX: "ahash",
-            },
-            "ahash",
-        ),
-    ],
-)
-def test_load_hash(mocker, key, document, expected):
-    mocker.patch(
-        "phenoback.functions.meteoswiss_import.get_document", return_value=document
-    )
-    assert meteoswiss._load_hash(key) == expected
+class TestObservations:
+    def test_get_observation_dicts(self, mocker, observation_data):
+        mocker.patch("phenoback.functions.meteoswiss_import.get_document")
+        dict_reader = csv.DictReader(StringIO(observation_data), delimiter=";")
+        results = meteoswiss._get_observations_dicts(dict_reader)
+        # assert all keys are generated
+        for result in results:
+            assert {
+                OBSERVATION_ID_KEY,
+                "user",
+                "date",
+                "individual_id",
+                "individual",
+                "source",
+                "year",
+                "species",
+                "phenophase",
+            } == result.keys()
 
+    def test_process_observations__ok(self, mocker):
+        response_text = "some_data"
+        response_elapsed = 0.01
+        process_response_mock = mocker.patch(
+            "phenoback.functions.meteoswiss_import.process_observations_response",
+            return_value=True,
+        )
+        mocker.patch(
+            "phenoback.functions.meteoswiss_import.get",
+            return_value=Response(
+                ok=True, text=response_text, elapsed=response_elapsed, status_code=200
+            ),
+        )
 
-def test_get_observation_dicts(mocker):
-    mocker.patch("phenoback.functions.meteoswiss_import.get_document")
-    csv_file = open(test.get_resource_path("meteoswiss_observations.csv"))
-    dict_reader = csv.DictReader(csv_file, delimiter=";")
-    results = meteoswiss._get_observations_dicts(dict_reader)
-    # assert all keys are generated
-    for result in results:
-        assert {
-            OBSERVATION_ID_KEY,
-            "user",
-            "date",
-            "individual_id",
-            "individual",
-            "source",
-            "year",
-            "species",
-            "phenophase",
-        } == result.keys()
+        assert meteoswiss.process_observations()
+        process_response_mock.assert_called_once_with(response_text, response_elapsed)
 
+    def test_process_observations__nok(self, mocker):
+        mocker.patch(
+            "phenoback.functions.meteoswiss_import.get",
+            return_value=Response(ok=False, text=None, elapsed=None, status_code="5xx"),
+        )
+        try:
+            meteoswiss.process_observations()
+        except meteoswiss.ResourceNotFoundException:
+            pass  # expected
 
-@pytest.mark.parametrize(
-    "new_hash, old_hash, is_processed_expected",
-    [
-        ("hash_match", "hash_match", False),
-        ("hash_new", "hash_old", True),
-        ("hash_new", None, True),
-    ],
-)
-def test_process_observations_ok(mocker, new_hash, old_hash, is_processed_expected):
-    response_text = "some response text"
-    mocker.patch(
-        "phenoback.functions.meteoswiss_import.get",
-        return_value=Response(
-            ok=True, text=response_text, elapsed=None, status_code=None
-        ),
-    )
-    mocker.patch(
-        "phenoback.functions.meteoswiss_import._get_hash", return_value=new_hash
-    )
-    load_hash_mock = mocker.patch(
-        "phenoback.functions.meteoswiss_import._load_hash", return_value=old_hash
-    )
-    mocker.patch(
-        "phenoback.functions.meteoswiss_import._get_observations_dicts",
-        return_value=[],
-    )
-    write_batch_mock = mocker.patch("phenoback.functions.meteoswiss_import.write_batch")
-    set_hash_mock = mocker.patch("phenoback.functions.meteoswiss_import._set_hash")
-
-    assert is_processed_expected == meteoswiss.process_observations()
-
-    if is_processed_expected:
-        # check write
-        write_batch_mock.assert_called_once()
-        call = write_batch_mock.call_args
-        assert call[0][0] == OBSERVATION_COLLECTION  # collection
-        assert call[0][1] == OBSERVATION_ID_KEY  # document id key
-        assert call[1] == {"merge": True}
-        # check hash
-        set_hash_mock.assert_called_once()
-        # test hash loading and writing use the same key
-        assert load_hash_mock.call_args[0][0] == set_hash_mock.call_args[0][0]
-        assert set_hash_mock.call_args[0][1] == response_text
-    else:
-        write_batch_mock.assert_not_called()
-        set_hash_mock.assert_not_called()
-
-
-def test_process_observations_nok(mocker):
-    mocker.patch(
-        "phenoback.functions.meteoswiss_import.get",
-        return_value=Response(ok=False, text=None, elapsed=None, status_code="5xx"),
-    )
-    try:
-        meteoswiss.process_observations()
-    except meteoswiss.ResourceNotFoundException:
-        pass  # expected
-
-
-def test_clean_station_csv(station_data):
-    clean_data = meteoswiss._clean_station_csv(station_data)
-    assert len(clean_data.splitlines()) == 4
-
-
-def test_get_individuals_dicts(station_data):
-    clean_data = meteoswiss._clean_station_csv(station_data)
-    dict_reader = csv.DictReader(StringIO(clean_data), delimiter=";")
-    results = meteoswiss._get_individuals_dicts(2011, dict_reader)
-    # assert all keys are generated
-    for result in results:
-        assert {
-            STATION_ID_KEY,
-            "altitude",
-            "geopos",
-            "individual",
-            "name",
-            "source",
-            "user",
-            "type",
-            "year",
-        } == result.keys()
-        assert result["year"] == 2011
-        assert result[STATION_ID_KEY].startswith("2011_")
-
-
-def test_get_individuals_dicts_footer(station_data):
-    clean_data = meteoswiss._clean_station_csv(station_data)
-    dict_reader = csv.DictReader(StringIO(clean_data), delimiter=";")
-    results = meteoswiss._get_individuals_dicts(2011, dict_reader)
-    # assert the footer is ignored
-    assert len(results) == 3
-
-
-@pytest.mark.parametrize(
-    "new_hash, old_hash, is_processed_expected",
-    [
-        ("hash_match", "hash_match", False),
-        ("hash_new", "hash_old", True),
-        ("hash_new", None, True),
-    ],
-)
-def test_process_stations_ok(mocker, new_hash, old_hash, is_processed_expected):
-    phenoyear = 2011
-    mocker.patch(
-        "phenoback.functions.meteoswiss_import.get_phenoyear", return_value=phenoyear
-    )
-    response_text = "some response text"
-    mocker.patch(
-        "phenoback.functions.meteoswiss_import.get",
-        return_value=Response(
-            ok=True, text=response_text, elapsed=None, status_code=None
-        ),
-    )
-    mocker.patch(
-        "phenoback.functions.meteoswiss_import._get_hash", return_value=new_hash
-    )
-    load_hash_mock = mocker.patch(
-        "phenoback.functions.meteoswiss_import._load_hash", return_value=old_hash
-    )
-    mocker.patch(
-        "phenoback.functions.meteoswiss_import._get_observations_dicts", return_value=[]
-    )
-    write_batch_mock = mocker.patch("phenoback.functions.meteoswiss_import.write_batch")
-    set_hash_mock = mocker.patch("phenoback.functions.meteoswiss_import._set_hash")
-
-    assert is_processed_expected == meteoswiss.process_stations()
-
-    if is_processed_expected:
-        # check write
-        write_batch_mock.assert_called_once()
-        call = write_batch_mock.call_args
-        assert call[0][0] == STATION_COLLECTION  # collection
-        assert call[0][1] == STATION_ID_KEY  # document id key
-        assert call[1] == {"merge": True}
-        # check hash
-        set_hash_mock.assert_called_once()
-        # test hash loading and writing use the same key
-        assert load_hash_mock.call_args[0][0] == set_hash_mock.call_args[0][0]
-        assert set_hash_mock.call_args[0][1] == str(phenoyear) + response_text
-    else:
-        write_batch_mock.assert_not_called()
-        set_hash_mock.assert_not_called()
-
-
-def test_process_stations_nok(mocker):
-    mocker.patch(
-        "phenoback.functions.meteoswiss_import.get_phenoyear", return_value=2011
-    )
-    mocker.patch(
-        "phenoback.functions.meteoswiss_import.get",
-        return_value=Response(ok=False, text=None, elapsed=None, status_code="5xx"),
-    )
-    try:
-        meteoswiss.process_stations()
-    except meteoswiss.ResourceNotFoundException:
-        pass  # expected
-
-
-def test_get_station_species():
-    result = meteoswiss._get_station_species(
-        # output of meteoswiss._get_observations_dict
+    @pytest.mark.parametrize(
+        "data1, data2, is_processed_expected",
         [
-            {"individual_id": "individual_1", "species": "species_1"},
-            {"individual_id": "individual_1", "species": "species_2"},
-            {"individual_id": "individual_2", "species": "species_1"},
-        ]
+            ("same", "same", False),
+            ("old", "new", True),
+        ],
     )
-    assert result == {
-        "individual_1": ["species_1", "species_2"],
-        "individual_2": ["species_1"],
-    }
+    def test_process_observations_response__cache(
+        self, data1, data2, is_processed_expected
+    ):
+        assert meteoswiss.process_observations_response(data1, 0)
+        assert (
+            meteoswiss.process_observations_response(data2, 0) == is_processed_expected
+        )
+
+    @pytest.mark.parametrize(
+        "old_species, new_species, expected",
+        [
+            ("None", ["s1", "s2"], ["s1", "s2"]),
+            ([], ["s1", "s2"], ["s1", "s2"]),
+            (["s1", "s2"], ["s2", "s3"], ["s1", "s2", "s3"]),
+        ],
+    )
+    def test_update_station_species(self, old_species, new_species, expected):
+        individual_id = "individual_1"
+        d.write_individual(
+            individual_id, {"attribute": "should stay", "station_species": old_species}
+        )
+        meteoswiss._update_station_species({individual_id: new_species})
+        result = d.get_individual(individual_id)
+        assert result["attribute"]
+        assert len(result["station_species"]) == len(expected)
+        assert set(result["station_species"]) == set(expected)
+
+    def test_get_station_species(self):
+        result = meteoswiss._get_station_species(
+            # output of meteoswiss._get_observations_dict
+            [
+                {"individual_id": "individual_1", "species": "species_1"},
+                {"individual_id": "individual_1", "species": "species_2"},
+                {"individual_id": "individual_2", "species": "species_1"},
+            ]
+        )
+        assert result == {
+            "individual_1": ["species_1", "species_2"],
+            "individual_2": ["species_1"],
+        }
 
 
-@pytest.mark.parametrize(
-    "old_species, new_species, expected",
-    [
-        ("None", ["s1", "s2"], ["s1", "s2"]),
-        ([], ["s1", "s2"], ["s1", "s2"]),
-        (["s1", "s2"], ["s2", "s3"], ["s1", "s2", "s3"]),
-    ],
-)
-def test_update_station_species(old_species, new_species, expected):
-    individual_id = "individual_1"
-    write_individual(
-        individual_id, {"attribute": "should stay", "station_species": old_species}
+class TestStations:
+    def test_clean_station_csv(self, station_data):
+        clean_data = meteoswiss._clean_station_csv(station_data)
+        assert len(clean_data.splitlines()) == 4
+
+    def test_get_individuals_dicts(self, station_data):
+        clean_data = meteoswiss._clean_station_csv(station_data)
+        dict_reader = csv.DictReader(StringIO(clean_data), delimiter=";")
+        results = meteoswiss._get_individuals_dicts(2011, dict_reader)
+        # assert all keys are generated
+        for result in results:
+            assert {
+                STATION_ID_KEY,
+                "altitude",
+                "geopos",
+                "individual",
+                "name",
+                "source",
+                "user",
+                "type",
+                "year",
+            } == result.keys()
+            assert result["year"] == 2011
+            assert result[STATION_ID_KEY].startswith("2011_")
+
+    def test_get_individuals_dicts__footer(self, station_data):
+        clean_data = meteoswiss._clean_station_csv(station_data)
+        dict_reader = csv.DictReader(StringIO(clean_data), delimiter=";")
+        results = meteoswiss._get_individuals_dicts(2011, dict_reader)
+        # assert the footer is ignored
+        assert len(results) == 3
+
+    def test_process_stations__ok(self, mocker):
+        response_text = "some_data"
+        response_elapsed = 0.01
+        process_response_mock = mocker.patch(
+            "phenoback.functions.meteoswiss_import.process_stations_response",
+            return_value=True,
+        )
+        mocker.patch(
+            "phenoback.functions.meteoswiss_import.get",
+            return_value=Response(
+                ok=True, text=response_text, elapsed=response_elapsed, status_code=200
+            ),
+        )
+
+        assert meteoswiss.process_stations()
+        process_response_mock.assert_called_once_with(response_text, response_elapsed)
+
+    def test_process_stations__nok(self, mocker):
+        mocker.patch(
+            "phenoback.functions.meteoswiss_import.get",
+            return_value=Response(ok=False, text=None, elapsed=None, status_code="5xx"),
+        )
+        try:
+            meteoswiss.process_stations()
+        except meteoswiss.ResourceNotFoundException:
+            pass  # expected
+
+    def test_process_stations_response__write(self, station_data):
+        phenoyear = d.get_phenoyear()
+        meteoswiss.process_stations_response(station_data, 0)
+        station = d.get_individual("%i_%s" % (phenoyear, "ADB"))
+        assert station is not None
+        assert d.get_individual("%i_%s" % (phenoyear, "ALC")) is not None
+        assert d.get_individual("%i_%s" % (phenoyear, "ALD")) is not None
+
+        assert station["altitude"] == 1350
+        assert station["geopos"] == {"lat": 46.492022, "lng": 7.561067}
+        assert station["individual"] == "ADB"
+        assert station["name"] == "Adelboden"
+        assert station["source"] == "meteoswiss"
+        assert station["user"] == "meteoswiss"
+        assert station["type"] == "station"
+        assert station["year"] == phenoyear
+
+    @pytest.mark.parametrize(
+        "data1, data2, is_processed_expected",
+        [
+            ("same", "same", False),
+            ("old", "new", True),
+        ],
     )
-    meteoswiss._update_station_species({individual_id: new_species})
-    result = get_individual(individual_id)
-    assert result["attribute"]
-    assert len(result["station_species"]) == len(expected)
-    assert set(result["station_species"]) == set(expected)
+    def test_process_stations_response__cache(
+        self, mocker, data1, data2, is_processed_expected
+    ):
+        clean_station_mock = mocker.patch(
+            "phenoback.functions.meteoswiss_import._clean_station_csv",
+            side_effect=[data1, data2],
+        )
+        assert meteoswiss.process_stations_response(data1, 0)
+        clean_station_mock.assert_called_once_with(data1)
+        assert meteoswiss.process_stations_response(data2, 0) == is_processed_expected
+
+    def test_process_stations_response__cache_year_change(self):
+        data = "some_data"
+        assert meteoswiss.process_stations_response(data, 0)
+        assert not meteoswiss.process_stations_response(data, 0)
+        d.update_phenoyear(2001)
+        assert meteoswiss.process_stations_response(data, 0)
