@@ -270,21 +270,30 @@ def process_document_ts_write(data, context):
         document_id = get_document_id(context)
 
         if is_create_event(data):
-            log.info("update created ts on document %s", context.resource)
+            log.info(
+                "update created ts on document %s (%s)",
+                context.resource,
+                get_field(data, "source", expected=False),
+            )
             documents.update_created_document(collection_path, document_id)
         elif is_update_event(data) and not is_field_updated(
             data, documents.MODIFIED_KEY
         ):
             log.info(
-                "update modified ts on document %s %s",
+                "update modified ts on document %s %s (%s)",
                 context.resource,
                 get_fields_updated(data),
+                get_field(data, "source", expected=False),
             )
             documents.update_modified_document(collection_path, document_id)
         elif is_delete_event(data):
             log.info("document %s was deleted", context.resource)
         else:
-            log.debug("Nothing to do for document %s", context.resource)
+            log.debug(
+                "Nothing to do for document %s (%s)",
+                context.resource,
+                get_field(data, "source", old_value=True, expected=False),
+            )
 
 
 @retry.Retry(predicate=if_exception_type(exceptions.NotFound))
