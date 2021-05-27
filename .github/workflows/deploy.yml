@@ -18,7 +18,7 @@ on:
         required: false
 
 env:
-  RUNTIME: python37
+  RUNTIME: python39
   REGION: europe-west1
   TIMEOUT: 540s
   PROJECT: ${{ github.event.inputs.project }}
