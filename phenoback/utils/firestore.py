@@ -9,6 +9,7 @@ from google.cloud.firestore_v1 import Increment as _Increment
 from google.cloud.firestore_v1 import Query
 from google.cloud.firestore_v1.client import Client
 from google.cloud.firestore_v1.collection import CollectionReference
+from google.cloud.firestore_v1.transaction import Transaction
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
@@ -33,9 +34,15 @@ def get_transaction():
     return firestore_client().transaction()
 
 
-def delete_document(collection: str, document_id: str) -> None:
+def delete_document(
+    collection: str, document_id: str, transaction: Transaction = None
+) -> None:
     log.debug("Delete document %s from %s", document_id, collection)
-    firestore_client().collection(collection).document(document_id).delete()
+    ref = firestore_client().collection(collection).document(document_id)
+    if transaction:
+        transaction.delete(ref)
+    else:
+        ref.delete()
 
 
 def _delete_batch(coll_ref, batch_size: int = 1000):
@@ -88,23 +95,59 @@ def write_batch(
 
 
 def write_document(
-    collection: str, document_id: Optional[str], data: dict, merge: bool = False
+    collection: str,
+    document_id: Optional[str],
+    data: dict,
+    merge: bool = False,
+    transaction: Transaction = None,
 ) -> None:
-    log.debug("Write document %s to %s", document_id, collection)
-    firestore_client().collection(collection).document(document_id).set(
-        data, merge=merge
+    log.debug(
+        "Write document %s to %s (%s)",
+        document_id,
+        collection,
+        transaction.id if transaction else None,
     )
+    ref = firestore_client().collection(collection).document(document_id)
+    if transaction:
+        transaction.set(ref, data, merge=merge)
+    else:
+        ref.set(data, merge=merge)
 
 
-def update_document(collection: str, document_id: str, data: dict) -> None:
-    log.debug("Update document %s in %s", document_id, collection)
-    firestore_client().collection(collection).document(document_id).update(data)
+def update_document(
+    collection: str,
+    document_id: str,
+    data: dict,
+    transaction: Transaction = None,
+) -> None:
+    log.debug(
+        "Update document %s in %s (%s)",
+        document_id,
+        collection,
+        transaction.id if transaction else None,
+    )
+    ref = firestore_client().collection(collection).document(document_id)
+    if transaction:
+        transaction.update(ref, data)
+    else:
+        ref.update(data)
 
 
-def get_document(collection: str, document_id: str) -> Optional[dict]:
-    log.debug("Get document %s in %s", document_id, collection)
+def get_document(
+    collection: str, document_id: str, transaction: Transaction = None
+) -> Optional[dict]:
+    log.debug(
+        "Get document %s in %s (%s)",
+        document_id,
+        collection,
+        transaction.id if transaction else None,
+    )
     return (
-        firestore_client().collection(collection).document(document_id).get().to_dict()
+        firestore_client()
+        .collection(collection)
+        .document(document_id)
+        .get(transaction=transaction)
+        .to_dict()
     )
 
 

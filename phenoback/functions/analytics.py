@@ -4,6 +4,7 @@ from typing import Optional
 
 import numpy as np
 from google.cloud import firestore
+from google.cloud.firestore_v1.transaction import Transaction
 
 from phenoback.utils.data import get_individual
 from phenoback.utils.firestore import DELETE_FIELD, firestore_client
@@ -16,7 +17,7 @@ RESULT_COLLECTION = "analytics_result"
 
 
 def update_state(
-    transaction,
+    transaction: Transaction,
     observation_id: str,
     observation_date: datetime,
     phase: str,
@@ -62,7 +63,7 @@ def update_state(
 
 
 def update_result(
-    transaction,
+    transaction: Transaction,
     observation_dates: list,
     phase: str,
     source: str,
@@ -113,7 +114,7 @@ def update_result(
 
 @firestore.transactional
 def update_data(
-    transaction,
+    transaction: Transaction,
     observation_id: str,
     observation_date: datetime,
     year: int,
@@ -139,7 +140,7 @@ def update_data(
 
 @firestore.transactional
 def remove_observation(
-    transaction,
+    transaction: Transaction,
     observation_id: str,
     year: int,
     species: str,

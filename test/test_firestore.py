@@ -1,9 +1,12 @@
 import random
 import string
+from contextlib import contextmanager
 from typing import Dict
 
 import google.api_core.exceptions
 import pytest
+from google.cloud import firestore
+from google.cloud.firestore_v1._helpers import ReadAfterWriteError
 
 from phenoback.utils import firestore as f
 
@@ -13,6 +16,13 @@ def get_random_string(length) -> str:
     letters = string.ascii_letters
     result_str = "".join(random.choice(letters) for i in range(length))  # nosec (B312)
     return result_str
+
+
+@contextmanager
+def transaction():
+    transaction = f.get_transaction()
+    yield transaction
+    transaction.commit()
 
 
 @pytest.fixture()
@@ -164,3 +174,77 @@ def test_delete_batch(collection):
     for result in results:
         assert result.to_dict().get("property") is not None
         assert result.to_dict()["property"] != 2
+
+
+def test_write_document__transaction(collection, doc_id, doc):
+    @firestore.transactional
+    def write_transactional(
+        transaction,
+        collection,
+        doc_id,
+    ):
+        f.write_document(collection, doc_id, doc, transaction=transaction)
+
+    with transaction() as trx:
+        write_transactional(trx, collection, doc_id)
+    assert f.get_document(collection, doc_id) == doc
+
+
+def test_update_document__transaction(collection, doc_id, doc, doc2):
+    @firestore.transactional
+    def update_transactional(
+        transaction,
+        collection,
+        doc_id,
+    ):
+        f.update_document(collection, doc_id, doc2, transaction=transaction)
+
+    f.write_document(collection, doc_id, doc)
+    with transaction() as trx:
+        update_transactional(trx, collection, doc_id)
+    updated_doc = f.get_document(collection, doc_id)
+    assert doc.items() < updated_doc.items()
+    assert doc2.items() < updated_doc.items()
+
+
+def test_delete_document__transaction(collection, doc_id, doc):
+    @firestore.transactional
+    def delete_transactional(
+        transaction,
+        collection,
+        doc_id,
+    ):
+        f.delete_document(collection, doc_id, transaction=transaction)
+
+    f.write_document(collection, doc_id, doc)
+    with transaction() as trx:
+        delete_transactional(trx, collection, doc_id)
+
+    assert f.get_document(collection, doc_id) is None
+
+
+def test_get_document__transaction(collection, doc_id, doc):
+    @firestore.transactional
+    def get_transactional(
+        transaction,
+        collection,
+        doc_id,
+    ):
+        return f.get_document(collection, doc_id, transaction=transaction)
+
+    f.write_document(collection, doc_id, doc)
+    with transaction() as trx:
+        assert get_transactional(trx, collection, doc_id) == doc
+
+
+def test_get_document__transaction_fail(collection, doc_id, doc):
+    @firestore.transactional
+    def transactional__fail(transaction, collection, doc_id):
+        f.write_document(collection, doc_id, doc, transaction=transaction)
+        f.get_document(collection, doc_id, transaction=transaction)
+
+    with transaction() as trx:
+        try:
+            transactional__fail(trx, collection, doc_id)
+        except ReadAfterWriteError:
+            pass  # expected
