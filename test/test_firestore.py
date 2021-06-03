@@ -1,6 +1,5 @@
 import random
 import string
-from contextlib import contextmanager
 from typing import Dict
 
 import google.api_core.exceptions
@@ -8,7 +7,7 @@ import pytest
 from google.cloud.firestore_v1._helpers import ReadAfterWriteError
 
 from phenoback.utils import firestore as f
-from phenoback.utils.firestore import transactional
+from phenoback.utils.firestore import transaction, transactional
 
 
 def get_random_string(length) -> str:
@@ -16,13 +15,6 @@ def get_random_string(length) -> str:
     letters = string.ascii_letters
     result_str = "".join(random.choice(letters) for i in range(length))  # nosec (B312)
     return result_str
-
-
-@contextmanager
-def transaction():
-    transaction = f.get_transaction()
-    yield transaction
-    transaction.commit()
 
 
 @pytest.fixture()

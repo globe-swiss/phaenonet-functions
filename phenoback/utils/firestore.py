@@ -1,4 +1,5 @@
 import logging
+from contextlib import contextmanager
 from typing import Any, List, Optional
 
 from firebase_admin import firestore
@@ -7,12 +8,12 @@ from google.cloud.firestore_v1 import SERVER_TIMESTAMP as _SERVER_TIMESTAMP
 from google.cloud.firestore_v1 import ArrayUnion as _ArrayUnion
 from google.cloud.firestore_v1 import Increment as _Increment
 from google.cloud.firestore_v1 import Query as _Query
+from google.cloud.firestore_v1 import transactional as _transactional
 from google.cloud.firestore_v1.client import Client as _Client
 from google.cloud.firestore_v1.collection import (
     CollectionReference as _CollectionReference,
 )
 from google.cloud.firestore_v1.transaction import Transaction as _Transaction
-from google.cloud.firestore_v1 import transactional as _transactional
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
@@ -40,6 +41,13 @@ def firestore_client() -> Client:
 
 def get_transaction():
     return firestore_client().transaction()
+
+
+@contextmanager
+def transaction():
+    transaction = get_transaction()
+    yield transaction
+    transaction.commit()
 
 
 def delete_document(
