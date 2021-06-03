@@ -310,7 +310,6 @@ def create_thumbnail_finalize(data, context):
         thumbnails.process_new_image(pathfile)
 
 
-@retry.Retry()
 def rollover_manual(data, context):
     """
     Rollover the phenoyear and creates data for meteoswiss export.

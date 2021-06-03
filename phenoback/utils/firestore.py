@@ -9,6 +9,7 @@ from google.cloud.firestore_v1 import ArrayUnion as _ArrayUnion
 from google.cloud.firestore_v1 import Increment as _Increment
 from google.cloud.firestore_v1 import Query as _Query
 from google.cloud.firestore_v1 import transactional as _transactional
+from google.cloud.firestore_v1.batch import WriteBatch
 from google.cloud.firestore_v1.client import Client as _Client
 from google.cloud.firestore_v1.collection import (
     CollectionReference as _CollectionReference,
@@ -50,13 +51,11 @@ def transaction():
     transaction.commit()
 
 
-def delete_document(
-    collection: str, document_id: str, transaction: Transaction = None
-) -> None:
+def delete_document(collection: str, document_id: str, trx: Transaction = None) -> None:
     log.debug("Delete document %s from %s", document_id, collection)
     ref = firestore_client().collection(collection).document(document_id)
-    if transaction:
-        transaction.delete(ref)
+    if trx:
+        trx.delete(ref)
     else:
         ref.delete()
 
@@ -87,27 +86,61 @@ def delete_batch(
     _delete_batch(query, batch_size=batch_size)
 
 
+def _write_batch(
+    collection: str,
+    key: str,
+    data: List[dict],
+    merge: bool,
+    commit_size: int,
+    writebatch: WriteBatch,
+) -> int:
+    cnt = 0
+    for item in data:
+        cnt += 1
+        ref = firestore_client().collection(collection).document(str(item[key]))
+        item.pop(key)
+        writebatch.set(ref, item, merge=merge)
+        if cnt == commit_size:
+            log.debug("Commiting %i documents on %s", cnt, collection)
+            writebatch.commit()
+            cnt = 0
+    if commit_size > 0:
+        log.debug("Committing %i documents on %s", cnt, collection)
+        writebatch.commit()
+        cnt = 0
+    return cnt
+
+
 def write_batch(
     collection: str,
     key: str,
     data: List[dict],
     merge: bool = False,
     batch_size: int = 500,
-) -> None:
+) -> int:
     log.info("Batch-write %i documents to %s", len(data), collection)
     batch = firestore_client().batch()
-    cnt = 0
-    for item in data:
-        cnt += 1
-        ref = firestore_client().collection(collection).document(str(item[key]))
-        item.pop(key)
-        batch.set(ref, item, merge=merge)
-        if cnt == batch_size:
-            log.debug("Commiting %i documents on %s", cnt, collection)
-            batch.commit()
-            cnt = 0
-    log.debug("Committing %i documents on %s", cnt, collection)
-    batch.commit()
+    return _write_batch(
+        collection, key, data, merge=merge, commit_size=batch_size, writebatch=batch
+    )
+
+
+def write_batch_transaction(
+    collection: str,
+    key: str,
+    data: List[dict],
+    trx: Transaction,
+    merge: bool = False,
+) -> int:
+    log.info(
+        "Batch-write %i documents to %s within transaction %s",
+        len(data),
+        collection,
+        trx.id,
+    )
+    return _write_batch(
+        collection, key, data, merge=merge, commit_size=-1, writebatch=trx
+    )
 
 
 def write_document(
@@ -115,17 +148,17 @@ def write_document(
     document_id: Optional[str],
     data: dict,
     merge: bool = False,
-    transaction: Transaction = None,
+    trx: Transaction = None,
 ) -> None:
     log.debug(
         "Write document %s to %s (%s)",
         document_id,
         collection,
-        transaction.id if transaction else None,
+        trx.id if trx else None,
     )
     ref = firestore_client().collection(collection).document(document_id)
-    if transaction:
-        transaction.set(ref, data, merge=merge)
+    if trx:
+        trx.set(ref, data, merge=merge)
     else:
         ref.set(data, merge=merge)
 
@@ -134,35 +167,35 @@ def update_document(
     collection: str,
     document_id: str,
     data: dict,
-    transaction: Transaction = None,
+    trx: Transaction = None,
 ) -> None:
     log.debug(
         "Update document %s in %s (%s)",
         document_id,
         collection,
-        transaction.id if transaction else None,
+        trx.id if trx else None,
     )
     ref = firestore_client().collection(collection).document(document_id)
-    if transaction:
-        transaction.update(ref, data)
+    if trx:
+        trx.update(ref, data)
     else:
         ref.update(data)
 
 
 def get_document(
-    collection: str, document_id: str, transaction: Transaction = None
+    collection: str, document_id: str, trx: Transaction = None
 ) -> Optional[dict]:
     log.debug(
         "Get document %s in %s (%s)",
         document_id,
         collection,
-        transaction.id if transaction else None,
+        trx.id if trx else None,
     )
     return (
         firestore_client()
         .collection(collection)
         .document(document_id)
-        .get(transaction=transaction)
+        .get(transaction=trx)
         .to_dict()
     )
 

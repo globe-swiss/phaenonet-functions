@@ -327,7 +327,6 @@ def test_remove_observation(mocker, state_doc):
         "phase2": {"id": "value2", "another_id": "another_value2"},
     }
 
-    print(update_result_mock.call_args)
     assert update_result_mock.call_args[0][1] == ["another_value1"]
 
 
