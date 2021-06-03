@@ -1,6 +1,5 @@
 # pylint: disable=too-many-arguments
 import copy
-from contextlib import contextmanager
 from datetime import timezone
 from unittest.mock import Mock
 
@@ -10,8 +9,7 @@ from google.api_core.datetime_helpers import DatetimeWithNanoseconds as datetime
 from google.cloud.firestore_v1.transaction import transactional
 
 from phenoback.functions import analytics
-from phenoback.utils import firestore
-from phenoback.utils.firestore import get_document, write_document
+from phenoback.utils.firestore import get_document, transaction, write_document
 
 
 def _date(i: int) -> datetime:
@@ -55,13 +53,6 @@ def add_state(state_doc: dict, phase: str, observation_id: str, date: datetime) 
 @pytest.fixture()
 def state_doc():
     return get_state_doc()
-
-
-@contextmanager
-def transaction():
-    transaction = firestore.get_transaction()
-    yield transaction
-    transaction.commit()
 
 
 def read_state(
