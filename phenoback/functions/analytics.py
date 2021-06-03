@@ -4,10 +4,9 @@ from typing import Optional
 
 import numpy as np
 from google.cloud import firestore
-from google.cloud.firestore_v1.transaction import Transaction
 
 from phenoback.utils.data import get_individual
-from phenoback.utils.firestore import DELETE_FIELD, firestore_client
+from phenoback.utils.firestore import DELETE_FIELD, firestore_client, Transaction
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
