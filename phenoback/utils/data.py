@@ -2,10 +2,10 @@ from functools import lru_cache
 from typing import Any, List
 
 from firebase_admin import auth
-from google.cloud.firestore_v1 import Query
 
 from phenoback.utils.firestore import (
     ArrayUnion,
+    Query,
     delete_batch,
     delete_document,
     get_document,

@@ -1,7 +1,7 @@
 from collections import namedtuple
 from typing import List
 
-import google.cloud.firestore_v1.collection
+import google
 import pytest
 
 from phenoback.functions import activity
