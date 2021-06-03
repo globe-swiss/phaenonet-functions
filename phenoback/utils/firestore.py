@@ -12,6 +12,7 @@ from google.cloud.firestore_v1.collection import (
     CollectionReference as _CollectionReference,
 )
 from google.cloud.firestore_v1.transaction import Transaction as _Transaction
+from google.cloud.firestore_v1 import transactional as _transactional
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
@@ -27,6 +28,7 @@ Query = _Query
 Client = _Client
 CollectionReference = _CollectionReference
 Transaction = _Transaction
+transactional = _transactional
 
 
 def firestore_client() -> Client:

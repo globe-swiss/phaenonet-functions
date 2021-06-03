@@ -5,10 +5,10 @@ from typing import Dict
 
 import google.api_core.exceptions
 import pytest
-from google.cloud import firestore
 from google.cloud.firestore_v1._helpers import ReadAfterWriteError
 
 from phenoback.utils import firestore as f
+from phenoback.utils.firestore import transactional
 
 
 def get_random_string(length) -> str:
@@ -177,7 +177,7 @@ def test_delete_batch(collection):
 
 
 def test_write_document__transaction(collection, doc_id, doc):
-    @firestore.transactional
+    @transactional
     def write_transactional(
         transaction,
         collection,
@@ -191,7 +191,7 @@ def test_write_document__transaction(collection, doc_id, doc):
 
 
 def test_update_document__transaction(collection, doc_id, doc, doc2):
-    @firestore.transactional
+    @transactional
     def update_transactional(
         transaction,
         collection,
@@ -208,7 +208,7 @@ def test_update_document__transaction(collection, doc_id, doc, doc2):
 
 
 def test_delete_document__transaction(collection, doc_id, doc):
-    @firestore.transactional
+    @transactional
     def delete_transactional(
         transaction,
         collection,
@@ -224,7 +224,7 @@ def test_delete_document__transaction(collection, doc_id, doc):
 
 
 def test_get_document__transaction(collection, doc_id, doc):
-    @firestore.transactional
+    @transactional
     def get_transactional(
         transaction,
         collection,
@@ -238,7 +238,7 @@ def test_get_document__transaction(collection, doc_id, doc):
 
 
 def test_get_document__transaction_fail(collection, doc_id, doc):
-    @firestore.transactional
+    @transactional
     def transactional__fail(transaction, collection, doc_id):
         f.write_document(collection, doc_id, doc, transaction=transaction)
         f.get_document(collection, doc_id, transaction=transaction)

@@ -3,10 +3,14 @@ from datetime import datetime
 from typing import Optional
 
 import numpy as np
-from google.cloud import firestore
 
 from phenoback.utils.data import get_individual
-from phenoback.utils.firestore import DELETE_FIELD, firestore_client, Transaction
+from phenoback.utils.firestore import (
+    DELETE_FIELD,
+    Transaction,
+    firestore_client,
+    transactional,
+)
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
@@ -111,7 +115,7 @@ def update_result(
     transaction.set(result_ref, result_document, merge=True)
 
 
-@firestore.transactional
+@transactional
 def update_data(
     transaction: Transaction,
     observation_id: str,
@@ -137,7 +141,7 @@ def update_data(
     )
 
 
-@firestore.transactional
+@transactional
 def remove_observation(
     transaction: Transaction,
     observation_id: str,
