@@ -123,12 +123,28 @@ def test_query_collection__no_result(collection, doc_id, doc_id2, doc):
 
 
 def test_write_batch(collection):
-    size = 30
+    size = 32
     batch = []
     for i in range(size):
         batch.append({"id": i, "value": i})
 
-    f.write_batch(collection, "id", batch, batch_size=5)
+    assert f.write_batch(collection, "id", batch, commit_size=5) == 0
+    assert len(list(f.get_collection(collection).stream())) == size
+
+
+def test_write_batch__transaction(collection):
+    @transactional
+    def write_batch_trx(trx, collection, batch):
+        f.get_document(collection, "non_existing_id", trx=trx)
+        assert f.write_batch(collection, "id", batch, trx=trx) == size
+
+    size = 32
+    batch = []
+    for i in range(size):
+        batch.append({"id": i, "value": i})
+
+    with f.transaction() as trx:
+        write_batch_trx(trx, collection, batch)
 
     assert len(list(f.get_collection(collection).stream())) == size
 
@@ -175,7 +191,7 @@ def test_write_document__transaction(collection, doc_id, doc):
         collection,
         doc_id,
     ):
-        f.write_document(collection, doc_id, doc, transaction=transaction)
+        f.write_document(collection, doc_id, doc, trx=transaction)
 
     with transaction() as trx:
         write_transactional(trx, collection, doc_id)
@@ -189,7 +205,7 @@ def test_update_document__transaction(collection, doc_id, doc, doc2):
         collection,
         doc_id,
     ):
-        f.update_document(collection, doc_id, doc2, transaction=transaction)
+        f.update_document(collection, doc_id, doc2, trx=transaction)
 
     f.write_document(collection, doc_id, doc)
     with transaction() as trx:
@@ -206,7 +222,7 @@ def test_delete_document__transaction(collection, doc_id, doc):
         collection,
         doc_id,
     ):
-        f.delete_document(collection, doc_id, transaction=transaction)
+        f.delete_document(collection, doc_id, trx=transaction)
 
     f.write_document(collection, doc_id, doc)
     with transaction() as trx:
@@ -222,7 +238,7 @@ def test_get_document__transaction(collection, doc_id, doc):
         collection,
         doc_id,
     ):
-        return f.get_document(collection, doc_id, transaction=transaction)
+        return f.get_document(collection, doc_id, trx=transaction)
 
     f.write_document(collection, doc_id, doc)
     with transaction() as trx:
@@ -232,8 +248,8 @@ def test_get_document__transaction(collection, doc_id, doc):
 def test_get_document__transaction_fail(collection, doc_id, doc):
     @transactional
     def transactional__fail(transaction, collection, doc_id):
-        f.write_document(collection, doc_id, doc, transaction=transaction)
-        f.get_document(collection, doc_id, transaction=transaction)
+        f.write_document(collection, doc_id, doc, trx=transaction)
+        f.get_document(collection, doc_id, trx=transaction)
 
     with transaction() as trx:
         try:
