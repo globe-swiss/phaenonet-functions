@@ -11,12 +11,12 @@ log.setLevel(logging.INFO)
 def download_file(bucket: str, path: str):
     log.debug("Download file %s from %s", path, bucket)
     blob = storage.bucket(bucket).get_blob(path)
-    file = tempfile.TemporaryFile()
-    if blob:
-        blob.download_to_file(file)
-        return file
-    else:
-        return None
+    with tempfile.TemporaryFile() as file:
+        if blob:
+            blob.download_to_file(file)
+            return file
+        else:
+            return None
 
 
 def upload_file(
