@@ -94,6 +94,7 @@ def _write_batch(
     commit_size: int,
     writebatch: WriteBatch,
 ) -> int:
+    # pylint: disable=too-many-arguments
     cnt = 0
     for item in data:
         cnt += 1
