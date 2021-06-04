@@ -9,7 +9,6 @@ from phenoback.utils.data import (
     update_phenoyear,
     write_individuals,
 )
-from phenoback.utils.firestore import Transaction, transaction, transactional
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -19,7 +18,6 @@ def get_rollover_individuals(
     source_phenoyear: int,
     target_phenoyear: int,
     individual: str = None,
-    trx: Transaction = None,
 ) -> List[dict]:
     """
     Copy individuals to a new phenoyear, removing all fields that are specific for the phenoyear.
@@ -33,7 +31,7 @@ def get_rollover_individuals(
     )
     if individual:
         query = query.where("individual", "==", individual)
-    for individual_doc in query.stream(trx):
+    for individual_doc in query.stream():
         individual = individual_doc.to_dict()
         individual["id"] = "%i_%s" % (target_phenoyear, individual["individual"])
         individual["year"] = target_phenoyear
@@ -44,7 +42,7 @@ def get_rollover_individuals(
     return new_individuals
 
 
-def get_stale_individuals(year: int, trx: Transaction = None) -> List[str]:
+def get_stale_individuals(year: int) -> List[str]:
     """
     Remove all individuals in Firestore that have no observations for all
     sources (globe and meteoswiss) for the given phenoyear year.
@@ -52,43 +50,36 @@ def get_stale_individuals(year: int, trx: Transaction = None) -> List[str]:
     """
     stale_list = []
     # split querying and deleting to avoid stream timeouts
-    for individual_doc in query_individuals("year", "==", year).stream(trx):
+    for individual_doc in query_individuals("year", "==", year).stream():
         if not has_observations(individual_doc.to_dict()):
             stale_list.append(individual_doc.id)
     return stale_list
 
 
 def rollover():
-    phenoyear = get_phenoyear()
-    with transaction() as trx:
-        _rollover_trx(trx, phenoyear, phenoyear + 1)
-
-
-@transactional
-def _rollover_trx(trx: Transaction, source_phenoyear: int, target_phenoyear: int):
+    source_phenoyear = get_phenoyear()
+    target_phenoyear = source_phenoyear + 1
     log.info(
         "Gather rollover individuals of %i to %i", source_phenoyear, target_phenoyear
     )
-    new_individuals = get_rollover_individuals(
-        source_phenoyear, target_phenoyear, trx=trx
-    )
+    new_individuals = get_rollover_individuals(source_phenoyear, target_phenoyear)
 
     log.info("Gather stale individuals for %i", source_phenoyear)
-    stale_individuals = get_stale_individuals(source_phenoyear, trx=trx)
+    stale_individuals = get_stale_individuals(source_phenoyear)
 
     log.info(
         "Creating %i new individuals in %i", len(new_individuals), target_phenoyear
     )
-    write_individuals(new_individuals, "id", trx=trx)
+    write_individuals(new_individuals, "id")
 
     log.info(
         "Remove %i stale individuals for %i", len(stale_individuals), source_phenoyear
     )
     for individual_id in stale_individuals:
         log.debug("Remove individual %s", individual_id)
-        delete_individual(individual_id, trx=trx)
+        delete_individual(individual_id)
 
     log.info(
         "Setting current phenoyear from %i to %i", source_phenoyear, target_phenoyear
     )
-    update_phenoyear(target_phenoyear, trx=trx)
+    update_phenoyear(target_phenoyear)
