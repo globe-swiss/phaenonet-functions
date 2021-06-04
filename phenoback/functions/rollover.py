@@ -9,14 +9,17 @@ from phenoback.utils.data import (
     update_phenoyear,
     write_individuals,
 )
-from phenoback.utils.firestore import transaction, transactional
+from phenoback.utils.firestore import Transaction, transaction, transactional
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
 def get_rollover_individuals(
-    source_phenoyear, target_phenoyear, individual=None, trx=None
+    source_phenoyear: int,
+    target_phenoyear: int,
+    individual: str = None,
+    trx: Transaction = None,
 ) -> List[dict]:
     """
     Copy individuals to a new phenoyear, removing all fields that are specific for the phenoyear.
@@ -41,7 +44,7 @@ def get_rollover_individuals(
     return new_individuals
 
 
-def get_stale_individuals(year: int, trx=None) -> List[str]:
+def get_stale_individuals(year: int, trx: Transaction = None) -> List[str]:
     """
     Remove all individuals in Firestore that have no observations for all
     sources (globe and meteoswiss) for the given phenoyear year.
@@ -62,7 +65,7 @@ def rollover():
 
 
 @transactional
-def _rollover_trx(trx, source_phenoyear, target_phenoyear):
+def _rollover_trx(trx: Transaction, source_phenoyear: int, target_phenoyear: int):
     log.info(
         "Gather rollover individuals of %i to %i", source_phenoyear, target_phenoyear
     )

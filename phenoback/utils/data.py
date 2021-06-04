@@ -6,6 +6,7 @@ from firebase_admin import auth
 from phenoback.utils.firestore import (
     ArrayUnion,
     Query,
+    Transaction,
     delete_batch,
     delete_document,
     get_document,
@@ -38,17 +39,17 @@ def get_phenoyear() -> int:
     return _get_dynamic_config()["phenoyear"]
 
 
-def update_phenoyear(year: int, trx=None) -> None:
+def update_phenoyear(year: int, trx: Transaction = None) -> None:
     write_document(
         "definitions", "config_dynamic", {"phenoyear": year}, merge=True, trx=trx
     )
 
 
-def get_individual(individual_id: str, trx=None) -> dict:
+def get_individual(individual_id: str, trx: Transaction = None) -> dict:
     return get_document("individuals", individual_id, trx=trx)
 
 
-def delete_individual(individual_id: str, trx=None) -> None:
+def delete_individual(individual_id: str, trx: Transaction = None) -> None:
     delete_document("individuals", individual_id, trx=trx)
 
 
@@ -60,18 +61,22 @@ def query_individuals(field_path: str, op_string: str, value: Any) -> Query:
     return query_collection("individuals", field_path, op_string, value)
 
 
-def write_individuals(individuals: List[dict], key: str, trx=None) -> None:
+def write_individuals(
+    individuals: List[dict], key: str, trx: Transaction = None
+) -> None:
     if trx:
         write_batch_transaction("individuals", key, individuals, trx=trx)
     else:
         write_batch("individuals", key, individuals)
 
 
-def write_individual(individual_id: str, data: dict, merge=False, trx=None) -> None:
+def write_individual(
+    individual_id: str, data: dict, merge: bool = False, trx: Transaction = None
+) -> None:
     write_document("individuals", individual_id, data, merge=merge, trx=trx)
 
 
-def update_individual(individual_id: str, data: dict, trx=None) -> None:
+def update_individual(individual_id: str, data: dict, trx: Transaction = None) -> None:
     update_document("individuals", individual_id, data, trx=trx)
 
 
@@ -80,19 +85,21 @@ def has_observations(individual: dict) -> bool:
     return individual.get("last_observation_date") is not None
 
 
-def get_observation(observation_id: str, trx=None) -> dict:
+def get_observation(observation_id: str, trx: Transaction = None) -> dict:
     return get_document("observations", observation_id, trx=trx)
 
 
-def update_observation(observation_id: str, data: dict, trx=None) -> None:
+def update_observation(
+    observation_id: str, data: dict, trx: Transaction = None
+) -> None:
     update_document("observations", observation_id, data, trx=trx)
 
 
-def delete_observation(observation_id: str, trx=None) -> None:
+def delete_observation(observation_id: str, trx: Transaction = None) -> None:
     delete_document("observations", observation_id, trx=trx)
 
 
-def write_observation(observation_id: str, data: dict, trx=None) -> None:
+def write_observation(observation_id: str, data: dict, trx: Transaction = None) -> None:
     write_document("observations", observation_id, data, trx=trx)
 
 
@@ -100,7 +107,7 @@ def query_observation(field_path: str, op_string: str, value: Any) -> Query:
     return query_collection("observations", field_path, op_string, value)
 
 
-def get_user(user_id: str, trx=None) -> dict:
+def get_user(user_id: str, trx: Transaction = None) -> dict:
     return get_document("users", user_id, trx=trx)
 
 
@@ -120,7 +127,7 @@ def get_user_id_by_email(email: str) -> str:  # pragma: no cover
     return auth.get_user_by_email(email).uid
 
 
-def follow_user(follower_id: str, followee_id: str, trx=None) -> bool:
+def follow_user(follower_id: str, followee_id: str, trx: Transaction = None) -> bool:
     user = get_user(follower_id, trx=trx)
     if not user:
         raise ValueError("User not found %s" % follower_id)
