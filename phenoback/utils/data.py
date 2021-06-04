@@ -13,7 +13,6 @@ from phenoback.utils.firestore import (
     query_collection,
     update_document,
     write_batch,
-    write_batch_transaction,
     write_document,
 )
 
@@ -65,7 +64,7 @@ def write_individuals(
     individuals: List[dict], key: str, trx: Transaction = None
 ) -> None:
     if trx:
-        write_batch_transaction("individuals", key, individuals, trx=trx)
+        write_batch("individuals", key, individuals, trx=trx)
     else:
         write_batch("individuals", key, individuals)
 

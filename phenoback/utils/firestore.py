@@ -117,30 +117,41 @@ def write_batch(
     key: str,
     data: List[dict],
     merge: bool = False,
-    batch_size: int = 500,
+    commit_size: int = None,
+    trx: Transaction = None,
 ) -> int:
-    log.info("Batch-write %i documents to %s", len(data), collection)
-    batch = firestore_client().batch()
+    # pylint: disable=too-many-arguments
+    if trx:
+        log.info(
+            "Batch-write %i documents to %s within transaction %s",
+            len(data),
+            collection,
+            trx.id,
+        )
+        if commit_size is not None:  # pragma: no cover
+            log.warning(
+                "Commit-size cannot be set if writing to transaction, ignoring value (%s)",
+                commit_size,
+            )
+        commit_size = -1
+        writebatch = trx
+    else:
+        if commit_size is None:
+            commit_size = 500
+        log.info(
+            "Batch-write %i documents to %s in %i batches",
+            len(data),
+            collection,
+            commit_size,
+        )
+        writebatch = firestore_client().batch()
     return _write_batch(
-        collection, key, data, merge=merge, commit_size=batch_size, writebatch=batch
-    )
-
-
-def write_batch_transaction(
-    collection: str,
-    key: str,
-    data: List[dict],
-    trx: Transaction,
-    merge: bool = False,
-) -> int:
-    log.info(
-        "Batch-write %i documents to %s within transaction %s",
-        len(data),
         collection,
-        trx.id,
-    )
-    return _write_batch(
-        collection, key, data, merge=merge, commit_size=-1, writebatch=trx
+        key,
+        data,
+        merge=merge,
+        commit_size=commit_size,
+        writebatch=writebatch,
     )
 
 

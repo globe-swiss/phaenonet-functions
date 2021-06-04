@@ -128,16 +128,15 @@ def test_write_batch(collection):
     for i in range(size):
         batch.append({"id": i, "value": i})
 
-    assert f.write_batch(collection, "id", batch, batch_size=5) == 0
-
+    assert f.write_batch(collection, "id", batch, commit_size=5) == 0
     assert len(list(f.get_collection(collection).stream())) == size
 
 
-def test_write_batch_transaction(collection):
+def test_write_batch__transaction(collection):
     @transactional
-    def write_batch_transaction_trx(trx, collection, batch):
+    def write_batch_trx(trx, collection, batch):
         f.get_document(collection, "non_existing_id", trx=trx)
-        assert f.write_batch_transaction(collection, "id", batch, trx=trx) == size
+        assert f.write_batch(collection, "id", batch, trx=trx) == size
 
     size = 32
     batch = []
@@ -145,7 +144,7 @@ def test_write_batch_transaction(collection):
         batch.append({"id": i, "value": i})
 
     with f.transaction() as trx:
-        write_batch_transaction_trx(trx, collection, batch)
+        write_batch_trx(trx, collection, batch)
 
     assert len(list(f.get_collection(collection).stream())) == size
 
