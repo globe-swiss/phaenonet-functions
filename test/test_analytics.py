@@ -9,7 +9,7 @@ from google.api_core.datetime_helpers import DatetimeWithNanoseconds as datetime
 from google.cloud.firestore_v1.transaction import transactional
 
 from phenoback.functions import analytics
-from phenoback.utils.firestore import get_document, transaction, write_document
+from phenoback.utils.firestore import get_document, transaction_commit, write_document
 
 
 def _date(i: int) -> datetime:
@@ -89,7 +89,7 @@ def write_state(state_doc):
 @pytest.mark.parametrize("altitude_grp", [None, "alt_grp"])
 def test_update_state_initalized(altitude_grp):
     transactional_update_state = transactional(analytics.update_state)
-    with transaction() as txn:
+    with transaction_commit() as txn:
         result_state = transactional_update_state(
             txn, OBSERVATION_ID, DATE, PHASE, SOURCE, YEAR, SPECIES, altitude_grp
         )
@@ -146,7 +146,7 @@ def test_update_state_write(state_doc, obs_id, obs_date, phase, expected):
         state_doc,
     )
     transactional_update_state = transactional(analytics.update_state)
-    with transaction() as txn:
+    with transaction_commit() as txn:
         transactional_update_state(
             txn,
             obs_id,
@@ -190,7 +190,7 @@ def test_update_state_returned_states(state_doc, initial_state, next_state, expe
     write_state(state_doc)
 
     transactional_update_state = transactional(analytics.update_state)
-    with transaction() as txn:
+    with transaction_commit() as txn:
         result_state = transactional_update_state(
             txn,
             next_id,
@@ -207,7 +207,7 @@ def test_update_state_returned_states(state_doc, initial_state, next_state, expe
 
 
 def test_update_results_no_dates():
-    with transaction() as txn:
+    with transaction_commit() as txn:
         analytics.update_data(
             txn,
             OBSERVATION_ID,
@@ -222,7 +222,7 @@ def test_update_results_no_dates():
     # check the phase is present
     assert read_result()["values"][PHASE]
 
-    with transaction() as txn:
+    with transaction_commit() as txn:
         analytics.update_result(txn, [], PHASE, SOURCE, YEAR, SPECIES, ALTITUDE_GRP)
 
     # assert phase was deleted with the last value
@@ -272,7 +272,7 @@ def test_update_results_calculation(state, e_min, e_max, e_median, e_q25, e_q75)
     year = 2000
     altitude_grp = "grp"
     transactional_update_result = transactional(analytics.update_result)
-    with transaction() as txn:
+    with transaction_commit() as txn:
         transactional_update_result(
             txn, state, phase, source, year, species, altitude_grp
         )
@@ -288,7 +288,7 @@ def test_update_results_calculation(state, e_min, e_max, e_median, e_q25, e_q75)
 
 @pytest.mark.parametrize("altitude_grp", [None, "alt_grp"])
 def test_update_results_written(altitude_grp):
-    with transaction() as txn:
+    with transaction_commit() as txn:
         analytics.update_result(
             txn, [datetime.now()], PHASE, SOURCE, YEAR, SPECIES, altitude_grp
         )
@@ -317,7 +317,7 @@ def test_remove_observation(mocker, state_doc):
     }
     write_state(state_doc)
 
-    with transaction() as txn:
+    with transaction_commit() as txn:
         analytics.remove_observation(
             txn, "id", YEAR, SPECIES, "phase1", SOURCE, ALTITUDE_GRP
         )
@@ -339,7 +339,7 @@ def test_remove_observation_last_value(mocker, state_doc):
     }
     write_state(state_doc)
 
-    with transaction() as txn:
+    with transaction_commit() as txn:
         analytics.remove_observation(
             txn, "id", YEAR, SPECIES, "phase2", SOURCE, ALTITUDE_GRP
         )
@@ -369,7 +369,7 @@ def test_remove_data_not_exist(mocker, initial, state_doc):
         state_doc["state"] = initial
         write_state(state_doc)
 
-    with transaction() as txn:
+    with transaction_commit() as txn:
         analytics.remove_observation(txn, "id_not_exits", 0, "", "phase1", "")
 
     analytics.log.error.assert_called()
@@ -396,3 +396,16 @@ def test_get_altitude_grp_failure(mocker, individual):
     analytics.log = mocker.Mock()
     analytics.get_altitude_grp("ignored")
     analytics.log.error.assert_called()
+
+
+def test_process_observation():
+    analytics.process_observation(
+        "observation_id",
+        datetime(2020, 1, 4, tzinfo=timezone.utc),
+        "individual_id",
+        "source",
+        2020,
+        "species",
+        "phase",
+    )
+    # fixme: smoke test, add result checks

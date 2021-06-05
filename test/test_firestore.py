@@ -7,7 +7,6 @@ import pytest
 from google.cloud.firestore_v1._helpers import ReadAfterWriteError
 
 from phenoback.utils import firestore as f
-from phenoback.utils.firestore import transaction, transactional
 
 
 def get_random_string(length) -> str:
@@ -133,18 +132,17 @@ def test_write_batch(collection):
 
 
 def test_write_batch__transaction(collection):
-    @transactional
-    def write_batch_trx(trx, collection, batch):
-        f.get_document(collection, "non_existing_id", trx=trx)
-        assert f.write_batch(collection, "id", batch, trx=trx) == size
+    @f.transactional
+    def write_batch_transaction(transaction, collection, batch):
+        f.get_document(collection, "non_existing_id", transaction=transaction)
+        assert f.write_batch(collection, "id", batch, transaction=transaction) == size
 
     size = 32
     batch = []
     for i in range(size):
         batch.append({"id": i, "value": i})
 
-    with f.transaction() as trx:
-        write_batch_trx(trx, collection, batch)
+    write_batch_transaction(f.get_transaction(), collection, batch)
 
     assert len(list(f.get_collection(collection).stream())) == size
 
@@ -185,74 +183,69 @@ def test_delete_batch(collection):
 
 
 def test_write_document__transaction(collection, doc_id, doc):
-    @transactional
+    @f.transactional
     def write_transactional(
         transaction,
         collection,
         doc_id,
     ):
-        f.write_document(collection, doc_id, doc, trx=transaction)
+        f.write_document(collection, doc_id, doc, transaction=transaction)
 
-    with transaction() as trx:
-        write_transactional(trx, collection, doc_id)
+    write_transactional(f.get_transaction(), collection, doc_id)
     assert f.get_document(collection, doc_id) == doc
 
 
 def test_update_document__transaction(collection, doc_id, doc, doc2):
-    @transactional
+    @f.transactional
     def update_transactional(
         transaction,
         collection,
         doc_id,
     ):
-        f.update_document(collection, doc_id, doc2, trx=transaction)
+        f.update_document(collection, doc_id, doc2, transaction=transaction)
 
     f.write_document(collection, doc_id, doc)
-    with transaction() as trx:
-        update_transactional(trx, collection, doc_id)
+    update_transactional(f.get_transaction(), collection, doc_id)
     updated_doc = f.get_document(collection, doc_id)
     assert doc.items() < updated_doc.items()
     assert doc2.items() < updated_doc.items()
 
 
 def test_delete_document__transaction(collection, doc_id, doc):
-    @transactional
+    @f.transactional
     def delete_transactional(
         transaction,
         collection,
         doc_id,
     ):
-        f.delete_document(collection, doc_id, trx=transaction)
+        f.delete_document(collection, doc_id, transaction=transaction)
 
     f.write_document(collection, doc_id, doc)
-    with transaction() as trx:
-        delete_transactional(trx, collection, doc_id)
+    delete_transactional(f.get_transaction(), collection, doc_id)
 
     assert f.get_document(collection, doc_id) is None
 
 
 def test_get_document__transaction(collection, doc_id, doc):
-    @transactional
+    @f.transactional
     def get_transactional(
         transaction,
         collection,
         doc_id,
     ):
-        return f.get_document(collection, doc_id, trx=transaction)
+        return f.get_document(collection, doc_id, transaction=transaction)
 
     f.write_document(collection, doc_id, doc)
-    with transaction() as trx:
-        assert get_transactional(trx, collection, doc_id) == doc
+    assert get_transactional(f.get_transaction(), collection, doc_id) == doc
 
 
 def test_get_document__transaction_fail(collection, doc_id, doc):
-    @transactional
+    @f.transactional
     def transactional__fail(transaction, collection, doc_id):
-        f.write_document(collection, doc_id, doc, trx=transaction)
-        f.get_document(collection, doc_id, trx=transaction)
+        f.write_document(collection, doc_id, doc, transaction=transaction)
+        f.get_document(collection, doc_id, transaction=transaction)
 
-    with transaction() as trx:
-        try:
-            transactional__fail(trx, collection, doc_id)
-        except ReadAfterWriteError:
-            pass  # expected
+    try:
+        transactional__fail(f.get_transaction(), collection, doc_id)
+    except ReadAfterWriteError:
+        pass  # expected

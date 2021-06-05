@@ -45,17 +45,19 @@ def get_transaction():
 
 
 @contextmanager
-def transaction():
+def transaction_commit():
     transaction = get_transaction()
     yield transaction
     transaction.commit()
 
 
-def delete_document(collection: str, document_id: str, trx: Transaction = None) -> None:
+def delete_document(
+    collection: str, document_id: str, transaction: Transaction = None
+) -> None:
     log.debug("Delete document %s from %s", document_id, collection)
     ref = firestore_client().collection(collection).document(document_id)
-    if trx:
-        trx.delete(ref)
+    if transaction:
+        transaction.delete(ref)
     else:
         ref.delete()
 
@@ -118,15 +120,14 @@ def write_batch(
     data: List[dict],
     merge: bool = False,
     commit_size: int = None,
-    trx: Transaction = None,
+    transaction: Transaction = None,
 ) -> int:
     # pylint: disable=too-many-arguments
-    if trx:
+    if transaction:
         log.info(
-            "Batch-write %i documents to %s within transaction %s",
+            "Batch-write %i documents to %s within transaction",
             len(data),
             collection,
-            trx.id,
         )
         if commit_size is not None:  # pragma: no cover
             log.warning(
@@ -134,7 +135,7 @@ def write_batch(
                 commit_size,
             )
         commit_size = -1
-        writebatch = trx
+        writebatch = transaction
     else:
         if commit_size is None:
             commit_size = 500
@@ -160,17 +161,17 @@ def write_document(
     document_id: Optional[str],
     data: dict,
     merge: bool = False,
-    trx: Transaction = None,
+    transaction: Transaction = None,
 ) -> None:
     log.debug(
         "Write document %s to %s (%s)",
         document_id,
         collection,
-        trx.id if trx else None,
+        transaction.id if transaction else None,
     )
     ref = firestore_client().collection(collection).document(document_id)
-    if trx:
-        trx.set(ref, data, merge=merge)
+    if transaction:
+        transaction.set(ref, data, merge=merge)
     else:
         ref.set(data, merge=merge)
 
@@ -179,35 +180,35 @@ def update_document(
     collection: str,
     document_id: str,
     data: dict,
-    trx: Transaction = None,
+    transaction: Transaction = None,
 ) -> None:
     log.debug(
         "Update document %s in %s (%s)",
         document_id,
         collection,
-        trx.id if trx else None,
+        transaction.id if transaction else None,
     )
     ref = firestore_client().collection(collection).document(document_id)
-    if trx:
-        trx.update(ref, data)
+    if transaction:
+        transaction.update(ref, data)
     else:
         ref.update(data)
 
 
 def get_document(
-    collection: str, document_id: str, trx: Transaction = None
+    collection: str, document_id: str, transaction: Transaction = None
 ) -> Optional[dict]:
     log.debug(
         "Get document %s in %s (%s)",
         document_id,
         collection,
-        trx.id if trx else None,
+        transaction.id if transaction else None,
     )
     return (
         firestore_client()
         .collection(collection)
         .document(document_id)
-        .get(transaction=trx)
+        .get(transaction=transaction)
         .to_dict()
     )
 
