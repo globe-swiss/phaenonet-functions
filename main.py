@@ -157,7 +157,7 @@ def process_observation_update_analytics(data, context):
     Updates analytical values in Firestore if the observation date was modified on a observation document.
     """
     with setup(data, context):
-        if is_field_updated(data, "date"):
+        if is_field_updated(data, "date") or is_field_updated(data, "reprocess"):
             process_observation_create_analytics(data, context)
 
 
