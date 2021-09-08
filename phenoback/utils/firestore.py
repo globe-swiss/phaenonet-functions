@@ -56,7 +56,7 @@ def delete_document(
 ) -> None:
     log.debug("Delete document %s from %s", document_id, collection)
     ref = firestore_client().collection(collection).document(document_id)
-    if transaction:
+    if transaction is not None:
         transaction.delete(ref)
     else:
         ref.delete()
@@ -123,7 +123,7 @@ def write_batch(
     transaction: Transaction = None,
 ) -> int:
     # pylint: disable=too-many-arguments
-    if transaction:
+    if transaction is not None:
         log.info(
             "Batch-write %i documents to %s within transaction",
             len(data),
@@ -167,10 +167,10 @@ def write_document(
         "Write document %s to %s (%s)",
         document_id,
         collection,
-        transaction.id if transaction else None,
+        transaction.id if transaction is not None else None,
     )
     ref = firestore_client().collection(collection).document(document_id)
-    if transaction:
+    if transaction is not None:
         transaction.set(ref, data, merge=merge)
     else:
         ref.set(data, merge=merge)
@@ -186,10 +186,10 @@ def update_document(
         "Update document %s in %s (%s)",
         document_id,
         collection,
-        transaction.id if transaction else None,
+        transaction.id if transaction is not None else None,
     )
     ref = firestore_client().collection(collection).document(document_id)
-    if transaction:
+    if transaction is not None:
         transaction.update(ref, data)
     else:
         ref.update(data)
@@ -202,7 +202,7 @@ def get_document(
         "Get document %s in %s (%s)",
         document_id,
         collection,
-        transaction.id if transaction else None,
+        transaction.id if transaction is not None else None,
     )
     return (
         firestore_client()

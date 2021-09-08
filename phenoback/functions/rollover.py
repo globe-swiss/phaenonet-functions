@@ -29,7 +29,7 @@ def get_rollover_individuals(
     query = query_individuals("year", "==", source_phenoyear).where(
         "source", "==", "globe"
     )
-    if individual:
+    if individual is not None:
         query = query.where("individual", "==", individual)
     for individual_doc in query.stream():
         individual = individual_doc.to_dict()

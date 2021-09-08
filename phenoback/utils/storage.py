@@ -12,7 +12,7 @@ def download_file(bucket: str, path: str):
     log.debug("Download file %s from %s", path, bucket)
     blob = storage.bucket(bucket).get_blob(path)
     with tempfile.TemporaryFile() as file:
-        if blob:
+        if blob is not None:
             blob.download_to_file(file)
             return file
         else:
