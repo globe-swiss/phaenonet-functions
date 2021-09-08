@@ -14,7 +14,7 @@ def get_field(
 ) -> Union[str, int, datetime, None]:
     value_type = "oldValue" if old_value else "value"
     value_dict = data[value_type].get("fields", {}).get(fieldname)
-    if value_dict:
+    if value_dict is not None:
         value = next(iter(value_dict.values()))
         value_type = next(iter(value_dict.keys()))
         if value_type == "stringValue":

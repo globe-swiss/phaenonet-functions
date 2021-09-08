@@ -67,7 +67,7 @@ def query_individuals(field_path: str, op_string: str, value: Any) -> Query:
 def write_individuals(
     individuals: List[dict], key: str, transaction: Transaction = None
 ) -> None:
-    if transaction:
+    if transaction is not None:
         write_batch("individuals", key, individuals, transaction=transaction)
     else:
         write_batch("individuals", key, individuals)

@@ -15,7 +15,7 @@ LOOKUP_COLLECTION = "invites_lookup"
 
 
 def process(
-    doc_id: str, to_mail: str, locale: str, user_id: str, sent: datetime = None
+    doc_id: str, to_mail: str, locale: str, user_id: str, sent_date: datetime = None
 ) -> bool:
     send = False
     if d.user_exists(to_mail):
@@ -29,8 +29,8 @@ def process(
         invitee_nickname = d.get_user(invitee_user_id).get("nickname")
         register.register_user_invite(doc_id, invitee_user_id, invitee_nickname)
     else:
-        if sent:
-            delta = datetime.now().replace(tzinfo=timezone.utc) - sent
+        if sent_date is not None:
+            delta = datetime.now().replace(tzinfo=timezone.utc) - sent_date
             if delta.seconds < 600:  # resent only every 10 minutes
                 log.info(
                     "Invite %s by %s to %s failed: Resend time of %i seconds to short",

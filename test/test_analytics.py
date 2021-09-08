@@ -40,7 +40,7 @@ def get_state_doc(
     altitude_grp: str = ALTITUDE_GRP,
 ) -> dict:
     result = {"source": source, "species": species, "year": year, "state": {}}
-    if altitude_grp:
+    if altitude_grp is not None:
         result["altitude_grp"] = altitude_grp
     return result
 
@@ -365,7 +365,7 @@ def test_remove_data_not_exist(mocker, initial, state_doc):
     analytics.log = mocker.Mock()
     update_result_mock = mocker.patch("phenoback.functions.analytics.update_result")
 
-    if initial:
+    if initial is not None:
         state_doc["state"] = initial
         write_state(state_doc)
 

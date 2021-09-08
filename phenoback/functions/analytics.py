@@ -54,7 +54,7 @@ def update_state(
             "species": species,
             "state": {},
         }
-        if altitude_grp:
+        if altitude_grp is not None:
             state_document["altitude_grp"] = altitude_grp
 
     state = state_document.get("state")
@@ -105,7 +105,7 @@ def update_result(
         "species": species,
         "values": values,
     }
-    if altitude_grp:
+    if altitude_grp is not None:
         result_document["altitude_grp"] = altitude_grp
         result_document["type"] = "altitude"
     else:
@@ -230,7 +230,7 @@ def get_altitude_grp(individual_id: str) -> Optional[str]:
 def get_analytics_document_id(
     year: int, species: str, source: str, altitude_grp: str = None
 ) -> str:
-    if altitude_grp:
+    if altitude_grp is not None:
         return "%s_%s_%s_%s" % (str(year), species, source, altitude_grp)
     else:
         return "%s_%s_%s" % (str(year), species, source)
@@ -276,7 +276,7 @@ def process_observation(
     )
 
     altitude_key = get_altitude_grp(individual_id)
-    if altitude_key:
+    if altitude_key is not None:
         update_data(
             transaction=firestore_client().transaction(),
             observation_id=observation_id,
@@ -335,7 +335,7 @@ def process_remove_observation(
     )
 
     altitude_key = get_altitude_grp(individual_id)
-    if altitude_key:
+    if altitude_key is not None:
         remove_observation(
             transaction=firestore_client().transaction(),
             observation_id=observation_id,
