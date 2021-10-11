@@ -83,6 +83,9 @@ jobs:
           - name: process_ts_invite
             entrypoint: process_document_ts_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/invites/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+          - name: promote_ranger
+            entrypoint: promote_ranger_http
+            trigger: --trigger-http
           - name: e2e_clear_individuals
             entrypoint: e2e_clear_user_individuals_http
             trigger: --trigger-http --allow-unauthenticated

@@ -69,7 +69,7 @@ def get_fields_updated(data: dict) -> List[str]:
 
 
 def get_function_name() -> str:  # pragma: no cover
-    return os.getenv("FUNCTION_NAME", "Unknown")
+    return os.getenv("FUNCTION_TARGET", "Unknown")
 
 
 def get_project() -> str:  # pragma: no cover
