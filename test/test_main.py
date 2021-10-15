@@ -366,8 +366,6 @@ def test_promote_ranger__content_type(mocker):
 
 def test_promote_ranger__email_missing(mocker):
     request_mock = mocker.patch.object(flask, "request")
-    request_mock.headers = {"content-type": "something"}
-    request_mock = mocker.patch.object(flask, "request")
     request_mock.headers = {"content-type": "application/json"}
     request_mock.get_json.return_value = {"something": "something"}
     assert main.promote_ranger_http(request_mock).status_code == 400
