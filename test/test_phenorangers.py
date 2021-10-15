@@ -126,46 +126,32 @@ def test_promote__observations_found(mocker, public_user):
     set_ranger_spy.assert_not_called()
 
 
+def check_promote_updated(mocker, user_id, year, num):
+    mocker.patch(
+        "phenoback.functions.phenorangers.user_exists",
+        return_value=True,
+    )
+    mocker.patch(
+        "phenoback.functions.phenorangers.get_user_id_by_email",
+        return_value=user_id,
+    )
+    mocker.patch(
+        "phenoback.functions.phenorangers.get_phenoyear",
+        return_value=year,
+    )
+    set_ranger_spy = mocker.spy(phenorangers, "set_ranger")
+    update_individuals_spy = mocker.spy(phenorangers, "update_individuals")
+    assert phenorangers.promote("some_email").status_code == 200
+    set_ranger_spy.assert_called()
+    update_individuals_spy.assert_called_once()
+    assert update_individuals_spy.spy_return == num
+
+
 def test_promote__individuals(mocker, public_user):
     year = 2000
     insert_individuals(public_user.doc_id, "old_source", year)
-    mocker.patch(
-        "phenoback.functions.phenorangers.user_exists",
-        return_value=True,
-    )
-    mocker.patch(
-        "phenoback.functions.phenorangers.get_user_id_by_email",
-        return_value=public_user.doc_id,
-    )
-    mocker.patch(
-        "phenoback.functions.phenorangers.get_phenoyear",
-        return_value=year,
-    )
-    set_ranger_spy = mocker.spy(phenorangers, "set_ranger")
-    update_individuals_spy = mocker.spy(phenorangers, "update_individuals")
-    assert phenorangers.promote("some_email").status_code == 200
-    set_ranger_spy.assert_called()
-    update_individuals_spy.assert_called_once()
-    assert update_individuals_spy.spy_return == 1
+    check_promote_updated(mocker, public_user.doc_id, year, 1)
 
 
 def test_promote__no_individuals(mocker, public_user):
-    year = 2000
-    mocker.patch(
-        "phenoback.functions.phenorangers.user_exists",
-        return_value=True,
-    )
-    mocker.patch(
-        "phenoback.functions.phenorangers.get_user_id_by_email",
-        return_value=public_user.doc_id,
-    )
-    mocker.patch(
-        "phenoback.functions.phenorangers.get_phenoyear",
-        return_value=year,
-    )
-    set_ranger_spy = mocker.spy(phenorangers, "set_ranger")
-    update_individuals_spy = mocker.spy(phenorangers, "update_individuals")
-    assert phenorangers.promote("some_email").status_code == 200
-    set_ranger_spy.assert_called()
-    update_individuals_spy.assert_called_once()
-    assert update_individuals_spy.spy_return == 0
+    check_promote_updated(mocker, public_user.doc_id, 2000, 0)

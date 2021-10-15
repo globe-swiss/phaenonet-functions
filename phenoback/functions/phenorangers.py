@@ -1,4 +1,5 @@
 import logging
+from http import HTTPStatus
 from typing import Optional
 
 from flask import Response
@@ -40,29 +41,24 @@ def promote_transactional(transaction: Transaction, email: str) -> Response:
         year = get_phenoyear()
         observation_id = get_observation(user, year)
         if observation_id:
-            msg = "User %s with email %s has observations in %i. (%s)" % (
-                user,
-                email,
-                year,
-                observation_id,
-            )
+            msg = f"User {user} with email {email} has observations in {year}. ({observation_id})"
             log.warning(msg)
             return Response(
                 msg,
-                409,
+                HTTPStatus.CONFLICT,
             )
         set_ranger(user, transaction=transaction)
         num_updates = update_individuals(user, year, transaction=transaction)
         if num_updates:
-            msg = "Updated %i individuals." % num_updates
+            msg = f"Updated {num_updates} individuals."
             log.info(msg)
-            return Response(msg, 200)
+            return Response(msg, HTTPStatus.OK)
         else:
-            return Response("ok", 200)
+            return Response("ok", HTTPStatus.OK)
     else:
-        msg = "No user with email %s found." % email
+        msg = f"No user with email {email} found."
         log.warning(msg)
-        return Response(msg, 404)
+        return Response(msg, HTTPStatus.NOT_FOUND)
 
 
 def get_observation(user: str, year) -> Optional[str]:

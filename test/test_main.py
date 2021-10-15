@@ -1,7 +1,6 @@
 # pylint: disable=too-many-arguments, wrong-import-position
 from collections import namedtuple
 from datetime import datetime
-from test.utils import MockRequest
 from unittest.mock import MagicMock
 
 import firebase_admin
@@ -362,11 +361,7 @@ def test_promote_ranger_http(mocker):
 def test_promote_ranger__content_type(mocker):
     request_mock = mocker.patch.object(flask, "request")
     request_mock.headers = {"content-type": "something"}
-    try:
-        main.promote_ranger_http(request_mock)
-        pytest.fail("Exception expected: content-type")
-    except ValueError:
-        pass  # expected
+    assert main.promote_ranger_http(request_mock).status_code == 415
 
 
 def test_promote_ranger__email_missing(mocker):
@@ -375,8 +370,4 @@ def test_promote_ranger__email_missing(mocker):
     request_mock = mocker.patch.object(flask, "request")
     request_mock.headers = {"content-type": "application/json"}
     request_mock.get_json.return_value = {"something": "something"}
-    try:
-        main.promote_ranger_http(request_mock)
-        pytest.fail("Exception expected: Email missing")
-    except ValueError:
-        pass  # expected
+    assert main.promote_ranger_http(request_mock).status_code == 400
