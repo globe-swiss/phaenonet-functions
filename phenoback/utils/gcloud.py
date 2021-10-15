@@ -69,7 +69,7 @@ def get_fields_updated(data: dict) -> List[str]:
 
 
 def get_function_name() -> str:  # pragma: no cover
-    return os.getenv("FUNCTION_NAME", "Unknown")
+    return os.getenv("FUNCTION_TARGET", "Unknown")
 
 
 def get_project() -> str:  # pragma: no cover
@@ -83,5 +83,5 @@ def get_function_region() -> str:  # pragma: no cover
 def get_app_host() -> str:
     host = os.getenv("appHost")
     if not host:
-        host = "%s.web.app" % get_project()
+        host = f"{get_project()}.web.app"
     return host

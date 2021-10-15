@@ -46,10 +46,8 @@ sentry_sdk.init(
 firebase_admin.initialize_app(
     options={"storageBucket": os.environ.get("storageBucket")}
 )
-glogging.init(time.time())
 
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log = None  # pylint: disable=invalid-name
 
 ANALYTIC_PHENOPHASES = ("BEA", "BLA", "BFA", "BVA", "FRA")
 
@@ -57,6 +55,10 @@ ANALYTIC_PHENOPHASES = ("BEA", "BLA", "BFA", "BVA", "FRA")
 @contextmanager  # workaround as stackdriver fails to capture stackstraces
 def setup(data, context):
     try:
+        global log  # pylint: disable=global-statement,invalid-name
+        glogging.init(time.time())
+        log = logging.getLogger(__name__)
+        log.setLevel(logging.DEBUG)
         log.debug("context: (%s)", str(context))
         log.debug("data: (%s)", str(data))
         yield
@@ -370,3 +372,31 @@ def e2e_clear_user_individuals_http(request):
         from phenoback.functions import e2e
 
         e2e.delete_user_individuals("q7lgBm5nm7PUkof20UdZ9D4d0CV2")
+
+
+def promote_ranger_http(request):
+    """
+    Promotes a normal user to Ranger.
+    """
+    from collections import namedtuple
+    from flask import Response
+    from http import HTTPStatus
+
+    Context = namedtuple("context", "event_id")
+    context = Context(event_id=time.time())
+
+    content_type = request.headers["content-type"]
+    if content_type == "application/json":
+        request_json = request.get_json(silent=True)
+        if not (request_json and "email" in request_json):
+            msg = "JSON is invalid, or missing a 'email' property"
+            log.warning(msg)
+            return Response(msg, HTTPStatus.BAD_REQUEST)
+    else:
+        msg = f"Unknown content type: {content_type}, application/json required"
+        return Response(msg, HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
+
+    with setup(request_json, context):
+        from phenoback.functions import phenorangers
+
+        return phenorangers.promote(request_json["email"])

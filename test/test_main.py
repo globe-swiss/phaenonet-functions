@@ -4,6 +4,7 @@ from datetime import datetime
 from unittest.mock import MagicMock
 
 import firebase_admin
+import flask
 import pytest
 import sentry_sdk
 
@@ -345,3 +346,26 @@ def test_process_invite_sent(mocker, data, expected):
 @pytest.mark.skip(reason="todo: refactor context and data handling -> helpers")
 def test_process_user_write_update_invite():
     pass
+
+
+def test_promote_ranger_http(mocker):
+    email = "test@example.com"
+    promote_mock = mocker.patch("phenoback.functions.phenorangers.promote")
+    request_mock = mocker.patch.object(flask, "request")
+    request_mock.headers = {"content-type": "application/json"}
+    request_mock.get_json.return_value = {"email": email}
+    main.promote_ranger_http(request_mock)
+    promote_mock.assert_called_with(email)
+
+
+def test_promote_ranger__content_type(mocker):
+    request_mock = mocker.patch.object(flask, "request")
+    request_mock.headers = {"content-type": "something"}
+    assert main.promote_ranger_http(request_mock).status_code == 415
+
+
+def test_promote_ranger__email_missing(mocker):
+    request_mock = mocker.patch.object(flask, "request")
+    request_mock.headers = {"content-type": "application/json"}
+    request_mock.get_json.return_value = {"something": "something"}
+    assert main.promote_ranger_http(request_mock).status_code == 400

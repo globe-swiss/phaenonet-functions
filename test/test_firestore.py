@@ -1,5 +1,4 @@
-import random
-import string
+from test.utils import get_random_string
 from typing import Dict
 
 import google.api_core.exceptions
@@ -7,13 +6,6 @@ import pytest
 from google.cloud.firestore_v1._helpers import ReadAfterWriteError
 
 from phenoback.utils import firestore as f
-
-
-def get_random_string(length) -> str:
-    # Random string with the combination of lower and upper case
-    letters = string.ascii_letters
-    result_str = "".join(random.choice(letters) for i in range(length))  # nosec (B312)
-    return result_str
 
 
 @pytest.fixture()
