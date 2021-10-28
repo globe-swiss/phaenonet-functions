@@ -85,3 +85,7 @@ def get_app_host() -> str:
     if not host:
         host = f"{get_project()}.web.app"
     return host
+
+
+def get_version() -> str:  # pragma: no cover
+    return os.getenv("version")

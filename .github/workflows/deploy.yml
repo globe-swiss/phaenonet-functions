@@ -90,24 +90,22 @@ jobs:
             entrypoint: e2e_clear_user_individuals_http
             trigger: --trigger-http --allow-unauthenticated
             project: phaenonet-test
+    env:
+      VERSION: "${{ matrix.name }}@${{ github.event.inputs.tag && github.event.inputs.tag || github.sha }}"
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Cloud SDK (phaenonet)
+      - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@master
         with:
           project_id: ${{ env.PROJECT }}
-          service_account_key: ${{ secrets.GCP_SA_KEY_PROD }}
+          service_account_key: ${{ env.PROJECT == 'phaenonet' && secrets.GCP_SA_KEY_PROD || secrets.GCP_SA_KEY }}
           export_default_credentials: true
-        if: ${{ env.PROJECT == 'phaenonet' }}
 
-      - name: Set up Cloud SDK (phaenonet-test)
-        uses: google-github-actions/setup-gcloud@master
-        with:
-          project_id: ${{ env.PROJECT }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
-        if: ${{ env.PROJECT == 'phaenonet-test' }}
+      - name: set release version
+        run: |
+          echo "set release version: ${{ env.VERSION }}"
+          sed -ri 's|"#VERSION#"|"${{ env.VERSION }}"|' env.*.yaml
 
       - name: undeploy
         run: gcloud functions delete ${{ matrix.name }} --region ${{ env.REGION }} --quiet
@@ -117,6 +115,27 @@ jobs:
         run: gcloud functions deploy ${{ matrix.name }} --entry-point ${{ matrix.entrypoint }} --runtime ${{ env.RUNTIME }} ${{ matrix.trigger }} --timeout ${{ env.TIMEOUT }} --region ${{ env.REGION }} --quiet --env-vars-file env.${{ env.PROJECT }}.yaml
         if: ${{ (env.ACTION == 'deploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == null) && (matrix.project == env.PROJECT || matrix.project == null) }}
 
+      - name: Sentry release
+        run: |
+          curl -sL https://sentry.io/get-cli/ | bash
+          echo "Create new release ${{ env.VERSION }}"
+          sentry-cli releases new ${{ env.VERSION }}
+          sentry-cli releases set-commits ${{ env.VERSION }} --auto
+          sentry-cli releases finalize ${{ env.VERSION }}
+          echo "Finalized release ${{ env.VERSION }}"
+          echo "Adding deployment for ${{ env.ENVIRONMENT }} environment"
+          sentry-cli releases deploys ${{ env.VERSION }} new --env ${{ env.ENVIRONMENT }}
+        if: ${{ (env.ACTION == 'deploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == null) && (matrix.project == env.PROJECT || matrix.project == null) }}
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: phaenonet
+          SENTRY_PROJECT: phaenonet-functions
+          ENVIRONMENT: ${{ env.PROJECT == 'phaenonet' && 'production' || 'test' }}
+  tag:
+    name: Tag
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
       - name: Tag commit
         uses: tvdias/github-tagger@v0.0.1
         with:
