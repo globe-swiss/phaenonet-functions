@@ -95,21 +95,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Cloud SDK (phaenonet)
+      - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@master
         with:
           project_id: ${{ env.PROJECT }}
-          service_account_key: ${{ secrets.GCP_SA_KEY_PROD }}
+          service_account_key: ${{ env.PROJECT == 'phaenonet' && secrets.GCP_SA_KEY_PROD || secrets.GCP_SA_KEY }}
           export_default_credentials: true
-        if: ${{ env.PROJECT == 'phaenonet' }}
-
-      - name: Set up Cloud SDK (phaenonet-test)
-        uses: google-github-actions/setup-gcloud@master
-        with:
-          project_id: ${{ env.PROJECT }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
-        if: ${{ env.PROJECT == 'phaenonet-test' }}
 
       - name: set release version
         run: |
@@ -140,7 +131,11 @@ jobs:
           SENTRY_ORG: phaenonet
           SENTRY_PROJECT: phaenonet-functions
           ENVIRONMENT: ${{ env.PROJECT == 'phaenonet' && 'production' || 'test' }}
-
+  tag:
+    name: Tag
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
       - name: Tag commit
         uses: tvdias/github-tagger@v0.0.1
         with:
