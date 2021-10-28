@@ -19,6 +19,7 @@ from phenoback.utils.gcloud import (
     get_field,
     get_fields_updated,
     get_project,
+    get_version,
     is_create_event,
     is_delete_event,
     is_field_updated,
@@ -37,6 +38,7 @@ def _sentry_environment() -> Tuple[str, float]:
 
 
 sentry_sdk.init(
+    release=get_version(),
     environment=_sentry_environment()[0],
     dsn="https://2f043e3c7dd54efa831b9d44b20cf742@o510696.ingest.sentry.io/5606957",
     integrations=[GcpIntegration()],
@@ -379,8 +381,9 @@ def promote_ranger_http(request):
     Promotes a normal user to Ranger.
     """
     from collections import namedtuple
-    from flask import Response
     from http import HTTPStatus
+
+    from flask import Response
 
     Context = namedtuple("context", "event_id")
     context = Context(event_id=time.time())
