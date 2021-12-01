@@ -49,6 +49,7 @@ jobs:
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: ./coverage.xml
+        if: ${{ always() }}
   test-updated:
     runs-on: ubuntu-latest
     container: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
