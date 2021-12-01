@@ -1,4 +1,5 @@
 import json
+import os
 from typing import Set
 
 import requests
@@ -9,7 +10,15 @@ from phenoback.utils import firestore as f
 PROJECT_URL = "https://raw.githubusercontent.com/globe-swiss/phaenonet-client"
 BRANCH = "master"
 
-phenoback.load_credentials()
+# phenoback.load_credentials()
+phenoback.load_credentials(
+    credential_file=os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "credentials",
+        "phaenonet-firebase-adminsdk.json",
+    )
+)
 
 
 def check_translation(lang: str):
