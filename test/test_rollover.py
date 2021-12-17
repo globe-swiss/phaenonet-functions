@@ -80,6 +80,48 @@ def setup() -> None:
     )
     d.write_observation("5", {"individual_id": "2012_5"})
 
+    d.write_individual(
+        "2011_1x",
+        {
+            "individual": "1x",
+            "source": "other_source",
+            "year": 2011,
+            "last_observation_date": "a value",
+            "last_phenophase": "a value",
+            "rolled": False,
+            "removed": False,
+            "obs": True,
+        },
+    )
+    d.write_observation("1x", {"individual_id": "2011_1x"})
+
+    d.write_individual(
+        "2012_2x",
+        {
+            "individual": "2x",
+            "source": "other_source",
+            "year": 2012,
+            "last_observation_date": "a value",
+            "last_phenophase": "a value",
+            "rolled": True,
+            "removed": False,
+            "obs": True,
+        },
+    )
+    d.write_observation("2x", {"individual_id": "2012_2x"})
+
+    d.write_individual(
+        "2012_3x",
+        {
+            "individual": "3x",
+            "source": "other_source",
+            "year": 2012,
+            "rolled": True,
+            "removed": True,
+            "obs": False,
+        },
+    )
+
 
 @pytest.fixture
 def current_phenoyear():
