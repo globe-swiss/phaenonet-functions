@@ -7,15 +7,47 @@ on:
         description: "Which project to target? [phaenonet/phaenonet-test]"
         required: true
         default: phaenonet-test
+        type: choice
+        options:
+          - phaenonet
+          - phaenonet-test
       function:
-        description: "Which function to deploy? (empty for all)"
+        description: "Which function to deploy?"
+        required: true
+        type: choice
+        options:
+          - all
+          - process_observation_activity
+          - process_observation_create_analytics
+          - process_observation_update_analytics
+          - process_observation_delete_analytics
+          - process_user
+          - process_invite
+          - process_invite_register
+          - import_meteoswiss_data
+          - export_meteoswiss_data
+          - create_thumbnails
+          - rollover_phenoyear
+          - process_ts_user
+          - process_ts_observation
+          - process_ts_individual
+          - process_ts_definitions
+          - process_ts_invite
+          - promote_ranger
+          - e2e_clear_individuals
       action:
         description: "Action? [deploy/undeploy/redeploy]"
         required: true
         default: deploy
+        type: choice
+        options:
+          - deploy
+          - undeploy
+          - redeploy
       tag:
         description: "Tag this deployment?"
         required: false
+        type: string
 
 env:
   RUNTIME: python37
@@ -109,11 +141,11 @@ jobs:
 
       - name: undeploy
         run: gcloud functions delete ${{ matrix.name }} --region ${{ env.REGION }} --quiet
-        if: ${{ (env.ACTION == 'undeploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == null) && (matrix.project == env.PROJECT || matrix.project == null) }}
+        if: ${{ (env.ACTION == 'undeploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == 'all') && (matrix.project == env.PROJECT || matrix.project == null) }}
 
       - name: deploy
         run: gcloud functions deploy ${{ matrix.name }} --entry-point ${{ matrix.entrypoint }} --runtime ${{ env.RUNTIME }} ${{ matrix.trigger }} --timeout ${{ env.TIMEOUT }} --region ${{ env.REGION }} --quiet --env-vars-file env.${{ env.PROJECT }}.yaml
-        if: ${{ (env.ACTION == 'deploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == null) && (matrix.project == env.PROJECT || matrix.project == null) }}
+        if: ${{ (env.ACTION == 'deploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == 'all') && (matrix.project == env.PROJECT || matrix.project == null) }}
 
       - name: Sentry release
         run: |
@@ -125,7 +157,7 @@ jobs:
           echo "Finalized release ${{ env.VERSION }}"
           echo "Adding deployment for ${{ env.ENVIRONMENT }} environment"
           sentry-cli releases deploys ${{ env.VERSION }} new --env ${{ env.ENVIRONMENT }}
-        if: ${{ (env.ACTION == 'deploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == null) && (matrix.project == env.PROJECT || matrix.project == null) }}
+        if: ${{ (env.ACTION == 'deploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == 'all') && (matrix.project == env.PROJECT || matrix.project == null) }}
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: phaenonet
