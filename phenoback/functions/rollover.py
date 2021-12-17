@@ -26,19 +26,23 @@ def get_rollover_individuals(
     :return:
     """
     new_individuals = []
-    query = query_individuals("year", "==", source_phenoyear).where(
-        "source", "!=", "meteoswiss"
-    )
+    query = query_individuals("year", "==", source_phenoyear)
     if individual is not None:  # debuging or fixing
         query = query.where("individual", "==", individual)
     for individual_doc in query.stream():
         individual = individual_doc.to_dict()
-        individual["id"] = f'{target_phenoyear}_{individual["individual"]}'
-        individual["year"] = target_phenoyear
-        for key in ["last_phenophase", "last_observation_date", "created", "modified"]:
-            individual.pop(key, None)
-        new_individuals.append(individual)
-        log.debug("marking individual %s for rollover", individual)
+        if individual["source"] != "meteoswiss":
+            individual["id"] = f'{target_phenoyear}_{individual["individual"]}'
+            individual["year"] = target_phenoyear
+            for key in [
+                "last_phenophase",
+                "last_observation_date",
+                "created",
+                "modified",
+            ]:
+                individual.pop(key, None)
+            new_individuals.append(individual)
+            log.debug("marking individual %s for rollover", individual)
     return new_individuals
 
 
