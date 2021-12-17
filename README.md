@@ -40,19 +40,21 @@ Make sure `phaenonet-test@appspot.gserviceaccount.com` has following permissions
 - `Storage Legacy Bucket Reader`
 - `Storage Object Viewer`
 
+Or use a personal account that has access on both projects.
+
 Also make sure that the **cloud functions are not deployed** when importing the data!
 
 ```commandline
-gcloud --project=phaenonet-test --account=firestore-backup@phaenonet-test.iam.gserviceaccount.com firestore import gs://[backup-daily|backup-weekly]/[backup-folder]
+gcloud --project=phaenonet-test [--account=firestore-backup@phaenonet-test.iam.gserviceaccount.com] firestore import gs://phaenonet_[backup_daily|backup_weekly]/[backup-folder]
 ```
 
 ### Copy data partial to test instance
 
-Check if cloud functions should be deployed or not depending on the use-case and what data is imported.
+Check if cloud functions should be deployed or not depending on the use-case and what data is imported. Alternatively there is an UI available in Firestore.
 
 ```commandline
-gcloud --project=phaenonet --account=firestore-backup@phaenonet.iam.gserviceaccount.com firestore export gs://staging.phaenonet-test.appspot.com --collection-ids=[collection_ids]
-gcloud --project=phaenonet-test --account=firestore-backup@phaenonet-test.iam.gserviceaccount.com firestore import gs://staging.phaenonet-test.appspot.com/[folder] --collection-ids=[collection_ids]
+gcloud --project=phaenonet --account=firestore-backup@phaenonet.iam.gserviceaccount.com firestore export gs://phaenonet_[backup_daily|backup_weekly]/[backup-folder] --collection-ids=[collection_ids]
+gcloud --project=phaenonet-test --account=firestore-backup@phaenonet-test.iam.gserviceaccount.com firestore import gs://phaenonet_[backup_daily|backup_weekly]/[backup-folder] --collection-ids=[collection_ids]
 ```
 
 ## Related resources

@@ -80,6 +80,48 @@ def setup() -> None:
     )
     d.write_observation("5", {"individual_id": "2012_5"})
 
+    d.write_individual(
+        "2011_1x",
+        {
+            "individual": "1x",
+            "source": "other_source",
+            "year": 2011,
+            "last_observation_date": "a value",
+            "last_phenophase": "a value",
+            "rolled": False,
+            "removed": False,
+            "obs": True,
+        },
+    )
+    d.write_observation("1x", {"individual_id": "2011_1x"})
+
+    d.write_individual(
+        "2012_2x",
+        {
+            "individual": "2x",
+            "source": "other_source",
+            "year": 2012,
+            "last_observation_date": "a value",
+            "last_phenophase": "a value",
+            "rolled": True,
+            "removed": False,
+            "obs": True,
+        },
+    )
+    d.write_observation("2x", {"individual_id": "2012_2x"})
+
+    d.write_individual(
+        "2012_3x",
+        {
+            "individual": "3x",
+            "source": "other_source",
+            "year": 2012,
+            "rolled": True,
+            "removed": True,
+            "obs": False,
+        },
+    )
+
 
 @pytest.fixture
 def current_phenoyear():
@@ -126,10 +168,7 @@ def test_rollover_individuals__single_individual(setup, current_phenoyear):
     )
     assert len(roll_individuals) == 1
     for individual in roll_individuals:
-        assert individual["id"] == "%i_%s" % (
-            current_phenoyear + 1,
-            individual["individual"],
-        )
+        assert individual["id"] == f'{current_phenoyear + 1}_{individual["individual"]}'
         assert individual["individual"] == "3"
 
 
