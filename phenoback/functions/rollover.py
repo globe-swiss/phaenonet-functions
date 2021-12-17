@@ -27,13 +27,13 @@ def get_rollover_individuals(
     """
     new_individuals = []
     query = query_individuals("year", "==", source_phenoyear).where(
-        "source", "==", "globe"
+        "source", "!=", "meteoswiss"
     )
-    if individual is not None:
+    if individual is not None:  # debuging or fixing
         query = query.where("individual", "==", individual)
     for individual_doc in query.stream():
         individual = individual_doc.to_dict()
-        individual["id"] = "%i_%s" % (target_phenoyear, individual["individual"])
+        individual["id"] = f'{target_phenoyear}_{individual["individual"]}'
         individual["year"] = target_phenoyear
         for key in ["last_phenophase", "last_observation_date", "created", "modified"]:
             individual.pop(key, None)

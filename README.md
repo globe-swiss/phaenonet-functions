@@ -40,10 +40,12 @@ Make sure `phaenonet-test@appspot.gserviceaccount.com` has following permissions
 - `Storage Legacy Bucket Reader`
 - `Storage Object Viewer`
 
+Or use a personal account that has access on both projects.
+
 Also make sure that the **cloud functions are not deployed** when importing the data!
 
 ```commandline
-gcloud --project=phaenonet-test --account=firestore-backup@phaenonet-test.iam.gserviceaccount.com firestore import gs://[backup-daily|backup-weekly]/[backup-folder]
+gcloud --project=phaenonet-test [--account=firestore-backup@phaenonet-test.iam.gserviceaccount.com] firestore import gs://phaenonet_[backup_daily|backup_weekly]/[backup-folder]
 ```
 
 ### Copy data partial to test instance

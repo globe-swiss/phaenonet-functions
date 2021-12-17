@@ -126,10 +126,7 @@ def test_rollover_individuals__single_individual(setup, current_phenoyear):
     )
     assert len(roll_individuals) == 1
     for individual in roll_individuals:
-        assert individual["id"] == "%i_%s" % (
-            current_phenoyear + 1,
-            individual["individual"],
-        )
+        assert individual["id"] == f'{current_phenoyear + 1}_{individual["individual"]}'
         assert individual["individual"] == "3"
 
 
