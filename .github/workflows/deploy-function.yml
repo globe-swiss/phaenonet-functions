@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       project:
-        description: "Which project to target? [phaenonet/phaenonet-test]"
+        description: Project
         required: true
         default: phaenonet-test
         type: choice
@@ -12,7 +12,7 @@ on:
           - phaenonet
           - phaenonet-test
       function:
-        description: "Which function to deploy?"
+        description: Function
         required: true
         type: choice
         options:
@@ -36,7 +36,7 @@ on:
           - promote_ranger
           - e2e_clear_individuals
       action:
-        description: "Action? [deploy/undeploy/redeploy]"
+        description: Action
         required: true
         default: deploy
         type: choice
@@ -45,7 +45,7 @@ on:
           - undeploy
           - redeploy
       tag:
-        description: "Tag this deployment?"
+        description: Tag
         required: false
         type: string
 
