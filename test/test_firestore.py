@@ -241,3 +241,14 @@ def test_get_document__transaction_fail(collection, doc_id, doc):
         transactional__fail(f.get_transaction(), collection, doc_id)
     except ReadAfterWriteError:
         pass  # expected
+
+
+def test_get_collection_documents(collection):
+    docs = [{"value": "1"}, {"value": "2"}]
+    f.write_document(collection, "0", docs[0])
+    f.write_document(collection, "1", docs[1])
+
+    result = f.get_collection_documents(collection)
+    assert len(result) == 2
+    assert docs[0] in result
+    assert docs[1] in result

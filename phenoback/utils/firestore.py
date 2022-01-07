@@ -225,5 +225,9 @@ def get_collection(collection: str) -> CollectionReference:
     return firestore_client().collection(collection)
 
 
+def get_collection_documents(collection: str) -> List[dict]:
+    return [location.to_dict() for location in get_collection(collection).stream()]
+
+
 def docs2str(docs):  # pragma: no cover
     return ["(%s, %s)" % (doc.id, doc.to_dict()) for doc in docs]
