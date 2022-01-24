@@ -58,6 +58,10 @@ env:
   ACTION: ${{ github.event.inputs.action }}
   TAG: ${{ github.event.inputs.tag }}
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
