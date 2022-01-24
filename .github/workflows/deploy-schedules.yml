@@ -1,0 +1,88 @@
+name: "deploy schedules"
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: Project
+        required: true
+        default: phaenonet-test
+        type: choice
+        options:
+          - phaenonet
+          - phaenonet-test
+      schedule:
+        description: Schedule
+        required: true
+        type: choice
+        options:
+          - all
+          - import_meteoswiss_data
+          - backup_daily
+          - backup_weekly
+      action:
+        description: Action
+        required: true
+        default: update
+        type: choice
+        options:
+          - create
+          - update
+          - delete
+
+env:
+  REGION: europe-west1
+  PROJECT: ${{ github.event.inputs.project }}
+  SCHEDULE: ${{ github.event.inputs.schedule }}
+  ACTION: ${{ github.event.inputs.action }}
+  TIMEZONE: "Europe/Zurich"
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    container: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
+    environment: ${{ github.event.inputs.project }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: import_meteoswiss_data
+            topic: import_meteoswiss_data
+            schedule: "5 1 * * *"
+            description: "Trigger cloud function to import meteoswiss data"
+          - name: backup_daily
+            uri: "https://firestore.googleapis.com/v1/projects/phaenonet/databases/(default):exportDocuments"
+            body: '{"outputUriPrefix": "gs://phaenonet_backup_daily"}'
+            sa: ${{ secrets.BACKUP_SERVICE_ACCOUNT }}
+            schedule: "0 1 * * *"
+            description: "Daily backup of Firestore Database"
+          - name: backup_weekely
+            uri: "https://firestore.googleapis.com/v1/projects/phaenonet/databases/(default):exportDocuments"
+            body: '{"outputUriPrefix": "gs://phaenonet_backup_weekly"}'
+            sa: ${{ secrets.BACKUP_SERVICE_ACCOUNT }}
+            schedule: "0 1 * * 0"
+            description: "Weekly backup of Firestore Database"
+    steps:
+      - id: auth
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v0.4.0'
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0.3.0
+        with:
+          project_id: ${{ env.PROJECT }}
+      - name: create/update pubsub
+        run: gcloud scheduler jobs ${{ env.ACTION }} pubsub ${{ matrix.name }} --project ${{ env.PROJECT }} --schedule="${{ matrix.schedule }}" --topic=${{ matrix.topic }} --description=${{ matrix.description }} --message-body="none" --time-zone=${{ env.TIMEZONE }} --location=${{ env.REGION }} --quiet
+        if: ${{ matrix.topic && (env.ACTION == 'create' || env.ACTION == 'update') && (matrix.name == env.SCHEDULE || env.SCHEDULE == 'all') && (matrix.project == env.PROJECT || matrix.project == null) }}
+      - name: create/update http
+        run: gcloud scheduler jobs ${{ env.ACTION }} http ${{ matrix.name }} --project ${{ env.PROJECT }} --schedule="${{ matrix.schedule }}" --description=${{ matrix.description }} --message-body=${{ matrix.body }} --oidc-service-account-email=${{ matrix.sa }} --time-zone=${{ env.TIMEZONE }} --location=${{ env.REGION }} --quiet
+        if: ${{ matrix.uri && (env.ACTION == 'create' || env.ACTION == 'update') && (matrix.name == env.SCHEDULE || env.SCHEDULE == 'all') && (matrix.project == env.PROJECT || matrix.project == null) }}
+      - name: delete
+        run: gcloud scheduler jobs delete ${{ matrix.name }} --project ${{ env.PROJECT }} --location=${{ env.REGION }} --quiet
+        if: ${{ (env.ACTION == 'delete') && (matrix.name == env.SCHEDULE || env.SCHEDULE == 'all') && (matrix.project == env.PROJECT || matrix.project == null) }}
