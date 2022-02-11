@@ -243,7 +243,7 @@ def process_user_write_update_invite(data, context):
             register.delete_user(user_id)
         elif is_create_event(data):
             log.debug("update invites for user %s", user_id)
-            register.register_user(user_id, nickname)
+            register.register_user(user_id)
         else:
             log.debug("Nothing to do for %s", user_id)
 

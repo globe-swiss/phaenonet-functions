@@ -12,7 +12,7 @@ LOOKUP_COLLECTION = "invites_lookup"
 
 
 def invite_id(user_id: str, email: str) -> str:
-    return "%s_%s" % (user_id, email)
+    return f"{user_id}_{email}"
 
 
 def get_invite_ids(user_id: str) -> List[str]:
@@ -24,18 +24,26 @@ def get_invite_ids(user_id: str) -> List[str]:
     return lookup["invites"] if lookup else []
 
 
-def register_user(user_id: str, nickname: str) -> None:
+def register_user(user_id: str) -> None:
     """
     Register the given user on all invites pointing to him.
     """
     for invite_id in get_invite_ids(user_id):
-        register_user_invite(invite_id, user_id, nickname)
+        register_user_invite(invite_id, user_id)
 
 
-def register_user_invite(invite_id: str, user_id: str, nickname: str) -> None:
+def register_user_invite(invite_id: str, user_id: str) -> None:
     """
     Register an user on a specific invite.
     """
+    try:
+        user = d.get_user(user_id)
+        register_date = user["created"]
+        nickname = user["nickname"]
+    except (TypeError, KeyError):
+        register_date = f.SERVER_TIMESTAMP
+        nickname = "Unknown"
+        log.error("User document or creation property not found for %s", user_id)
     log.info("Register user %s (%s) on invite %s", user_id, nickname, invite_id)
     f.update_document(
         INVITE_COLLECTION,
@@ -43,7 +51,7 @@ def register_user_invite(invite_id: str, user_id: str, nickname: str) -> None:
         {
             "register_user": user_id,
             "register_nick": nickname,
-            "register_date": f.SERVER_TIMESTAMP,
+            "register_date": register_date,
         },
     )
     inviter_id = f.get_document(INVITE_COLLECTION, invite_id)["user"]
