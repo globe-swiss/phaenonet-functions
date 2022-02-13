@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use, protected-access
+# pylint: disable=no-self-use, protected-access, too-many-arguments
 import logging
 import os
 from datetime import datetime, timezone
@@ -138,11 +138,6 @@ class TestInvite:
             return_value=INVITEE_USER_ID,
             autospec=True,
         )
-        get_user_mock = mocker.patch(
-            "phenoback.utils.data.get_user",
-            return_value={"nickname": INVITEE_NICKNAME},
-            autospec=True,
-        )
         mocker.patch("phenoback.functions.invite.invite.clear_resend")
         register_user_invite_mock = mocker.patch(
             "phenoback.functions.invite.register.register_user_invite", autospec=True
@@ -242,6 +237,65 @@ class TestRegister:
         )
         assert INVITEE_USER_ID in d.get_user(inviter_user).get("following_users")
         assert len(caplog.records) == 0, caplog.records
+
+    def test_register_user__no_created(
+        self, caplog, mocker, new_invite, inviter_user, invitee_user
+    ):
+        """
+        Assert invite is registerd even if the invitee user document has no created-date.  Assert an error os logged.
+        """
+        caplog.set_level(logging.ERROR)
+        f.update_document("users", invitee_user, {"created": f.DELETE_FIELD})
+        get_invites_mock = mocker.patch(
+            "phenoback.functions.invite.register.get_invite_ids",
+            return_value=[new_invite],
+        )
+        register.register_user(invitee_user)
+
+        get_invites_mock.assert_called_once_with(INVITEE_USER_ID)
+        assert (
+            f.get_document(INVITE_COLLECTION, new_invite).get("register_user")
+            == INVITEE_USER_ID
+        )
+        assert (
+            f.get_document(INVITE_COLLECTION, new_invite).get("register_nick")
+            is not None
+        )
+        assert (
+            f.get_document(INVITE_COLLECTION, new_invite).get("register_date")
+            is not None
+        )
+        assert INVITEE_USER_ID in d.get_user(inviter_user).get("following_users")
+        assert len(caplog.records) == 1, caplog.records
+
+    def test_register_user__invitee_user_not_found(
+        self, caplog, mocker, new_invite, inviter_user
+    ):
+        """
+        Assert invite is registerd even if the invitee user document is not present. Assert an error os logged.
+        """
+        caplog.set_level(logging.ERROR)
+        get_invites_mock = mocker.patch(
+            "phenoback.functions.invite.register.get_invite_ids",
+            return_value=[new_invite],
+        )
+        register.register_user(INVITEE_USER_ID)
+
+        get_invites_mock.assert_called_once_with(INVITEE_USER_ID)
+        assert (
+            f.get_document(INVITE_COLLECTION, new_invite).get("register_user")
+            == INVITEE_USER_ID
+        )
+        assert (
+            f.get_document(INVITE_COLLECTION, new_invite).get("register_nick")
+            is not None
+        )
+        assert (
+            f.get_document(INVITE_COLLECTION, new_invite).get("register_date")
+            is not None
+        )
+        assert INVITEE_USER_ID in d.get_user(inviter_user).get("following_users")
+        assert len(caplog.records) == 1, caplog.records
 
     def test_change_nickname(self, mocker, new_invite):
         new_nickname = "a_new_nickname"
