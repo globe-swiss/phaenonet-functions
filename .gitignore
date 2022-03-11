@@ -4,6 +4,7 @@ credentials
 foto_uploads
 .xprocess
 maintenance/
+*.pickle
 
 # general python ignores
 # Byte-compiled / optimized / DLL files
