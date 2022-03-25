@@ -152,7 +152,7 @@ def process_observation_create_analytics(data, context):
             observation_id,
             phenophase,
         )
-        observation.updated_observation(individual_id, phenophase, observation_date)
+        observation.updated_observation(individual_id)
 
 
 @retry.Retry()
@@ -179,7 +179,6 @@ def process_observation_delete_analytics(data, context):
         source = get_field(data, "source", old_value=True)
         year = get_field(data, "year", old_value=True)
         species = get_field(data, "species", old_value=True)
-        observation_date = get_field(data, "date", old_value=True)
 
         if phenophase in ANALYTIC_PHENOPHASES:
             from phenoback.functions import analytics
@@ -199,7 +198,7 @@ def process_observation_delete_analytics(data, context):
                 observation_id,
                 phenophase,
             )
-        observation.removed_observation(individual_id, observation_date)
+        observation.updated_observation(individual_id)
 
 
 @retry.Retry()

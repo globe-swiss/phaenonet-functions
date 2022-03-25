@@ -94,7 +94,7 @@ def test_process_observation_delete_analytics__process_remove_observation(
     mocker.patch("phenoback.functions.analytics.process_observation")
     mock = mocker.patch("phenoback.functions.analytics.process_remove_observation")
     observation_mock = mocker.patch(
-        "phenoback.functions.observation.removed_observation"
+        "phenoback.functions.observation.updated_observation"
     )
     mocker.patch("phenoback.functions.activity.process_observation")
     mocker.patch("main.get_field", return_value=phenophase)
