@@ -88,12 +88,10 @@ def removed_observation(individual_id: str, observation_date: datetime) -> bool:
 
 
 def _get_last_observation(individual_id: str) -> Optional[dict]:
-    last_obs_query = (
-        d.query_observation("individual_id", "==", individual_id)
-        .order_by("date", "DESCENDING")
-        .limit(1)
-    )
-    for obs in last_obs_query.stream():
-        print(obs.to_dict())
-        return obs.to_dict()
-    return None
+    last_obs_query = d.query_observation("individual_id", "==", individual_id)
+    result = None
+    for observation_doc in last_obs_query.stream():
+        observation = observation_doc.to_dict()
+        if not result or observation.get("date") > result.get("date"):
+            result = observation
+    return result

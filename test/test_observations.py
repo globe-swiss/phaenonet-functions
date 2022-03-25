@@ -44,19 +44,19 @@ def last_observation():
         },
     )
     d.write_observation(
-        "obs_2",
-        {
-            "individual_id": "individual_id",
-            "date": datetime(2020, 1, 2, tzinfo=timezone.utc),
-            "phenophase": "B",
-        },
-    )
-    d.write_observation(
         "obs_3",
         {
             "individual_id": "individual_id",
             "date": datetime(2020, 1, 3, tzinfo=timezone.utc),
             "phenophase": "C",
+        },
+    )
+    d.write_observation(
+        "obs_2",
+        {
+            "individual_id": "individual_id",
+            "date": datetime(2020, 1, 2, tzinfo=timezone.utc),
+            "phenophase": "B",
         },
     )
     return (
