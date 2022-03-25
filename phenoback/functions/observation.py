@@ -1,38 +1,44 @@
 import logging
-from datetime import datetime, timezone
+from typing import Optional
 
-from phenoback.utils.data import get_individual
-from phenoback.utils.firestore import update_document
+import phenoback.utils.data as d
+import phenoback.utils.firestore as f
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def update_last_observation(
-    individual_id: str, phase: str, observation_date: datetime
-) -> bool:
-    individual = get_individual(individual_id)
-    old_observation_date = individual.get(
-        "last_observation_date", datetime.min.replace(tzinfo=timezone.utc)
-    )
-    if observation_date > old_observation_date:
-        data = {"last_observation_date": observation_date}
-        if individual.get("type") == "individual":
-            data["last_phenophase"] = phase
+def updated_observation(individual_id: str):
+    individual = d.get_individual(individual_id)
+    last_observation = _get_last_observation(individual_id)
 
-        update_document("individuals", individual_id, data)
-        log.info(
-            "updated last observation for %s (%s -> %s)",
-            individual_id,
-            old_observation_date,
-            observation_date,
-        )
-        return True
+    if last_observation:
+        new_phenophase = last_observation.get("phenophase")
+        new_observation_date = last_observation.get("date")
     else:
-        log.info(
-            "no update for last observation for %s (%s > %s)",
-            individual_id,
-            old_observation_date,
-            observation_date,
-        )
-        return False
+        new_phenophase = f.DELETE_FIELD
+        new_observation_date = f.DELETE_FIELD
+
+    old_observation_date = individual.get("last_observation_date")
+
+    data = {"last_observation_date": new_observation_date}
+    if individual.get("type") == "individual":
+        data["last_phenophase"] = new_phenophase
+
+    d.update_individual(individual_id, data)
+    log.info(
+        "updated last observation for %s (%s -> %s)",
+        individual_id,
+        old_observation_date,
+        new_observation_date,
+    )
+
+
+def _get_last_observation(individual_id: str) -> Optional[dict]:
+    last_obs_query = d.query_observation("individual_id", "==", individual_id)
+    result = None
+    for observation_doc in last_obs_query.stream():
+        observation = observation_doc.to_dict()
+        if not result or observation.get("date") > result.get("date"):
+            result = observation
+    return result

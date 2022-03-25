@@ -35,7 +35,7 @@ def test_process_observation_create_analytics__process_observation_called(
     mocker, phenophase, expected
 ):
     po_mock = mocker.patch("phenoback.functions.analytics.process_observation")
-    lo_mock = mocker.patch("phenoback.functions.observation.update_last_observation")
+    lo_mock = mocker.patch("phenoback.functions.observation.updated_observation")
     mocker.patch("phenoback.functions.activity.process_observation")
     mocker.patch("main.get_field", return_value=phenophase)
 
@@ -65,13 +65,16 @@ def test_process_observation_update_analytics__process_observation_called(
     mocker, phenophase, date_updated, expected
 ):
     mock = mocker.patch("phenoback.functions.analytics.process_observation")
-    mocker.patch("phenoback.functions.observation.update_last_observation")
+    observation_mock = mocker.patch(
+        "phenoback.functions.observation.updated_observation"
+    )
     mocker.patch("phenoback.functions.activity.process_observation")
     mocker.patch("main.is_field_updated", return_value=date_updated)
     mocker.patch("main.get_field", return_value=phenophase)
 
     main.process_observation_update_analytics("ignored", default_context)
     assert mock.called == expected
+    assert observation_mock.called == date_updated
 
 
 @pytest.mark.parametrize(
@@ -90,12 +93,15 @@ def test_process_observation_delete_analytics__process_remove_observation(
 ):
     mocker.patch("phenoback.functions.analytics.process_observation")
     mock = mocker.patch("phenoback.functions.analytics.process_remove_observation")
-    mocker.patch("phenoback.functions.observation.update_last_observation")
+    observation_mock = mocker.patch(
+        "phenoback.functions.observation.updated_observation"
+    )
     mocker.patch("phenoback.functions.activity.process_observation")
     mocker.patch("main.get_field", return_value=phenophase)
 
     main.process_observation_delete_analytics("ignored", default_context)
     assert mock.called == expected
+    assert observation_mock.called
 
 
 @pytest.mark.parametrize(
@@ -112,7 +118,7 @@ def test_process_observation_write_activity__process_activity_called(
 ):
     mocker.patch("phenoback.functions.analytics.process_observation")
     mocker.patch("phenoback.functions.analytics.process_remove_observation")
-    mocker.patch("phenoback.functions.observation.update_last_observation")
+    mocker.patch("phenoback.functions.observation.updated_observation")
     mock = mocker.patch("phenoback.functions.activity.process_observation")
     mocker.patch("main.is_create_event", return_value=is_create)
     mocker.patch("main.is_field_updated", return_value=date_updated)
