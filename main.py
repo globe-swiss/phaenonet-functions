@@ -175,7 +175,7 @@ def process_observation_delete_analytics(data, context):
 
         observation_id = get_document_id(context)
         phenophase = get_field(data, "phenophase", old_value=True)
-        individual_id = (get_field(data, "individual_id", old_value=True),)
+        individual_id = get_field(data, "individual_id", old_value=True)
         source = get_field(data, "source", old_value=True)
         year = get_field(data, "year", old_value=True)
         species = get_field(data, "species", old_value=True)
