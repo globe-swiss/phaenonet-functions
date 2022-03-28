@@ -86,6 +86,11 @@ def test_update_last_observation__no_observations(individual):
     assert updated_individual.get("last_phenophase") is None
 
 
+def test_update_last_observation__no_individual(capwarnings):
+    observation.updated_observation("not_existing_id")
+    assert len(capwarnings.records) == 1
+
+
 def test_update_last_observation__station(station):
     last_observation = create_last_observation(station[0])
     observation.updated_observation(station[0])
