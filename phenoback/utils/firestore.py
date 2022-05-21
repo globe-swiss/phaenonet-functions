@@ -1,5 +1,6 @@
 import logging
 from contextlib import contextmanager
+from time import sleep
 from typing import Any, List, Optional
 
 from firebase_admin import firestore
@@ -95,6 +96,7 @@ def _write_batch(
     merge: bool,
     commit_size: int,
     writebatch: WriteBatch,
+    commit_sleep: float = 0,
 ) -> int:
     # pylint: disable=too-many-arguments
     cnt = 0
@@ -106,6 +108,7 @@ def _write_batch(
         if cnt == commit_size:
             log.debug("Commiting %i documents on %s", cnt, collection)
             writebatch.commit()
+            sleep(commit_sleep)
             cnt = 0
     if commit_size > 0:
         log.debug("Committing %i documents on %s", cnt, collection)
@@ -121,6 +124,7 @@ def write_batch(
     merge: bool = False,
     commit_size: int = None,
     transaction: Transaction = None,
+    commit_sleep: float = 0,
 ) -> int:
     # pylint: disable=too-many-arguments
     if transaction is not None:
@@ -152,6 +156,7 @@ def write_batch(
         data,
         merge=merge,
         commit_size=commit_size,
+        commit_sleep=commit_sleep,
         writebatch=writebatch,
     )
 
