@@ -1,9 +1,8 @@
 import csv
-import io
 import logging
 from datetime import datetime
 from functools import lru_cache
-from typing import IO, Dict, List, Set
+from typing import Dict, List, Set
 from zipfile import ZipFile
 
 from phenoback.utils import data as d

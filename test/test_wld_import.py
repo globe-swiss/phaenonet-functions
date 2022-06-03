@@ -1,3 +1,4 @@
+# pylint: disable=unused-argument
 import io
 import test
 from zipfile import ZipFile
