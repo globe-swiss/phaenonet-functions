@@ -100,6 +100,7 @@ def import_data(pathfile: str, bucket=None):
     # assumption is that the data is always provided in the following year
     year = d.get_phenoyear() - 1
 
+    log.info("importing year %i", year)
     blob = s.get_blob(bucket, pathfile)
     check_file_size(blob)
 
@@ -225,9 +226,8 @@ def public_users():
 def insert_data(collection: str, documents: List[dict]) -> None:
     if len(documents) == 0:
         log.error(
-            "no data present on collection %s for year %i",
+            "no data present on collection %s",
             collection,
-            d.get_phenoyear(),
         )
     else:
         log.debug("Import %i record to collection %s", len(documents), collection)
