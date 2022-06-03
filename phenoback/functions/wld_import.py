@@ -1,9 +1,12 @@
 import csv
+import io
 import logging
 from datetime import datetime
 from functools import lru_cache
 from typing import Dict, List, Set
 from zipfile import ZipFile
+
+from google.cloud.storage import Blob
 
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
@@ -53,8 +56,8 @@ def check_zip_archive(input_zip: ZipFile) -> None:
         raise FileNotFoundError(f"Files found {set(filenames)} files expected {FILES}")
 
 
-def check_file_size(bucket: str, pathfile: str) -> None:
-    size = s.get_blob(bucket, pathfile).size
+def check_file_size(blob: Blob) -> None:
+    size = blob.size
     log.debug("Import file size %ib", size)
     if size > MAX_ARCHIVE_BYTES:
         raise OverflowError(f"File bigger than {MAX_ARCHIVE_BYTES/1000}kb")
@@ -97,10 +100,10 @@ def import_data(pathfile: str, bucket=None):
     # assumption is that the data is always provided in the following year
     year = d.get_phenoyear() - 1
 
-    check_file_size(bucket, pathfile)
-    input_file = s.download_file(bucket, pathfile)
+    blob = s.get_blob(bucket, pathfile)
+    check_file_size(blob)
 
-    with ZipFile(input_file, mode="r") as input_zip:
+    with ZipFile(io.BytesIO(blob.download_as_bytes()), mode="r") as input_zip:
         check_zip_archive(input_zip)
         DATA = load_data(input_zip)
     check_data_integrity()

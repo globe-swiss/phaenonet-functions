@@ -1,5 +1,4 @@
 import logging
-import tempfile
 import urllib.parse
 
 from firebase_admin import storage
@@ -7,17 +6,6 @@ from google.cloud.storage import Blob
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
-
-
-def download_file(bucket: str, path: str):
-    log.debug("Download file %s from %s", path, bucket)
-    blob = storage.bucket(bucket).get_blob(path)
-    with tempfile.TemporaryFile() as file:
-        if blob is not None:
-            blob.download_to_file(file)
-            return file
-        else:
-            return None
 
 
 def get_blob(bucket: str, path: str) -> Blob:
