@@ -38,15 +38,19 @@ def test_check_zip_archive__fail_files(mocker):
         wld_import.check_zip_archive(zip_file_mock)
 
 
-def test_check_file_size(input_bytes):
-    wld_import.check_file_size(input_bytes)
+def test_check_file_size(mocker):
+    blob_mock = mocker.Mock()
+    blob_mock.size = wld_import.MAX_ARCHIVE_BYTES
+    mocker.patch("phenoback.utils.storage.get_blob", return_value=blob_mock)
+    wld_import.check_file_size("bucket", "path")
 
 
-def test_check_file_size__fail_size():
+def test_check_file_size__fail_size(mocker):
+    blob_mock = mocker.Mock()
+    blob_mock.size = wld_import.MAX_ARCHIVE_BYTES + 1
+    mocker.patch("phenoback.utils.storage.get_blob", return_value=blob_mock)
     with pytest.raises(OverflowError):
-        wld_import.check_file_size(
-            io.BytesIO(bytearray(wld_import.MAX_ARCHIVE_BYTES + 1))
-        )
+        wld_import.check_file_size("bucket", "path")
 
 
 def test_check_load_data(input_bytes):
@@ -92,6 +96,7 @@ def test_check_data_integrity__error(data_loaded, caperrors, filename, fieldname
 
 def test_import_data(mocker, input_bytes):
     mocker.patch("phenoback.utils.storage.download_file", return_value=input_bytes)
+    mocker.patch("phenoback.functions.wld_import.check_file_size")
     d.update_phenoyear(2002)  # assume test data from 2001
     wld_import.import_data(zippath)
     assert len(f.get_collection_documents("users")) == 1
@@ -101,6 +106,7 @@ def test_import_data(mocker, input_bytes):
 
 def test_import_data__no_data(mocker, input_bytes):
     mocker.patch("phenoback.utils.storage.download_file", return_value=input_bytes)
+    mocker.patch("phenoback.functions.wld_import.check_file_size")
     d.update_phenoyear(2021)  # assume test data from 2020
     wld_import.import_data(zippath)
     assert len(f.get_collection_documents("users")) == 1

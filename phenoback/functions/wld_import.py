@@ -54,8 +54,8 @@ def check_zip_archive(input_zip: ZipFile) -> None:
         raise FileNotFoundError(f"Files found {set(filenames)} files expected {FILES}")
 
 
-def check_file_size(input_file: IO[bytes]) -> None:
-    size = input_file.getbuffer().nbytes
+def check_file_size(bucket: str, pathfile: str) -> None:
+    size = s.get_blob(bucket, pathfile).size
     log.debug("Import file size %ib", size)
     if size > MAX_ARCHIVE_BYTES:
         raise OverflowError(f"File bigger than {MAX_ARCHIVE_BYTES/1000}kb")
@@ -98,8 +98,8 @@ def import_data(pathfile: str, bucket=None):
     # assumption is that the data is always provided in the following year
     year = d.get_phenoyear() - 1
 
+    check_file_size(bucket, pathfile)
     input_file = s.download_file(bucket, pathfile)
-    check_file_size(input_file)
 
     with ZipFile(input_file, mode="r") as input_zip:
         check_zip_archive(input_zip)

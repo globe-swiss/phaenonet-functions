@@ -3,6 +3,7 @@ import tempfile
 import urllib.parse
 
 from firebase_admin import storage
+from google.cloud.storage import Blob
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
@@ -17,6 +18,11 @@ def download_file(bucket: str, path: str):
             return file
         else:
             return None
+
+
+def get_blob(bucket: str, path: str) -> Blob:
+    log.debug("Fetch blob %s from %s", path, bucket)
+    return storage.bucket(bucket).get_blob(path)
 
 
 def upload_file(
