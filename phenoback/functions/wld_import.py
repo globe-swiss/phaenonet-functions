@@ -97,7 +97,7 @@ def check_data_integrity():
         cur_value = site_year_user.get(site_id, {}).get(year)
         if cur_value and cur_value != user_id:
             log.error(
-                "Multiple users for %s in %s (%s, %s)",
+                "Multiple users have observations for site %s in %s (%s, %s)",
                 site_id,
                 year,
                 user_id,
