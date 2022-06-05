@@ -1,5 +1,4 @@
 # pylint: disable=no-self-use, protected-access, too-many-arguments
-import logging
 import os
 from datetime import datetime, timezone
 from unittest.mock import MagicMock
