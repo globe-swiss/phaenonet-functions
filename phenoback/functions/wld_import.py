@@ -52,7 +52,7 @@ PHASES_MAP = {
 def check_zip_archive(input_zip: ZipFile) -> None:
     filenames = input_zip.namelist()
     log.debug("Files found: %s", str(filenames))
-    if not set(filenames) == FILES:
+    if not set(filenames).issubset(FILES):
         raise FileNotFoundError(f"Files found {set(filenames)} files expected {FILES}")
 
 
