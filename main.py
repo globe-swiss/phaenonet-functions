@@ -314,12 +314,12 @@ def create_thumbnail_finalize(data, context):
     Creates thumbnails for images uploaded to google cloud storage.
     """
     with setup(data, context):
-        from phenoback.functions import thumbnails
-
         pathfile = data["name"]
+        if pathfile.startswith("images/"):
+            from phenoback.functions import thumbnails
 
-        log.info("Process thumbnail for %s", pathfile)
-        thumbnails.process_new_image(pathfile)
+            log.info("Process thumbnail for %s", pathfile)
+            thumbnails.process_new_image(pathfile)
 
 
 def rollover_manual(data, context):
@@ -411,3 +411,16 @@ def promote_ranger_http(request):
         from phenoback.functions import phenorangers
 
         return phenorangers.promote(request_json["email"])
+
+
+def import_wld_data_finalize(data, context):
+    """
+    Import wld data on file upload to private/wld_import
+    """
+    with setup(data, context):
+        pathfile = data["name"]
+        if pathfile.startswith("private/wld_import/"):
+            from phenoback.functions import wld_import
+
+            log.info("Import wld data for %s", pathfile)
+            wld_import.import_data(pathfile)

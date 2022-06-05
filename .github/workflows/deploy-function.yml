@@ -24,6 +24,7 @@ on:
           - process_user
           - process_invite
           - process_invite_register
+          - import_wld_data
           - import_meteoswiss_data
           - export_meteoswiss_data
           - create_thumbnails
@@ -92,6 +93,9 @@ jobs:
           - name: process_invite_register
             entrypoint: process_user_write_update_invite
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/users/{user_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+          - name: import_wld_data
+            entrypoint: import_wld_data_finalize
+            trigger: --trigger-resource "$PROJECT.appspot.com" --trigger-event google.storage.object.finalize
           - name: import_meteoswiss_data
             entrypoint: import_meteoswiss_data_publish
             trigger: --trigger-resource import_meteoswiss_data --trigger-event google.pubsub.topic.publish

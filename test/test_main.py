@@ -375,3 +375,42 @@ def test_promote_ranger__email_missing(mocker):
     request_mock.headers = {"content-type": "application/json"}
     request_mock.get_json.return_value = {"something": "something"}
     assert main.promote_ranger_http(request_mock).status_code == 400
+
+
+@pytest.mark.parametrize(
+    "main_function, call_function_name, pathfile, called",
+    [
+        (
+            main.create_thumbnail_finalize,
+            "thumbnails.process_new_image",
+            "images/anything_in_this_folder",
+            True,
+        ),
+        (
+            main.create_thumbnail_finalize,
+            "thumbnails.process_new_image",
+            "other_folder/anything_in_this_folder",
+            False,
+        ),
+        (
+            main.import_wld_data_finalize,
+            "wld_import.import_data",
+            "private/wld_import/anything_in_this_folder",
+            True,
+        ),
+        (
+            main.import_wld_data_finalize,
+            "wld_import.import_data",
+            "private/other_folder/anything_in_this_folder",
+            False,
+        ),
+    ],
+)
+def test_storage_triggers(mocker, main_function, call_function_name, pathfile, called):
+    """
+    Test all functions based on storage triggers to correctly limit
+    the function invocation to specific folders.
+    """
+    mock = mocker.patch(f"phenoback.functions.{call_function_name}")
+    main_function({"name": pathfile}, default_context)
+    assert mock.called == called
