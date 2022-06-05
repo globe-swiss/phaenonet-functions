@@ -377,14 +377,6 @@ def test_promote_ranger__email_missing(mocker):
     assert main.promote_ranger_http(request_mock).status_code == 400
 
 
-# def test_create_thumbnails(mocker):
-#     tn_mock = mocker.patch("phenoback.functions.thumbnails.process_new_image")
-#     main.create_thumbnail_finalize(
-#         {"name": "images/anything_in_this_folder"}, default_context
-#     )
-#     tn_mock.assert_called()
-
-
 @pytest.mark.parametrize(
     "main_function, call_function_name, pathfile, called",
     [
@@ -415,6 +407,10 @@ def test_promote_ranger__email_missing(mocker):
     ],
 )
 def test_storage_triggers(mocker, main_function, call_function_name, pathfile, called):
+    """
+    Test all functions based on storage triggers to correctly limit
+    the function invocation to specific folders.
+    """
     mock = mocker.patch(f"phenoback.functions.{call_function_name}")
     main_function({"name": pathfile}, default_context)
     assert mock.called == called

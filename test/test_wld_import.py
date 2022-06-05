@@ -10,6 +10,13 @@ import phenoback.utils.firestore as f
 from phenoback.functions import wld_import
 
 
+@pytest.fixture(autouse=True, scope="function")
+def cache_clear():
+    wld_import.site_users.cache_clear()
+    wld_import.station_species.cache_clear()
+    wld_import.tree_species.cache_clear()
+
+
 @pytest.fixture()
 def zippath():
     return test.get_resource_path("wld_import_test.zip")
@@ -83,39 +90,42 @@ def test_check_data_integrity__empty(data_loaded, caperrors, filename, fieldname
     wld_import.DATA[filename] = []
     with pytest.raises(ValueError):
         wld_import.check_data_integrity()
-    assert f"{fieldname} not found" in caperrors.text
+    assert f"{fieldname} not found" in caperrors.text, caperrors.text
 
 
 @pytest.mark.parametrize(
-    "filename, fieldname",
+    "filename, fieldname, value",
     [
-        ("user_id.csv", "user_id"),
-        ("site.csv", "site_id"),
-        ("observation_phaeno.csv", "observation_id"),
+        ("user_id.csv", "user_id", -1),
+        ("site.csv", "site_id", -1),
+        ("observation_phaeno.csv", "observation_id", -1),
+        ("observation_phaeno.csv", "user_id", 200),
     ],
 )
-def test_check_data_integrity__error(data_loaded, caperrors, filename, fieldname):
+def test_check_data_integrity__error(
+    data_loaded, caperrors, filename, fieldname, value
+):
     assert wld_import.DATA
-    wld_import.DATA[filename][0][fieldname] = -999
+    wld_import.DATA[filename][0][fieldname] = value
     with pytest.raises(ValueError):
         wld_import.check_data_integrity()
-    assert f"{fieldname} not" in caperrors.text
+    assert f"{fieldname} not" in caperrors.text, caperrors.text
 
 
 def test_import_data(mocker, input_blob):
-    print(input_blob)
     mocker.patch("phenoback.utils.storage.get_blob", return_value=input_blob)
     d.update_phenoyear(2002)  # assume test data from 2001
-    wld_import.import_data(zippath)
-    assert len(f.get_collection_documents("users")) == 1
+    wld_import.import_data("mocked")
+    assert len(f.get_collection_documents("users")) == 2
     assert len(f.get_collection_documents("individuals")) == 1
     assert len(f.get_collection_documents("observations")) == 2
 
 
-def test_import_data__no_data(mocker, input_blob):
+def test_import_data__no_data(mocker, caperrors, input_blob):
     mocker.patch("phenoback.utils.storage.get_blob", return_value=input_blob)
     d.update_phenoyear(2021)  # assume test data from 2020
-    wld_import.import_data(zippath)
-    assert len(f.get_collection_documents("users")) == 1
+    wld_import.import_data("mocked")
+    assert len(f.get_collection_documents("users")) == 2
     assert len(f.get_collection_documents("individuals")) == 0
     assert len(f.get_collection_documents("observations")) == 0
+    assert len(caperrors.records) >= 1, caperrors

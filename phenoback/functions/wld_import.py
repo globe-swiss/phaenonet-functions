@@ -78,19 +78,24 @@ def check_data_integrity():
     error = False
     users = {u["user_id"]: True for u in DATA["user_id.csv"]}
     sites = {s["site_id"]: True for s in DATA["site.csv"]}
+    site_users_year = {}
 
     for row in DATA["observation_phaeno.csv"]:
-        if not users.get(row.get("user_id")):
-            log.error("user_id not found: %s", row.get("user_id"))
+        user_id = row.get("user_id")
+        site_id = row.get("site_id")
+        observation_id = row.get("observation_id")
+        year = row.get("year")
+        if not users.get(user_id):
+            log.error("user_id not found: %s", user_id)
             error = True
-        if not sites.get(row.get("site_id")):
-            log.error("site_id not found: %s", row.get("site_id"))
+        if not sites.get(site_id):
+            log.error("site_id not found: %s", site_id)
             error = True
-        if not PHASES_MAP.get(row.get("observation_id")):
-            log.error(
-                "observation_id not mapped to phenophase: %s", row.get("observation_id")
-            )
+        if not PHASES_MAP.get(observation_id):
+            log.error("observation_id not mapped to phenophase: %s", observation_id)
             error = True
+        if site_users_year.get(site_id, {}).get(user_id, {}).get(year) is not None:
+            log.error("Multiple users for %s in %s", site_id, year)
     if error:
         raise ValueError("Data integrity check failed")
 
@@ -136,8 +141,6 @@ def tree_species() -> Dict[str, Dict[str, str]]:
 def site_users() -> Dict[str, Dict[str, str]]:
     result = {}
     for obs in DATA["observation_phaeno.csv"]:
-        if result.get(obs["year"], {}).get(obs["site_id"]) is not None:
-            raise ValueError(f"Multiple users for {obs['site_id']} in {obs['year']}")
         result.setdefault(obs["site_id"], {})[obs["year"]] = obs["user_id"]
     return result
 
@@ -193,7 +196,7 @@ def observations(year: int):
             "individual_id": f"{o['year']}_{SOURCE}_{o['site_id']}",
             "species": get_tree_species(o["site_id"], o["tree_id"]),
             "user": f"{SOURCE}_{o['user_id']}",
-            "year": int(o["year"]),
+            "year": year,
             "tree_id": o["tree_id"],
             "date": datetime.strptime(o["date"], "%Y-%m-%d"),
             "phenophase": map_phenophase(o["observation_id"]),
