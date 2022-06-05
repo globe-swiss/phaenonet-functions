@@ -17,7 +17,7 @@ log.setLevel(logging.INFO)
 
 
 SOURCE = "wld"
-NICKNAME = "PhaenoWald"
+NICKNAME = "PhaenoWaldWSL"
 FILES = {"tree.csv", "observation_phaeno.csv", "user_id.csv", "site.csv"}
 MAX_ARCHIVE_BYTES = 100000
 
@@ -114,6 +114,7 @@ def import_data(pathfile: str, bucket=None):
         DATA = load_data(input_zip)
     check_data_integrity()
 
+    insert_data("public_users", public_users())
     insert_data("users", users())
     insert_data("individuals", individuals(year))
     insert_data("observations", observations(year))

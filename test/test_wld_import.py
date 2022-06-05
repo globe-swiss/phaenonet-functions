@@ -117,6 +117,7 @@ def test_import_data(mocker, input_blob):
     d.update_phenoyear(2002)  # assume test data from 2001
     wld_import.import_data("mocked")
     assert len(f.get_collection_documents("users")) == 2
+    assert len(f.get_collection_documents("public_users")) == 2
     assert len(f.get_collection_documents("individuals")) == 1
     assert len(f.get_collection_documents("observations")) == 2
 
@@ -126,6 +127,7 @@ def test_import_data__no_data(mocker, caperrors, input_blob):
     d.update_phenoyear(2021)  # assume test data from 2020
     wld_import.import_data("mocked")
     assert len(f.get_collection_documents("users")) == 2
+    assert len(f.get_collection_documents("public_users")) == 2
     assert len(f.get_collection_documents("individuals")) == 0
     assert len(f.get_collection_documents("observations")) == 0
     assert len(caperrors.records) >= 1, caperrors
