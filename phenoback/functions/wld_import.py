@@ -78,7 +78,7 @@ def check_data_integrity():
     error = False
     users = {u["user_id"]: True for u in DATA["user_id.csv"]}
     sites = {s["site_id"]: True for s in DATA["site.csv"]}
-    site_users_year = {}
+    site_year_user = {}
 
     for row in DATA["observation_phaeno.csv"]:
         user_id = row.get("user_id")
@@ -94,8 +94,17 @@ def check_data_integrity():
         if not PHASES_MAP.get(observation_id):
             log.error("observation_id not mapped to phenophase: %s", observation_id)
             error = True
-        if site_users_year.get(site_id, {}).get(user_id, {}).get(year) is not None:
-            log.error("Multiple users for %s in %s", site_id, year)
+        cur_value = site_year_user.get(site_id, {}).get(year)
+        if cur_value and cur_value != user_id:
+            log.error(
+                "Multiple users for %s in %s (%s, %s)",
+                site_id,
+                year,
+                user_id,
+                cur_value,
+            )
+            error = True
+        site_year_user.setdefault(site_id, {})[year] = user_id
     if error:
         raise ValueError("Data integrity check failed")
 
