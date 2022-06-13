@@ -4,9 +4,10 @@ from datetime import datetime
 from unittest.mock import MagicMock
 
 import firebase_admin
-import flask
 import pytest
 import sentry_sdk
+from flask import Request
+from werkzeug.test import EnvironBuilder
 
 from phenoback.utils import glogging
 
@@ -357,24 +358,33 @@ def test_process_user_write_update_invite():
 def test_promote_ranger_http(mocker):
     email = "test@example.com"
     promote_mock = mocker.patch("phenoback.functions.phenorangers.promote")
-    request_mock = mocker.patch.object(flask, "request")
-    request_mock.headers = {"content-type": "application/json"}
-    request_mock.get_json.return_value = {"email": email}
-    main.promote_ranger_http(request_mock)
+    request = Request(
+        EnvironBuilder(
+            method="POST",
+            json={"email": email},
+        ).get_environ()
+    )
+    main.promote_ranger_http(request)
     promote_mock.assert_called_with(email)
 
 
-def test_promote_ranger__content_type(mocker):
-    request_mock = mocker.patch.object(flask, "request")
-    request_mock.headers = {"content-type": "something"}
-    assert main.promote_ranger_http(request_mock).status_code == 415
+def test_promote_ranger__content_type():
+    request = Request(
+        EnvironBuilder(
+            method="POST", headers={"content-type": "something"}
+        ).get_environ()
+    )
+    assert main.promote_ranger_http(request).status_code == 415
 
 
-def test_promote_ranger__email_missing(mocker):
-    request_mock = mocker.patch.object(flask, "request")
-    request_mock.headers = {"content-type": "application/json"}
-    request_mock.get_json.return_value = {"something": "something"}
-    assert main.promote_ranger_http(request_mock).status_code == 400
+def test_promote_ranger__email_missing():
+    request = Request(
+        EnvironBuilder(
+            method="POST",
+            json={"something": "something"},
+        ).get_environ()
+    )
+    assert main.promote_ranger_http(request).status_code == 400
 
 
 @pytest.mark.parametrize(

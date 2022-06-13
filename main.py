@@ -424,3 +424,13 @@ def import_wld_data_finalize(data, context):
 
             log.info("Import wld data for %s", pathfile)
             wld_import.import_data(pathfile)
+
+
+def test_log(data, context):
+    with setup(data, context):
+        log.debug("L - debug")
+        log.info("L - info")
+        log.warning("L - warning")
+        log.error("L - error")
+        log.critical("L - critical")
+        log.exception("L - exception", exc_info=Exception("myException"))
