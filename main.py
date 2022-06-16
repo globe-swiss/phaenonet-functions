@@ -426,7 +426,7 @@ def import_wld_data_finalize(data, context):
             wld_import.import_data(pathfile)
 
 
-def test_log(data, context):
+def test_logging(data, context):
     with setup(data, context):
         log.debug("L - debug")
         log.info("L - info")
