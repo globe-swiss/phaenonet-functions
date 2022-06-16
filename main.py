@@ -426,11 +426,18 @@ def import_wld_data_finalize(data, context):
             wld_import.import_data(pathfile)
 
 
-def test_logging(data, context):
+def test(data, context):
+    from time import sleep
+
     with setup(data, context):
         log.debug("L - debug")
-        log.info("L - info")
+        sleep(1)
+        log.info("L - info, %s", str(os.environ))
+        sleep(1)
         log.warning("L - warning")
+        sleep(1)
         log.error("L - error")
+        sleep(1)
         log.critical("L - critical")
+        sleep(1)
         log.exception("L - exception", exc_info=Exception("myException"))
