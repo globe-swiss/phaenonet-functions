@@ -12,7 +12,7 @@ defaults:
 jobs:
   test:
     runs-on: ubuntu-latest
-    container: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
+    container: globeswiss/cloud-sdk:py3.9-latest
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
@@ -52,7 +52,7 @@ jobs:
         if: ${{ always() }}
   test-updated:
     runs-on: ubuntu-latest
-    container: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
+    container: globeswiss/cloud-sdk:py3.9-latest
     steps:
       - uses: actions/checkout@v2
       - name: install dependencies
