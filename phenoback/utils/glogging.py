@@ -13,7 +13,6 @@ def init(log_id="Unknown"):  # pragma: no cover
         labels={
             "function_name": gcloud.get_function_name(),
             "project_id": gcloud.get_project(),
-            "region": gcloud.get_function_region(),
         },
     )
 

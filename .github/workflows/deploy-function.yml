@@ -126,6 +126,9 @@ jobs:
           - name: promote_ranger
             entrypoint: promote_ranger_http
             trigger: --trigger-http
+          - name: test
+            entrypoint: test
+            trigger: --trigger-http
           - name: e2e_clear_individuals
             entrypoint: e2e_clear_user_individuals_http
             trigger: --trigger-http --allow-unauthenticated

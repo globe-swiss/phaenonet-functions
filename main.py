@@ -49,7 +49,7 @@ firebase_admin.initialize_app(
     options={"storageBucket": os.environ.get("storageBucket")}
 )
 
-log = None  # pylint: disable=invalid-name
+log: logging.Logger = None  # pylint: disable=invalid-name
 
 ANALYTIC_PHENOPHASES = ("BEA", "BLA", "BFA", "BVA", "FRA")
 
@@ -429,10 +429,34 @@ def import_wld_data_finalize(data, context):
 def test(data, context):
     from time import sleep
 
+    from phenoback.utils import gcloud as g
+
     with setup(data, context):
+        log.info("Environment: %s", str(os.environ))
+        sleep(1)
+        log.log(
+            level=logging.ERROR if g.get_function_name() != "test" else logging.INFO,
+            msg=("Function Name: %s", g.get_function_name()),
+        )
+        sleep(1)
+        log.log(
+            level=logging.ERROR if g.get_project() == "Unknown" else logging.INFO,
+            msg=("Project: %s", g.get_project()),
+        )
+        sleep(1)
+        log.log(
+            level=logging.ERROR if g.get_app_host() == "Unknown" else logging.INFO,
+            msg=("App Host: %s", g.get_app_host()),
+        )
+        sleep(1)
+        log.log(
+            level=logging.ERROR if g.get_version() == "Unknown" else logging.INFO,
+            msg=("Version: %s", g.get_version()),
+        )
+        sleep(1)
         log.debug("L - debug")
         sleep(1)
-        log.info("L - info, %s", str(os.environ))
+        log.info("L - info")
         sleep(1)
         log.warning("L - warning")
         sleep(1)

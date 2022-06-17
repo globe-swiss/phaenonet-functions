@@ -76,10 +76,6 @@ def get_project() -> str:  # pragma: no cover
     return os.getenv("GCP_PROJECT", "Unknown")
 
 
-def get_function_region() -> str:  # pragma: no cover
-    return os.getenv("FUNCTION_REGION", "Unknown")
-
-
 def get_app_host() -> str:
     host = os.getenv("appHost")
     if not host:
