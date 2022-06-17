@@ -6,7 +6,7 @@ from unittest.mock import MagicMock
 import firebase_admin
 import pytest
 import sentry_sdk
-from flask import Request
+from flask import Request, Response
 from werkzeug.test import EnvironBuilder
 
 from phenoback.utils import glogging
@@ -208,7 +208,7 @@ def test_meteoswiss_export(mocker, data, expected):
 
 def test_e2e_clear_user_individuals_http(mocker):
     e2e_mock = mocker.patch("phenoback.functions.e2e.delete_user_individuals")
-    main.e2e_clear_user_individuals_http("ignored")
+    assert isinstance(main.e2e_clear_user_individuals_http("ignored"), Response)
     e2e_mock.assert_called_once()
     e2e_mock.assert_called_with("q7lgBm5nm7PUkof20UdZ9D4d0CV2")
 
