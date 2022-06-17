@@ -35,6 +35,7 @@ on:
           - process_ts_definitions
           - process_ts_invite
           - promote_ranger
+          - test
           - e2e_clear_individuals
       action:
         description: Action
