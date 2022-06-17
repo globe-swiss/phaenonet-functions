@@ -167,4 +167,5 @@ def _load_hash(key: str) -> Optional[str]:
 
 
 def _get_hash(data: str) -> str:
+    # pylint: disable=unexpected-keyword-arg
     return md5(data.encode(), usedforsecurity=False).hexdigest()
