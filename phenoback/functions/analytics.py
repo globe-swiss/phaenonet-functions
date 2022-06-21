@@ -88,13 +88,9 @@ def update_result(
             phase: {
                 "min": np.min(observation_dates),
                 "max": np.max(observation_dates),
-                "median": np.quantile(observation_dates, 0.5, interpolation="nearest"),
-                "quantile_25": np.quantile(
-                    observation_dates, 0.25, interpolation="nearest"
-                ),
-                "quantile_75": np.quantile(
-                    observation_dates, 0.75, interpolation="nearest"
-                ),
+                "median": np.quantile(observation_dates, 0.5, method="nearest"),
+                "quantile_25": np.quantile(observation_dates, 0.25, method="nearest"),
+                "quantile_75": np.quantile(observation_dates, 0.75, method="nearest"),
             }
         }
     else:  # delete phase results if has no values

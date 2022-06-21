@@ -49,7 +49,7 @@ firebase_admin.initialize_app(
     options={"storageBucket": os.environ.get("storageBucket")}
 )
 
-log = None  # pylint: disable=invalid-name
+log: logging.Logger = None  # pylint: disable=invalid-name
 
 ANALYTIC_PHENOPHASES = ("BEA", "BLA", "BFA", "BVA", "FRA")
 
@@ -374,6 +374,7 @@ def e2e_clear_user_individuals_http(request):
     Clear all individuals for the e2e test user. This is used for assuring the firestore state before running e2e tests.
     """
     from collections import namedtuple
+    from flask import Response
 
     Context = namedtuple("context", "event_id")
     context = Context(event_id=time.time())
@@ -382,6 +383,7 @@ def e2e_clear_user_individuals_http(request):
         from phenoback.functions import e2e
 
         e2e.delete_user_individuals("q7lgBm5nm7PUkof20UdZ9D4d0CV2")
+        return Response("ok", 200)
 
 
 def promote_ranger_http(request):
@@ -424,3 +426,44 @@ def import_wld_data_finalize(data, context):
 
             log.info("Import wld data for %s", pathfile)
             wld_import.import_data(pathfile)
+
+
+def test(data, context):
+    from time import sleep
+
+    from phenoback.utils import gcloud as g
+
+    with setup(data, context):
+        log.info("Environment: %s", str(os.environ))
+        sleep(1)
+        log.log(
+            level=logging.ERROR if g.get_function_name() != "test" else logging.INFO,
+            msg=("Function Name: %s", g.get_function_name()),
+        )
+        sleep(1)
+        log.log(
+            level=logging.ERROR if g.get_project() == "Unknown" else logging.INFO,
+            msg=("Project: %s", g.get_project()),
+        )
+        sleep(1)
+        log.log(
+            level=logging.ERROR if g.get_app_host() == "Unknown" else logging.INFO,
+            msg=("App Host: %s", g.get_app_host()),
+        )
+        sleep(1)
+        log.log(
+            level=logging.ERROR if g.get_version() == "Unknown" else logging.INFO,
+            msg=("Version: %s", g.get_version()),
+        )
+        sleep(1)
+        log.debug("L - debug")
+        sleep(1)
+        log.info("L - info")
+        sleep(1)
+        log.warning("L - warning")
+        sleep(1)
+        log.error("L - error")
+        sleep(1)
+        log.critical("L - critical")
+        sleep(1)
+        log.exception("L - exception", exc_info=Exception("myException"))

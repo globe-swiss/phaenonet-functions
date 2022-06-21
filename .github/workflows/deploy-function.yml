@@ -35,6 +35,7 @@ on:
           - process_ts_definitions
           - process_ts_invite
           - promote_ranger
+          - test
           - e2e_clear_individuals
       action:
         description: Action
@@ -51,7 +52,7 @@ on:
         type: string
 
 env:
-  RUNTIME: python37
+  RUNTIME: python39
   REGION: europe-west1
   TIMEOUT: 540s
   PROJECT: ${{ github.event.inputs.project }}
@@ -125,6 +126,9 @@ jobs:
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/invites/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
           - name: promote_ranger
             entrypoint: promote_ranger_http
+            trigger: --trigger-http
+          - name: test
+            entrypoint: test
             trigger: --trigger-http
           - name: e2e_clear_individuals
             entrypoint: e2e_clear_user_individuals_http
