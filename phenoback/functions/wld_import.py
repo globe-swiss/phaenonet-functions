@@ -78,11 +78,13 @@ def check_data_integrity():
     error = False
     users = {u["user_id"]: True for u in DATA["user_id.csv"]}
     sites = {s["site_id"]: True for s in DATA["site.csv"]}
+    trees = {f"${s['site_id']},${s['tree_id']}": True for s in DATA["tree.csv"]}
     site_year_user = {}
 
     for row in DATA["observation_phaeno.csv"]:
         user_id = row.get("user_id")
         site_id = row.get("site_id")
+        tree_id = row.get("tree_id")
         observation_id = row.get("observation_id")
         year = row.get("year")
         if not users.get(user_id):
@@ -90,6 +92,9 @@ def check_data_integrity():
             error = True
         if not sites.get(site_id):
             log.error("site_id not found: %s", site_id)
+            error = True
+        if not trees.get(f"${site_id},${tree_id}"):
+            log.error("tree not found: site_id=%s, tree_id=%s", site_id, tree_id)
             error = True
         if not PHASES_MAP.get(observation_id):
             log.error("observation_id not mapped to phenophase: %s", observation_id)
@@ -105,6 +110,14 @@ def check_data_integrity():
             )
             error = True
         site_year_user.setdefault(site_id, {})[year] = user_id
+
+    trees = [
+        f"${row.get('site_id')},{row.get('species_id')}" for row in DATA["tree.csv"]
+    ]
+    if len(trees) != len(set(trees)):
+        log.error("Duplicate entries in trees file")
+        error = True
+
     if error:
         raise ValueError("Data integrity check failed")
 

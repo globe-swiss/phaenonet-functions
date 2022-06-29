@@ -100,13 +100,22 @@ def test_check_data_integrity__empty(data_loaded, caperrors, filename, fieldname
         ("site.csv", "site_id", "unknown_id"),
         ("observation_phaeno.csv", "observation_id", "unknown_id"),
         ("observation_phaeno.csv", "user_id", "user2"),
+        ("tree.csv", "tree_id", "unknown_id"),
     ],
 )
-def test_check_data_integrity__error(
+def test_check_data_integrity__reference_error(
     data_loaded, caperrors, filename, fieldname, value
 ):
     assert wld_import.DATA
     wld_import.DATA[filename][0][fieldname] = value
+    with pytest.raises(ValueError):
+        wld_import.check_data_integrity()
+    assert len(caperrors.records) >= 1
+
+
+def test_check_data_integrity__duplicate_tree_error(data_loaded, caperrors):
+    assert wld_import.DATA
+    wld_import.DATA["tree.csv"].append(wld_import.DATA["tree.csv"][0])
     with pytest.raises(ValueError):
         wld_import.check_data_integrity()
     assert len(caperrors.records) >= 1
