@@ -111,10 +111,7 @@ def check_data_integrity():
             error = True
         site_year_user.setdefault(site_id, {})[year] = user_id
 
-    trees = [
-        f"${row.get('site_id')},{row.get('species_id')}" for row in DATA["tree.csv"]
-    ]
-    if len(trees) != len(set(trees)):
+    if len(DATA["tree.csv"]) != len(trees.keys()):
         log.error("Duplicate entries in trees file")
         error = True
 
