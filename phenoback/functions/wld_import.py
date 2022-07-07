@@ -110,6 +110,10 @@ def check_data_integrity():
             )
             error = True
         site_year_user.setdefault(site_id, {})[year] = user_id
+        # tree_id is a composed key of ${statcode}_${tree_id}
+        if len(tree_id.split("_", 1)) != 2:
+            log.error("wrong tree_id format: %s", tree_id)
+            error = True
 
     if len(DATA["tree.csv"]) != len(trees.keys()):
         log.error("Duplicate entries in trees file")
@@ -217,7 +221,7 @@ def observations(year: int):
             "species": get_tree_species(o["site_id"], o["tree_id"]),
             "user": f"{SOURCE}_{o['user_id']}",
             "year": year,
-            "tree_id": o["tree_id"],
+            "tree_id": o["tree_id"].split("_", 1)[1],
             "date": datetime.strptime(o["date"], "%Y-%m-%d"),
             "phenophase": map_phenophase(o["observation_id"]),
             "source": SOURCE,
