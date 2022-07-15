@@ -61,7 +61,7 @@ def _get_individuals_dicts(phenoyear: int, stations: csv.DictReader) -> List[Dic
     return [
         {
             "id": "%i_%s" % (phenoyear, station["Abbr."]),
-            "altitude": int(station["Station height m. a. sea level"]),
+            "altitude": int(station["Station height m a. sea level"]),
             "geopos": {
                 "lat": float(station["Latitude"]),
                 "lng": float(station["Longitude"]),
