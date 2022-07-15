@@ -58,7 +58,7 @@ ANALYTIC_PHENOPHASES = ("BEA", "BLA", "BFA", "BVA", "FRA")
 def setup(data, context):
     try:
         global log  # pylint: disable=global-statement,invalid-name
-        glogging.init(time.time())
+        glogging.init()
         log = logging.getLogger(__name__)
         log.setLevel(logging.DEBUG)
         log.debug("context: (%s)", str(context))
@@ -374,6 +374,7 @@ def e2e_clear_user_individuals_http(request):
     Clear all individuals for the e2e test user. This is used for assuring the firestore state before running e2e tests.
     """
     from collections import namedtuple
+
     from flask import Response
 
     Context = namedtuple("context", "event_id")
@@ -428,7 +429,7 @@ def import_wld_data_finalize(data, context):
             wld_import.import_data(pathfile)
 
 
-def test(data, context):
+def test(data, context):  # pragma: no cover
     from time import sleep
 
     from phenoback.utils import gcloud as g
@@ -467,3 +468,7 @@ def test(data, context):
         log.critical("L - critical")
         sleep(1)
         log.exception("L - exception", exc_info=Exception("myException"))
+        sleep(1)
+
+        with setup("test data", "test context"):
+            raise KeyError("Should log")
