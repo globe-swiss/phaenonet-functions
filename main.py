@@ -280,32 +280,23 @@ def process_document_ts_write(data, context):
 
         collection_path = get_collection_path(context)
         document_id = get_document_id(context)
+        source = get_field(data, "source", old_value=True, expected=False)
 
         if is_create_event(data):
-            log.info(
-                "update created ts on document %s (%s)",
-                context.resource,
-                get_field(data, "source", expected=False),
-            )
+            log.debug("document %s was created (%s)", context.resource, source)
             documents.update_created_document(collection_path, document_id)
-        elif is_update_event(data) and not is_field_updated(
-            data, documents.MODIFIED_KEY
-        ):
-            log.info(
-                "update modified ts on document %s %s (%s)",
-                context.resource,
+        elif is_update_event(data):
+            log.debug("document %s was updated (%s)", context.resource, source)
+            documents.update_modified_document(
+                collection_path,
+                document_id,
                 get_fields_updated(data),
-                get_field(data, "source", expected=False),
+                get_field(data, documents.CREATED_KEY, old_value=True),
             )
-            documents.update_modified_document(collection_path, document_id)
         elif is_delete_event(data):
-            log.info("document %s was deleted", context.resource)
-        else:
-            log.debug(
-                "Nothing to do for document %s (%s)",
-                context.resource,
-                get_field(data, "source", old_value=True, expected=False),
-            )
+            log.debug("document %s was deleted (%s)", context.resource, source)
+        else:  # pragma: no cover
+            log.error("Unexpected case for %s (%s)", context.resource, source)
 
 
 @retry.Retry(predicate=if_exception_type(exceptions.NotFound))

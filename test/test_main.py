@@ -1,7 +1,7 @@
 # pylint: disable=too-many-arguments, wrong-import-position
 from collections import namedtuple
-from datetime import datetime
-from unittest.mock import MagicMock
+from datetime import datetime, timezone
+from unittest.mock import ANY, MagicMock
 
 import firebase_admin
 import pytest
@@ -131,11 +131,10 @@ def test_process_observation_write_activity__process_activity_called(
 
 
 @pytest.mark.parametrize(
-    "update_called, data, comment",
+    "called, data",
     [
-        (False, {"oldValue": {}, "value": {}}, "invalid case"),
         (
-            False,
+            "updated",
             {
                 "updateMask": {"fieldPaths": ["modified"]},
                 "oldValue": {
@@ -145,50 +144,57 @@ def test_process_observation_write_activity__process_activity_called(
                     "fields": {"modified": {"timestampValue": str(datetime.now())}}
                 },
             },
-            "update modified",
         ),
         (
-            True,
+            "created",
             {
-                "updateMask": {"fieldPaths": ["other"]},
-                "oldValue": {
-                    "fields": {"modified": {"timestampValue": str(datetime.now())}}
-                },
-                "value": {
-                    "fields": {"modified": {"timestampValue": str(datetime.now())}}
-                },
-            },
-            "update sth else",
-        ),
-        (
-            False,
-            {
+                "updateMask": {},
                 "oldValue": {},
                 "value": {
                     "fields": {"modified": {"timestampValue": str(datetime.now())}}
                 },
             },
-            "create case",
         ),
         (
-            False,
+            "deleted",
             {
+                "updateMask": {"fieldPaths": ["modified"]},
                 "oldValue": {
                     "fields": {"modified": {"timestampValue": str(datetime.now())}}
                 },
                 "value": {},
             },
-            "delete case",
         ),
     ],
 )
-def test_document_ts_update(mocker, update_called, data, comment):
-    update_modified_document = mocker.patch(
+def test_document_ts_update(mocker, called, data):
+    update_modified_document_mock = mocker.patch(
         "phenoback.functions.documents.update_modified_document"
     )
-    mocker.patch("phenoback.functions.documents.update_created_document")
+    update_created_document_mock = mocker.patch(
+        "phenoback.functions.documents.update_created_document"
+    )
     main.process_document_ts_write(data, mocker.MagicMock())
-    assert update_modified_document.called == update_called, comment
+    assert update_modified_document_mock.called == (called == "updated")
+    assert update_created_document_mock.called == (called == "created")
+    # nothing to do for delete
+
+
+def test_document_ts_update__overwrite_created(mocker):
+    create_ts = datetime.utcnow().replace(tzinfo=timezone.utc)
+    data = {
+        "updateMask": {"fieldPaths": ["created", "somevalue"]},
+        "oldValue": {"fields": {"created": {"timestampValue": str(create_ts)}}},
+        "value": {"fields": {"somevalue": {"something"}}},
+    }
+    update_modified_document_mock = mocker.patch(
+        "phenoback.functions.documents.update_modified_document"
+    )
+
+    main.process_document_ts_write(data, mocker.MagicMock())
+    update_modified_document_mock.assert_called_once_with(
+        ANY, ANY, data["updateMask"]["fieldPaths"], create_ts
+    )
 
 
 def test_rollover(mocker):
