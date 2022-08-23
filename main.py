@@ -280,7 +280,9 @@ def process_document_ts_write(data, context):
 
         collection_path = get_collection_path(context)
         document_id = get_document_id(context)
-        source = get_field(data, "source", old_value=True, expected=False)
+        source = get_field(data, "source", expected=False) or get_field(
+            data, "source", old_value=True, expected=False
+        )
 
         if is_create_event(data):
             log.debug("document %s was created (%s)", context.resource, source)
@@ -291,7 +293,7 @@ def process_document_ts_write(data, context):
                 collection_path,
                 document_id,
                 get_fields_updated(data),
-                get_field(data, documents.CREATED_KEY, old_value=True),
+                get_field(data, documents.CREATED_KEY, old_value=True, expected=False),
             )
         elif is_delete_event(data):
             log.debug("document %s was deleted (%s)", context.resource, source)

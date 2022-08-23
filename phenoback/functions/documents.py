@@ -5,14 +5,14 @@ from typing import List
 from phenoback.utils import firestore as f
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.INFO)
+log.setLevel(logging.DEBUG)
 
 MODIFIED_KEY = "modified"
 CREATED_KEY = "created"
 
 
 def update_created_document(collection: str, document_id: str):
-    log.info("create event update %s.%s", collection, document_id)
+    log.info("create event: update created, modified on %s.%s", collection, document_id)
     f.update_document(
         collection,
         document_id,
@@ -27,7 +27,7 @@ def update_modified_document(
     created: datetime = None,
 ):
     log.debug(
-        "modified update event: %s.%s, fields: %s, created: %s",
+        "update event: %s.%s, fields: %s, created: %s",
         collection,
         document_id,
         updated_fields,
@@ -41,13 +41,15 @@ def update_modified_document(
                 {CREATED_KEY: created, MODIFIED_KEY: f.SERVER_TIMESTAMP},
             )
             log.info(
-                "modified update event: %s.%s with create=%s",
+                "update event: update modified and create=%s on %s.%s ",
+                created,
                 collection,
                 document_id,
-                created,
             )
         else:
             f.update_document(
                 collection, document_id, {MODIFIED_KEY: f.SERVER_TIMESTAMP}
             )
-            log.info("modified update event: %s.%s", collection, document_id)
+            log.info("update event: update modified on %s.%s", collection, document_id)
+    else:
+        log.debug("update event: nothing to do: fields=%s", updated_fields)
