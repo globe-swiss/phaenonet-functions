@@ -78,9 +78,13 @@ def test_update_modified_document__create_ts(doc_ts, updated_fields):
         [documents.MODIFIED_KEY, documents.CREATED_KEY],
     ],
 )
-def test_update_modified_document__skip_update(doc_ts, updated_fields):
+def test_update_modified_document__skip_update(mocker, doc_ts, updated_fields):
+    write_mock = mocker.patch("phenoback.utils.firestore.write_document")
+    update_mock = mocker.patch("phenoback.utils.firestore.update_document")
     initial_ts = f.get_document(*doc_ts)[documents.MODIFIED_KEY]
     documents.update_modified_document(*doc_ts, updated_fields)
     updated_doc = f.get_document(*doc_ts)
+    write_mock.assert_not_called()
+    update_mock.assert_not_called()
     assert updated_doc[documents.MODIFIED_KEY] == initial_ts
     assert updated_doc["data"]
