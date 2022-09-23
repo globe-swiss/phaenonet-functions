@@ -33,7 +33,7 @@ def update_modified_document(
         updated_fields,
         created,
     )
-    if set(updated_fields).difference([CREATED_KEY, MODIFIED_KEY]):
+    if _should_update_modified(updated_fields):
         if created:
             f.update_document(
                 collection,
@@ -53,3 +53,10 @@ def update_modified_document(
             log.info("update event: update modified on %s.%s", collection, document_id)
     else:
         log.debug("update event: nothing to do: fields=%s", updated_fields)
+
+
+def _should_update_modified(updated_fields: List[str]):
+    return not (
+        all(field in [CREATED_KEY, MODIFIED_KEY] for field in updated_fields)
+        or any(field.startswith("sensor.") for field in updated_fields)
+    )

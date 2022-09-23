@@ -76,6 +76,7 @@ def test_update_modified_document__create_ts(doc_ts, updated_fields):
         [documents.MODIFIED_KEY],
         [documents.CREATED_KEY],
         [documents.MODIFIED_KEY, documents.CREATED_KEY],
+        ["sensor.value", "any_other_data"],
     ],
 )
 def test_update_modified_document__skip_update(mocker, doc_ts, updated_fields):
