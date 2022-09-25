@@ -28,6 +28,7 @@ envelopes = "*"
 tinify = "*"
 google-cloud-secret-manager = "*"
 flask = "*"
+google-cloud-tasks = "*"
 
 [requires]
 python_version = "3.9"
