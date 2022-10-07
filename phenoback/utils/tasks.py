@@ -14,18 +14,18 @@ log.setLevel(logging.DEBUG)
 
 
 class HTTPClient:
-    def __init__(self, queue: str, function: str) -> None:
+    def __init__(self, queue: str, target_function: str) -> None:
         self.queue = queue
-        self.function = function
+        self.target_function = target_function
         self.project = gcloud.get_project()
         # assume task queue and functions is default location
         self.location = gcloud.get_location()
         self.client = tasks_v2.CloudTasksClient()
         self.parent = self.client.queue_path(self.project, self.location, self.queue)
-        self.url = (
-            f"https://{self.location}-{self.project}.cloudfunctions.net/{self.function}"
+        self.url = f"https://{self.location}-{self.project}.cloudfunctions.net/{self.target_function}"
+        log.debug(
+            "Client created on sending to %s dispatching to %s", queue, target_function
         )
-        log.debug("Client created on sending to %s dispatching to %s", queue, function)
 
     def send(
         self,
