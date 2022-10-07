@@ -34,6 +34,8 @@ on:
           - process_ts_individual
           - process_ts_definitions
           - process_ts_invite
+          - enqueue_individual_map
+          - process_individual_map
           - promote_ranger
           - test
           - e2e_clear_individuals
@@ -124,6 +126,12 @@ jobs:
           - name: process_ts_invite
             entrypoint: process_document_ts_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/invites/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+          - name: enqueue_individual_map
+            entrypoint: enqueue_individual_map_write
+            trigger: --trigger-resource "projects/phaenonet-test/databases/(default)/documents/individuals/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+          - name: process_individual_map
+            entrypoint: process_individual_map_http
+            trigger: --trigger-http
           - name: promote_ranger
             entrypoint: promote_ranger_http
             trigger: --trigger-http
