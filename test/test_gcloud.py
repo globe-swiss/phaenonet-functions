@@ -63,7 +63,7 @@ def test_get_collection_path(expected, resource):
 
 
 @pytest.fixture()
-def activity_data():
+def request_data():
     return {
         "value": {
             "fields": {
@@ -72,6 +72,7 @@ def activity_data():
                 "individual": {"stringValue": "EDt26K5YIGoPe36z64vy"},
                 "year": {"integerValue": "2020"},
                 "boolTrue": {"booleanValue": True},
+                "map": {"mapValue": {"fields": {"boolTrue": {"booleanValue": True}}}},
             }
         }
     }
@@ -86,10 +87,11 @@ def activity_data():
         (2020, "year"),
         (None, "not_present"),
         (True, "boolTrue"),
+        ({"boolTrue": True}, "map"),
     ],
 )
-def test_get_field_activity(expected, fieldname, activity_data):
-    assert get_field(activity_data, fieldname) == expected
+def test_get_field_activity(expected, fieldname, request_data):
+    assert get_field(request_data, fieldname) == expected
 
 
 @pytest.mark.parametrize(
