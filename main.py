@@ -4,8 +4,6 @@ import logging
 import os
 import time
 from contextlib import contextmanager
-from inspect import getfile
-from pkgutil import get_data
 from typing import Tuple
 
 import firebase_admin

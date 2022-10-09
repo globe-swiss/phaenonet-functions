@@ -65,7 +65,11 @@ disable=redefined-outer-name,
         missing-module-docstring,
         missing-class-docstring,
         line-too-long,
-        no-else-return
+        no-else-return,
+        too-few-public-methods,
+        too-many-return-statements,
+        too-many-arguments,
+        django-not-configured
 
 
 

@@ -53,10 +53,12 @@ class HTTPClient:
 
         if in_seconds is not None:
             # Convert "seconds from now" into an rfc3339 datetime string.
-            d = datetime.datetime.utcnow() + datetime.timedelta(seconds=in_seconds)
+            target_date = datetime.datetime.utcnow() + datetime.timedelta(
+                seconds=in_seconds
+            )
             # pylint: disable=no-member
             timestamp = timestamp_pb2.Timestamp()
-            timestamp.FromDatetime(d)
+            timestamp.FromDatetime(target_date)
             task["schedule_time"] = timestamp
 
         if task_name is not None:
