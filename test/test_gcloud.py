@@ -73,6 +73,7 @@ def request_data():
                 "year": {"integerValue": "2020"},
                 "boolTrue": {"booleanValue": True},
                 "map": {"mapValue": {"fields": {"boolTrue": {"booleanValue": True}}}},
+                "double": {"doubleValue": 1.5},
             }
         }
     }
@@ -88,6 +89,7 @@ def request_data():
         (None, "not_present"),
         (True, "boolTrue"),
         ({"boolTrue": True}, "map"),
+        (1.5, "double"),
     ],
 )
 def test_get_field_activity(expected, fieldname, request_data):
