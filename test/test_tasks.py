@@ -97,6 +97,14 @@ class TestHttpClient:
 
         assert task_req_arg["schedule_time"]
 
+    def test_send__deadline(self, http_client):
+        deadline = 360
+        http_client.send("foo", deadline=deadline)
+        TestHttpClient.check_default_headers(http_client)
+        task_req_arg = TestHttpClient.get_request_args(http_client)["task"]
+
+        assert task_req_arg["dispatch_deadline"]
+
     @staticmethod
     def check_default_headers(http_client) -> None:
         request_args = TestHttpClient.get_request_args(http_client)
