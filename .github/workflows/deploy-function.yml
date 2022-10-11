@@ -128,7 +128,7 @@ jobs:
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/invites/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
           - name: enqueue_individual_map
             entrypoint: enqueue_individual_map_write
-            trigger: --trigger-resource "projects/phaenonet-test/databases/(default)/documents/individuals/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/individuals/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
           - name: process_individual_map
             entrypoint: process_individual_map_http
             trigger: --trigger-http
