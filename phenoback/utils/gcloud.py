@@ -15,29 +15,42 @@ def get_field(
     value_type = "oldValue" if old_value else "value"
     value_dict = data[value_type].get("fields", {}).get(fieldname)
     if value_dict is not None:
-        value = next(iter(value_dict.values()))
-        value_type = next(iter(value_dict.keys()))
-        if value_type == "stringValue":
-            return str(value)
-        elif value_type == "integerValue":
-            return int(value)
-        elif value_type == "timestampValue":
-            return dateparser.parse(value)
-        elif value_type == "booleanValue":
-            return bool(value)
-        else:  # pragma: no cover
-            log.warning(
-                "Unknown field type %s, returning str representation: %s",
-                value_type,
-                str(value),
-            )
-            return str(value)
+        return _get_field(value_dict)
     else:
         if expected:
             log.warning(
                 "field %s not found in data %s, returning None", fieldname, str(data)
             )
         return None
+
+
+def _get_field(value_dict: dict):
+    value = next(iter(value_dict.values()))
+    value_type = next(iter(value_dict.keys()))
+    if value_type == "stringValue":
+        return str(value)
+    elif value_type == "integerValue":
+        return int(value)
+    elif value_type == "doubleValue":
+        return float(value)
+    elif value_type == "timestampValue":
+        return dateparser.parse(value)
+    elif value_type == "booleanValue":
+        return bool(value)
+    elif value_type == "mapValue":
+        return dict(
+            zip(
+                value["fields"].keys(),
+                [_get_field(v) for v in value["fields"].values()],
+            )
+        )
+    else:  # pragma: no cover
+        log.warning(
+            "Unknown field type %s, returning str representation: %s",
+            value_type,
+            str(value),
+        )
+        return str(value)
 
 
 def get_document_id(context) -> str:
@@ -85,3 +98,7 @@ def get_app_host() -> str:
 
 def get_version() -> str:  # pragma: no cover
     return os.getenv("version")
+
+
+def get_location() -> str:  # pragma: no cover
+    return os.getenv("location")

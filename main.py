@@ -361,6 +361,43 @@ def process_invite_write(data, context):
             )
 
 
+def enqueue_individual_map_write(data, context):
+    with setup(data, context):
+        import phenoback.functions.map
+
+        if not is_delete_event(data):
+            phenoback.functions.map.enqueue_change(
+                get_document_id(context),
+                get_field(data, "species", expected=False),
+                get_field(data, "station_species", expected=False),
+                get_field(data, "type"),
+                get_field(data, "last_phenophase", expected=False),
+                get_field(data, "geopos"),
+                get_field(data, "source"),
+                get_field(data, "year"),
+                get_fields_updated(data),
+            )
+        else:
+            phenoback.functions.map.delete(
+                get_field(data, "year", old_value=True), get_document_id(context)
+            )
+
+
+def process_individual_map_http(request):
+    from collections import namedtuple
+
+    from flask import Response
+
+    Context = namedtuple("context", "event_id")
+    context = Context(event_id=time.time())
+
+    with setup(request, context):
+        import phenoback.functions.map
+
+        phenoback.functions.map.process_change(request.get_json(silent=True))
+        return Response("ok", 200)
+
+
 @retry.Retry()
 def e2e_clear_user_individuals_http(request):
     """
