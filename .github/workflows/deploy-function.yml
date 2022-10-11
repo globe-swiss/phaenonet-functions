@@ -190,6 +190,7 @@ jobs:
     name: Tag
     needs: deploy
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.tag }}
     permissions:
       contents: write
     steps:
@@ -198,4 +199,3 @@ jobs:
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           tag: ${{ env.TAG }}
-        if: ${{ env.TAG }}
