@@ -105,7 +105,7 @@ def test_follow_user():
 
 def update_resources():
     """
-    Updates resource files needed for tests from phenonet test instance.
+    Updates resource files needed for tests from phaenonet test instance.
     Run from the base folder for the file to be written in the correct
     location e.g. `python /workspaces/phaenonet-functions/test/test_data.py`.
     """

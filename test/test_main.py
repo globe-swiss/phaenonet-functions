@@ -430,3 +430,36 @@ def test_storage_triggers(mocker, main_function, call_function_name, pathfile, c
     mock = mocker.patch(f"phenoback.functions.{call_function_name}")
     main_function({"name": pathfile}, default_context)
     assert mock.called == called
+
+
+def test_process_dragino_http(mocker):
+    process_mock = mocker.patch("phenoback.functions.iot.dragino.process_dragino")
+    payload = {"foo": "bar"}
+    request = Request(
+        EnvironBuilder(
+            method="POST",
+            json=payload,
+        ).get_environ()
+    )
+    result = main.process_dragino_http(request)
+
+    assert result.status_code == 200
+    process_mock.assert_called_with(payload)
+
+
+def test_process_dragino_phaenonet(mocker):
+    encoded_data = b"eyJmb28iOiJiYXIifQ=="
+    process_mock = mocker.patch("phenoback.functions.iot.app.process_dragino")
+
+    main.process_dragino_phaenonet({"data": encoded_data}, None)
+
+    process_mock.assert_called_with({"foo": "bar"})
+
+
+def test_process_dragino_bq(mocker):
+    encoded_data = b"eyJmb28iOiJiYXIifQ=="
+    process_mock = mocker.patch("phenoback.utils.bq.insert_data")
+
+    main.process_dragino_bq({"data": encoded_data}, None)
+
+    process_mock.assert_called_with("iot.raw", {"foo": "bar"})

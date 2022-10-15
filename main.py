@@ -1,12 +1,15 @@
 # allow import outside toplevel as not all modules need to be loaded for every function
 # pylint: disable=import-outside-toplevel
+import base64
+import json
 import logging
 import os
-import time
 from contextlib import contextmanager
-from typing import Tuple
+from http import HTTPStatus
+from typing import Tuple, Union
 
 import firebase_admin
+import flask
 import sentry_sdk
 from google.api_core import exceptions, retry
 from google.api_core.retry import if_exception_type
@@ -55,14 +58,18 @@ ANALYTIC_PHENOPHASES = ("BEA", "BLA", "BFA", "BVA", "FRA")
 
 
 @contextmanager  # workaround as stackdriver fails to capture stackstraces
-def setup(data, context):
+def setup(data: Union[dict, flask.Request], context=None, level=logging.DEBUG):
     try:
         global log  # pylint: disable=global-statement,invalid-name
         glogging.init()
         log = logging.getLogger(__name__)
-        log.setLevel(logging.DEBUG)
-        log.debug("context: (%s)", str(context))
-        log.debug("data: (%s)", str(data))
+        log.setLevel(level)
+        if context:
+            log.debug(context)
+        if data:
+            if isinstance(data, flask.Request):
+                data = data.json if data.is_json else data.data
+            log.debug(data)
         yield
     except Exception:
         log.exception("Fatal error in cloud function")
@@ -384,64 +391,42 @@ def enqueue_individual_map_write(data, context):
             )
 
 
-def process_individual_map_http(request):
-    from collections import namedtuple
-
-    from flask import Response
-
-    Context = namedtuple("context", "event_id")
-    context = Context(event_id=time.time())
-
-    with setup(request, context):
+def process_individual_map_http(request: flask.Request):
+    with setup(request):
         import phenoback.functions.map
 
         phenoback.functions.map.process_change(request.get_json(silent=True))
-        return Response("ok", 200)
+        return flask.Response("ok", HTTPStatus.OK)
 
 
 @retry.Retry()
-def e2e_clear_user_individuals_http(request):
+def e2e_clear_user_individuals_http(request: flask.Request):
     """
     Clear all individuals for the e2e test user. This is used for assuring the firestore state before running e2e tests.
     """
-    from collections import namedtuple
-
-    from flask import Response
-
-    Context = namedtuple("context", "event_id")
-    context = Context(event_id=time.time())
-
-    with setup(request, context):
+    with setup(request):
         from phenoback.functions import e2e
 
         e2e.delete_user_individuals("q7lgBm5nm7PUkof20UdZ9D4d0CV2")
-        return Response("ok", 200)
+        return flask.Response("ok", HTTPStatus.OK)
 
 
-def promote_ranger_http(request):
+def promote_ranger_http(request: flask.Request):
     """
     Promotes a normal user to Ranger.
     """
-    from collections import namedtuple
-    from http import HTTPStatus
+    with setup(request):
+        content_type = request.headers["content-type"]
+        if content_type == "application/json":
+            request_json = request.get_json(silent=True)
+            if not (request_json and "email" in request_json):
+                msg = "JSON is invalid, or missing a 'email' property"
+                log.warning(msg)
+                return flask.Response(msg, HTTPStatus.BAD_REQUEST)
+        else:
+            msg = f"Unknown content type: {content_type}, application/json required"
+            return flask.Response(msg, HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
 
-    from flask import Response
-
-    Context = namedtuple("context", "event_id")
-    context = Context(event_id=time.time())
-
-    content_type = request.headers["content-type"]
-    if content_type == "application/json":
-        request_json = request.get_json(silent=True)
-        if not (request_json and "email" in request_json):
-            msg = "JSON is invalid, or missing a 'email' property"
-            log.warning(msg)
-            return Response(msg, HTTPStatus.BAD_REQUEST)
-    else:
-        msg = f"Unknown content type: {content_type}, application/json required"
-        return Response(msg, HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
-
-    with setup(request_json, context):
         from phenoback.functions import phenorangers
 
         return phenorangers.promote(request_json["email"])
@@ -458,6 +443,38 @@ def import_wld_data_finalize(data, context):
 
             log.info("Import wld data for %s", pathfile)
             wld_import.import_data(pathfile)
+
+
+def process_dragino_http(request: flask.Request):
+    with setup(request):
+        from phenoback.functions.iot import dragino
+
+        if request.is_json:
+            dragino.process_dragino(request.json)
+        else:  # pragma: no cover
+            log.error("No json headers found")
+            return flask.Response("No json payload", HTTPStatus.BAD_REQUEST)
+        return flask.Response("ok", HTTPStatus.OK)
+
+
+def process_dragino_phaenonet(event, context):
+    # attributes = event["attributes"]
+    data = base64.b64decode(event["data"])
+    json_data = json.loads(data)
+    with setup(json_data, context):
+        from phenoback.functions.iot import app
+
+        app.process_dragino(json_data)
+
+
+def process_dragino_bq(event, context):
+    # attributes = event["attributes"]
+    data = base64.b64decode(event["data"])
+    json_data = json.loads(data)
+    with setup(json_data, context):
+        from phenoback.utils import bq
+
+        bq.insert_data("iot.raw", json_data)
 
 
 def test(data, context):  # pragma: no cover

@@ -28,24 +28,17 @@ def http_client(mocker, fkn_env) -> tasks.HTTPClient:
 
 
 class TestHttpClient:
-    def test_init(self, mocker, fkn_env):
-        client_mock = mocker.patch.object(
-            google.cloud.tasks_v2, "CloudTasksClient", autospec=True
-        )
-        client_mock.queue_path.return_value = PARENT
-        mocker.patch("google.cloud.tasks_v2.CloudTasksClient", return_value=client_mock)
+    def test_init(self, http_client):
+        client_mock = http_client.client
 
-        client = tasks.HTTPClient(QUEUE, TARGET_FUNCTION)
-
-        assert client.client == client_mock
-        assert client.queue == QUEUE
-        assert client.target_function == TARGET_FUNCTION
-        assert client.project == PROJECT
-        assert client.location == LOCATION
-        assert client.parent == PARENT
+        assert http_client.queue == QUEUE
+        assert http_client.target_function == TARGET_FUNCTION
+        assert http_client.project == PROJECT
+        assert http_client.location == LOCATION
+        assert http_client.parent == PARENT
         client_mock.queue_path.assert_called_with(PROJECT, LOCATION, QUEUE)
         assert (
-            client.url
+            http_client.url
             == f"https://{LOCATION}-{PROJECT}.cloudfunctions.net/{TARGET_FUNCTION}"
         )
 
