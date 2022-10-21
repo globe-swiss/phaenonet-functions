@@ -368,6 +368,7 @@ def enqueue_individual_map_write(data, context):
         if not is_delete_event(data):
             phenoback.functions.map.enqueue_change(
                 get_document_id(context),
+                get_fields_updated(data),
                 get_field(data, "species", expected=False),
                 get_field(data, "station_species", expected=False),
                 get_field(data, "type"),
@@ -375,7 +376,7 @@ def enqueue_individual_map_write(data, context):
                 get_field(data, "geopos"),
                 get_field(data, "source"),
                 get_field(data, "year"),
-                get_fields_updated(data),
+                get_field(data, "deveui", expected=False),
             )
         else:
             phenoback.functions.map.delete(
