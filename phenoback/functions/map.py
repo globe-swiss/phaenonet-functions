@@ -11,6 +11,8 @@ log.setLevel(logging.DEBUG)
 QUEUE_NAME = "mapupdates"
 FUNCTION_NAME = "process_individual_map"
 
+DELETE_TOKEN = "__DELETE__"  # nosec
+
 
 @lru_cache
 def client() -> tasks.HTTPClient:
@@ -19,6 +21,7 @@ def client() -> tasks.HTTPClient:
 
 def enqueue_change(
     individual_id: str,
+    updated_fields: List[str],
     species: str,
     station_species: List[str],
     individual_type: str,
@@ -26,7 +29,7 @@ def enqueue_change(
     geopos: Dict[str, float],
     source: str,
     year: int,
-    updated_fields: List[str],
+    deveui: str,
 ) -> None:
     if _should_update(updated_fields):
         values = {
@@ -36,16 +39,16 @@ def enqueue_change(
                 "so": source,
             }
         }
-        if last_phenophase:
-            values[individual_id]["p"] = last_phenophase
-        if species:
-            values[individual_id]["sp"] = species
-        if station_species:
-            values[individual_id]["ss"] = station_species
+        values[individual_id]["p"] = (
+            last_phenophase if last_phenophase else DELETE_TOKEN
+        )
+        values[individual_id]["sp"] = species if species else DELETE_TOKEN
+        values[individual_id]["ss"] = (
+            station_species if station_species else DELETE_TOKEN
+        )
+        values[individual_id]["hs"] = True if deveui else DELETE_TOKEN
 
-        payload = {}
-        payload["year"] = year
-        payload["values"] = values
+        payload = {"year": year, "values": values}
         client().send(payload)
         log.info(
             "enqueue task for change on %s: fields=%s",
@@ -60,11 +63,18 @@ def enqueue_change(
         )
 
 
-def process_change(payload: Dict) -> None:
+def process_change(payload: dict) -> None:
+    replace_delete_tokens(payload)
     f.write_document(
         "maps", str(payload["year"]), {"data": payload["values"]}, merge=True
     )
     log.info("update map for %s", str(payload["values"].keys()))
+
+
+def replace_delete_tokens(payload: dict) -> None:
+    for individual_dict in payload["values"].values():
+        for key, value in individual_dict.items():
+            individual_dict[key] = f.DELETE_FIELD if value == DELETE_TOKEN else value
 
 
 def _should_update(updated_fields: List[str]) -> bool:
@@ -76,6 +86,9 @@ def _should_update(updated_fields: List[str]) -> bool:
             "station_species",
             "last_phenophase",
             "source",
+            "deveui",
+            "type",
+            "species",
         ]
         for elem in updated_fields
     )
