@@ -14,7 +14,7 @@ CONFIG_DYNAMIC_RESOURCE = "test/resources/config_dynamic.json"
 @pytest.fixture
 def static_config():
     d._get_static_config.cache_clear()
-    with open(CONFIG_STATIC_RESOURCE, "r") as file:
+    with open(CONFIG_STATIC_RESOURCE, "r", encoding="utf-8") as file:
         data = json.loads(file.read())
         f.write_document("definitions", "config_static", data)
         return data
@@ -22,7 +22,7 @@ def static_config():
 
 @pytest.fixture
 def dynamic_config():
-    with open(CONFIG_DYNAMIC_RESOURCE, "r") as file:
+    with open(CONFIG_DYNAMIC_RESOURCE, "r", encoding="utf-8") as file:
         data = json.loads(file.read())
         f.write_document("definitions", "config_dynamic", data)
         return data
@@ -112,13 +112,13 @@ def update_resources():
     import phenoback  # pylint: disable=import-outside-toplevel
 
     phenoback.load_credentials()
-    with open(CONFIG_STATIC_RESOURCE, "w") as file:
+    with open(CONFIG_STATIC_RESOURCE, "w", encoding="utf-8") as file:
         file.write(
             json.dumps(
                 f.get_document("definitions", "config_static"), indent=2, sort_keys=True
             )
         )
-    with open(CONFIG_DYNAMIC_RESOURCE, "w") as file:
+    with open(CONFIG_DYNAMIC_RESOURCE, "w", encoding="utf-8") as file:
         file.write(
             json.dumps(
                 f.get_document("definitions", "config_dynamic"),
