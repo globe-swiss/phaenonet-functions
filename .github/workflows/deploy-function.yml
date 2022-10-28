@@ -36,6 +36,9 @@ on:
           - process_ts_invite
           - enqueue_individual_map
           - process_individual_map
+          - process_dragino_http
+          - process_dragino_phaenonet
+          - process_dragino_bq
           - promote_ranger
           - test
           - e2e_clear_individuals
@@ -132,6 +135,15 @@ jobs:
           - name: process_individual_map
             entrypoint: process_individual_map_http
             trigger: --trigger-http
+          - name: process_dragino_http
+            entrypoint: process_dragino_http
+            trigger: --trigger-http --allow-unauthenticated
+          - name: process_dragino_phaenonet
+            entrypoint: process_dragino_phaenonet
+            trigger: --trigger-resource iot_dragino --trigger-event google.pubsub.topic.publish
+          - name: process_dragino_bq
+            entrypoint: process_dragino_bq
+            trigger: --trigger-resource iot_dragino --trigger-event google.pubsub.topic.publish
           - name: promote_ranger
             entrypoint: promote_ranger_http
             trigger: --trigger-http
