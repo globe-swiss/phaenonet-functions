@@ -1,4 +1,4 @@
-from test.utils import get_random_string
+from test.util import get_random_string
 from typing import Dict
 
 import google.api_core.exceptions
