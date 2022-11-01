@@ -85,7 +85,7 @@ def process_observations() -> bool:
     if response.ok:
         return process_observations_response(response.text, response.elapsed)
     else:
-        msg = "Could not fetch observation data ({response.status_code})"
+        msg = f"Could not fetch observation data ({response.status_code})"
         log.error(msg)
         raise ResourceNotFoundException(msg)
 

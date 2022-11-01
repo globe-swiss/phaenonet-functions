@@ -335,7 +335,8 @@ class TestMail:
             return_value={},
         )
         reset_mock = mocker.patch("phenoback.utils.gsecrets.reset")
-        assert not envelopesmail.sendmail(invite_mail)
+        # explicit test for empty dict
+        assert envelopesmail.sendmail(invite_mail) == {}  # pylint: disable=C1803
         assert send_mock.call_count == 1
         assert reset_mock.not_called()
 
@@ -345,7 +346,8 @@ class TestMail:
             side_effect=[Exception("invalid credentials"), {}],
         )
         reset_mock = mocker.patch("phenoback.utils.gsecrets.reset")
-        assert not envelopesmail.sendmail(invite_mail)
+        # explicit test for empty dict
+        assert envelopesmail.sendmail(invite_mail) == {}  # pylint: disable=C1803
         assert send_mock.call_count == 2
         reset_mock.assert_called_once()
 
