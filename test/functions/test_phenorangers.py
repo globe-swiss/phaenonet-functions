@@ -1,4 +1,4 @@
-from test.utils import Doc, get_random_string
+from test.util import Doc, get_random_string
 from typing import List
 
 import pytest

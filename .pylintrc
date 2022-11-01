@@ -68,8 +68,7 @@ disable=redefined-outer-name,
         no-else-return,
         too-few-public-methods,
         too-many-return-statements,
-        too-many-arguments,
-        django-not-configured
+        too-many-arguments
 
 
 
@@ -283,7 +282,7 @@ ignore-comments=yes
 ignore-docstrings=yes
 
 # Ignore imports when computing similarities.
-ignore-imports=no
+ignore-imports=yes
 
 # Minimum lines number of a similarity.
 min-similarity-lines=4
