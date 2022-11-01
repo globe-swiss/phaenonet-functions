@@ -10,7 +10,7 @@ log.setLevel(logging.DEBUG)
 
 @lru_cache
 def client():
-    return bigquery.Client()
+    return bigquery.Client()  # pragma: no cover
 
 
 def insert_data(table: str, data: Union[dict, List[dict]]):

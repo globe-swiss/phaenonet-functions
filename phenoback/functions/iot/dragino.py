@@ -13,7 +13,7 @@ TOPIC_ID = "iot_dragino"
 
 @lru_cache
 def client() -> pubsub.Publisher:
-    return pubsub.Publisher(TOPIC_ID)
+    return pubsub.Publisher(TOPIC_ID)  # pragma: no cover
 
 
 def process_dragino(data: dict) -> None:
