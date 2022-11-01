@@ -114,10 +114,10 @@ def _get_observations_dicts(observations: csv.DictReader) -> List[Dict]:
     mapping = get_document("definitions", "meteoswiss_mapping")
     return [
         {
-            "id": f'{observation["nat_abbr"]}_{observation["reference_year"]}_{mapping[observation["param_id"]]["species"]}_{mapping[observation["param_id"]]["phenophase"]}',
+            "id": f"{observation['nat_abbr']}_{observation['reference_year']}_{mapping[observation['param_id']]['species']}_{mapping[observation['param_id']]['phenophase']}",
             "user": "meteoswiss",
             "date": datetime.strptime(observation["value"], "%Y%m%d"),
-            "individual_id": f'{observation["reference_year"]}_{observation["nat_abbr"]}',
+            "individual_id": f"{observation['reference_year']}_{observation['nat_abbr']}",
             "individual": observation["nat_abbr"],
             "source": "meteoswiss",
             "year": int(observation["reference_year"]),
