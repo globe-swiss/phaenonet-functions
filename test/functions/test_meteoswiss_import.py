@@ -30,13 +30,17 @@ def set_phenoyear():
 
 @pytest.fixture
 def station_data() -> str:
-    with open(test.get_resource_path("meteoswiss_stations.csv"), "r") as csv_file:
+    with open(
+        test.get_resource_path("meteoswiss_stations.csv"), "r", encoding="utf-8"
+    ) as csv_file:
         return csv_file.read()
 
 
 @pytest.fixture
 def observation_data() -> str:
-    with open(test.get_resource_path("meteoswiss_observations.csv")) as csv_file:
+    with open(
+        test.get_resource_path("meteoswiss_observations.csv"), encoding="utf-8"
+    ) as csv_file:
         return csv_file.read()
 
 
@@ -56,7 +60,7 @@ class TestCommon:
         meteoswiss._set_hash(hash_key, data)
         write_mock.assert_called_once()
         assert f.get_document(HASH_COLLECTION, HASH_DOCUMENT).get(
-            "%s%s" % (HASH_KEY_PREFIX, hash_key)
+            f"{HASH_KEY_PREFIX}{hash_key}"
         ) == meteoswiss._get_hash(data)
 
     def test_load_hash(self):
@@ -224,10 +228,10 @@ class TestStations:
     def test_process_stations_response__write(self, station_data):
         phenoyear = d.get_phenoyear()
         meteoswiss.process_stations_response(station_data, 0)
-        station = d.get_individual("%i_%s" % (phenoyear, "ADB"))
+        station = d.get_individual(f"{phenoyear}_ADB")
         assert station is not None
-        assert d.get_individual("%i_%s" % (phenoyear, "ALC")) is not None
-        assert d.get_individual("%i_%s" % (phenoyear, "ALD")) is not None
+        assert d.get_individual(f"{phenoyear}_ALC") is not None
+        assert d.get_individual(f"{phenoyear}_ALD") is not None
 
         assert station["altitude"] == 1350
         assert station["geopos"] == {"lat": 46.492022, "lng": 7.561067}

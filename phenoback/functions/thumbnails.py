@@ -30,7 +30,7 @@ def process_new_image(pathfile: str, bucket=None) -> bool:
         )
         upload_file(
             bucket,
-            "%s/%s_tn%s" % (path, filename_base, filename_ext),
+            f"{path}/{filename_base}_tn{filename_ext}",
             thumbnail_file,
             content_type="image/jpeg",
             cache_control="public, max-age=31536000",

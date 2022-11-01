@@ -12,7 +12,7 @@ _PROJECT = "phaenonet-test"
 _TYPE = "firebase-adminsdk"
 
 default_credential_file = os.path.join(
-    os.path.dirname(__file__), "..", "credentials", "%s-%s.json" % (_PROJECT, _TYPE)
+    os.path.dirname(__file__), "..", "credentials", f"{_PROJECT}-{_TYPE}.json"
 )
 
 
@@ -23,7 +23,7 @@ def load_credentials(
 
         cred = credentials.Certificate(credential_file)
         firebase_admin.initialize_app(
-            cred, {"storageBucket": "%s.appspot.com" % cred.project_id}
+            cred, {"storageBucket": f"{cred.project_id}.appspot.com"}
         )
 
         log.info("app initialized with local credentials %s", credential_file)

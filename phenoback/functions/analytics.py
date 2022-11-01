@@ -58,7 +58,7 @@ def update_state(
             state_document["altitude_grp"] = altitude_grp
 
     state = state_document.get("state")
-    state.setdefault(phase, dict())[observation_id] = observation_date
+    state.setdefault(phase, {})[observation_id] = observation_date
     transaction.set(
         state_ref, state_document
     )  # optimize: set->update if document existed
@@ -227,9 +227,9 @@ def get_analytics_document_id(
     year: int, species: str, source: str, altitude_grp: str = None
 ) -> str:
     if altitude_grp is not None:
-        return "%s_%s_%s_%s" % (str(year), species, source, altitude_grp)
+        return f"{year}_{species}_{source}_{altitude_grp}"
     else:
-        return "%s_%s_%s" % (str(year), species, source)
+        return f"{year}_{species}_{source}"
 
 
 def process_observation(

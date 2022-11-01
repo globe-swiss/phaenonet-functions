@@ -44,7 +44,7 @@ def html_body(language: str, nickname: str, email: str):
         language + ".html.j2",
         nickname=nickname,
         email=email,
-        url="https://%s" % gcloud.get_app_host(),
+        url=f"https://{gcloud.get_app_host()}",
     )
 
 

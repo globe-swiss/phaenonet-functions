@@ -335,7 +335,7 @@ class TestMail:
             return_value={},
         )
         reset_mock = mocker.patch("phenoback.utils.gsecrets.reset")
-        assert envelopesmail.sendmail(invite_mail) == dict()
+        assert not envelopesmail.sendmail(invite_mail)
         assert send_mock.call_count == 1
         assert reset_mock.not_called()
 
@@ -345,7 +345,7 @@ class TestMail:
             side_effect=[Exception("invalid credentials"), {}],
         )
         reset_mock = mocker.patch("phenoback.utils.gsecrets.reset")
-        assert envelopesmail.sendmail(invite_mail) == dict()
+        assert not envelopesmail.sendmail(invite_mail)
         assert send_mock.call_count == 2
         reset_mock.assert_called_once()
 
@@ -385,3 +385,4 @@ class TestContent:
         body = content.html_body(language, nick, email)
         assert nick in body
         assert email in body
+        assert "https://Unknown.web.app/assets/" in body  # check url
