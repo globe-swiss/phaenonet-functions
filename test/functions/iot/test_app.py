@@ -1,4 +1,5 @@
 from datetime import datetime
+from test.functions.iot.sample_data import DraginoData as dd
 
 import pytest
 
@@ -7,26 +8,6 @@ from phenoback.utils import data as d
 from phenoback.utils import firestore as f
 
 YEAR = 2000
-
-UPLINK = "DevEUI_uplink"
-PAYLOAD = "01b4034001f30800fc01b821"
-DEVEUI = "DevEUI"
-TIME = "Time"
-DECODED_PAYLOAD = {
-    "soilHumidity": {"value": 7.27, "unit": "%"},
-    "soilTemperature": {"value": 33.2, "unit": "°C"},
-    "airHumidity": {"value": 44.0, "unit": "%"},
-    "airTemperature": {"value": 25.2, "unit": "°C"},
-    "batteryVoltage": {"value": 3.3, "unit": "V"},
-}
-
-SAMPLE_DATA = {
-    UPLINK: {
-        "payload_hex": PAYLOAD,
-        DEVEUI: DEVEUI,
-        TIME: TIME,
-    }
-}
 
 
 @pytest.fixture(autouse=True)
@@ -37,13 +18,13 @@ def set_phenoyear():
 @pytest.fixture()
 def individual_id():
     individual_id = "id"
-    d.write_individual(individual_id, {"deveui": DEVEUI, "year": YEAR})
+    d.write_individual(individual_id, {"deveui": dd.DEVEUI, "year": YEAR})
     return individual_id
 
 
 def test_process_dragino__e2e(mocker, individual_id):
     update_spy = mocker.spy(app, "update")
-    app.process_dragino(SAMPLE_DATA)
+    app.process_dragino(dd.SAMPLE_DATA)
 
     result = d.get_individual(individual_id)
 
@@ -54,18 +35,18 @@ def test_process_dragino__e2e(mocker, individual_id):
 
 def test_process_dragino__individual_not_found(mocker, caperrors):
     update_spy = mocker.spy(app, "update")
-    app.process_dragino(SAMPLE_DATA)
+    app.process_dragino(dd.SAMPLE_DATA)
 
     update_spy.assert_not_called()
     assert len(caperrors.records) == 1, caperrors.records
 
 
 def test_get_individual_id(individual_id):
-    assert app.get_individual_id(YEAR, DEVEUI) == individual_id
+    assert app.get_individual_id(YEAR, dd.DEVEUI) == individual_id
 
 
 def test_get_individual_id__not_found():
-    assert app.get_individual_id(YEAR, DEVEUI) is None
+    assert app.get_individual_id(YEAR, dd.DEVEUI) is None
 
 
 def test_update(mocker):
@@ -75,7 +56,7 @@ def test_update(mocker):
         "phenoback.functions.iot.app.update_individual"
     )
 
-    app.update(DECODED_PAYLOAD, YEAR, individual_id)
+    app.update(dd.DECODED_PAYLOAD, YEAR, individual_id)
 
     update_history_mock.assert_called()
     update_individual_mock.assert_called()

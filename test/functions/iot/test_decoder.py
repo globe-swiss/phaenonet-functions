@@ -2,13 +2,14 @@ import pytest
 
 from phenoback.functions.iot.decoder import Decoder
 
-UPLINK = "DevEUI_uplink"
-PAYLOAD = "FFAA00"
+UPLINK_KEY = "DevEUI_uplink"
+PAYLOAD_HEX_KEY = "payload_hex"
+PAYLOAD_HEX = "FFAA00"
 DEVEUI = "DevEUI"
 TIME = "Time"
 DECODED_PAYLOAD = "decoded_payload"
 
-SAMPLE_DATA = {UPLINK: {"payload_hex": PAYLOAD, DEVEUI: DEVEUI, TIME: TIME}}
+SAMPLE_DATA = {UPLINK_KEY: {PAYLOAD_HEX_KEY: PAYLOAD_HEX, DEVEUI: DEVEUI, TIME: TIME}}
 
 
 class DecoderImpl(Decoder):
@@ -22,11 +23,10 @@ def decoder() -> Decoder:
 
 
 def test_init(decoder: Decoder):
-    uplink = SAMPLE_DATA[UPLINK]
-    assert decoder.data == SAMPLE_DATA
-    assert decoder.uplink == uplink
     assert decoder.is_uplink
-    assert decoder.payload == PAYLOAD
+    assert decoder.data == SAMPLE_DATA
+    assert decoder.uplink == SAMPLE_DATA[UPLINK_KEY]
+    assert decoder.payload == PAYLOAD_HEX
     assert decoder.devuei == DEVEUI
     assert decoder.time == TIME
 
@@ -48,7 +48,7 @@ def test_decode__no_uplink():
 @pytest.mark.parametrize(
     "data, expected",
     [
-        ({UPLINK: {"foo": "bar"}}, True),
+        ({UPLINK_KEY: {"foo": "bar"}}, True),
         ({"downlink": {"foo": "bar"}}, False),
     ],
 )
@@ -71,5 +71,5 @@ def test_is_uplink(data, expected):
     ],
 )
 def test_get_value(payload_hex, start, length, expected):
-    decoder = DecoderImpl({UPLINK: {"payload_hex": payload_hex}})
+    decoder = DecoderImpl({UPLINK_KEY: {PAYLOAD_HEX_KEY: payload_hex}})
     assert decoder.get_value(start, length) == expected
