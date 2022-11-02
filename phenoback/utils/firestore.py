@@ -235,4 +235,4 @@ def get_collection_documents(collection: str) -> List[dict]:
 
 
 def docs2str(docs):  # pragma: no cover
-    return ["(%s, %s)" % (doc.id, doc.to_dict()) for doc in docs]
+    return [f"({doc.id}, {doc.to_dict()})" for doc in docs]

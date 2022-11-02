@@ -409,3 +409,11 @@ def test_process_observation():
         "phase",
     )
     # fixme: smoke test, add result checks
+
+
+def test_get_analytics_document_id__no_alt():
+    assert analytics.get_analytics_document_id(0, "a", "b") == "0_a_b"
+
+
+def test_get_analytics_document_id__alt():
+    assert analytics.get_analytics_document_id(0, "a", "b", "c") == "0_a_b_c"

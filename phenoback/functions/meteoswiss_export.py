@@ -1,4 +1,5 @@
-"""Meteoswiss phenology data export
+"""
+Meteoswiss phenology data export
 
 New PhaenoNet data mapped as good as possible to the previously existing export structure for meteoswiss.
 """
@@ -52,7 +53,7 @@ def process(year: int = None):
                     "MODIFIED": o["modified"].strftime("%d.%m.%Y %H:%M:%S")
                     if o["modified"]
                     else "",
-                    "GEOPOS": "%s,%s" % (i["geopos"]["lat"], i["geopos"]["lng"]),
+                    "GEOPOS": f"{i['geopos']['lat']},{i['geopos']['lng']}",
                     "ALTITUDE": i["altitude"],
                     "DESCRIPTION": i["description"],
                     "EXPOSITION": i["exposition"],
@@ -95,7 +96,7 @@ def process(year: int = None):
 
         storage.upload_string(
             None,
-            "public/meteoswiss/export_%i.csv" % year,
+            f"public/meteoswiss/export_{year}.csv",
             csv_string.getvalue(),
             content_type="text/csv",
         )

@@ -25,15 +25,15 @@ class ResourceNotFoundException(Exception):
 
 def process_stations() -> bool:
     response = get(
-        "https://data.geo.admin.ch/ch.meteoschweiz.messnetz-phaenologie/ch.meteoschweiz.messnetz-phaenologie_en.csv"
+        "https://data.geo.admin.ch/ch.meteoschweiz.messnetz-phaenologie/ch.meteoschweiz.messnetz-phaenologie_en.csv",
+        timeout=60,
     )
     if response.ok:
         return process_stations_response(response.text, response.elapsed)
     else:
-        log.error("Could not fetch station data (%s)", response.status_code)
-        raise ResourceNotFoundException(
-            "Could not fetch station data (%s)" % response.status_code
-        )
+        msg = f"Could not fetch station data ({response.status_code})"
+        log.error(msg)
+        raise ResourceNotFoundException(msg)
 
 
 def process_stations_response(response_text: str, response_elapsed: float) -> bool:
@@ -60,7 +60,7 @@ def _clean_station_csv(text):
 def _get_individuals_dicts(phenoyear: int, stations: csv.DictReader) -> List[Dict]:
     return [
         {
-            "id": "%i_%s" % (phenoyear, station["Abbr."]),
+            "id": f"{phenoyear}_{station['Abbr.']}",
             "altitude": int(station["Station height m a. sea level"]),
             "geopos": {
                 "lat": float(station["Latitude"]),
@@ -79,15 +79,15 @@ def _get_individuals_dicts(phenoyear: int, stations: csv.DictReader) -> List[Dic
 
 def process_observations() -> bool:
     response = get(
-        "https://data.geo.admin.ch/ch.meteoschweiz.klima/phaenologie/phaeno_current.csv"
+        "https://data.geo.admin.ch/ch.meteoschweiz.klima/phaenologie/phaeno_current.csv",
+        timeout=60,
     )
     if response.ok:
         return process_observations_response(response.text, response.elapsed)
     else:
-        log.error("Could not fetch observation data (%s)", response.status_code)
-        raise ResourceNotFoundException(
-            "Could not fetch observation data (%s)" % response.status_code
-        )
+        msg = f"Could not fetch observation data ({response.status_code})"
+        log.error(msg)
+        raise ResourceNotFoundException(msg)
 
 
 def process_observations_response(response_text: str, response_elapsed: float) -> bool:
@@ -114,17 +114,10 @@ def _get_observations_dicts(observations: csv.DictReader) -> List[Dict]:
     mapping = get_document("definitions", "meteoswiss_mapping")
     return [
         {
-            "id": "%s_%s_%s_%s"
-            % (
-                observation["nat_abbr"],
-                observation["reference_year"],
-                mapping[observation["param_id"]]["species"],
-                mapping[observation["param_id"]]["phenophase"],
-            ),
+            "id": f"{observation['nat_abbr']}_{observation['reference_year']}_{mapping[observation['param_id']]['species']}_{mapping[observation['param_id']]['phenophase']}",
             "user": "meteoswiss",
             "date": datetime.strptime(observation["value"], "%Y%m%d"),
-            "individual_id": "%s_%s"
-            % (observation["reference_year"], observation["nat_abbr"]),
+            "individual_id": f"{observation['reference_year']}_{observation['nat_abbr']}",
             "individual": observation["nat_abbr"],
             "source": "meteoswiss",
             "year": int(observation["reference_year"]),
@@ -154,14 +147,14 @@ def _update_station_species(station_species: dict) -> None:
 def _set_hash(key: str, data: str):
     hashed_data = _get_hash(data)
     write_document(
-        "definitions", "meteoswiss_import", {"hash_%s" % key: hashed_data}, merge=True
+        "definitions", "meteoswiss_import", {f"hash_{key}": hashed_data}, merge=True
     )
     log.debug("set hash for %s to %s", key, hashed_data)
 
 
 def _load_hash(key: str) -> Optional[str]:
     doc = get_document("definitions", "meteoswiss_import")
-    loaded_hash = doc.get("hash_%s" % key) if doc else None
+    loaded_hash = doc.get(f"hash_{key}") if doc else None
     log.debug("loaded hash for %s to %s", key, loaded_hash)
     return loaded_hash
 

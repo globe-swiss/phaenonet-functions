@@ -141,7 +141,7 @@ def follow_user(
 ) -> bool:
     user = get_user(follower_id, transaction=transaction)
     if not user:
-        raise ValueError("User not found %s" % follower_id)
+        raise ValueError(f"User not found {follower_id}")
     if followee_id not in user.get("following_users", []):
         update_document(
             "users",
