@@ -463,3 +463,93 @@ def test_process_dragino_bq(mocker):
     main.process_dragino_bq({"data": encoded_data}, None)
 
     process_mock.assert_called_with("iot.raw", {"foo": "bar"})
+
+
+def test_set_sensor_http__ok(mocker):
+    set_sensor_mock = mocker.patch(
+        "phenoback.functions.iot.app.set_sensor", return_value=True
+    )
+    payload = {
+        "individual_id": "foo",
+        "deveui": "bar",
+    }
+    request = Request(
+        EnvironBuilder(
+            method="POST",
+            json=payload,
+        ).get_environ()
+    )
+
+    result = main.set_sensor_http(request)
+
+    assert result.status_code == 200
+    set_sensor_mock.assert_called_with("foo", "bar")
+
+
+@pytest.mark.parametrize(
+    "payload, status",
+    [
+        ({"individual_id": "foo"}, 400),
+        ({"deveui": "bar"}, 400),
+        (
+            {
+                "individual_id": "foo",
+                "deveui": "bar",
+            },
+            404,
+        ),
+    ],
+)
+def test_set_sensor_http__error(mocker, payload, status):
+    mocker.patch("phenoback.functions.iot.app.set_sensor", return_value=False)
+    request = Request(
+        EnvironBuilder(
+            method="POST",
+            json=payload,
+        ).get_environ()
+    )
+
+    result = main.set_sensor_http(request)
+
+    assert result.status_code == status
+
+
+def test_remove_sensor_http__ok(mocker):
+    remove_sensor_mock = mocker.patch(
+        "phenoback.functions.iot.app.remove_sensor", return_value=True
+    )
+    payload = {
+        "deveui": "bar",
+    }
+    request = Request(
+        EnvironBuilder(
+            method="POST",
+            json=payload,
+        ).get_environ()
+    )
+
+    result = main.remove_sensor_http(request)
+
+    assert result.status_code == 200
+    remove_sensor_mock.assert_called_with("bar")
+
+
+@pytest.mark.parametrize(
+    "payload, status",
+    [
+        ({"foo": "bar"}, 400),
+        ({"deveui": "bar"}, 404),
+    ],
+)
+def test_remove_sensor_http__error(mocker, payload, status):
+    mocker.patch("phenoback.functions.iot.app.remove_sensor", return_value=False)
+    request = Request(
+        EnvironBuilder(
+            method="POST",
+            json=payload,
+        ).get_environ()
+    )
+
+    result = main.remove_sensor_http(request)
+
+    assert result.status_code == status

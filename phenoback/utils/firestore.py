@@ -218,6 +218,11 @@ def get_document(
     )
 
 
+def collection(collection: str) -> Query:
+    log.debug("Query %s", collection)
+    return firestore_client().collection(collection)
+
+
 def query_collection(
     collection: str, field_path: str, op_string: str, value: Any
 ) -> Query:

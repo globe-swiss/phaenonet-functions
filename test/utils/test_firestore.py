@@ -96,6 +96,16 @@ def test_get_collection__empty(collection):
     assert len(list(f.get_collection(collection).stream())) == 0
 
 
+def test_collection(collection, doc_id, doc_id2, doc):
+    doc2 = {"key": "value"}
+    assert doc != doc2
+    f.write_document(collection, doc_id, doc)
+    f.write_document(collection, doc_id2, doc2)
+    result = list(f.collection(collection).stream())
+    assert len(result) == 2
+    assert all(x in (result[0].to_dict(), result[1].to_dict()) for x in [doc, doc2])
+
+
 def test_query_collection(collection, doc_id, doc_id2, doc):
     doc2 = {"key": "value"}
     assert doc != doc2

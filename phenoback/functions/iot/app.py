@@ -104,3 +104,36 @@ def update_individual(
             }
         },
     )
+
+
+def set_sensor(individual_id: str, deveui: str) -> bool:
+    remove_sensor(deveui)
+    log.info("set sensor %s on individual %s", deveui, individual_id)
+    try:
+        d.update_individual(individual_id, {"deveui": deveui})
+    except google.api_core.exceptions.NotFound:
+        return False
+    return True
+
+
+def remove_sensor(deveui: str, year: int = None) -> bool:
+    if not year:
+        year = d.get_phenoyear()
+    individual_id = get_individual_id(year, deveui)
+    if individual_id:
+        log.info("remove sensor %s on individual %s", deveui, individual_id)
+        d.update_individual(
+            individual_id, {"deveui": f.DELETE_FIELD, "sensor": f.DELETE_FIELD}
+        )
+        return True
+    return False
+
+
+def clear_sensors() -> int:
+    """Clears all sensor data on individuals for all years"""
+    clear_individuals_ids = [
+        doc.id for doc in f.collection("individuals").order_by("sensor").stream()
+    ]
+    for individual_id in clear_individuals_ids:
+        d.update_individual(individual_id, {"sensor": f.DELETE_FIELD})
+    return len(clear_individuals_ids)
