@@ -116,9 +116,8 @@ def set_sensor(individual_id: str, deveui: str) -> bool:
     return True
 
 
-def remove_sensor(deveui: str, year: int = None) -> bool:
-    if not year:
-        year = d.get_phenoyear()
+def remove_sensor(deveui: str) -> bool:
+    year = d.get_phenoyear()
     individual_id = get_individual_id(year, deveui)
     if individual_id:
         log.info("remove sensor %s on individual %s", deveui, individual_id)
