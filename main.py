@@ -483,36 +483,17 @@ def set_sensor_http(request: flask.Request):
 
         msg = "ok"
         status = HTTPStatus.OK
-        individual_id = request.json.get("individual_id")
+        individual = request.json.get("individual")
         deveui = request.json.get("deveui")
+        year = request.json.get("year")
 
-        if request.is_json and deveui and individual_id:
-            if not app.set_sensor(individual_id, deveui):
-                msg = f"individual {individual_id} not found"
+        if request.is_json and deveui and individual and year:
+            if not app.set_sensor(individual, year, deveui):
+                msg = f"individual {individual} not found in {year}"
                 status = HTTPStatus.NOT_FOUND
                 log.error(msg)
         else:
-            msg = f"Invalid request (json={request.is_json}, individual_id={individual_id}, deveui={deveui}"
-            status = HTTPStatus.BAD_REQUEST
-            log.error(msg)
-        return flask.Response(msg, status)
-
-
-def remove_sensor_http(request: flask.Request):
-    with setup(request):
-        from phenoback.functions.iot import app
-
-        msg = "ok"
-        status = HTTPStatus.OK
-        deveui = request.json.get("deveui")
-
-        if request.is_json and deveui:
-            if not app.remove_sensor(deveui):
-                msg = f"deveui {deveui} not found"
-                status = HTTPStatus.NOT_FOUND
-                log.error(msg)
-        else:
-            msg = f"Invalid request (json={request.is_json}, deveui={deveui}"
+            msg = f"Invalid request (json={request.is_json}, individual={individual}, year={year}, deveui={deveui}"
             status = HTTPStatus.BAD_REQUEST
             log.error(msg)
         return flask.Response(msg, status)

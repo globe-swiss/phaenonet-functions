@@ -8,6 +8,7 @@ from phenoback.utils import data as d
 from phenoback.utils import firestore as f
 
 YEAR = 2000
+INDIVIDUAL = "individual"
 
 
 @pytest.fixture(autouse=True)
@@ -18,14 +19,16 @@ def set_phenoyear():
 @pytest.fixture()
 def individual_id():
     individual_id = "id"
-    d.write_individual(individual_id, {"deveui": dd.DEVEUI, "year": YEAR})
+    d.write_individual(
+        individual_id, {"deveui": dd.DEVEUI, "year": YEAR, "individual": INDIVIDUAL}
+    )
     return individual_id
 
 
 @pytest.fixture()
 def individual_id_no_deveui():
     individual_id = "id_no_deveui"
-    d.write_individual(individual_id, {"year": YEAR})
+    d.write_individual(individual_id, {"year": YEAR, "individual": INDIVIDUAL})
     return individual_id
 
 
@@ -112,7 +115,7 @@ def test_update_individual(individual_id):
 
 
 def test_set_sensor__new(individual_id_no_deveui):
-    result = app.set_sensor(individual_id_no_deveui, dd.DEVEUI)
+    result = app.set_sensor(INDIVIDUAL, YEAR, dd.DEVEUI)
 
     individual = d.get_individual(individual_id_no_deveui)
 
@@ -128,7 +131,7 @@ def test_set_sensor__switch(individual_id, individual_id_no_deveui):
     assert init_old.get("sensor")
     assert not init_new.get("deveui")
 
-    result = app.set_sensor(individual_id_no_deveui, dd.DEVEUI)
+    result = app.set_sensor(INDIVIDUAL, YEAR, dd.DEVEUI)
 
     individual_old = d.get_individual(individual_id)
     individual_new = d.get_individual(individual_id_no_deveui)
@@ -140,7 +143,7 @@ def test_set_sensor__switch(individual_id, individual_id_no_deveui):
 
 
 def test_set_sensor__not_found():
-    result = app.set_sensor("some_id", dd.DEVEUI)
+    result = app.set_sensor("foo", YEAR, dd.DEVEUI)
 
     assert not result
 
@@ -151,7 +154,7 @@ def test_remove_sensor(individual_id):
     assert init.get("deveui") == dd.DEVEUI
     assert init.get("sensor")
 
-    result = app.remove_sensor(dd.DEVEUI)
+    result = app.remove_sensor(dd.DEVEUI, YEAR)
 
     individual = d.get_individual(individual_id)
 
@@ -161,14 +164,14 @@ def test_remove_sensor(individual_id):
 
 
 def test_remove_sensor__not_found():
-    result = app.remove_sensor(dd.DEVEUI)
+    result = app.remove_sensor(dd.DEVEUI, YEAR)
     assert not result
 
 
 def test_clear_sensors(individual_id):
     d.update_individual(individual_id, {"sensor": "some data"})
 
-    result = app.clear_sensors()
+    result = app.clear_sensors(YEAR)
 
     assert result == 1
     assert not d.get_individual(individual_id).get("sensor")
