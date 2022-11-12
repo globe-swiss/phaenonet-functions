@@ -39,6 +39,7 @@ on:
           - process_dragino_http
           - process_dragino_phaenonet
           - process_dragino_bq
+          - set_sensor
           - promote_ranger
           - test
           - e2e_clear_individuals
@@ -144,6 +145,9 @@ jobs:
           - name: process_dragino_bq
             entrypoint: process_dragino_bq
             trigger: --trigger-resource iot_dragino --trigger-event google.pubsub.topic.publish
+          - name: set_sensor
+            entrypoint: set_sensor_http
+            trigger: --trigger-http
           - name: promote_ranger
             entrypoint: promote_ranger_http
             trigger: --trigger-http

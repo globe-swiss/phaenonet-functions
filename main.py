@@ -477,6 +477,28 @@ def process_dragino_bq(event, context):
         bq.insert_data("iot.raw", json_data)
 
 
+def set_sensor_http(request: flask.Request):
+    with setup(request):
+        from phenoback.functions.iot import app
+
+        msg = "ok"
+        status = HTTPStatus.OK
+        individual = request.json.get("individual")
+        deveui = request.json.get("deveui")
+        year = request.json.get("year")
+
+        if request.is_json and deveui and individual and year:
+            if not app.set_sensor(individual, year, deveui):
+                msg = f"individual {individual} not found in {year}"
+                status = HTTPStatus.NOT_FOUND
+                log.error(msg)
+        else:
+            msg = f"Invalid request (json={request.is_json}, individual={individual}, year={year}, deveui={deveui}"
+            status = HTTPStatus.BAD_REQUEST
+            log.error(msg)
+        return flask.Response(msg, status)
+
+
 def test(data, context):  # pragma: no cover
     from time import sleep
 

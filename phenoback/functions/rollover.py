@@ -1,6 +1,7 @@
 import logging
 from typing import List
 
+from phenoback.functions.iot import app
 from phenoback.utils.data import (
     delete_individual,
     get_phenoyear,
@@ -39,6 +40,7 @@ def get_rollover_individuals(
                 "last_observation_date",
                 "created",
                 "modified",
+                "sensor",
             ]:
                 individual.pop(key, None)
             new_individuals.append(individual)
@@ -82,6 +84,11 @@ def rollover():
     for individual_id in stale_individuals:
         log.debug("Remove individual %s", individual_id)
         delete_individual(individual_id)
+
+    cleared_sensors = app.clear_sensors(source_phenoyear)
+    log.info(
+        "Cleared %i sensors from individuals for %i", cleared_sensors, source_phenoyear
+    )
 
     log.info(
         "Setting current phenoyear from %i to %i", source_phenoyear, target_phenoyear

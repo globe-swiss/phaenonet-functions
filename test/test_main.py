@@ -463,3 +463,53 @@ def test_process_dragino_bq(mocker):
     main.process_dragino_bq({"data": encoded_data}, None)
 
     process_mock.assert_called_with("iot.raw", {"foo": "bar"})
+
+
+def test_set_sensor_http__ok(mocker):
+    set_sensor_mock = mocker.patch(
+        "phenoback.functions.iot.app.set_sensor", return_value=True
+    )
+    payload = {"individual": "foo", "deveui": "bar", "year": 2000}
+    request = Request(
+        EnvironBuilder(
+            method="POST",
+            json=payload,
+        ).get_environ()
+    )
+
+    result = main.set_sensor_http(request)
+
+    assert result.status_code == 200
+    set_sensor_mock.assert_called_with("foo", 2000, "bar")
+
+
+@pytest.mark.parametrize(
+    "payload, status",
+    [
+        ({"individual": "foo"}, 400),
+        ({"deveui": "bar"}, 400),
+        (
+            {
+                "individual": "foo",
+                "deveui": "bar",
+            },
+            400,
+        ),
+        (
+            {"individual": "foo", "deveui": "bar", "year": 2000},
+            404,
+        ),
+    ],
+)
+def test_set_sensor_http__error(mocker, payload, status):
+    mocker.patch("phenoback.functions.iot.app.set_sensor", return_value=False)
+    request = Request(
+        EnvironBuilder(
+            method="POST",
+            json=payload,
+        ).get_environ()
+    )
+
+    result = main.set_sensor_http(request)
+
+    assert result.status_code == status
