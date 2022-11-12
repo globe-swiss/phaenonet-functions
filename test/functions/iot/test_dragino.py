@@ -8,7 +8,7 @@ from phenoback.functions.iot import dragino
 
 @pytest.fixture(autouse=True)
 def client(mocker):
-    return mocker.patch("phenoback.functions.iot.dragino.client").return_value
+    return mocker.patch("phenoback.functions.iot.dragino.ps_client").return_value
 
 
 def test_process(client):

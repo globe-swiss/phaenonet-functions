@@ -14,18 +14,21 @@ log.setLevel(logging.DEBUG)
 
 
 class HTTPClient:
-    def __init__(self, queue: str, target_function: str) -> None:
+    def __init__(self, queue: str, url: str) -> None:
         self.queue = queue
-        self.target_function = target_function
-        self.project = gcloud.get_project()
-        # assume task queue and functions is default location
-        self.location = gcloud.get_location()
         self.client = tasks_v2.CloudTasksClient()
         self.parent = self.client.queue_path(self.project, self.location, self.queue)
-        self.url = f"https://{self.location}-{self.project}.cloudfunctions.net/{self.target_function}"
-        log.debug(
-            "Client created on sending to %s dispatching to %s", queue, target_function
-        )
+        self.url = url
+        log.debug("Client created on sending to %s dispatching to %s", queue, self.url)
+
+    @property
+    def project(self):
+        return gcloud.get_project()
+
+    @property
+    def location(self):
+        # assume task queue and functions is default location
+        return gcloud.get_location()
 
     def send(
         self,
@@ -78,3 +81,17 @@ class HTTPClient:
 
         log.debug("Created task on %s (%s)", self.queue, response.name)
         return response
+
+
+class GCFClient(HTTPClient):
+    def __init__(self, queue: str, target_function: str) -> None:
+        log.debug(
+            "Create client sending to %s dispatching to function %s",
+            queue,
+            target_function,
+        )
+        self.target_function = target_function
+        super().__init__(
+            queue,
+            f"https://{self.location}-{self.project}.cloudfunctions.net/{self.target_function}",
+        )

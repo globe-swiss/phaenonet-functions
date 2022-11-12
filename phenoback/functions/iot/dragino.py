@@ -3,7 +3,7 @@ from collections import defaultdict
 from functools import lru_cache
 
 from phenoback.functions.iot.decoder import Decoder
-from phenoback.utils import pubsub
+from phenoback.utils import pubsub, tasks
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -12,7 +12,7 @@ TOPIC_ID = "iot_dragino"
 
 
 @lru_cache
-def client() -> pubsub.Publisher:
+def ps_client() -> pubsub.Publisher:
     return pubsub.Publisher(TOPIC_ID)  # pragma: no cover
 
 
@@ -20,7 +20,7 @@ def process_dragino(data: dict) -> None:
     decoder = DraginoDecoder(data)
     if decoder.is_uplink:
         decoder.decode()
-        client().send(
+        ps_client().send(
             decoder.data,
             {
                 "DevEUI": decoder.devuei,
