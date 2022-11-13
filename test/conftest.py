@@ -13,7 +13,8 @@ def emulator_process(xprocess):
 @pytest.fixture(autouse=True)
 def clear_emulator_data():
     delete(
-        "http://localhost:8001/emulator/v1/projects/test/databases/(default)/documents"
+        "http://localhost:8001/emulator/v1/projects/test/databases/(default)/documents",
+        timeout=10,
     )
 
 
@@ -27,3 +28,17 @@ def caperrors(caplog):
 def capwarnings(caplog):
     caplog.set_level(logging.WARNING)
     return caplog
+
+
+@pytest.fixture(autouse=True)
+def gcp_project(mocker) -> None:
+    project = "project"
+    mocker.patch("phenoback.utils.gcloud.get_project", return_value=project)
+    return project
+
+
+@pytest.fixture(autouse=True)
+def gcp_location(mocker) -> None:
+    location = "location"
+    mocker.patch("phenoback.utils.gcloud.get_location", return_value=location)
+    return location

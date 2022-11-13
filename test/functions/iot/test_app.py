@@ -1,7 +1,9 @@
-from datetime import datetime
+import datetime
 from test.functions.iot.sample_data import DraginoData as dd
+from zoneinfo import ZoneInfo
 
 import pytest
+from freezegun import freeze_time
 
 from phenoback.functions.iot import app
 from phenoback.utils import data as d
@@ -32,8 +34,18 @@ def individual_id_no_deveui():
     return individual_id
 
 
+@pytest.fixture
+def increase_uplink_frequency_mock(mocker):
+    return mocker.patch("phenoback.functions.iot.app.increase_uplink_frequency")
+
+
+@pytest.fixture(autouse=True)
+def set_uplink_frequency_mock(mocker):
+    return mocker.patch("phenoback.functions.iot.dragino.set_uplink_frequency")
+
+
 def today() -> str:
-    return datetime.now().strftime("%Y-%m-%d")
+    return datetime.date.today().strftime("%Y-%m-%d")
 
 
 def test_process_dragino__e2e(mocker, individual_id):
@@ -114,16 +126,19 @@ def test_update_individual(individual_id):
     assert result["ts"]
 
 
-def test_set_sensor__new(individual_id_no_deveui):
+def test_set_sensor__new(increase_uplink_frequency_mock, individual_id_no_deveui):
     result = app.set_sensor(INDIVIDUAL, YEAR, dd.DEVEUI)
 
     individual = d.get_individual(individual_id_no_deveui)
 
     assert result
     assert individual.get("deveui") == dd.DEVEUI
+    increase_uplink_frequency_mock.assert_called_with(dd.DEVEUI)
 
 
-def test_set_sensor__switch(individual_id, individual_id_no_deveui):
+def test_set_sensor__switch(
+    increase_uplink_frequency_mock, individual_id, individual_id_no_deveui
+):
     d.update_individual(individual_id, {"sensor": "some data"})
     init_old = d.get_individual(individual_id)
     init_new = d.get_individual(individual_id_no_deveui)
@@ -140,12 +155,14 @@ def test_set_sensor__switch(individual_id, individual_id_no_deveui):
     assert individual_new.get("deveui") == dd.DEVEUI
     assert not individual_old.get("deveui")
     assert not individual_old.get("sensor")
+    increase_uplink_frequency_mock.assert_called_with(dd.DEVEUI)
 
 
-def test_set_sensor__not_found():
+def test_set_sensor__not_found(increase_uplink_frequency_mock):
     result = app.set_sensor("foo", YEAR, dd.DEVEUI)
 
     assert not result
+    increase_uplink_frequency_mock.assert_not_called()
 
 
 def test_remove_sensor(individual_id):
@@ -175,3 +192,32 @@ def test_clear_sensors(individual_id):
 
     assert result == 1
     assert not d.get_individual(individual_id).get("sensor")
+
+
+@freeze_time("2020-01-01 23:59:00")
+def test_increase_uplink_frequency(set_uplink_frequency_mock):
+    app.increase_uplink_frequency(dd.DEVEUI)
+
+    assert set_uplink_frequency_mock.call_count == 2
+    set_uplink_frequency_mock.assert_any_call(dd.DEVEUI, 60)
+    set_uplink_frequency_mock.assert_any_call(
+        dd.DEVEUI, 3600, datetime.datetime(2020, 1, 2, tzinfo=ZoneInfo("Europe/Zurich"))
+    )
+
+
+@pytest.mark.parametrize(
+    "timestr, expected",
+    [
+        (
+            "2020-01-01 00:00:00",
+            datetime.datetime(2020, 1, 1),
+        ),
+        (
+            "2020-01-01 23:59:00",
+            datetime.datetime(2020, 1, 1),
+        ),
+    ],
+)
+def test_local_today(timestr, expected):
+    with freeze_time(timestr):
+        assert app.local_today() == expected

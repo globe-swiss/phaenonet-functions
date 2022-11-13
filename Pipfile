@@ -16,6 +16,7 @@ bandit = "*"
 pytest-xprocess = "*"
 mock = "*"
 isort = "*"
+freezegun = "*"
 
 [packages]
 firebase-admin = "*"
@@ -31,6 +32,7 @@ flask = "*"
 google-cloud-tasks = "*"
 google-cloud-pubsub = "*"
 google-cloud-bigquery = "*"
+tzlocal = "*"
 
 [requires]
 python_version = "3.9"

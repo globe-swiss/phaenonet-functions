@@ -381,10 +381,10 @@ class TestContent:
         assert nick in body
         assert email in body
 
-    def test_html_body(self, language):
+    def test_html_body(self, language, gcp_project):
         nick = "mynickname"
         email = "myemail"
         body = content.html_body(language, nick, email)
         assert nick in body
         assert email in body
-        assert "https://Unknown.web.app/assets/" in body  # check url
+        assert f"https://{gcp_project}.web.app/assets/" in body  # check url
