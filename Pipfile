@@ -17,6 +17,7 @@ pytest-xprocess = "*"
 mock = "*"
 isort = "*"
 freezegun = "*"
+py = "*"
 
 [packages]
 firebase-admin = "*"
