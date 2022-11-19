@@ -15,8 +15,8 @@ DELETE_TOKEN = "__DELETE__"  # nosec
 
 
 @lru_cache
-def client() -> tasks.HTTPClient:
-    return tasks.HTTPClient(QUEUE_NAME, FUNCTION_NAME)
+def client() -> tasks.GCFClient:
+    return tasks.GCFClient(QUEUE_NAME, FUNCTION_NAME)
 
 
 def enqueue_change(

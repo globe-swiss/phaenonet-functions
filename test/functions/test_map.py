@@ -34,7 +34,7 @@ def get_changepayload(initialdata, year, individual, key, value):
 
 
 def test_client(mocker):
-    task_mock = mocker.patch("phenoback.utils.tasks.HTTPClient")
+    task_mock = mocker.patch("phenoback.utils.tasks.GCFClient")
 
     pheno_map.client()
 

@@ -1,11 +1,14 @@
+import datetime
 import logging
-from datetime import datetime
 from typing import Optional
+from zoneinfo import ZoneInfo
 
 import google
+from tzlocal import get_localzone
 
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
+from phenoback.functions.iot import dragino
 from phenoback.functions.iot.dragino import DraginoDecoder
 
 log = logging.getLogger(__name__)
@@ -69,7 +72,7 @@ def update_history(
     air_humidity: float,
     air_temperature: float,
 ):
-    today = datetime.now().strftime("%Y-%m-%d")
+    today = local_today()
     data_today = {}
     data_today[f"data.{today}.shs"] = f.Increment(soil_humidity)
     data_today[f"data.{today}.sts"] = f.Increment(soil_temperature)
@@ -115,10 +118,24 @@ def set_sensor(individual: str, year: int, deveui: str) -> bool:
     ):
         individual_id = doc.id
     remove_sensor(deveui, year)
-    log.info("set sensor %s on individual %s", deveui, individual_id)
     try:
         d.update_individual(individual_id, {"deveui": deveui})
+        log.info(
+            "set sensor %s on individual %s in %i (id=%s)",
+            deveui,
+            individual_id,
+            year,
+            individual_id,
+        )
+        increase_uplink_frequency(deveui)
     except google.api_core.exceptions.NotFound:
+        log.warning(
+            "individual %s not found in %i setting sensor %s (id=%s)",
+            individual_id,
+            year,
+            deveui,
+            individual_id,
+        )
         return False
     return True
 
@@ -148,3 +165,22 @@ def clear_sensors(year: int) -> int:
     for deveui in deveuis:
         remove_sensor(deveui, year)
     return len(deveuis)
+
+
+def increase_uplink_frequency(deveui: str):
+    dragino.set_uplink_frequency(deveui, 60)
+    tomorrow = local_today() + datetime.timedelta(days=1)
+    dragino.set_uplink_frequency(
+        deveui,
+        3600,
+        datetime.datetime(
+            tomorrow.year,
+            tomorrow.month,
+            tomorrow.day,
+            tzinfo=ZoneInfo("Europe/Zurich"),
+        ),
+    )
+
+
+def local_today() -> datetime.date:
+    return datetime.datetime.now(tz=get_localzone()).date()

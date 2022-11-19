@@ -1,26 +1,34 @@
 import logging
 from collections import defaultdict
+from datetime import datetime
 from functools import lru_cache
 
 from phenoback.functions.iot.decoder import Decoder
-from phenoback.utils import pubsub
+from phenoback.utils import pubsub, tasks
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 TOPIC_ID = "iot_dragino"
+DOWNLINK_QUEUE = "swisscom-iot"
+DOWNLINK_URL = "https://proxy1.lpn.swisscom.ch/thingpark/lrc/rest/downlink"
 
 
 @lru_cache
-def client() -> pubsub.Publisher:
+def ps_client() -> pubsub.Publisher:
     return pubsub.Publisher(TOPIC_ID)  # pragma: no cover
+
+
+@lru_cache
+def task_client() -> tasks.HTTPClient:
+    return tasks.HTTPClient(DOWNLINK_QUEUE, DOWNLINK_URL)  # pragma: no cover
 
 
 def process_dragino(data: dict) -> None:
     decoder = DraginoDecoder(data)
     if decoder.is_uplink:
         decoder.decode()
-        client().send(
+        ps_client().send(
             decoder.data,
             {
                 "DevEUI": decoder.devuei,
@@ -30,6 +38,19 @@ def process_dragino(data: dict) -> None:
         log.info("Published sensor event for %s to %s", decoder.devuei, TOPIC_ID)
     else:
         log.debug("No uplink data, skip")
+
+
+def set_uplink_frequency(deveui: str, interval: int, at: datetime = None):
+    log.info("set uplink frequency to %is for %s at %s", interval, deveui, at)
+    task_client().send(
+        "",
+        params={
+            "DevEUI": deveui,
+            "Payload": f"{16777216 + interval:{0}8x}",
+            "FPort": 1,
+        },
+        at=at,
+    )
 
 
 class DraginoDecoder(Decoder):
