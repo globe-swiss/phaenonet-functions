@@ -163,6 +163,8 @@ jobs:
     environment: ${{ github.event.inputs.project }}
     steps:
       - uses: actions/checkout@v3
+      - name: Work around https://github.com/actions/checkout/issues/766
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - id: auth
         name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v0
@@ -177,15 +179,12 @@ jobs:
         run: |
           echo "set release version: ${{ env.VERSION }}"
           sed -ri 's|"#VERSION#"|"${{ env.VERSION }}"|' env.*.yaml
-
       - name: undeploy
         run: gcloud functions delete ${{ matrix.name }} --region ${{ env.REGION }} --quiet
         if: ${{ (env.ACTION == 'undeploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == 'all') && (matrix.project == env.PROJECT || matrix.project == null) }}
-
       - name: deploy
         run: gcloud functions deploy ${{ matrix.name }} --entry-point ${{ matrix.entrypoint }} --runtime ${{ env.RUNTIME }} ${{ matrix.trigger }} --timeout ${{ env.TIMEOUT }} --region ${{ env.REGION }} --quiet --env-vars-file env.${{ env.PROJECT }}.yaml
         if: ${{ (env.ACTION == 'deploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == 'all') && (matrix.project == env.PROJECT || matrix.project == null) }}
-
       - name: Sentry release
         run: |
           curl -sL https://sentry.io/get-cli/ | bash
