@@ -168,7 +168,7 @@ def clear_sensors(year: int) -> int:
 
 
 def increase_uplink_frequency(deveui: str):
-    dragino.set_uplink_frequency(deveui, 60)
+    dragino.set_uplink_frequency(deveui, 600)
     tomorrow = local_today() + datetime.timedelta(days=1)
     dragino.set_uplink_frequency(
         deveui,
