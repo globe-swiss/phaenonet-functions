@@ -74,6 +74,36 @@ def request_data():
                 "boolTrue": {"booleanValue": True},
                 "map": {"mapValue": {"fields": {"boolTrue": {"booleanValue": True}}}},
                 "double": {"doubleValue": 1.5},
+                "array": {
+                    "arrayValue": {
+                        "values": [
+                            {"stringValue": "RK"},
+                            {"stringValue": "BA"},
+                        ]
+                    }
+                },
+                "mixed": {
+                    "mapValue": {
+                        "fields": {
+                            "myArray": {
+                                "arrayValue": {
+                                    "values": [
+                                        {"booleanValue": True},
+                                        {
+                                            "mapValue": {
+                                                "fields": {
+                                                    "myString": {"stringValue": "abc"}
+                                                }
+                                            }
+                                        },
+                                    ]
+                                }
+                            },
+                            "myBool": {"booleanValue": True},
+                        }
+                    }
+                },
+                "set": {"setValue": set()},
             }
         }
     }
@@ -90,10 +120,17 @@ def request_data():
         (True, "boolTrue"),
         ({"boolTrue": True}, "map"),
         (1.5, "double"),
+        (["RK", "BA"], "array"),
+        ({"myBool": True, "myArray": [True, {"myString": "abc"}]}, "mixed"),
     ],
 )
-def test_get_field_activity(expected, fieldname, request_data):
+def test_get_field(expected, fieldname, request_data):
     assert get_field(request_data, fieldname) == expected
+
+
+def test_get_field__invalid(request_data, caperrors):
+    assert get_field(request_data, "set") == "set()"
+    assert len(caperrors.records) == 1, caperrors.records
 
 
 @pytest.mark.parametrize(

@@ -44,8 +44,10 @@ def _get_field(value_dict: dict):
                 [_get_field(v) for v in value["fields"].values()],
             )
         )
-    else:  # pragma: no cover
-        log.warning(
+    elif value_type == "arrayValue":
+        return [_get_field(v) for v in value["values"]]
+    else:
+        log.error(
             "Unknown field type %s, returning str representation: %s",
             value_type,
             str(value),
