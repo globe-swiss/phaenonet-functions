@@ -201,6 +201,7 @@ def test_process_change__new_value(mapdata, initialdata: dict):
         (["deveui"], True),
         (["source", "other_values"], True),
         (["other_values"], False),
+        (["reprocess"], True),
     ],
 )
 def test_should_update(updated_fields, expected):

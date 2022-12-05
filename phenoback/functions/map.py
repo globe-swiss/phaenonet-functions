@@ -89,6 +89,7 @@ def _should_update(updated_fields: List[str]) -> bool:
             "deveui",
             "type",
             "species",
+            "reprocess",
         ]
         for elem in updated_fields
     )
