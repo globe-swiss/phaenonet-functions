@@ -41,6 +41,7 @@ def get_rollover_individuals(
                 "created",
                 "modified",
                 "sensor",
+                "reprocess",
             ]:
                 individual.pop(key, None)
             new_individuals.append(individual)
