@@ -74,7 +74,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     container: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
-    continue-on-error: true
+    continue-on-error: false
     strategy:
       fail-fast: false
       matrix:
