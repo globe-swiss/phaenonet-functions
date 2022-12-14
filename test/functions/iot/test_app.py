@@ -59,12 +59,12 @@ def test_process_dragino__e2e(mocker, individual_id):
     assert f.get_document("sensors", individual_id)["data"].get(today())
 
 
-def test_process_dragino__individual_not_found(mocker, caperrors):
+def test_process_dragino__individual_not_found(mocker, capwarnings):
     update_spy = mocker.spy(app, "update")
     app.process_dragino(dd.SAMPLE_DATA)
 
     update_spy.assert_not_called()
-    assert len(caperrors.records) == 1, caperrors.records
+    assert len(capwarnings.records) == 1, capwarnings.records
 
 
 def test_get_individual_id(individual_id):

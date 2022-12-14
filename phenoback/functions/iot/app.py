@@ -26,7 +26,7 @@ def process_dragino(data: dict) -> None:
         log.info("process sensor data for %s (%s)", individual_id, decoder.devuei)
         update(decoder.decoded_payload, year, individual_id)
     else:
-        log.error("No individual found for %s in %i", decoder.devuei, year)
+        log.warning("No individual found for %s in %i", decoder.devuei, year)
 
 
 def get_individual_id(year: int, deveui: str) -> Optional[str]:
