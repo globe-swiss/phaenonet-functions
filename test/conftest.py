@@ -42,3 +42,9 @@ def gcp_location(mocker) -> None:
     location = "location"
     mocker.patch("phenoback.utils.gcloud.get_location", return_value=location)
     return location
+
+
+@pytest.fixture(autouse=True)
+def mock_requests(mocker):
+    mocker.patch("requests.post")
+    mocker.patch("requests.get")
