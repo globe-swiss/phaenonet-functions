@@ -66,6 +66,6 @@ class DraginoDecoder(Decoder):
             "soilTemperature", (self.get_value(2 * 8, 16) / 1000 - 0.5) * 100, 1, "°C"
         )
         self.set("airHumidity", self.get_value(9 * 8, 16) / 10, 2, "%")
-        self.set("airTemperature", self.get_value(7 * 8, 16) / 10, 2, "°C")
+        self.set("airTemperature", self.get_value(7 * 8, 16, signed=True) / 10, 2, "°C")
         self.set("batteryVoltage", self.get_value(88, 8) / 10, 1, "V")
         return dict(self.result)

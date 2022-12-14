@@ -5,10 +5,13 @@ class Decoder:
             self.int_pl = int(self.payload, 16)
             self.size = len(self.payload) * 4
 
-    def get_value(self, start, length):
+    def get_value(self, start, length, signed=False):
         shift = self.size - start - length
         mask = ((1 << length) - 1) << shift
-        return (self.int_pl & mask) >> shift
+        value = (self.int_pl & mask) >> shift
+        if signed and value & (1 << (length - 1)):
+            value -= 1 << length
+        return value
 
     @property
     def data(self):
