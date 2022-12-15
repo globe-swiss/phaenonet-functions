@@ -2,14 +2,7 @@ import logging
 from typing import List
 
 from phenoback.functions.iot import app
-from phenoback.utils.data import (
-    delete_individual,
-    get_phenoyear,
-    has_observations,
-    query_individuals,
-    update_phenoyear,
-    write_individuals,
-)
+from phenoback.utils import data as d
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -27,12 +20,12 @@ def get_rollover_individuals(
     :return:
     """
     new_individuals = []
-    query = query_individuals("year", "==", source_phenoyear)
+    query = d.query_individuals("year", "==", source_phenoyear)
     if individual is not None:  # debuging or fixing
         query = query.where("individual", "==", individual)
     for individual_doc in query.stream():
         individual = individual_doc.to_dict()
-        if individual["source"] != "meteoswiss":
+        if d.does_rollover(individual):
             individual["id"] = f'{target_phenoyear}_{individual["individual"]}'
             individual["year"] = target_phenoyear
             for key in [
@@ -40,10 +33,11 @@ def get_rollover_individuals(
                 "last_observation_date",
                 "created",
                 "modified",
-                "sensor",
                 "reprocess",
             ]:
                 individual.pop(key, None)
+            if individual.get("sensor"):
+                individual["sensor"] = {}
             new_individuals.append(individual)
             log.debug("marking individual %s for rollover", individual)
     return new_individuals
@@ -57,14 +51,15 @@ def get_stale_individuals(year: int) -> List[str]:
     """
     stale_list = []
     # split querying and deleting to avoid stream timeouts
-    for individual_doc in query_individuals("year", "==", year).stream():
-        if not has_observations(individual_doc.to_dict()):
+    for individual_doc in d.query_individuals("year", "==", year).stream():
+        individual = individual_doc.to_dict()
+        if not (d.has_observations(individual) or d.has_sensor(individual)):
             stale_list.append(individual_doc.id)
     return stale_list
 
 
 def rollover():
-    source_phenoyear = get_phenoyear()
+    source_phenoyear = d.get_phenoyear()
     target_phenoyear = source_phenoyear + 1
     log.info(
         "Gather rollover individuals of %i to %i", source_phenoyear, target_phenoyear
@@ -77,14 +72,14 @@ def rollover():
     log.info(
         "Creating %i new individuals in %i", len(new_individuals), target_phenoyear
     )
-    write_individuals(new_individuals, "id")
+    d.write_individuals(new_individuals, "id")
 
     log.info(
         "Remove %i stale individuals for %i", len(stale_individuals), source_phenoyear
     )
     for individual_id in stale_individuals:
         log.debug("Remove individual %s", individual_id)
-        delete_individual(individual_id)
+        d.delete_individual(individual_id)
 
     cleared_sensors = app.clear_sensors(source_phenoyear)
     log.info(
@@ -94,4 +89,4 @@ def rollover():
     log.info(
         "Setting current phenoyear from %i to %i", source_phenoyear, target_phenoyear
     )
-    update_phenoyear(target_phenoyear)
+    d.update_phenoyear(target_phenoyear)

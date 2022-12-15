@@ -1,3 +1,4 @@
+import logging
 from functools import lru_cache
 from typing import Any, List
 
@@ -15,6 +16,17 @@ from phenoback.utils.firestore import (
     write_batch,
     write_document,
 )
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
+
+
+SOURCE_ROLLOVER_MAPPING = {
+    "globe": True,
+    "meteoswiss": False,
+    "wld": False,
+    "ranger": True,
+}
 
 
 @lru_cache()
@@ -87,11 +99,6 @@ def update_individual(
     update_document("individuals", individual_id, data, transaction=transaction)
 
 
-def has_observations(individual: dict) -> bool:
-    # last observation date is set for individuals and stations
-    return individual.get("last_observation_date") is not None
-
-
 def get_observation(observation_id: str, transaction: Transaction = None) -> dict:
     return get_document("observations", observation_id, transaction=transaction)
 
@@ -152,3 +159,27 @@ def follow_user(
         return True
     else:
         return False
+
+
+def has_observations(individual: dict) -> bool:
+    # last observation date is set for individuals and stations
+    return individual.get("last_observation_date") is not None
+
+
+def has_sensor(individual: dict) -> bool:
+    return individual.get("sensor") is not None
+
+
+def does_rollover(individual: dict) -> bool:
+    source = individual.get("source")
+    try:
+        return SOURCE_ROLLOVER_MAPPING[source]
+    except KeyError as ex:
+        msg = f"Rollover rule for source '{source}' is not defined for {individual}"
+        log.error(msg)
+        raise ValueError(msg) from ex
+
+
+# only rolled over sources support sensors
+def supports_sensor(individual: dict) -> bool:
+    return SOURCE_ROLLOVER_MAPPING[individual["source"]]
