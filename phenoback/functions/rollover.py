@@ -7,6 +7,23 @@ from phenoback.utils import data as d
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
+SOURCE_ROLLOVER_MAPPING = {
+    "globe": True,
+    "meteoswiss": False,
+    "wld": False,
+    "ranger": True,
+}
+
+
+def does_rollover(individual: dict) -> bool:
+    source = individual.get("source")
+    try:
+        return SOURCE_ROLLOVER_MAPPING[source]
+    except KeyError as ex:
+        msg = f"Rollover rule for source '{source}' is not defined for {individual}"
+        log.error(msg)
+        raise ValueError(msg) from ex
+
 
 def get_rollover_individuals(
     source_phenoyear: int,
@@ -25,7 +42,7 @@ def get_rollover_individuals(
         query = query.where("individual", "==", individual)
     for individual_doc in query.stream():
         individual = individual_doc.to_dict()
-        if d.does_rollover(individual):
+        if does_rollover(individual):
             individual["id"] = f'{target_phenoyear}_{individual["individual"]}'
             individual["year"] = target_phenoyear
             for key in [

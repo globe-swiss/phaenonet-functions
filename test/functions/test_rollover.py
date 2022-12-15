@@ -190,3 +190,10 @@ def test_rollover__sensor_field(current_phenoyear):
         .stream()
     ):
         assert sensor_doc.to_dict()["sensor"] == {}
+
+
+def test_rollover__invalid_source(caperrors):
+    setup_source("invalid", False)
+    with pytest.raises(ValueError):
+        rollover.rollover()
+    assert len(caperrors.records) == 1

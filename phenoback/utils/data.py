@@ -1,4 +1,3 @@
-import logging
 from functools import lru_cache
 from typing import Any, List
 
@@ -16,17 +15,6 @@ from phenoback.utils.firestore import (
     write_batch,
     write_document,
 )
-
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
-
-
-SOURCE_ROLLOVER_MAPPING = {
-    "globe": True,
-    "meteoswiss": False,
-    "wld": False,
-    "ranger": True,
-}
 
 
 @lru_cache()
@@ -168,18 +156,3 @@ def has_observations(individual: dict) -> bool:
 
 def has_sensor(individual: dict) -> bool:
     return individual.get("sensor") is not None
-
-
-def does_rollover(individual: dict) -> bool:
-    source = individual.get("source")
-    try:
-        return SOURCE_ROLLOVER_MAPPING[source]
-    except KeyError as ex:
-        msg = f"Rollover rule for source '{source}' is not defined for {individual}"
-        log.error(msg)
-        raise ValueError(msg) from ex
-
-
-# only rolled over sources support sensors
-def supports_sensor(individual: dict) -> bool:
-    return SOURCE_ROLLOVER_MAPPING[individual["source"]]
