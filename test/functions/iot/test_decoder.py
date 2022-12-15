@@ -58,18 +58,26 @@ def test_is_uplink(data, expected):
 
 
 @pytest.mark.parametrize(
-    "payload_hex, start, length, expected",
+    "payload_hex, start, length, signed, expected",
     [
-        ("00", 0, 8, 0),
-        ("FF", 0, 8, 255),
-        ("F0", 0, 8, 240),
-        ("0F", 0, 8, 15),
-        ("F0", 0, 4, 15),
-        ("F0", 4, 4, 0),
-        ("0F", 0, 4, 0),
-        ("0F", 4, 4, 15),
+        ("00", 0, 8, False, 0),
+        ("FF", 0, 8, False, 255),
+        ("F0", 0, 8, False, 240),
+        ("0F", 0, 8, False, 15),
+        ("F0", 0, 4, False, 15),
+        ("F0", 4, 4, False, 0),
+        ("0F", 0, 4, False, 0),
+        ("0F", 4, 4, False, 15),
+        ("00", 0, 8, True, 0),
+        ("FF", 0, 8, True, -1),
+        ("F0", 0, 8, True, -16),
+        ("0F", 0, 8, True, 15),
+        ("F0", 0, 4, True, -1),
+        ("F0", 4, 4, True, 0),
+        ("0F", 0, 4, True, 0),
+        ("0F", 4, 4, True, -1),
     ],
 )
-def test_get_value(payload_hex, start, length, expected):
+def test_get_value(payload_hex, start, length, signed, expected):
     decoder = DecoderImpl({UPLINK_KEY: {PAYLOAD_HEX_KEY: payload_hex}})
-    assert decoder.get_value(start, length) == expected
+    assert decoder.get_value(start, length, signed=signed) == expected

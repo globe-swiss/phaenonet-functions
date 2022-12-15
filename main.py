@@ -477,6 +477,16 @@ def process_dragino_bq(event, context):
         bq.insert_data("iot.raw", json_data)
 
 
+def process_dragino_permarobotics(event, context):
+    # attributes = event["attributes"]
+    data = base64.b64decode(event["data"])
+    json_data = json.loads(data)
+    with setup(json_data, context):
+        from phenoback.functions.iot import permarobotics
+
+        permarobotics.send_permarobotics(json_data)
+
+
 def set_sensor_http(request: flask.Request):
     with setup(request):
         from phenoback.functions.iot import app
