@@ -160,6 +160,7 @@ def test_rollover__individuals_created(current_phenoyear):
     assert roll_amt == rolled_amt
 
 
+@pytest.mark.skip("Disabled remove individuals on rollover")
 def test_rollover__individuals_removed(current_phenoyear):
     individuals_kept_amt = get_amt(current_phenoyear) - get_amt(
         current_phenoyear, "_remove"

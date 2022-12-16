@@ -84,19 +84,19 @@ def rollover():
     new_individuals = get_rollover_individuals(source_phenoyear, target_phenoyear)
 
     log.info("Gather stale individuals for %i", source_phenoyear)
-    stale_individuals = get_stale_individuals(source_phenoyear)
+    # stale_individuals = get_stale_individuals(source_phenoyear)
 
     log.info(
         "Creating %i new individuals in %i", len(new_individuals), target_phenoyear
     )
     d.write_individuals(new_individuals, "id")
 
-    log.info(
-        "Remove %i stale individuals for %i", len(stale_individuals), source_phenoyear
-    )
-    for individual_id in stale_individuals:
-        log.debug("Remove individual %s", individual_id)
-        d.delete_individual(individual_id)
+    # log.info(
+    #     "Remove %i stale individuals for %i", len(stale_individuals), source_phenoyear
+    # )
+    # for individual_id in stale_individuals:
+    #     log.debug("Remove individual %s", individual_id)
+    #     d.delete_individual(individual_id)
 
     cleared_sensors = app.clear_sensors(source_phenoyear)
     log.info(
