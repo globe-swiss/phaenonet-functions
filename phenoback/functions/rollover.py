@@ -4,7 +4,6 @@ from typing import List
 from phenoback.functions import map as pheno_map
 from phenoback.functions.iot import app
 from phenoback.utils import data as d
-from phenoback.utils import firestore as f
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)

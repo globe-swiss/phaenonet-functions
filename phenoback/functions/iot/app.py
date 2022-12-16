@@ -156,15 +156,20 @@ def remove_sensor(deveui: str, year: int) -> bool:
 
 
 def clear_sensors(year: int) -> int:
-    """Clears all sensor data on individuals for all years"""
-    deveuis = [
-        doc.to_dict()["deveui"]
+    """Clears all sensor data on individuals"""
+    individual_ids = [
+        doc.id
         for doc in f.collection("individuals").order_by("deveui").stream()
         if doc.to_dict()["year"] == year
     ]
-    for deveui in deveuis:
-        remove_sensor(deveui, year)
-    return len(deveuis)
+    for individual_id in individual_ids:
+        d.update_individual(
+            individual_id,
+            {
+                "sensor": {},
+            },
+        )
+    return len(individual_ids)
 
 
 def increase_uplink_frequency(deveui: str):
