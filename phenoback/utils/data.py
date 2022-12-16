@@ -87,11 +87,6 @@ def update_individual(
     update_document("individuals", individual_id, data, transaction=transaction)
 
 
-def has_observations(individual: dict) -> bool:
-    # last observation date is set for individuals and stations
-    return individual.get("last_observation_date") is not None
-
-
 def get_observation(observation_id: str, transaction: Transaction = None) -> dict:
     return get_document("observations", observation_id, transaction=transaction)
 
@@ -152,3 +147,12 @@ def follow_user(
         return True
     else:
         return False
+
+
+def has_observations(individual: dict) -> bool:
+    # last observation date is set for individuals and stations
+    return individual.get("last_observation_date") is not None
+
+
+def has_sensor(individual: dict) -> bool:
+    return individual.get("sensor") is not None

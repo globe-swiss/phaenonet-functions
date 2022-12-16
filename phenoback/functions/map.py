@@ -97,3 +97,7 @@ def _should_update(updated_fields: List[str]) -> bool:
 
 def delete(year: int, individual_id: str) -> None:
     f.update_document("maps", str(year), {f"data.{individual_id}": f.DELETE_FIELD})
+
+
+def init(year: int) -> None:
+    f.write_document("maps", str(year), {"year": year, "data": {}})

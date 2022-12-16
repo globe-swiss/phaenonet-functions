@@ -78,6 +78,7 @@ jobs:
     continue-on-error: false
     strategy:
       fail-fast: false
+      max-parallel: 10
       matrix:
         include:
           - name: process_observation_activity

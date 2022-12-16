@@ -1,8 +1,78 @@
 # pylint: disable=unused-argument
+import phenoback.functions.map
 import pytest
 
 from phenoback.functions import rollover
 from phenoback.utils import data as d
+from phenoback.utils import firestore as f
+
+
+def setup_source(source: str, rolled_source: bool):
+    d.write_individual(
+        f"2011_1_{source}",
+        {
+            "individual": f"1_{source}",
+            "source": source,
+            "year": 2011,
+            "last_observation_date": "a value",
+            "_rolled": False,
+            "_remove": False,
+        },
+    )
+
+    d.write_individual(
+        f"2012_2_{source}",
+        {
+            "individual": f"2_{source}",
+            "source": source,
+            "year": 2012,
+            "last_observation_date": "a value",
+            "reprocess": 1,
+            "_rolled": rolled_source,
+            "_remove": False,
+        },
+    )
+
+    d.write_individual(
+        f"2012_3_{source}",
+        {
+            "individual": f"3_{source}",
+            "source": source,
+            "year": 2012,
+            "reprocess": 2,
+            "_rolled": rolled_source,
+            "_remove": True,
+        },
+    )
+
+    d.write_individual(
+        f"2012_4_{source}",
+        {
+            "individual": f"4_{source}",
+            "source": source,
+            "year": 2012,
+            "last_observation_date": "a value",
+            "deveui": f"deveui_4_{source}",
+            "sensor": {"foo": "bar"},
+            "reprocess": 1,
+            "_rolled": rolled_source,
+            "_remove": False,
+        },
+    )
+
+    d.write_individual(
+        f"2012_5_{source}",
+        {
+            "individual": f"5_{source}",
+            "source": source,
+            "year": 2012,
+            "deveui": f"deveui_5_{source}",
+            "sensor": {"foo": "bar"},
+            "reprocess": 2,
+            "_rolled": rolled_source,
+            "_remove": False,
+        },
+    )
 
 
 @pytest.fixture(autouse=True)
@@ -10,117 +80,10 @@ def setup() -> None:
     """
     Setup based on rollover 2012 -> 2013.
     """
-    d.write_individual(
-        "2011_1",
-        {
-            "individual": "1",
-            "source": "globe",
-            "year": 2011,
-            "last_observation_date": "a value",
-            "last_phenophase": "a value",
-            "rolled": False,
-            "removed": False,
-            "obs": True,
-        },
-    )
-    d.write_observation("1", {"individual_id": "2011_1"})
-
-    d.write_individual(
-        "2012_2",
-        {
-            "individual": "2",
-            "source": "globe",
-            "year": 2012,
-            "last_observation_date": "a value",
-            "last_phenophase": "a value",
-            "rolled": True,
-            "removed": False,
-            "obs": True,
-        },
-    )
-    d.write_observation("2", {"individual_id": "2012_2"})
-
-    d.write_individual(
-        "2012_3",
-        {
-            "individual": "3",
-            "source": "globe",
-            "year": 2012,
-            "rolled": True,
-            "removed": True,
-            "obs": False,
-        },
-    )
-
-    d.write_individual(
-        "2012_4",
-        {
-            "individual": "4",
-            "source": "meteoswiss",
-            "year": 2012,
-            "last_observation_date": "a value",
-            "last_phenophase": "a value",
-            "rolled": False,
-            "removed": False,
-            "obs": True,
-        },
-    )
-    d.write_observation("4", {"individual_id": "2012_4"})
-
-    d.write_individual(
-        "2012_5",
-        {
-            "individual": "5",
-            "source": "meteoswiss",
-            "year": 2012,
-            "rolled": False,
-            "removed": True,
-            "obs": False,
-        },
-    )
-    d.write_observation("5", {"individual_id": "2012_5"})
-
-    d.write_individual(
-        "2011_1x",
-        {
-            "individual": "1x",
-            "source": "other_source",
-            "year": 2011,
-            "last_observation_date": "a value",
-            "last_phenophase": "a value",
-            "rolled": False,
-            "removed": False,
-            "obs": True,
-        },
-    )
-    d.write_observation("1x", {"individual_id": "2011_1x"})
-
-    d.write_individual(
-        "2012_2x",
-        {
-            "individual": "2x",
-            "source": "other_source",
-            "year": 2012,
-            "last_observation_date": "a value",
-            "last_phenophase": "a value",
-            "rolled": True,
-            "removed": False,
-            "obs": True,
-        },
-    )
-    d.write_observation("2x", {"individual_id": "2012_2x"})
-
-    d.write_individual(
-        "2012_3x",
-        {
-            "individual": "3x",
-            "source": "other_source",
-            "year": 2012,
-            "rolled": True,
-            "removed": True,
-            "obs": False,
-        },
-    )
+    setup_source("globe", True)
+    setup_source("meteoswiss", False)
+    setup_source("wld", False)
+    setup_source("ranger", True)
 
 
 @pytest.fixture(autouse=True)
@@ -130,8 +93,17 @@ def current_phenoyear():
     return year
 
 
-def test_rollover_individuals__roll_amt(current_phenoyear):
-    roll_amt = len(list(d.query_individuals("rolled", "==", True).stream()))
+def get_amt(year: int, field: str = None):
+    query = f.collection("individuals").where("year", "==", year)
+    if field and field.startswith("_"):
+        query = query.where(field, "==", True)
+    elif field:
+        query = query.order_by(field)
+    return len(list(query.stream()))
+
+
+def test_get_rollover_individuals__roll_amt(current_phenoyear):
+    roll_amt = get_amt(current_phenoyear, "_rolled")
 
     roll_individuals = rollover.get_rollover_individuals(
         current_phenoyear, current_phenoyear + 1
@@ -140,7 +112,7 @@ def test_rollover_individuals__roll_amt(current_phenoyear):
     assert len(roll_individuals) == roll_amt
 
 
-def test_rollover_individuals__keys(current_phenoyear):
+def test_get_rollover_individuals__keys(current_phenoyear):
     roll_individuals = rollover.get_rollover_individuals(
         current_phenoyear, current_phenoyear + 1
     )
@@ -151,46 +123,51 @@ def test_rollover_individuals__keys(current_phenoyear):
     )
 
 
-def test_rollover_individuals__documents(current_phenoyear):
+def test_get_rollover_individuals__documents(current_phenoyear):
     roll_individuals = rollover.get_rollover_individuals(
         current_phenoyear, current_phenoyear + 1
     )
     assert len(roll_individuals) > 0
     for individual in roll_individuals:
-        assert individual["rolled"], individual
+        assert individual["_rolled"], individual
         assert "last_phenophase" not in individual, individual
         assert "last_observation_date" not in individual, individual
+        assert "reprocess" not in individual, individual
 
 
-def test_rollover_individuals__single_individual(current_phenoyear):
+def test_get_rollover_individuals__single_individual(current_phenoyear):
     roll_individuals = rollover.get_rollover_individuals(
-        current_phenoyear, current_phenoyear + 1, "3"
+        current_phenoyear, current_phenoyear + 1, "2_globe"
     )
     assert len(roll_individuals) == 1
     for individual in roll_individuals:
         assert individual["id"] == f'{current_phenoyear + 1}_{individual["individual"]}'
-        assert individual["individual"] == "3"
+        assert individual["individual"] == "2_globe"
 
 
-def test_remove_stale_individuals__removed_amt(current_phenoyear):
-    removed_amt = len(list(d.query_individuals("removed", "==", True).stream()))
+def test_get_stale_individuals__removed_amt(current_phenoyear):
+    removed_amt = get_amt(current_phenoyear, "_remove")
+    assert removed_amt > 0
+
     stale_individuals = rollover.get_stale_individuals(current_phenoyear)
-    assert len(stale_individuals) > 0
+
     assert len(stale_individuals) == removed_amt, stale_individuals
 
 
 def test_rollover__individuals_created(current_phenoyear):
+    roll_amt = get_amt(current_phenoyear, "_rolled")
     rollover.rollover()
-    for individual_doc in d.query_individuals(
-        "year", "==", current_phenoyear + 1
-    ).stream():
-        assert individual_doc.to_dict()["rolled"], individual_doc.to_dict()
+    rolled_amt = get_amt(current_phenoyear + 1)
+    assert roll_amt == rolled_amt
 
 
+@pytest.mark.skip("Disabled remove individuals on rollover")
 def test_rollover__individuals_removed(current_phenoyear):
+    individuals_kept_amt = get_amt(current_phenoyear) - get_amt(
+        current_phenoyear, "_remove"
+    )
     rollover.rollover()
-    for individual_doc in d.query_individuals("year", "==", current_phenoyear).stream():
-        assert not individual_doc.to_dict()["removed"], individual_doc.to_dict()
+    assert get_amt(current_phenoyear) == individuals_kept_amt
 
 
 def test_rollover__update_year(current_phenoyear):
@@ -198,9 +175,38 @@ def test_rollover__update_year(current_phenoyear):
     assert d.get_phenoyear() == current_phenoyear + 1
 
 
-def test_rollover__sensors_cleared(mocker):
-    clean_sensors_mock = mocker.patch("phenoback.functions.iot.app.clear_sensors")
+def test_rollover__sensor_field(current_phenoyear):
+    clear_sensor_amt = get_amt(current_phenoyear, "sensor")
 
     rollover.rollover()
 
-    clean_sensors_mock.assert_called()
+    assert get_amt(current_phenoyear, "sensor") == clear_sensor_amt
+
+    for sensor_doc in (
+        d.query_individuals("year", "==", current_phenoyear).order_by("sensor").stream()
+    ):
+        assert sensor_doc.to_dict()["sensor"] == {}
+    for sensor_doc in (
+        d.query_individuals("year", "==", current_phenoyear + 1)
+        .order_by("sensor")
+        .stream()
+    ):
+        assert sensor_doc.to_dict()["sensor"] == {}
+
+
+def test_rollover__invalid_source(caperrors):
+    setup_source("invalid", False)
+    with pytest.raises(ValueError):
+        rollover.rollover()
+    assert len(caperrors.records) == 1
+
+
+def test_rollover__update_maps(mocker, current_phenoyear):
+    map_init_spy = mocker.spy(phenoback.functions.map, "init")
+    rollover.rollover()
+
+    map_init_spy.assert_called_once_with(current_phenoyear + 1)
+    doc = f.get_document("maps", str(current_phenoyear + 1))
+    assert doc
+    assert doc["year"] == current_phenoyear + 1
+    assert doc["data"] == {}
