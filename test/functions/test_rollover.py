@@ -1,4 +1,5 @@
 # pylint: disable=unused-argument
+import phenoback.functions.map
 import pytest
 
 from phenoback.functions import rollover
@@ -198,3 +199,14 @@ def test_rollover__invalid_source(caperrors):
     with pytest.raises(ValueError):
         rollover.rollover()
     assert len(caperrors.records) == 1
+
+
+def test_rollover__update_maps(mocker, current_phenoyear):
+    map_init_spy = mocker.spy(phenoback.functions.map, "init")
+    rollover.rollover()
+
+    map_init_spy.assert_called_once_with(current_phenoyear + 1)
+    doc = f.get_document("maps", str(current_phenoyear + 1))
+    assert doc
+    assert doc["year"] == current_phenoyear + 1
+    assert doc["data"] == {}

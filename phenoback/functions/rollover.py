@@ -1,8 +1,10 @@
 import logging
 from typing import List
 
+from phenoback.functions import map as pheno_map
 from phenoback.functions.iot import app
 from phenoback.utils import data as d
+from phenoback.utils import firestore as f
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -83,8 +85,11 @@ def rollover():
     )
     new_individuals = get_rollover_individuals(source_phenoyear, target_phenoyear)
 
-    log.info("Gather stale individuals for %i", source_phenoyear)
+    # log.info("Gather stale individuals for %i", source_phenoyear)
     # stale_individuals = get_stale_individuals(source_phenoyear)
+
+    log.info("Create maps document for %i", target_phenoyear)
+    pheno_map.init(target_phenoyear)
 
     log.info(
         "Creating %i new individuals in %i", len(new_individuals), target_phenoyear

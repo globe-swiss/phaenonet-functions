@@ -218,3 +218,13 @@ def test_delete(mapdata):
     assert result_year.get("individual_2") is not None, result_year
     assert other_year.get("individual_1") is not None, other_year
     assert other_year.get("individual_2") is not None, other_year
+
+
+def test_init():
+    year = 2025
+    pheno_map.init(year)
+
+    doc = f.get_document("maps", str(year))
+    assert doc
+    assert doc["year"] == year
+    assert doc["data"] == {}
