@@ -245,34 +245,15 @@ def ps_import_meteoswiss_data_publish(data, context):
 
 
 @retry.Retry()
-def process_document_ts_write(data, context):
+def fs_document_write(data, context):
     """
     Updates create and modified timestamps on documents.
     """
     with setup(data, context):
-        from phenoback.functions import documents
+        with execute():
+            from phenoback.functions import documents
 
-        collection_path = get_collection_path(context)
-        document_id = get_document_id(context)
-        source = get_field(data, "source", expected=False) or get_field(
-            data, "source", old_value=True, expected=False
-        )
-
-        if is_create_event(data):
-            log.debug("document %s was created (%s)", context.resource, source)
-            documents.update_created_document(collection_path, document_id)
-        elif is_update_event(data):
-            log.debug("document %s was updated (%s)", context.resource, source)
-            documents.update_modified_document(
-                collection_path,
-                document_id,
-                get_fields_updated(data),
-                get_field(data, documents.CREATED_KEY, old_value=True, expected=False),
-            )
-        elif is_delete_event(data):
-            log.debug("document %s was deleted (%s)", context.resource, source)
-        else:  # pragma: no cover
-            log.error("Unexpected case for %s (%s)", context.resource, source)
+            documents.main(data, context)
 
 
 @retry.Retry(predicate=if_exception_type(exceptions.NotFound))

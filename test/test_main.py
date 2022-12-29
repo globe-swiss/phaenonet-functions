@@ -47,6 +47,7 @@ def data():
             main.ps_import_meteoswiss_data_publish,
             ["phenoback.functions.meteoswiss_import.main"],
         ),
+        (main.fs_document_write, ["phenoback.functions.documents.main"]),
     ],
 )
 def test_executes(mocker, entrypoint, functions, data, context):
@@ -167,73 +168,6 @@ def test_process_observation_write_activity__process_activity_called(
 
     main.process_observation_write_activity("ignored", default_context)
     assert mock.called == expected
-
-
-@pytest.mark.parametrize(
-    "called, data",
-    [
-        (
-            "updated",
-            {
-                "updateMask": {"fieldPaths": ["modified"]},
-                "oldValue": {
-                    "fields": {"modified": {"timestampValue": str(datetime.now())}}
-                },
-                "value": {
-                    "fields": {"modified": {"timestampValue": str(datetime.now())}}
-                },
-            },
-        ),
-        (
-            "created",
-            {
-                "updateMask": {},
-                "oldValue": {},
-                "value": {
-                    "fields": {"modified": {"timestampValue": str(datetime.now())}}
-                },
-            },
-        ),
-        (
-            "deleted",
-            {
-                "updateMask": {"fieldPaths": ["modified"]},
-                "oldValue": {
-                    "fields": {"modified": {"timestampValue": str(datetime.now())}}
-                },
-                "value": {},
-            },
-        ),
-    ],
-)
-def test_document_ts_update(mocker, called, data):
-    update_modified_document_mock = mocker.patch(
-        "phenoback.functions.documents.update_modified_document"
-    )
-    update_created_document_mock = mocker.patch(
-        "phenoback.functions.documents.update_created_document"
-    )
-    main.process_document_ts_write(data, mocker.MagicMock())
-    assert update_modified_document_mock.called == (called == "updated")
-    assert update_created_document_mock.called == (called == "created")
-    # nothing to do for delete
-
-
-def test_document_ts_update__overwrite_created(mocker):
-    create_ts = datetime.utcnow().replace(tzinfo=timezone.utc)
-    data = {
-        "updateMask": {"fieldPaths": ["created", "somevalue"]},
-        "oldValue": {"fields": {"created": {"timestampValue": str(create_ts)}}},
-        "value": {"fields": {"somevalue": {"something"}}},
-    }
-    update_modified_document_mock = mocker.patch(
-        "phenoback.functions.documents.update_modified_document"
-    )
-
-    main.process_document_ts_write(data, mocker.MagicMock())
-    update_modified_document_mock.assert_called_once_with(
-        ANY, ANY, data["updateMask"]["fieldPaths"], create_ts
-    )
 
 
 def test_rollover(mocker):

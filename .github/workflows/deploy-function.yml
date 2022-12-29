@@ -115,19 +115,19 @@ jobs:
             entrypoint: rollover_manual
             trigger: --trigger-resource rollover_phenoyear --trigger-event google.pubsub.topic.publish
           - name: process_ts_user
-            entrypoint: process_document_ts_write
+            entrypoint: fs_document_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/users/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
           - name: process_ts_observation
-            entrypoint: process_document_ts_write
+            entrypoint: fs_document_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
           - name: process_ts_individual
-            entrypoint: process_document_ts_write
+            entrypoint: fs_document_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/individuals/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
           - name: process_ts_definitions
-            entrypoint: process_document_ts_write
+            entrypoint: fs_document_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/definitions/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
           - name: process_ts_invite
-            entrypoint: process_document_ts_write
+            entrypoint: fs_document_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/invites/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
           - name: enqueue_individual_map
             entrypoint: enqueue_individual_map_write

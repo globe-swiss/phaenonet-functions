@@ -3,12 +3,37 @@ from datetime import datetime
 from typing import List
 
 from phenoback.utils import firestore as f
+from phenoback.utils import gcloud as g
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 MODIFIED_KEY = "modified"
 CREATED_KEY = "created"
+
+
+def main(data, context):
+    collection_path = g.get_collection_path(context)
+    document_id = g.get_document_id(context)
+    source = g.get_field(data, "source", expected=False) or g.get_field(
+        data, "source", old_value=True, expected=False
+    )
+
+    if g.is_create_event(data):
+        log.debug("document %s was created (%s)", context.resource, source)
+        update_created_document(collection_path, document_id)
+    elif g.is_update_event(data):
+        log.debug("document %s was updated (%s)", context.resource, source)
+        update_modified_document(
+            collection_path,
+            document_id,
+            g.get_fields_updated(data),
+            g.get_field(data, CREATED_KEY, old_value=True, expected=False),
+        )
+    elif g.is_delete_event(data):
+        log.debug("document %s was deleted (%s)", context.resource, source)
+    else:  # pragma: no cover
+        log.error("Unexpected case for %s (%s)", context.resource, source)
 
 
 def update_created_document(collection: str, document_id: str):
