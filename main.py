@@ -76,6 +76,14 @@ def setup(data: Union[dict, flask.Request], context=None, level=logging.DEBUG):
         raise
 
 
+@contextmanager
+def execute():
+    try:
+        yield
+    except Exception as ex:  # pylint: disable=broad-except
+        log.error("Error in execution", exc_info=ex)
+
+
 def _process_observation_activity(data, context, action):
     from phenoback.functions import activity
 
@@ -209,58 +217,19 @@ def process_observation_delete_analytics(data, context):
 
 
 @retry.Retry()
-def process_user_write(data, context):
+def fs_users_write(data, context):
     """
-    Processes user related documents if a user is created, modified or deleted.
-    """
-    with setup(data, context):
-        from phenoback.functions import users
-
-        user_id = get_document_id(context)
-
-        if is_update_event(data) and is_field_updated(data, "nickname"):
-            log.info("update nickname for %s", user_id)
-            users.process_update_nickname(
-                user_id,
-                get_field(data, "nickname", old_value=True),
-                get_field(data, "nickname"),
-            )
-        elif is_delete_event(data):
-            log.info("delete user %s", user_id)
-            users.process_delete_user(
-                user_id, get_field(data, "nickname", old_value=True)
-            )
-        elif is_create_event(data):
-            log.info("create user %s", user_id)
-            users.process_new_user(user_id, get_field(data, "nickname"))
-        else:
-            log.debug("Nothing to do for %s", user_id)
-
-
-@retry.Retry()
-def process_user_write_update_invite(data, context):
-    """
-    Processes invite related documents if a user is created, modified or deleted.
+    Execute all functions to user related document changes (created, modified or deleted).
     """
     with setup(data, context):
-        from phenoback.functions.invite import register
+        with execute():
+            from phenoback.functions import users
 
-        user_id = get_document_id(context)
-        nickname = get_field(
-            data, "nickname", expected=False
-        )  # don't warn on delete event
+            users.main(data, context)
+        with execute():
+            from phenoback.functions.invite import register
 
-        if is_update_event(data) and is_field_updated(data, "nickname"):
-            log.debug("update nickname on invites for user %s", user_id)
-            register.change_nickname(user_id, nickname)
-        elif is_delete_event(data):
-            log.debug("delete invites for user %s", user_id)
-            register.delete_user(user_id)
-        elif is_create_event(data):
-            log.debug("update invites for user %s", user_id)
-            register.register_user(user_id)
-        else:
-            log.debug("Nothing to do for %s", user_id)
+            register.main(data, context)
 
 
 @retry.Retry()

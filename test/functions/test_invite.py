@@ -184,6 +184,10 @@ class TestInvite:
 
 
 class TestRegister:
+    @pytest.mark.skip(reason="todo: refactor context and data handling -> helpers")
+    def test_main(self):
+        pass
+
     @pytest.fixture()
     def lookup(self):
         invite_id = "invite_1"

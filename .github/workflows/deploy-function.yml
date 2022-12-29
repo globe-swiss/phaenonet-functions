@@ -94,14 +94,11 @@ jobs:
             entrypoint: process_observation_delete_analytics
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{observation_id}" --trigger-event providers/cloud.firestore/eventTypes/document.delete
           - name: process_user
-            entrypoint: process_user_write
+            entrypoint: fs_users_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/users/{user_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
           - name: process_invite
             entrypoint: process_invite_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/invites/{invite_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: process_invite_register
-            entrypoint: process_user_write_update_invite
-            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/users/{user_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
           - name: import_wld_data
             entrypoint: import_wld_data_finalize
             trigger: --trigger-resource "$PROJECT.appspot.com" --trigger-event google.storage.object.finalize

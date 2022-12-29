@@ -18,7 +18,19 @@ sentry_sdk.init = MagicMock()
 import main
 
 Context = namedtuple("context", "event_id, resource")
-default_context = Context(event_id="ignored", resource="document_path/document_id")
+default_context = Context(
+    event_id="ignored", resource="document_path/document_id"
+)  # todo: move to fixture
+
+
+@pytest.fixture()
+def context():
+    return default_context
+
+
+@pytest.fixture()
+def data():
+    return {"foo": "bar"}
 
 
 @pytest.mark.parametrize(
@@ -128,6 +140,16 @@ def test_process_observation_write_activity__process_activity_called(
 
     main.process_observation_write_activity("ignored", default_context)
     assert mock.called == expected
+
+
+def test_fs_users_write(mocker, data, context):
+    users_mock = mocker.patch("phenoback.functions.users.main")
+    register_mock = mocker.patch("phenoback.functions.invite.register.main")
+
+    main.fs_users_write(data, context)
+
+    users_mock.assert_called_once_with(data, context)
+    register_mock.assert_called_once_with(data, context)
 
 
 @pytest.mark.parametrize(
@@ -354,11 +376,6 @@ def test_process_invite_sent(mocker, data, expected):
     main.process_invite_write(data, default_context)
     invite_mock.assert_called()
     assert invite_mock.call_args[0][4] == expected
-
-
-@pytest.mark.skip(reason="todo: refactor context and data handling -> helpers")
-def test_process_user_write_update_invite():
-    pass
 
 
 def test_promote_ranger_http(mocker):
