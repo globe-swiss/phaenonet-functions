@@ -14,6 +14,16 @@ THUMBNAIL_WIDTH = 302
 THUMBNAIL_HEIGHT = 302
 
 
+def main(data, context):  # pylint: disable=unused-argument
+    """
+    Creates thumbnails for images uploaded to google cloud storage.
+    """
+    pathfile = data["name"]
+    if pathfile.startswith("images/"):
+        log.info("Process thumbnail for %s", pathfile)
+        process_new_image(pathfile)
+
+
 def process_new_image(pathfile: str, bucket=None) -> bool:
     path = os.path.split(pathfile)[0]
     filename_base = os.path.splitext(os.path.split(pathfile)[1])[0]

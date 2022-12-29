@@ -43,6 +43,29 @@ def data_loaded(input_io):
         wld_import.DATA = wld_import.load_data(input_zip)
 
 
+@pytest.mark.parametrize(
+    "pathfile, called",
+    [
+        (
+            "private/wld_import/anything_in_this_folder",
+            True,
+        ),
+        (
+            "private/other_folder/anything_in_this_folder",
+            False,
+        ),
+    ],
+)
+def test_main(mocker, context, pathfile, called):
+    """
+    Test all thumbnails storage triggers to correctly limit
+    the function invocation to specific folders.
+    """
+    mock = mocker.patch("phenoback.functions.wld_import.import_data")
+    wld_import.main({"name": pathfile}, context)
+    assert mock.called == called
+
+
 def test_check_zip_archive(zippath):
     with ZipFile(zippath, mode="r") as zip_file:
         wld_import.check_zip_archive(zip_file)

@@ -1,3 +1,4 @@
+from collections import namedtuple
 import logging
 from test import emulator
 
@@ -48,3 +49,14 @@ def gcp_location(mocker) -> None:
 def mock_requests(mocker):
     mocker.patch("requests.post")
     mocker.patch("requests.get")
+
+
+@pytest.fixture()
+def context():
+    Context = namedtuple("context", "event_id, resource")
+    return Context(event_id="ignored", resource="document_path/document_id")
+
+
+@pytest.fixture()
+def data():
+    return {"foo": "bar"}

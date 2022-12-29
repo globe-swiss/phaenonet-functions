@@ -17,20 +17,10 @@ sentry_sdk.init = MagicMock()
 
 import main
 
-Context = namedtuple("context", "event_id, resource")
+Context = namedtuple("context", "event_id, resource")  # todo: remove
 default_context = Context(
     event_id="ignored", resource="document_path/document_id"
-)  # todo: move to fixture
-
-
-@pytest.fixture()
-def context():
-    return default_context
-
-
-@pytest.fixture()
-def data():
-    return {"foo": "bar"}
+)  # todo: remove
 
 
 @pytest.mark.parametrize(
@@ -48,6 +38,13 @@ def data():
             ["phenoback.functions.meteoswiss_import.main"],
         ),
         (main.fs_document_write, ["phenoback.functions.documents.main"]),
+        (
+            main.st_appspot_finalize,
+            [
+                "phenoback.functions.thumbnails.main",
+                "phenoback.functions.wld_import.main",
+            ],
+        ),
     ],
 )
 def test_executes(mocker, entrypoint, functions, data, context):
@@ -359,45 +356,6 @@ def test_promote_ranger__email_missing():
         ).get_environ()
     )
     assert main.promote_ranger_http(request).status_code == 400
-
-
-@pytest.mark.parametrize(
-    "main_function, call_function_name, pathfile, called",
-    [
-        (
-            main.create_thumbnail_finalize,
-            "thumbnails.process_new_image",
-            "images/anything_in_this_folder",
-            True,
-        ),
-        (
-            main.create_thumbnail_finalize,
-            "thumbnails.process_new_image",
-            "other_folder/anything_in_this_folder",
-            False,
-        ),
-        (
-            main.import_wld_data_finalize,
-            "wld_import.import_data",
-            "private/wld_import/anything_in_this_folder",
-            True,
-        ),
-        (
-            main.import_wld_data_finalize,
-            "wld_import.import_data",
-            "private/other_folder/anything_in_this_folder",
-            False,
-        ),
-    ],
-)
-def test_storage_triggers(mocker, main_function, call_function_name, pathfile, called):
-    """
-    Test all functions based on storage triggers to correctly limit
-    the function invocation to specific folders.
-    """
-    mock = mocker.patch(f"phenoback.functions.{call_function_name}")
-    main_function({"name": pathfile}, default_context)
-    assert mock.called == called
 
 
 def test_process_dragino_http(mocker):

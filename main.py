@@ -246,9 +246,6 @@ def ps_import_meteoswiss_data_publish(data, context):
 
 @retry.Retry()
 def fs_document_write(data, context):
-    """
-    Updates create and modified timestamps on documents.
-    """
     with setup(data, context):
         with execute():
             from phenoback.functions import documents
@@ -257,17 +254,16 @@ def fs_document_write(data, context):
 
 
 @retry.Retry(predicate=if_exception_type(exceptions.NotFound))
-def create_thumbnail_finalize(data, context):
-    """
-    Creates thumbnails for images uploaded to google cloud storage.
-    """
+def st_appspot_finalize(data, context):
     with setup(data, context):
-        pathfile = data["name"]
-        if pathfile.startswith("images/"):
+        with execute():
             from phenoback.functions import thumbnails
 
-            log.info("Process thumbnail for %s", pathfile)
-            thumbnails.process_new_image(pathfile)
+            thumbnails.main(data, context)
+        with execute():
+            from phenoback.functions import wld_import
+
+            wld_import.main(data, context)
 
 
 def rollover_manual(data, context):
@@ -378,19 +374,6 @@ def promote_ranger_http(request: flask.Request):
         from phenoback.functions import phenorangers
 
         return phenorangers.promote(request_json["email"])
-
-
-def import_wld_data_finalize(data, context):
-    """
-    Import wld data on file upload to private/wld_import
-    """
-    with setup(data, context):
-        pathfile = data["name"]
-        if pathfile.startswith("private/wld_import/"):
-            from phenoback.functions import wld_import
-
-            log.info("Import wld data for %s", pathfile)
-            wld_import.import_data(pathfile)
 
 
 def process_dragino_http(request: flask.Request):

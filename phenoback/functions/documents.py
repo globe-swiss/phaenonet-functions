@@ -13,6 +13,9 @@ CREATED_KEY = "created"
 
 
 def main(data, context):
+    """
+    Updates create and modified timestamps on documents.
+    """
     collection_path = g.get_collection_path(context)
     document_id = g.get_document_id(context)
     source = g.get_field(data, "source", expected=False) or g.get_field(

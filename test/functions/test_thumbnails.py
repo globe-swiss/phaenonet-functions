@@ -12,6 +12,29 @@ def url(path: str):
 
 
 @pytest.mark.parametrize(
+    "pathfile, called",
+    [
+        (
+            "images/anything_in_this_folder",
+            True,
+        ),
+        (
+            "other_folder/anything_in_this_folder",
+            False,
+        ),
+    ],
+)
+def test_main(mocker, context, pathfile, called):
+    """
+    Test all thumbnails storage triggers to correctly limit
+    the function invocation to specific folders.
+    """
+    mock = mocker.patch("phenoback.functions.thumbnails.process_new_image")
+    thumbnails.main({"name": pathfile}, context)
+    assert mock.called == called
+
+
+@pytest.mark.parametrize(
     "image_path",
     ["images/user_id/individuals/test.jpeg", "images/user_id/individuals/test"],
 )
