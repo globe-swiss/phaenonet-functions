@@ -154,7 +154,7 @@ jobs:
             entrypoint: test
             trigger: --trigger-resource test --trigger-event google.pubsub.topic.publish
           - name: e2e_clear_individuals
-            entrypoint: e2e_clear_user_individuals_http
+            entrypoint: http_reset_e2e_data
             trigger: --trigger-http --allow-unauthenticated
             project: phaenonet-test
     env:

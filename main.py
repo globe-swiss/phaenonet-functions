@@ -318,15 +318,12 @@ def http_individuals_write(request: flask.Request):
 
 
 @retry.Retry()
-def e2e_clear_user_individuals_http(request: flask.Request):
-    """
-    Clear all individuals for the e2e test user. This is used for assuring the firestore state before running e2e tests.
-    """
+def http_reset_e2e_data(request: flask.Request):
     with setup(request):
-        from phenoback.functions import e2e
+        with execute():
+            from phenoback.functions import e2e
 
-        e2e.delete_user_individuals("q7lgBm5nm7PUkof20UdZ9D4d0CV2")
-        return flask.Response("ok", HTTPStatus.OK)
+            return e2e.main(request)
 
 
 def promote_ranger_http(request: flask.Request):

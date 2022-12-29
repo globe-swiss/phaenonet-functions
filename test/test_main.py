@@ -86,6 +86,12 @@ def test_executes(mocker, entrypoint, functions, data, context):
                 "phenoback.functions.map.main_process",
             ],
         ),
+        (
+            main.http_reset_e2e_data,
+            [
+                "phenoback.functions.e2e.main",
+            ],
+        ),
     ],
 )
 def test_executes__http(mocker, entrypoint, functions):
@@ -209,13 +215,6 @@ def test_process_observation_write_activity__process_activity_called(
 
     main.process_observation_write_activity("ignored", default_context)
     assert mock.called == expected
-
-
-def test_e2e_clear_user_individuals_http(mocker):
-    e2e_mock = mocker.patch("phenoback.functions.e2e.delete_user_individuals")
-    assert isinstance(main.e2e_clear_user_individuals_http("ignored"), Response)
-    e2e_mock.assert_called_once()
-    e2e_mock.assert_called_with("q7lgBm5nm7PUkof20UdZ9D4d0CV2")
 
 
 def test_promote_ranger_http(mocker):
