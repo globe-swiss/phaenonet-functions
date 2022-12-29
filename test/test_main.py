@@ -92,11 +92,17 @@ def test_executes(mocker, entrypoint, functions, data, context):
                 "phenoback.functions.e2e.main",
             ],
         ),
+        (
+            main.http_promote_ranger,
+            [
+                "phenoback.functions.phenorangers.main",
+            ],
+        ),
     ],
 )
 def test_executes__http(mocker, entrypoint, functions):
     request = object
-    mock_return_value = "value"
+    mock_return_value = "gcf return value"
     mocks = []
     for function in functions:
         mocks.append(mocker.patch(function, return_value=mock_return_value))
@@ -215,38 +221,6 @@ def test_process_observation_write_activity__process_activity_called(
 
     main.process_observation_write_activity("ignored", default_context)
     assert mock.called == expected
-
-
-def test_promote_ranger_http(mocker):
-    email = "test@example.com"
-    promote_mock = mocker.patch("phenoback.functions.phenorangers.promote")
-    request = Request(
-        EnvironBuilder(
-            method="POST",
-            json={"email": email},
-        ).get_environ()
-    )
-    main.promote_ranger_http(request)
-    promote_mock.assert_called_with(email)
-
-
-def test_promote_ranger__content_type():
-    request = Request(
-        EnvironBuilder(
-            method="POST", headers={"content-type": "something"}
-        ).get_environ()
-    )
-    assert main.promote_ranger_http(request).status_code == 415
-
-
-def test_promote_ranger__email_missing():
-    request = Request(
-        EnvironBuilder(
-            method="POST",
-            json={"something": "something"},
-        ).get_environ()
-    )
-    assert main.promote_ranger_http(request).status_code == 400
 
 
 def test_process_dragino_http(mocker):

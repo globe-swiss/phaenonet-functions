@@ -326,25 +326,15 @@ def http_reset_e2e_data(request: flask.Request):
             return e2e.main(request)
 
 
-def promote_ranger_http(request: flask.Request):
+def http_promote_ranger(request: flask.Request):
     """
     Promotes a normal user to Ranger.
     """
     with setup(request):
-        content_type = request.headers["content-type"]
-        if content_type == "application/json":
-            request_json = request.get_json(silent=True)
-            if not (request_json and "email" in request_json):
-                msg = "JSON is invalid, or missing a 'email' property"
-                log.warning(msg)
-                return flask.Response(msg, HTTPStatus.BAD_REQUEST)
-        else:
-            msg = f"Unknown content type: {content_type}, application/json required"
-            return flask.Response(msg, HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
+        with execute():
+            from phenoback.functions import phenorangers
 
-        from phenoback.functions import phenorangers
-
-        return phenorangers.promote(request_json["email"])
+            return phenorangers.main(request)
 
 
 def process_dragino_http(request: flask.Request):

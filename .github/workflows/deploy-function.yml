@@ -148,7 +148,7 @@ jobs:
             entrypoint: set_sensor_http
             trigger: --trigger-http
           - name: promote_ranger
-            entrypoint: promote_ranger_http
+            entrypoint: http_promote_ranger
             trigger: --trigger-http
           - name: test
             entrypoint: test

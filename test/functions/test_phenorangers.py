@@ -2,6 +2,8 @@ from test.util import Doc, get_random_string
 from typing import List
 
 import pytest
+from flask import Request
+from werkzeug.test import EnvironBuilder
 
 from phenoback.functions import phenorangers
 from phenoback.utils import data as d
@@ -27,6 +29,38 @@ def insert_individuals(user: str, source: str, year: int, num: int = 1) -> List[
         )
         doc_ids.append(doc_id)
     return doc_ids
+
+
+def test_main(mocker):
+    email = "test@example.com"
+    promote_mock = mocker.patch("phenoback.functions.phenorangers.promote")
+    request = Request(
+        EnvironBuilder(
+            method="POST",
+            json={"email": email},
+        ).get_environ()
+    )
+    phenorangers.main(request)
+    promote_mock.assert_called_with(email)
+
+
+def test_main__content_type():
+    request = Request(
+        EnvironBuilder(
+            method="POST", headers={"content-type": "something"}
+        ).get_environ()
+    )
+    assert phenorangers.main(request).status_code == 415
+
+
+def test_main__email_missing():
+    request = Request(
+        EnvironBuilder(
+            method="POST",
+            json={"something": "something"},
+        ).get_environ()
+    )
+    assert phenorangers.main(request).status_code == 400
 
 
 def test_set_ranger__new_role(public_user):
