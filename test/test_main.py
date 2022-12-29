@@ -60,6 +60,10 @@ default_context = Context(
             main.fs_invites_write,
             ["phenoback.functions.invite.invite.main"],
         ),
+        (
+            main.fs_individuals_write,
+            ["phenoback.functions.map.main_enqueue"],
+        ),
     ],
 )
 def test_executes(mocker, entrypoint, functions, data, context):
@@ -71,6 +75,31 @@ def test_executes(mocker, entrypoint, functions, data, context):
 
     for mock in mocks:
         mock.assert_called_once_with(data, context)
+
+
+@pytest.mark.parametrize(
+    "entrypoint, functions",
+    [
+        (
+            main.http_individuals_write,
+            [
+                "phenoback.functions.map.main_process",
+            ],
+        ),
+    ],
+)
+def test_executes__http(mocker, entrypoint, functions):
+    request = object
+    mock_return_value = "value"
+    mocks = []
+    for function in functions:
+        mocks.append(mocker.patch(function, return_value=mock_return_value))
+
+    result = entrypoint(request)
+
+    for mock in mocks:
+        mock.assert_called_once_with(request)
+        assert result == mock_return_value
 
 
 @pytest.mark.parametrize(

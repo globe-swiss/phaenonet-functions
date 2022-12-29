@@ -295,41 +295,26 @@ def ps_export_meteoswiss_data_publish(data, context):
 @retry.Retry()
 def fs_invites_write(data, context):
     with setup(data, context):
-        from phenoback.functions.invite import invite
-
         with execute():
+            from phenoback.functions.invite import invite
+
             invite.main(data, context)
 
 
-def enqueue_individual_map_write(data, context):
+def fs_individuals_write(data, context):
     with setup(data, context):
-        import phenoback.functions.map
+        with execute():
+            import phenoback.functions.map
 
-        if not is_delete_event(data):
-            phenoback.functions.map.enqueue_change(
-                get_document_id(context),
-                get_fields_updated(data),
-                get_field(data, "species", expected=False),
-                get_field(data, "station_species", expected=False),
-                get_field(data, "type"),
-                get_field(data, "last_phenophase", expected=False),
-                get_field(data, "geopos"),
-                get_field(data, "source"),
-                get_field(data, "year"),
-                get_field(data, "deveui", expected=False),
-            )
-        else:
-            phenoback.functions.map.delete(
-                get_field(data, "year", old_value=True), get_document_id(context)
-            )
+            phenoback.functions.map.main_enqueue(data, context)
 
 
-def process_individual_map_http(request: flask.Request):
+def http_individuals_write(request: flask.Request):
     with setup(request):
-        import phenoback.functions.map
+        with execute():
+            import phenoback.functions.map
 
-        phenoback.functions.map.process_change(request.get_json(silent=True))
-        return flask.Response("ok", HTTPStatus.OK)
+            return phenoback.functions.map.main_process(request)
 
 
 @retry.Retry()

@@ -1,8 +1,12 @@
 import logging
 from functools import lru_cache
+from http import HTTPStatus
 from typing import Dict, List
 
+from flask import Request, Response
+
 from phenoback.utils import firestore as f
+from phenoback.utils import gcloud as g
 from phenoback.utils import tasks
 
 log = logging.getLogger(__name__)
@@ -12,6 +16,29 @@ QUEUE_NAME = "mapupdates"
 FUNCTION_NAME = "process_individual_map"
 
 DELETE_TOKEN = "__DELETE__"  # nosec
+
+
+def main_enqueue(data, context):
+    if not g.is_delete_event(data):
+        enqueue_change(
+            g.get_document_id(context),
+            g.get_fields_updated(data),
+            g.get_field(data, "species", expected=False),
+            g.get_field(data, "station_species", expected=False),
+            g.get_field(data, "type"),
+            g.get_field(data, "last_phenophase", expected=False),
+            g.get_field(data, "geopos"),
+            g.get_field(data, "source"),
+            g.get_field(data, "year"),
+            g.get_field(data, "deveui", expected=False),
+        )
+    else:
+        delete(g.get_field(data, "year", old_value=True), g.get_document_id(context))
+
+
+def main_process(request: Request):  # pylint: disable=unused-argument
+    process_change(request.get_json(silent=True))
+    return Response("ok", HTTPStatus.OK)
 
 
 @lru_cache
