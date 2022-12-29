@@ -45,6 +45,17 @@ default_context = Context(
                 "phenoback.functions.wld_import.main",
             ],
         ),
+        (
+            main.ps_rollover_phenoyear_publish,
+            [
+                "phenoback.functions.meteoswiss_export.main",
+                "phenoback.functions.rollover.main",
+            ],
+        ),
+        (
+            main.ps_export_meteoswiss_data_publish,
+            ["phenoback.functions.meteoswiss_export.main"],
+        ),
     ],
 )
 def test_executes(mocker, entrypoint, functions, data, context):
@@ -165,21 +176,6 @@ def test_process_observation_write_activity__process_activity_called(
 
     main.process_observation_write_activity("ignored", default_context)
     assert mock.called == expected
-
-
-def test_rollover(mocker):
-    rollover_mock = mocker.patch("phenoback.functions.rollover.rollover")
-    export_mock = mocker.patch("phenoback.functions.meteoswiss_export.process")
-    main.rollover_manual("ignored", default_context)
-    rollover_mock.assert_called_once()
-    export_mock.assert_called_once()
-
-
-@pytest.mark.parametrize("data, expected", [({"year": 2020}, 2020), ({}, None)])
-def test_meteoswiss_export(mocker, data, expected):
-    export_mock = mocker.patch("phenoback.functions.meteoswiss_export.process")
-    main.export_meteoswiss_data_manual(data, default_context)
-    export_mock.assert_called_once_with(expected)
 
 
 def test_e2e_clear_user_individuals_http(mocker):

@@ -16,6 +16,10 @@ SOURCE_ROLLOVER_MAPPING = {
 }
 
 
+def main(data, context):  # pylint: disable=unused-argument
+    rollover()
+
+
 def does_rollover(individual: dict) -> bool:
     source = individual.get("source")
     try:

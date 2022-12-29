@@ -1,7 +1,7 @@
 # pylint: disable=unused-argument
-import phenoback.functions.map
 import pytest
 
+import phenoback.functions.map
 from phenoback.functions import rollover
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
@@ -100,6 +100,12 @@ def get_amt(year: int, field: str = None):
     elif field:
         query = query.order_by(field)
     return len(list(query.stream()))
+
+
+def test_main(mocker, data, context):
+    rollover_mock = mocker.patch("phenoback.functions.rollover.rollover")
+    rollover.main(data, context)
+    rollover_mock.assert_called_once()
 
 
 def test_get_rollover_individuals__roll_amt(current_phenoyear):

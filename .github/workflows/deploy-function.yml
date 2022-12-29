@@ -103,13 +103,13 @@ jobs:
             entrypoint: ps_import_meteoswiss_data_publish
             trigger: --trigger-resource import_meteoswiss_data --trigger-event google.pubsub.topic.publish
           - name: export_meteoswiss_data
-            entrypoint: export_meteoswiss_data_manual
+            entrypoint: ps_export_meteoswiss_data_publish
             trigger: --trigger-resource export_meteoswiss_data --trigger-event google.pubsub.topic.publish
           - name: process_new_files
             entrypoint: st_appspot_finalize
             trigger: --trigger-resource "$PROJECT.appspot.com" --trigger-event google.storage.object.finalize
           - name: rollover_phenoyear
-            entrypoint: rollover_manual
+            entrypoint: ps_rollover_phenoyear_publish
             trigger: --trigger-resource rollover_phenoyear --trigger-event google.pubsub.topic.publish
           - name: process_ts_user
             entrypoint: fs_document_write

@@ -15,6 +15,10 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 
+def main(data, context):  # pylint: disable=unused-argument
+    process(data.get("year"))
+
+
 def process(year: int = None):
     if not year:
         year = d.get_phenoyear()
