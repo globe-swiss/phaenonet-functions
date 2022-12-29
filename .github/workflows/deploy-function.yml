@@ -103,7 +103,7 @@ jobs:
             entrypoint: import_wld_data_finalize
             trigger: --trigger-resource "$PROJECT.appspot.com" --trigger-event google.storage.object.finalize
           - name: import_meteoswiss_data
-            entrypoint: import_meteoswiss_data_publish
+            entrypoint: ps_import_meteoswiss_data_publish
             trigger: --trigger-resource import_meteoswiss_data --trigger-event google.pubsub.topic.publish
           - name: export_meteoswiss_data
             entrypoint: export_meteoswiss_data_manual

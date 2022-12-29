@@ -23,6 +23,13 @@ class ResourceNotFoundException(Exception):
     pass
 
 
+def main(data, context):  # pylint: disable=unused-argument
+    log.info("Import meteoswiss stations")
+    process_stations()
+    log.info("Import meteoswiss observations")
+    process_observations()
+
+
 def process_stations() -> bool:
     response = get(
         "https://data.geo.admin.ch/ch.meteoschweiz.messnetz-phaenologie/ch.meteoschweiz.messnetz-phaenologie_en.csv",

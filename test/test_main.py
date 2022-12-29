@@ -34,6 +34,33 @@ def data():
 
 
 @pytest.mark.parametrize(
+    "entrypoint, functions",
+    [
+        (
+            main.fs_users_write,
+            [
+                "phenoback.functions.users.main",
+                "phenoback.functions.invite.register.main",
+            ],
+        ),
+        (
+            main.ps_import_meteoswiss_data_publish,
+            ["phenoback.functions.meteoswiss_import.main"],
+        ),
+    ],
+)
+def test_executes(mocker, entrypoint, functions, data, context):
+    mocks = []
+    for function in functions:
+        mocks.append(mocker.patch(function))
+
+    entrypoint(data, context)
+
+    for mock in mocks:
+        mock.assert_called_once_with(data, context)
+
+
+@pytest.mark.parametrize(
     "phenophase, expected",
     [
         ("BEA", True),
@@ -140,16 +167,6 @@ def test_process_observation_write_activity__process_activity_called(
 
     main.process_observation_write_activity("ignored", default_context)
     assert mock.called == expected
-
-
-def test_fs_users_write(mocker, data, context):
-    users_mock = mocker.patch("phenoback.functions.users.main")
-    register_mock = mocker.patch("phenoback.functions.invite.register.main")
-
-    main.fs_users_write(data, context)
-
-    users_mock.assert_called_once_with(data, context)
-    register_mock.assert_called_once_with(data, context)
 
 
 @pytest.mark.parametrize(

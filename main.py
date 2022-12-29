@@ -233,17 +233,15 @@ def fs_users_write(data, context):
 
 
 @retry.Retry()
-def import_meteoswiss_data_publish(data, context):
+def ps_import_meteoswiss_data_publish(data, context):
     """
     Imports meteoswiss stations and observations.
     """
     with setup(data, context):
-        from phenoback.functions import meteoswiss_import as meteoswiss
+        with execute():
+            from phenoback.functions import meteoswiss_import
 
-        log.info("Import meteoswiss stations")
-        meteoswiss.process_stations()
-        log.info("Import meteoswiss observations")
-        meteoswiss.process_observations()
+            meteoswiss_import.main(data, context)
 
 
 @retry.Retry()
