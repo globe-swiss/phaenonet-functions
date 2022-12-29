@@ -293,25 +293,12 @@ def ps_export_meteoswiss_data_publish(data, context):
 
 
 @retry.Retry()
-def process_invite_write(data, context):
-    """
-    Send email invites if invite is created or resend is set
-    """
+def fs_invites_write(data, context):
     with setup(data, context):
         from phenoback.functions.invite import invite
 
-        # process if new invite or resend was changed but not deleted
-        if is_create_event(data) or (
-            is_field_updated(data, "resend")
-            and get_field(data, "resend", expected=False)
-        ):
-            invite.process(
-                get_document_id(context),
-                get_field(data, "email"),
-                get_field(data, "locale"),
-                get_field(data, "user"),
-                get_field(data, "sent", expected=False),
-            )
+        with execute():
+            invite.main(data, context)
 
 
 def enqueue_individual_map_write(data, context):

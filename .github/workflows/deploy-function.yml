@@ -97,7 +97,7 @@ jobs:
             entrypoint: fs_users_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/users/{user_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
           - name: process_invite
-            entrypoint: process_invite_write
+            entrypoint: fs_invites_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/invites/{invite_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
           - name: import_meteoswiss_data
             entrypoint: ps_import_meteoswiss_data_publish
