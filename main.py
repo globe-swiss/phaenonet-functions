@@ -78,7 +78,7 @@ def setup(data: Union[dict, flask.Request], context=None, level=logging.DEBUG):
 
 
 @contextmanager
-def execute():
+def invoke():
     try:
         yield
     except Exception as ex:  # pylint: disable=broad-except
@@ -223,11 +223,11 @@ def fs_users_write(data, context):
     Execute all functions to user related document changes (created, modified or deleted).
     """
     with setup(data, context):
-        with execute():
+        with invoke():
             from phenoback.functions import users
 
             users.main(data, context)
-        with execute():
+        with invoke():
             from phenoback.functions.invite import register
 
             register.main(data, context)
@@ -239,7 +239,7 @@ def ps_import_meteoswiss_data(event, context):
     Imports meteoswiss stations and observations.
     """
     with setup(event, context):
-        with execute():
+        with invoke():
             from phenoback.functions import meteoswiss_import
 
             meteoswiss_import.main(event, context)
@@ -248,7 +248,7 @@ def ps_import_meteoswiss_data(event, context):
 @retry.Retry()
 def fs_document_write(data, context):
     with setup(data, context):
-        with execute():
+        with invoke():
             from phenoback.functions import documents
 
             documents.main(data, context)
@@ -257,11 +257,11 @@ def fs_document_write(data, context):
 @retry.Retry(predicate=if_exception_type(exceptions.NotFound))
 def st_appspot_finalize(data, context):
     with setup(data, context):
-        with execute():
+        with invoke():
             from phenoback.functions import thumbnails
 
             thumbnails.main(data, context)
-        with execute():
+        with invoke():
             from phenoback.functions import wld_import
 
             wld_import.main(data, context)
@@ -274,7 +274,7 @@ def ps_rollover_phenoyear(event, context):
     definition in firestore.
     """
     with setup(event, context):
-        with execute():
+        with invoke():
             from phenoback.functions import meteoswiss_export, rollover
 
             meteoswiss_export.main(event, context)
@@ -287,7 +287,7 @@ def ps_export_meteoswiss_data(event, context):
     Manually trigger a meteoswiss export for a given year.
     """
     with setup(event, context):
-        with execute():
+        with invoke():
             from phenoback.functions import meteoswiss_export
 
             meteoswiss_export.main(event, context)
@@ -296,7 +296,7 @@ def ps_export_meteoswiss_data(event, context):
 @retry.Retry()
 def fs_invites_write(data, context):
     with setup(data, context):
-        with execute():
+        with invoke():
             from phenoback.functions.invite import invite
 
             invite.main(data, context)
@@ -304,7 +304,7 @@ def fs_invites_write(data, context):
 
 def fs_individuals_write(data, context):
     with setup(data, context):
-        with execute():
+        with invoke():
             import phenoback.functions.map
 
             phenoback.functions.map.main_enqueue(data, context)
@@ -312,7 +312,7 @@ def fs_individuals_write(data, context):
 
 def http_individuals_write(request: flask.Request):
     with setup(request):
-        with execute():
+        with invoke():
             import phenoback.functions.map
 
             return phenoback.functions.map.main_process(request)
@@ -321,7 +321,7 @@ def http_individuals_write(request: flask.Request):
 @retry.Retry()
 def http_reset_e2e_data(request: flask.Request):
     with setup(request):
-        with execute():
+        with invoke():
             from phenoback.functions import e2e
 
             return e2e.main(request)
@@ -332,7 +332,7 @@ def http_promote_ranger(request: flask.Request):
     Promotes a normal user to Ranger.
     """
     with setup(request):
-        with execute():
+        with invoke():
             from phenoback.functions import phenorangers
 
             return phenorangers.main(request)
@@ -340,7 +340,7 @@ def http_promote_ranger(request: flask.Request):
 
 def http_iot_dragino(request: flask.Request):
     with setup(request):
-        with execute():
+        with invoke():
             from phenoback.functions.iot import dragino
 
             return dragino.main(request)
@@ -348,7 +348,7 @@ def http_iot_dragino(request: flask.Request):
 
 def ps_iot_dragino_app(event, context):
     with setup(g.get_data(event), context):
-        with execute():
+        with invoke():
             from phenoback.functions.iot import app
 
             app.main(event, context)
@@ -356,7 +356,7 @@ def ps_iot_dragino_app(event, context):
 
 def ps_iot_dragino_bq(event, context):
     with setup(g.get_data(event), context):
-        with execute():
+        with invoke():
             from phenoback.functions.iot import bq
 
             bq.main(event, context)
