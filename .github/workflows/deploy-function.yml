@@ -143,7 +143,7 @@ jobs:
             entrypoint: ps_iot_dragino_permarobotics
             trigger: --trigger-resource iot_dragino --trigger-event google.pubsub.topic.publish
           - name: set_sensor
-            entrypoint: set_sensor_http
+            entrypoint: http_set_sensor
             trigger: --trigger-http
           - name: promote_ranger
             entrypoint: http_promote_ranger

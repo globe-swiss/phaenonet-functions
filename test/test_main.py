@@ -2,8 +2,6 @@
 from collections import namedtuple
 
 import pytest
-from flask import Request
-from werkzeug.test import EnvironBuilder
 
 import main  # mocked via fixture
 
@@ -113,6 +111,12 @@ def test_executes__firestore(mocker, entrypoint, functions, data, context):
             main.http_iot_dragino,
             [
                 "phenoback.functions.iot.dragino.main",
+            ],
+        ),
+        (
+            main.http_set_sensor,
+            [
+                "phenoback.functions.iot.app.main_set_sensor",
             ],
         ),
     ],
@@ -261,53 +265,3 @@ def test_process_observation_write_activity__process_activity_called(
 
     main.process_observation_write_activity("ignored", default_context)
     assert mock.called == expected
-
-
-def test_set_sensor_http__ok(mocker):
-    set_sensor_mock = mocker.patch(
-        "phenoback.functions.iot.app.set_sensor", return_value=True
-    )
-    payload = {"individual": "foo", "deveui": "bar", "year": 2000}
-    request = Request(
-        EnvironBuilder(
-            method="POST",
-            json=payload,
-        ).get_environ()
-    )
-
-    result = main.set_sensor_http(request)
-
-    assert result.status_code == 200
-    set_sensor_mock.assert_called_with("foo", 2000, "bar")
-
-
-@pytest.mark.parametrize(
-    "payload, status",
-    [
-        ({"individual": "foo"}, 400),
-        ({"deveui": "bar"}, 400),
-        (
-            {
-                "individual": "foo",
-                "deveui": "bar",
-            },
-            400,
-        ),
-        (
-            {"individual": "foo", "deveui": "bar", "year": 2000},
-            404,
-        ),
-    ],
-)
-def test_set_sensor_http__error(mocker, payload, status):
-    mocker.patch("phenoback.functions.iot.app.set_sensor", return_value=False)
-    request = Request(
-        EnvironBuilder(
-            method="POST",
-            json=payload,
-        ).get_environ()
-    )
-
-    result = main.set_sensor_http(request)
-
-    assert result.status_code == status

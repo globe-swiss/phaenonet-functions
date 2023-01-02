@@ -370,26 +370,12 @@ def ps_iot_dragino_permarobotics(event, context):
             permarobotics.main(event, context)
 
 
-def set_sensor_http(request: flask.Request):
+def http_set_sensor(request: flask.Request):
     with setup(request):
-        from phenoback.functions.iot import app
+        with invoke():
+            from phenoback.functions.iot import app
 
-        msg = "ok"
-        status = HTTPStatus.OK
-        individual = request.json.get("individual")
-        deveui = request.json.get("deveui")
-        year = request.json.get("year")
-
-        if request.is_json and deveui and individual and year:
-            if not app.set_sensor(individual, year, deveui):
-                msg = f"individual {individual} not found in {year}"
-                status = HTTPStatus.NOT_FOUND
-                log.error(msg)
-        else:
-            msg = f"Invalid request (json={request.is_json}, individual={individual}, year={year}, deveui={deveui}"
-            status = HTTPStatus.BAD_REQUEST
-            log.error(msg)
-        return flask.Response(msg, status)
+            return app.main_set_sensor(request)
 
 
 def test(data, context):  # pragma: no cover

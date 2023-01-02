@@ -3,7 +3,9 @@ from test.functions.iot.sample_data import DraginoData as dd
 from zoneinfo import ZoneInfo
 
 import pytest
+from flask import Request
 from freezegun import freeze_time
+from werkzeug.test import EnvironBuilder
 
 from phenoback.functions.iot import app
 from phenoback.utils import data as d
@@ -55,6 +57,56 @@ def test_main(mocker):
     app.main({"data": encoded_data}, None)
 
     process_mock.assert_called_with({"foo": "bar"})
+
+
+def test_main_set_sensor__ok(mocker):
+    set_sensor_mock = mocker.patch(
+        "phenoback.functions.iot.app.set_sensor", return_value=True
+    )
+    payload = {"individual": "foo", "deveui": "bar", "year": 2000}
+    request = Request(
+        EnvironBuilder(
+            method="POST",
+            json=payload,
+        ).get_environ()
+    )
+
+    result = app.main_set_sensor(request)
+
+    assert result.status_code == 200
+    set_sensor_mock.assert_called_with("foo", 2000, "bar")
+
+
+@pytest.mark.parametrize(
+    "payload, status",
+    [
+        ({"individual": "foo"}, 400),
+        ({"deveui": "bar"}, 400),
+        (
+            {
+                "individual": "foo",
+                "deveui": "bar",
+            },
+            400,
+        ),
+        (
+            {"individual": "foo", "deveui": "bar", "year": 2000},
+            404,
+        ),
+    ],
+)
+def test_main_set_sensor__error(mocker, payload, status):
+    mocker.patch("phenoback.functions.iot.app.set_sensor", return_value=False)
+    request = Request(
+        EnvironBuilder(
+            method="POST",
+            json=payload,
+        ).get_environ()
+    )
+
+    result = app.main_set_sensor(request)
+
+    assert result.status_code == status
 
 
 def test_process_dragino__e2e(mocker, individual_id):
