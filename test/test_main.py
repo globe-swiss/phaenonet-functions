@@ -1,10 +1,8 @@
 # pylint: disable=too-many-arguments, wrong-import-position
 from collections import namedtuple
-from datetime import datetime, timezone
-from unittest.mock import ANY, MagicMock
 
 import pytest
-from flask import Request, Response
+from flask import Request
 from werkzeug.test import EnvironBuilder
 
 import main  # mocked via fixture
@@ -19,23 +17,27 @@ default_context = Context(
     "entrypoint, functions",
     [
         (
-            main.ps_import_meteoswiss_data_publish,
+            main.ps_import_meteoswiss_data,
             ["phenoback.functions.meteoswiss_import.main"],
         ),
         (
-            main.ps_rollover_phenoyear_publish,
+            main.ps_rollover_phenoyear,
             [
                 "phenoback.functions.meteoswiss_export.main",
                 "phenoback.functions.rollover.main",
             ],
         ),
         (
-            main.ps_export_meteoswiss_data_publish,
+            main.ps_export_meteoswiss_data,
             ["phenoback.functions.meteoswiss_export.main"],
         ),
         (
-            main.ps_iot_dragino_publish,
+            main.ps_iot_dragino_app,
             ["phenoback.functions.iot.app.main"],
+        ),
+        (
+            main.ps_iot_dragino_bq,
+            ["phenoback.functions.iot.bq.main"],
         ),
     ],
 )
@@ -255,15 +257,6 @@ def test_process_observation_write_activity__process_activity_called(
 
     main.process_observation_write_activity("ignored", default_context)
     assert mock.called == expected
-
-
-def test_process_dragino_bq(mocker):
-    encoded_data = b"eyJmb28iOiJiYXIifQ=="
-    process_mock = mocker.patch("phenoback.utils.bq.insert_data")
-
-    main.process_dragino_bq({"data": encoded_data}, None)
-
-    process_mock.assert_called_with("iot.raw", {"foo": "bar"})
 
 
 def test_set_sensor_http__ok(mocker):

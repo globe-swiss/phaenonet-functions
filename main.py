@@ -234,7 +234,7 @@ def fs_users_write(data, context):
 
 
 @retry.Retry()
-def ps_import_meteoswiss_data_publish(event, context):
+def ps_import_meteoswiss_data(event, context):
     """
     Imports meteoswiss stations and observations.
     """
@@ -267,7 +267,7 @@ def st_appspot_finalize(data, context):
             wld_import.main(data, context)
 
 
-def ps_rollover_phenoyear_publish(event, context):
+def ps_rollover_phenoyear(event, context):
     """
     Rollover the phenoyear and creates data for meteoswiss export.
     Rollover is based on the year defined in the dynamic configuration
@@ -282,7 +282,7 @@ def ps_rollover_phenoyear_publish(event, context):
 
 
 @retry.Retry()
-def ps_export_meteoswiss_data_publish(event, context):
+def ps_export_meteoswiss_data(event, context):
     """
     Manually trigger a meteoswiss export for a given year.
     """
@@ -346,8 +346,7 @@ def http_iot_dragino(request: flask.Request):
             return dragino.main(request)
 
 
-def ps_iot_dragino_publish(event, context):
-    # attributes = event["attributes"]
+def ps_iot_dragino_app(event, context):
     with setup(g.get_data(event), context):
         with execute():
             from phenoback.functions.iot import app
@@ -355,14 +354,12 @@ def ps_iot_dragino_publish(event, context):
             app.main(event, context)
 
 
-def process_dragino_bq(event, context):
-    # attributes = event["attributes"]
-    data = base64.b64decode(event["data"])
-    json_data = json.loads(data)
-    with setup(json_data, context):
-        from phenoback.utils import bq
+def ps_iot_dragino_bq(event, context):
+    with setup(g.get_data(event), context):
+        with execute():
+            from phenoback.functions.iot import bq
 
-        bq.insert_data("iot.raw", json_data)
+            bq.main(event, context)
 
 
 def process_dragino_permarobotics(event, context):

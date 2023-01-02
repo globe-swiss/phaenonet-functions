@@ -98,16 +98,16 @@ jobs:
             entrypoint: fs_invites_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/invites/{invite_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
           - name: import_meteoswiss_data
-            entrypoint: ps_import_meteoswiss_data_publish
+            entrypoint: ps_import_meteoswiss_data
             trigger: --trigger-resource import_meteoswiss_data --trigger-event google.pubsub.topic.publish
           - name: export_meteoswiss_data
-            entrypoint: ps_export_meteoswiss_data_publish
+            entrypoint: ps_export_meteoswiss_data
             trigger: --trigger-resource export_meteoswiss_data --trigger-event google.pubsub.topic.publish
           - name: process_new_files
             entrypoint: st_appspot_finalize
             trigger: --trigger-resource "$PROJECT.appspot.com" --trigger-event google.storage.object.finalize
           - name: rollover_phenoyear
-            entrypoint: ps_rollover_phenoyear_publish
+            entrypoint: ps_rollover_phenoyear
             trigger: --trigger-resource rollover_phenoyear --trigger-event google.pubsub.topic.publish
           - name: process_ts_user
             entrypoint: fs_document_write
@@ -134,10 +134,10 @@ jobs:
             entrypoint: http_iot_dragino
             trigger: --trigger-http --allow-unauthenticated
           - name: process_dragino_phaenonet
-            entrypoint: ps_iot_dragino_publish
+            entrypoint: ps_iot_dragino_app
             trigger: --trigger-resource iot_dragino --trigger-event google.pubsub.topic.publish
           - name: process_dragino_bq
-            entrypoint: process_dragino_bq
+            entrypoint: ps_iot_dragino_bq
             trigger: --trigger-resource iot_dragino --trigger-event google.pubsub.topic.publish
           - name: process_dragino_permarobotics
             entrypoint: process_dragino_permarobotics
