@@ -90,6 +90,12 @@ def test_executes(mocker, entrypoint, functions, data, context):
                 "phenoback.functions.phenorangers.main",
             ],
         ),
+        (
+            main.http_dragino_iot,
+            [
+                "phenoback.functions.iot.dragino.main",
+            ],
+        ),
     ],
 )
 def test_executes__http(mocker, entrypoint, functions):
@@ -213,21 +219,6 @@ def test_process_observation_write_activity__process_activity_called(
 
     main.process_observation_write_activity("ignored", default_context)
     assert mock.called == expected
-
-
-def test_process_dragino_http(mocker):
-    process_mock = mocker.patch("phenoback.functions.iot.dragino.process_dragino")
-    payload = {"foo": "bar"}
-    request = Request(
-        EnvironBuilder(
-            method="POST",
-            json=payload,
-        ).get_environ()
-    )
-    result = main.process_dragino_http(request)
-
-    assert result.status_code == 200
-    process_mock.assert_called_with(payload)
 
 
 def test_process_dragino_phaenonet(mocker):

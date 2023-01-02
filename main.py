@@ -337,16 +337,12 @@ def http_promote_ranger(request: flask.Request):
             return phenorangers.main(request)
 
 
-def process_dragino_http(request: flask.Request):
+def http_dragino_iot(request: flask.Request):
     with setup(request):
-        from phenoback.functions.iot import dragino
+        with execute():
+            from phenoback.functions.iot import dragino
 
-        if request.is_json:
-            dragino.process_dragino(request.json)
-        else:  # pragma: no cover
-            log.error("No json headers found")
-            return flask.Response("No json payload", HTTPStatus.BAD_REQUEST)
-        return flask.Response("ok", HTTPStatus.OK)
+            return dragino.main(request)
 
 
 def process_dragino_phaenonet(event, context):

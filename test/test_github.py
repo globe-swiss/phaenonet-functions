@@ -22,7 +22,7 @@ def main_yaml():
 
 
 @pytest.fixture
-def main_entrypoints():
+def main_functions():
     return [f[0] for f in getmembers(main, isfunction)]
 
 
@@ -46,8 +46,10 @@ def github_deploy_options(deploy_yaml):
     return deploy_yaml["on"]["workflow_dispatch"]["inputs"]["function"]["options"].data
 
 
-def test_entrypoints(main_entrypoints, github_entrypoints):
-    assert set(github_entrypoints).issubset(main_entrypoints)
+def test_entrypoints(main_functions, github_entrypoints):
+    assert set(github_entrypoints).issubset(
+        main_functions
+    ), f"Entrypoints not found in main: {set(github_entrypoints) - set(main_functions)}"
 
 
 def test_function_names(github_function_names, github_deploy_options):

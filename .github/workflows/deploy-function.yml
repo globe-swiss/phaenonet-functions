@@ -131,7 +131,7 @@ jobs:
             entrypoint: http_individuals_write
             trigger: --trigger-http
           - name: process_dragino_http
-            entrypoint: process_dragino_http
+            entrypoint: http_dragino_iot
             trigger: --trigger-http --allow-unauthenticated
           - name: process_dragino_phaenonet
             entrypoint: process_dragino_phaenonet

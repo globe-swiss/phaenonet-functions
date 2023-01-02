@@ -2,6 +2,9 @@ import logging
 from collections import defaultdict
 from datetime import datetime
 from functools import lru_cache
+from http import HTTPStatus
+
+from flask import Request, Response
 
 from phenoback.functions.iot.decoder import Decoder
 from phenoback.utils import pubsub, tasks
@@ -12,6 +15,15 @@ log.setLevel(logging.DEBUG)
 TOPIC_ID = "iot_dragino"
 DOWNLINK_QUEUE = "swisscom-iot"
 DOWNLINK_URL = "https://proxy1.lpn.swisscom.ch/thingpark/lrc/rest/downlink"
+
+
+def main(request: Request):
+    if request.is_json:
+        process_dragino(request.json)
+    else:  # pragma: no cover
+        log.error("No json headers found")
+        return Response("No json payload", HTTPStatus.BAD_REQUEST)
+    return Response("ok", HTTPStatus.OK)
 
 
 @lru_cache
