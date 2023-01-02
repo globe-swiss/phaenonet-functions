@@ -19,6 +19,20 @@ def clear_emulator_data():
     )
 
 
+@pytest.fixture(autouse=True)
+def mock_main(mocker):
+    import firebase_admin
+    import sentry_sdk
+
+    from phenoback.utils import glogging
+
+    firebase_admin.initialize_app = mocker.Mock()
+    glogging.init = mocker.Mock()
+    sentry_sdk.init = mocker.Mock()
+
+    import main  # pylint disable=unused-import
+
+
 @pytest.fixture()
 def caperrors(caplog):
     caplog.set_level(logging.ERROR)

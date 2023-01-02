@@ -3,19 +3,11 @@ from collections import namedtuple
 from datetime import datetime, timezone
 from unittest.mock import ANY, MagicMock
 
-import firebase_admin
 import pytest
-import sentry_sdk
 from flask import Request, Response
 from werkzeug.test import EnvironBuilder
 
-from phenoback.utils import glogging
-
-firebase_admin.initialize_app = MagicMock()
-glogging.init = MagicMock()
-sentry_sdk.init = MagicMock()
-
-import main
+import main  # mocked via fixture
 
 Context = namedtuple("context", "event_id, resource")  # todo: remove
 default_context = Context(

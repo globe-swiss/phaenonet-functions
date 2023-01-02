@@ -16,34 +16,32 @@ on:
         required: true
         type: choice
         options:
-          # - all
-          # - process_observation_activity
-          # - process_observation_create_analytics
-          # - process_observation_update_analytics
-          # - process_observation_delete_analytics
-          # - process_user
-          # - process_invite
-          # - process_invite_register
-          # - import_wld_data
-          # - import_meteoswiss_data
-          # - export_meteoswiss_data
-          # - create_thumbnails
-          # - rollover_phenoyear
-          # - process_ts_user
-          # - process_ts_observation
-          # - process_ts_individual
-          # - process_ts_definitions
-          # - process_ts_invite
-          # - enqueue_individual_map
-          # - process_individual_map
-          # - process_dragino_http
-          # - process_dragino_phaenonet
-          # - process_dragino_bq
-          # - process_dragino_permarobotics
-          # - set_sensor
-          # - promote_ranger
-          # - test
-          # - e2e_clear_individuals
+          - all
+          - process_observation_activity
+          - process_observation_create_analytics
+          - process_observation_update_analytics
+          - process_observation_delete_analytics
+          - process_user
+          - process_invite
+          - import_meteoswiss_data
+          - export_meteoswiss_data
+          - process_new_files
+          - rollover_phenoyear
+          - process_ts_user
+          - process_ts_observation
+          - process_ts_individual
+          - process_ts_definitions
+          - process_ts_invite
+          - enqueue_individual_map
+          - process_individual_map
+          - process_dragino_http
+          - process_dragino_phaenonet
+          - process_dragino_bq
+          - process_dragino_permarobotics
+          - set_sensor
+          - promote_ranger
+          - test
+          - e2e_clear_individuals
       action:
         description: Action
         required: true
