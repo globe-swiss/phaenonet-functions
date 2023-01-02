@@ -233,15 +233,15 @@ def fs_users_write(data, context):
 
 
 @retry.Retry()
-def ps_import_meteoswiss_data_publish(data, context):
+def ps_import_meteoswiss_data_publish(event, context):
     """
     Imports meteoswiss stations and observations.
     """
-    with setup(data, context):
+    with setup(event, context):
         with execute():
             from phenoback.functions import meteoswiss_import
 
-            meteoswiss_import.main(data, context)
+            meteoswiss_import.main(event, context)
 
 
 @retry.Retry()
@@ -266,30 +266,30 @@ def st_appspot_finalize(data, context):
             wld_import.main(data, context)
 
 
-def ps_rollover_phenoyear_publish(data, context):
+def ps_rollover_phenoyear_publish(event, context):
     """
     Rollover the phenoyear and creates data for meteoswiss export.
     Rollover is based on the year defined in the dynamic configuration
     definition in firestore.
     """
-    with setup(data, context):
+    with setup(event, context):
         with execute():
             from phenoback.functions import meteoswiss_export, rollover
 
-            meteoswiss_export.main(data, context)
-            rollover.main(data, context)
+            meteoswiss_export.main(event, context)
+            rollover.main(event, context)
 
 
 @retry.Retry()
-def ps_export_meteoswiss_data_publish(data, context):
+def ps_export_meteoswiss_data_publish(event, context):
     """
     Manually trigger a meteoswiss export for a given year.
     """
-    with setup(data, context):
+    with setup(event, context):
         with execute():
             from phenoback.functions import meteoswiss_export
 
-            meteoswiss_export.main(data, context)
+            meteoswiss_export.main(event, context)
 
 
 @retry.Retry()

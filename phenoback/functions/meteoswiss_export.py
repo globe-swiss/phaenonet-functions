@@ -16,7 +16,7 @@ log.setLevel(logging.INFO)
 
 
 def main(data, context):  # pylint: disable=unused-argument
-    process(data.get("year"))
+    process()
 
 
 def process(year: int = None):
