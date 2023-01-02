@@ -1,3 +1,5 @@
+import base64
+import json
 import logging
 import os
 from datetime import datetime
@@ -104,3 +106,8 @@ def get_version() -> str:  # pragma: no cover
 
 def get_location() -> str:  # pragma: no cover
     return os.getenv("location")
+
+
+def get_data(pubsub_event):
+    data = base64.b64decode(pubsub_event["data"])
+    return json.loads(data)

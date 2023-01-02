@@ -48,6 +48,15 @@ def today() -> str:
     return datetime.date.today().strftime("%Y-%m-%d")
 
 
+def test_main(mocker):
+    encoded_data = b"eyJmb28iOiJiYXIifQ=="
+    process_mock = mocker.patch("phenoback.functions.iot.app.process_dragino")
+
+    app.main({"data": encoded_data}, None)
+
+    process_mock.assert_called_with({"foo": "bar"})
+
+
 def test_process_dragino__e2e(mocker, individual_id):
     update_spy = mocker.spy(app, "update")
     app.process_dragino(dd.SAMPLE_DATA)

@@ -19,23 +19,8 @@ default_context = Context(
     "entrypoint, functions",
     [
         (
-            main.fs_users_write,
-            [
-                "phenoback.functions.users.main",
-                "phenoback.functions.invite.register.main",
-            ],
-        ),
-        (
             main.ps_import_meteoswiss_data_publish,
             ["phenoback.functions.meteoswiss_import.main"],
-        ),
-        (main.fs_document_write, ["phenoback.functions.documents.main"]),
-        (
-            main.st_appspot_finalize,
-            [
-                "phenoback.functions.thumbnails.main",
-                "phenoback.functions.wld_import.main",
-            ],
         ),
         (
             main.ps_rollover_phenoyear_publish,
@@ -49,6 +34,34 @@ default_context = Context(
             ["phenoback.functions.meteoswiss_export.main"],
         ),
         (
+            main.ps_iot_dragino_publish,
+            ["phenoback.functions.iot.app.main"],
+        ),
+    ],
+)
+def test_executes__pubsub(mocker, entrypoint, functions, pubsub_event, context):
+    mocks = []
+    for function in functions:
+        mocks.append(mocker.patch(function))
+
+    entrypoint(pubsub_event, context)
+
+    for mock in mocks:
+        mock.assert_called_once_with(pubsub_event, context)
+
+
+@pytest.mark.parametrize(
+    "entrypoint, functions",
+    [
+        (
+            main.fs_users_write,
+            [
+                "phenoback.functions.users.main",
+                "phenoback.functions.invite.register.main",
+            ],
+        ),
+        (main.fs_document_write, ["phenoback.functions.documents.main"]),
+        (
             main.fs_invites_write,
             ["phenoback.functions.invite.invite.main"],
         ),
@@ -58,7 +71,7 @@ default_context = Context(
         ),
     ],
 )
-def test_executes(mocker, entrypoint, functions, data, context):
+def test_executes__firestore(mocker, entrypoint, functions, data, context):
     mocks = []
     for function in functions:
         mocks.append(mocker.patch(function))
@@ -91,7 +104,7 @@ def test_executes(mocker, entrypoint, functions, data, context):
             ],
         ),
         (
-            main.http_dragino_iot,
+            main.http_iot_dragino,
             [
                 "phenoback.functions.iot.dragino.main",
             ],
@@ -110,6 +123,29 @@ def test_executes__http(mocker, entrypoint, functions):
     for mock in mocks:
         mock.assert_called_once_with(request)
         assert result == mock_return_value
+
+
+@pytest.mark.parametrize(
+    "entrypoint, functions",
+    [
+        (
+            main.st_appspot_finalize,
+            [
+                "phenoback.functions.thumbnails.main",
+                "phenoback.functions.wld_import.main",
+            ],
+        ),
+    ],
+)
+def test_executes__storage(mocker, entrypoint, functions, data, context):
+    mocks = []
+    for function in functions:
+        mocks.append(mocker.patch(function))
+
+    entrypoint(data, context)
+
+    for mock in mocks:
+        mock.assert_called_once_with(data, context)
 
 
 @pytest.mark.parametrize(
@@ -219,15 +255,6 @@ def test_process_observation_write_activity__process_activity_called(
 
     main.process_observation_write_activity("ignored", default_context)
     assert mock.called == expected
-
-
-def test_process_dragino_phaenonet(mocker):
-    encoded_data = b"eyJmb28iOiJiYXIifQ=="
-    process_mock = mocker.patch("phenoback.functions.iot.app.process_dragino")
-
-    main.process_dragino_phaenonet({"data": encoded_data}, None)
-
-    process_mock.assert_called_with({"foo": "bar"})
 
 
 def test_process_dragino_bq(mocker):

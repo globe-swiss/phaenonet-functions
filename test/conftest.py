@@ -74,3 +74,8 @@ def context():
 @pytest.fixture()
 def data():
     return {"foo": "bar"}
+
+
+@pytest.fixture()
+def pubsub_event():
+    return {"data": b"eyJmb28iOiJiYXIifQ=="}

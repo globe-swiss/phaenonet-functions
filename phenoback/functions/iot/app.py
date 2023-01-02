@@ -8,6 +8,7 @@ from tzlocal import get_localzone
 
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
+import phenoback.utils.gcloud as g
 from phenoback.functions.iot import dragino
 from phenoback.functions.iot.dragino import DraginoDecoder
 
@@ -15,6 +16,11 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 COLLECTION = "sensors"
+
+
+def main(event, context):  # pylint: disable=unused-argument
+    json_data = g.get_data(event)
+    process_dragino(json_data)
 
 
 def process_dragino(data: dict) -> None:

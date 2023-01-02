@@ -15,6 +15,7 @@ from google.api_core import exceptions, retry
 from google.api_core.retry import if_exception_type
 from sentry_sdk.integrations.gcp import GcpIntegration
 
+import phenoback.utils.gcloud as g
 from phenoback.utils import glogging
 from phenoback.utils.gcloud import (
     get_collection_path,
@@ -337,7 +338,7 @@ def http_promote_ranger(request: flask.Request):
             return phenorangers.main(request)
 
 
-def http_dragino_iot(request: flask.Request):
+def http_iot_dragino(request: flask.Request):
     with setup(request):
         with execute():
             from phenoback.functions.iot import dragino
@@ -345,14 +346,13 @@ def http_dragino_iot(request: flask.Request):
             return dragino.main(request)
 
 
-def process_dragino_phaenonet(event, context):
+def ps_iot_dragino_publish(event, context):
     # attributes = event["attributes"]
-    data = base64.b64decode(event["data"])
-    json_data = json.loads(data)
-    with setup(json_data, context):
-        from phenoback.functions.iot import app
+    with setup(g.get_data(event), context):
+        with execute():
+            from phenoback.functions.iot import app
 
-        app.process_dragino(json_data)
+            app.main(event, context)
 
 
 def process_dragino_bq(event, context):
@@ -399,8 +399,6 @@ def set_sensor_http(request: flask.Request):
 
 def test(data, context):  # pragma: no cover
     from time import sleep
-
-    from phenoback.utils import gcloud as g
 
     with setup(data, context):
         log.info("Environment: %s", str(os.environ))

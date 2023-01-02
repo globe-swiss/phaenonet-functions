@@ -131,10 +131,10 @@ jobs:
             entrypoint: http_individuals_write
             trigger: --trigger-http
           - name: process_dragino_http
-            entrypoint: http_dragino_iot
+            entrypoint: http_iot_dragino
             trigger: --trigger-http --allow-unauthenticated
           - name: process_dragino_phaenonet
-            entrypoint: process_dragino_phaenonet
+            entrypoint: ps_iot_dragino_publish
             trigger: --trigger-resource iot_dragino --trigger-event google.pubsub.topic.publish
           - name: process_dragino_bq
             entrypoint: process_dragino_bq
