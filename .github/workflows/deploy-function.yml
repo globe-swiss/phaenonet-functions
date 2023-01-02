@@ -140,7 +140,7 @@ jobs:
             entrypoint: ps_iot_dragino_bq
             trigger: --trigger-resource iot_dragino --trigger-event google.pubsub.topic.publish
           - name: process_dragino_permarobotics
-            entrypoint: process_dragino_permarobotics
+            entrypoint: ps_iot_dragino_permarobotics
             trigger: --trigger-resource iot_dragino --trigger-event google.pubsub.topic.publish
           - name: set_sensor
             entrypoint: set_sensor_http

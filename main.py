@@ -362,14 +362,12 @@ def ps_iot_dragino_bq(event, context):
             bq.main(event, context)
 
 
-def process_dragino_permarobotics(event, context):
-    # attributes = event["attributes"]
-    data = base64.b64decode(event["data"])
-    json_data = json.loads(data)
-    with setup(json_data, context):
-        from phenoback.functions.iot import permarobotics
+def ps_iot_dragino_permarobotics(event, context):
+    with setup(g.get_data(event), context):
+        with invoke():
+            from phenoback.functions.iot import permarobotics
 
-        permarobotics.send_permarobotics(json_data)
+            permarobotics.main(event, context)
 
 
 def set_sensor_http(request: flask.Request):

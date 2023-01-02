@@ -39,6 +39,10 @@ default_context = Context(
             main.ps_iot_dragino_bq,
             ["phenoback.functions.iot.bq.main"],
         ),
+        (
+            main.ps_iot_dragino_permarobotics,
+            ["phenoback.functions.iot.permarobotics.main"],
+        ),
     ],
 )
 def test_executes__pubsub(mocker, entrypoint, functions, pubsub_event, context):
