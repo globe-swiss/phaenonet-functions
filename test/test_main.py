@@ -73,6 +73,10 @@ def test_executes__pubsub(mocker, entrypoint, functions, pubsub_event, context):
             main.fs_individuals_write,
             ["phenoback.functions.map.main_enqueue"],
         ),
+        (
+            main.fs_observations_write,
+            ["phenoback.functions.activity.main"],
+        ),
     ],
 )
 def test_executes__firestore(mocker, entrypoint, functions, data, context):
@@ -240,28 +244,3 @@ def test_process_observation_delete_analytics__process_remove_observation(
     main.process_observation_delete_analytics("ignored", default_context)
     assert mock.called == expected
     assert observation_mock.called
-
-
-@pytest.mark.parametrize(
-    "phenophase, is_create, date_updated, is_delete, expected",
-    [
-        ("XXX", True, False, False, True),
-        ("XXX", False, True, False, True),
-        ("XXX", False, False, True, True),
-        ("XXX", False, False, False, False),
-    ],
-)
-def test_process_observation_write_activity__process_activity_called(
-    mocker, phenophase, is_create, date_updated, is_delete, expected
-):
-    mocker.patch("phenoback.functions.analytics.process_observation")
-    mocker.patch("phenoback.functions.analytics.process_remove_observation")
-    mocker.patch("phenoback.functions.observation.updated_observation")
-    mock = mocker.patch("phenoback.functions.activity.process_observation")
-    mocker.patch("main.is_create_event", return_value=is_create)
-    mocker.patch("main.is_field_updated", return_value=date_updated)
-    mocker.patch("main.is_delete_event", return_value=is_delete)
-    mocker.patch("main.get_field", return_value=phenophase)
-
-    main.process_observation_write_activity("ignored", default_context)
-    assert mock.called == expected

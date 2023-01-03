@@ -2,11 +2,46 @@ import logging
 from datetime import datetime
 from typing import Set
 
-from phenoback.utils.data import get_individual, get_phenophase, get_species, get_user
-from phenoback.utils.firestore import query_collection, write_document
+from phenoback.utils import data as d
+from phenoback.utils import firestore as f
+from phenoback.utils import gcloud as g
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
+
+
+def main(data, context):
+    """
+    Creates an activity when an observation is created, modified or deleted in
+    Firestore **and** the user or individual of that observation is being followed.
+    """
+    observation_id = g.get_document_id(context)
+    if g.is_create_event(data):
+        log.info("Add create activity for observation %s", observation_id)
+        _main(data, context, "create")
+    elif g.is_field_updated(data, "date"):
+        log.info("Add modify activity for observation %s", observation_id)
+        _main(data, context, "modify")
+    elif g.is_delete_event(data):
+        log.info("Add delete activity for observation %s", observation_id)
+        _main(data, context, "delete")
+    else:
+        log.debug("No activity to add")
+
+
+def _main(data, context, action):
+    is_delete = action == "delete"
+    process_observation(
+        event_id=context.event_id,
+        observation_id=g.get_document_id(context),
+        individual_id=g.get_field(data, "individual_id", old_value=is_delete),
+        user_id=g.get_field(data, "user", old_value=is_delete),
+        phenophase=g.get_field(data, "phenophase", old_value=is_delete),
+        source=g.get_field(data, "source", old_value=is_delete),
+        species=g.get_field(data, "species", old_value=is_delete),
+        individual=g.get_field(data, "individual", old_value=is_delete),
+        action=action,
+    )
 
 
 def process_observation(
@@ -20,7 +55,7 @@ def process_observation(
     individual: str,
     action: str,
 ) -> bool:
-    individual_dict = get_individual(individual_id)
+    individual_dict = d.get_individual(individual_id)
     if not individual_dict:
         log.error(
             "Individual %s not found. Was it deleted in the meantime?", individual_id
@@ -39,13 +74,13 @@ def process_observation(
             "species": species,
             "activity_date": datetime.now(),
             "individual_name": individual_dict["name"],
-            "phenophase_name": get_phenophase(species, phenophase)["de"],
-            "species_name": get_species(species)["de"],
-            "user_name": get_user(user_id)["nickname"],
+            "phenophase_name": d.get_phenophase(species, phenophase)["de"],
+            "species_name": d.get_species(species)["de"],
+            "user_name": d.get_user(user_id)["nickname"],
             "action": action,
             "followers": list(followers),
         }
-        write_document("activities", event_id, data)
+        f.write_document("activities", event_id, data)
         return True
     else:
         log.debug(
@@ -55,10 +90,10 @@ def process_observation(
 
 
 def get_followers(individual: str, user_id: str) -> Set[str]:
-    following_users_query = query_collection(
+    following_users_query = f.query_collection(
         "users", "following_users", "array_contains", user_id
     )
-    following_individuals_query = query_collection(
+    following_individuals_query = f.query_collection(
         "users", "following_individuals", "array_contains", individual
     )
 

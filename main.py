@@ -85,42 +85,12 @@ def invoke():
         log.error("Error in execution", exc_info=ex)
 
 
-def _process_observation_activity(data, context, action):
-    from phenoback.functions import activity
-
-    delete_op = action == "delete"
-    activity.process_observation(
-        event_id=context.event_id,
-        observation_id=get_document_id(context),
-        individual_id=get_field(data, "individual_id", old_value=delete_op),
-        user_id=get_field(data, "user", old_value=delete_op),
-        phenophase=get_field(data, "phenophase", old_value=delete_op),
-        source=get_field(data, "source", old_value=delete_op),
-        species=get_field(data, "species", old_value=delete_op),
-        individual=get_field(data, "individual", old_value=delete_op),
-        action=action,
-    )
-
-
-@retry.Retry()
-def process_observation_write_activity(data, context):
-    """
-    Creates an activity when an observation is created, modified or deleted in
-    Firestore **and** the user or individual of that observation is being followed.
-    """
+def fs_observations_write(data, context):
     with setup(data, context):
-        observation_id = get_document_id(context)
-        if is_create_event(data):
-            log.info("Add create activity for observation %s", observation_id)
-            _process_observation_activity(data, context, "create")
-        elif is_field_updated(data, "date"):
-            log.info("Add modify activity for observation %s", observation_id)
-            _process_observation_activity(data, context, "modify")
-        elif is_delete_event(data):
-            log.info("Add delete activity for observation %s", observation_id)
-            _process_observation_activity(data, context, "delete")
-        else:
-            log.debug("No activity to add")
+        with invoke():
+            from phenoback.functions import activity
+
+            activity.main(data, context)
 
 
 @retry.Retry()
