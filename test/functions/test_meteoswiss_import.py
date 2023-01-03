@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use, protected-access
+# pylint: disable=protected-access
 import csv
 import test
 from collections import namedtuple

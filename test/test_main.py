@@ -1,14 +1,7 @@
 # pylint: disable=too-many-arguments, wrong-import-position
-from collections import namedtuple
-
 import pytest
 
 import main  # mocked via fixture
-
-Context = namedtuple("context", "event_id, resource")  # todo: remove
-default_context = Context(
-    event_id="ignored", resource="document_path/document_id"
-)  # todo: remove
 
 
 @pytest.mark.parametrize(

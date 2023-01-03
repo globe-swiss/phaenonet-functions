@@ -1,3 +1,4 @@
+# pylint: disable=import-outside-toplevel
 import logging
 from collections import namedtuple
 from test import emulator
@@ -30,7 +31,7 @@ def mock_main(mocker):
     glogging.init = mocker.Mock()
     sentry_sdk.init = mocker.Mock()
 
-    import main  # pylint disable=unused-import
+    import main  # pylint: disable=unused-import
 
 
 @pytest.fixture()
