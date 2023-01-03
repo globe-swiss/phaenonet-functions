@@ -19,12 +19,12 @@ def main(data, context):
     if g.is_create_event(data):
         log.info("Add create activity for observation %s", observation_id)
         _main(data, context, "create")
-    elif g.is_field_updated(data, "date"):
-        log.info("Add modify activity for observation %s", observation_id)
-        _main(data, context, "modify")
     elif g.is_delete_event(data):
         log.info("Add delete activity for observation %s", observation_id)
         _main(data, context, "delete")
+    elif g.is_field_updated(data, "date"):
+        log.info("Add modify activity for observation %s", observation_id)
+        _main(data, context, "modify")
     else:
         log.debug("No activity to add")
 

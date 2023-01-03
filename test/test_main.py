@@ -75,7 +75,11 @@ def test_executes__pubsub(mocker, entrypoint, functions, pubsub_event, context):
         ),
         (
             main.fs_observations_write,
-            ["phenoback.functions.activity.main"],
+            [
+                "phenoback.functions.activity.main",
+                "phenoback.functions.analytics.main",
+                "phenoback.functions.individual.main",
+            ],
         ),
     ],
 )
@@ -160,87 +164,3 @@ def test_executes__storage(mocker, entrypoint, functions, data, context):
 
     for mock in mocks:
         mock.assert_called_once_with(data, context)
-
-
-@pytest.mark.parametrize(
-    "phenophase, expected",
-    [
-        ("BEA", True),
-        ("BLA", True),
-        ("BFA", True),
-        ("BVA", True),
-        ("FRA", True),
-        ("XXX", False),
-    ],
-)
-def test_process_observation_create_analytics__process_observation_called(
-    mocker, phenophase, expected
-):
-    po_mock = mocker.patch("phenoback.functions.analytics.process_observation")
-    lo_mock = mocker.patch("phenoback.functions.observation.updated_observation")
-    mocker.patch("phenoback.functions.activity.process_observation")
-    mocker.patch("main.get_field", return_value=phenophase)
-
-    main.process_observation_create_analytics("ignored", default_context)
-    assert po_mock.called == expected
-    assert lo_mock.called
-
-
-@pytest.mark.parametrize(
-    "phenophase, date_updated, expected",
-    [
-        ("BEA", True, True),
-        ("BLA", True, True),
-        ("BFA", True, True),
-        ("BVA", True, True),
-        ("FRA", True, True),
-        ("XXX", True, False),
-        ("BEA", False, False),
-        ("BLA", False, False),
-        ("BFA", False, False),
-        ("BVA", False, False),
-        ("FRA", False, False),
-        ("XXX", False, False),
-    ],
-)
-def test_process_observation_update_analytics__process_observation_called(
-    mocker, phenophase, date_updated, expected
-):
-    mock = mocker.patch("phenoback.functions.analytics.process_observation")
-    observation_mock = mocker.patch(
-        "phenoback.functions.observation.updated_observation"
-    )
-    mocker.patch("phenoback.functions.activity.process_observation")
-    mocker.patch("main.is_field_updated", return_value=date_updated)
-    mocker.patch("main.get_field", return_value=phenophase)
-
-    main.process_observation_update_analytics("ignored", default_context)
-    assert mock.called == expected
-    assert observation_mock.called == date_updated
-
-
-@pytest.mark.parametrize(
-    "phenophase, expected",
-    [
-        ("BEA", True),
-        ("BLA", True),
-        ("BFA", True),
-        ("BVA", True),
-        ("FRA", True),
-        ("XXX", False),
-    ],
-)
-def test_process_observation_delete_analytics__process_remove_observation(
-    mocker, phenophase, expected
-):
-    mocker.patch("phenoback.functions.analytics.process_observation")
-    mock = mocker.patch("phenoback.functions.analytics.process_remove_observation")
-    observation_mock = mocker.patch(
-        "phenoback.functions.observation.updated_observation"
-    )
-    mocker.patch("phenoback.functions.activity.process_observation")
-    mocker.patch("main.get_field", return_value=phenophase)
-
-    main.process_observation_delete_analytics("ignored", default_context)
-    assert mock.called == expected
-    assert observation_mock.called

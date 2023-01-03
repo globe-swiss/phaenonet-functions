@@ -1,11 +1,8 @@
 # allow import outside toplevel as not all modules need to be loaded for every function
 # pylint: disable=import-outside-toplevel
-import base64
-import json
 import logging
 import os
 from contextlib import contextmanager
-from http import HTTPStatus
 from typing import Tuple, Union
 
 import firebase_admin
@@ -55,8 +52,6 @@ firebase_admin.initialize_app(
 
 log: logging.Logger = None  # pylint: disable=invalid-name
 
-ANALYTIC_PHENOPHASES = ("BEA", "BLA", "BFA", "BVA", "FRA")
-
 
 @contextmanager  # workaround as stackdriver fails to capture stackstraces
 def setup(data: Union[dict, flask.Request], context=None, level=logging.DEBUG):
@@ -91,100 +86,14 @@ def fs_observations_write(data, context):
             from phenoback.functions import activity
 
             activity.main(data, context)
-
-
-@retry.Retry()
-def process_observation_create_analytics(data, context):
-    """
-    Updates analytic values in Firestore when an observation is created in Firestore.
-    """
-    with setup(data, context):
-        from phenoback.functions import observation
-
-        observation_id = get_document_id(context)
-        phenophase = get_field(data, "phenophase")
-        individual_id = get_field(data, "individual_id")
-        source = get_field(data, "source")
-        year = get_field(data, "year")
-        species = get_field(data, "species")
-        observation_date = get_field(data, "date")
-
-        if phenophase in ANALYTIC_PHENOPHASES:
+        with invoke():
             from phenoback.functions import analytics
 
-            log.info(
-                "Process analytic values for %s, phenophase %s",
-                observation_id,
-                phenophase,
-            )
-            analytics.process_observation(
-                observation_id,
-                observation_date,
-                individual_id,
-                source,
-                year,
-                species,
-                phenophase,
-            )
-        else:
-            log.debug(
-                "No analytic values processed for %s, phenophase %s",
-                observation_id,
-                phenophase,
-            )
-        # LAST OBSERVATION DATE
-        log.info(
-            "Process last observation date for %s, phenophase %s",
-            observation_id,
-            phenophase,
-        )
-        observation.updated_observation(individual_id)
+            analytics.main(data, context)
+        with invoke():
+            from phenoback.functions import individual
 
-
-@retry.Retry()
-def process_observation_update_analytics(data, context):
-    """
-    Updates analytical values in Firestore if the observation date was modified on a observation document.
-    """
-    with setup(data, context):
-        if is_field_updated(data, "date") or is_field_updated(data, "reprocess"):
-            process_observation_create_analytics(data, context)
-
-
-@retry.Retry()
-def process_observation_delete_analytics(data, context):
-    """
-    Updates analytical values in Firestore if an observation was deleted.
-    """
-    with setup(data, context):
-        from phenoback.functions import observation
-
-        observation_id = get_document_id(context)
-        phenophase = get_field(data, "phenophase", old_value=True)
-        individual_id = get_field(data, "individual_id", old_value=True)
-        source = get_field(data, "source", old_value=True)
-        year = get_field(data, "year", old_value=True)
-        species = get_field(data, "species", old_value=True)
-
-        if phenophase in ANALYTIC_PHENOPHASES:
-            from phenoback.functions import analytics
-
-            log.info("Remove observation %s", observation_id)
-            analytics.process_remove_observation(
-                observation_id,
-                individual_id,
-                source,
-                year,
-                species,
-                phenophase,
-            )
-        else:
-            log.debug(
-                "No analytic values processed for %s, phenophase %s",
-                observation_id,
-                phenophase,
-            )
-        observation.updated_observation(individual_id)
+            individual.main(data, context)
 
 
 @retry.Retry()

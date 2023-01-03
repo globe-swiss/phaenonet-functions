@@ -18,9 +18,6 @@ on:
         options:
           - all
           - process_observation
-          - process_observation_create_analytics
-          - process_observation_update_analytics
-          - process_observation_delete_analytics
           - process_user
           - process_invite
           - import_meteoswiss_data
@@ -82,15 +79,6 @@ jobs:
           - name: process_observation
             entrypoint: fs_observations_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{observation_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: process_observation_create_analytics
-            entrypoint: process_observation_create_analytics
-            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{observation_id}" --trigger-event providers/cloud.firestore/eventTypes/document.create
-          - name: process_observation_update_analytics
-            entrypoint: process_observation_update_analytics
-            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{observation_id}" --trigger-event providers/cloud.firestore/eventTypes/document.update
-          - name: process_observation_delete_analytics
-            entrypoint: process_observation_delete_analytics
-            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{observation_id}" --trigger-event providers/cloud.firestore/eventTypes/document.delete
           - name: process_user
             entrypoint: fs_users_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/users/{user_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write

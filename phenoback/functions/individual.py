@@ -3,9 +3,18 @@ from typing import Optional
 
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
+import phenoback.utils.gcloud as g
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
+
+
+def main(data, context):  # pylint: disable=unused-argument
+    if g.is_delete_event(data):
+        individual_id = g.get_field(data, "individual_id", old_value=True)
+    else:
+        individual_id = g.get_field(data, "individual_id")
+    updated_observation(individual_id)
 
 
 def updated_observation(individual_id: str):
