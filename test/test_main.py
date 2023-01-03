@@ -30,16 +30,12 @@ default_context = Context(
             ["phenoback.functions.meteoswiss_export.main"],
         ),
         (
-            main.ps_iot_dragino_app,
-            ["phenoback.functions.iot.app.main"],
-        ),
-        (
-            main.ps_iot_dragino_bq,
-            ["phenoback.functions.iot.bq.main"],
-        ),
-        (
-            main.ps_iot_dragino_permarobotics,
-            ["phenoback.functions.iot.permarobotics.main"],
+            main.ps_iot_dragino,
+            [
+                "phenoback.functions.iot.app.main",
+                "phenoback.functions.iot.bq.main",
+                "phenoback.functions.iot.permarobotics.main",
+            ],
         ),
     ],
 )

@@ -215,28 +215,20 @@ def http_iot_dragino(request: flask.Request):
             return dragino.main(request)
 
 
-def ps_iot_dragino_app(event, context):
+def ps_iot_dragino(event, context):
     with setup(g.get_data(event), context):
         with invoke():
             from phenoback.functions.iot import app
 
             app.main(event, context)
-
-
-def ps_iot_dragino_bq(event, context):
-    with setup(g.get_data(event), context):
-        with invoke():
-            from phenoback.functions.iot import bq
-
-            bq.main(event, context)
-
-
-def ps_iot_dragino_permarobotics(event, context):
-    with setup(g.get_data(event), context):
         with invoke():
             from phenoback.functions.iot import permarobotics
 
             permarobotics.main(event, context)
+        with invoke():
+            from phenoback.functions.iot import bq
+
+            bq.main(event, context)
 
 
 def http_set_sensor(request: flask.Request):
