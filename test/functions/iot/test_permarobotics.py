@@ -35,6 +35,16 @@ def data(raw_data, decoded_payload):
     return raw_data
 
 
+def test_main(mocker, pubsub_event, context):
+    send_permarobotics_mock = mocker.patch(
+        "phenoback.functions.iot.permarobotics.send_permarobotics"
+    )
+
+    permarobotics.main(pubsub_event, context)
+
+    send_permarobotics_mock.assert_called_once_with({"foo": "bar"})
+
+
 def test_assert_compatible_decoder(raw_data, decoded_payload):
     decoder = dragino.DraginoDecoder(raw_data)
     decoder.decode()

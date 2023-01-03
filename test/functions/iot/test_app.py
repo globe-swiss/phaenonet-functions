@@ -50,11 +50,10 @@ def today() -> str:
     return datetime.date.today().strftime("%Y-%m-%d")
 
 
-def test_main(mocker):
-    encoded_data = b"eyJmb28iOiJiYXIifQ=="
+def test_main(mocker, pubsub_event, context):
     process_mock = mocker.patch("phenoback.functions.iot.app.process_dragino")
 
-    app.main({"data": encoded_data}, None)
+    app.main(pubsub_event, context)
 
     process_mock.assert_called_with({"foo": "bar"})
 

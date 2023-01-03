@@ -79,4 +79,4 @@ def data():
 
 @pytest.fixture()
 def pubsub_event():
-    return {"data": b"eyJmb28iOiJiYXIifQ=="}
+    return {"data": b"eyJmb28iOiJiYXIifQ=="}  # {"foo": "bar"}
