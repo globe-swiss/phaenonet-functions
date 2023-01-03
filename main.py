@@ -14,22 +14,10 @@ from sentry_sdk.integrations.gcp import GcpIntegration
 
 import phenoback.utils.gcloud as g
 from phenoback.utils import glogging
-from phenoback.utils.gcloud import (
-    get_collection_path,
-    get_document_id,
-    get_field,
-    get_fields_updated,
-    get_project,
-    get_version,
-    is_create_event,
-    is_delete_event,
-    is_field_updated,
-    is_update_event,
-)
 
 
 def _sentry_environment() -> Tuple[str, float]:
-    project = get_project()
+    project = g.get_project()
     if project == "phaenonet":
         return ("production", 1.0)
     elif project == "phaenonet-test":
@@ -39,7 +27,7 @@ def _sentry_environment() -> Tuple[str, float]:
 
 
 sentry_sdk.init(
-    release=get_version(),
+    release=g.get_version(),
     environment=_sentry_environment()[0],
     dsn="https://2f043e3c7dd54efa831b9d44b20cf742@o510696.ingest.sentry.io/5606957",
     integrations=[GcpIntegration()],
@@ -80,6 +68,7 @@ def invoke():
         log.error("Error in execution", exc_info=ex)
 
 
+@retry.Retry()
 def fs_observations_write(data, context):
     with setup(data, context):
         with invoke():
@@ -181,6 +170,7 @@ def fs_invites_write(data, context):
             invite.main(data, context)
 
 
+@retry.Retry()
 def fs_individuals_write(data, context):
     with setup(data, context):
         with invoke():

@@ -29,7 +29,7 @@ def main(data, context):
         _main_update(data, context)
     elif g.is_delete_event(data):
         _main_delete(data, context)
-    else:
+    else:  # pragma: no cover
         log.error("Unknown event type")
 
 
