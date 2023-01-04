@@ -4,6 +4,19 @@ import pytest
 import main  # mocked via fixture
 
 
+def test_invoke__exception(data, context):
+    def function():
+        with main.setup(data, context):
+            value = False
+            with main.invoke():
+                raise Exception("Some error")
+            with main.invoke():
+                value = True
+            return value
+
+    assert function()
+
+
 @pytest.mark.parametrize(
     "entrypoint, functions",
     [
