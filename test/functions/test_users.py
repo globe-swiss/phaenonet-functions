@@ -60,7 +60,7 @@ def test_main__update(mocker, data, context, user_id, nickname, nickname2):
     process_update_mock.assert_called_once_with(user_id, nickname, nickname2)
 
 
-def test_main__no_update(mocker, data, context, user_id, nickname, nickname2):
+def test_main__no_update(mocker, data, context, user_id):
     mocker.patch("phenoback.utils.gcloud.is_create_event", return_value=False)
     mocker.patch("phenoback.utils.gcloud.is_update_event", return_value=True)
     mocker.patch("phenoback.utils.gcloud.is_delete_event", return_value=False)
