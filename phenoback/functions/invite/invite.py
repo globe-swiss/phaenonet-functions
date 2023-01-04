@@ -6,12 +6,31 @@ from phenoback.functions.invite import register
 from phenoback.functions.invite.content import InviteMail
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
+from phenoback.utils import gcloud as g
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 INVITE_COLLECTION = "invites"
 LOOKUP_COLLECTION = "invites_lookup"
+
+
+def main(data, context):
+    """
+    Send email invites if invite is created or resend is set
+    """
+    # process if new invite or resend was changed but not deleted
+    if g.is_create_event(data) or (
+        g.is_field_updated(data, "resend")
+        and g.get_field(data, "resend", expected=False)
+    ):
+        process(
+            g.get_document_id(context),
+            g.get_field(data, "email"),
+            g.get_field(data, "locale"),
+            g.get_field(data, "user"),
+            g.get_field(data, "sent", expected=False),
+        )
 
 
 def process(

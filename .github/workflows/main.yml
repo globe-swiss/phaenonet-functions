@@ -34,7 +34,7 @@ jobs:
         run: pipenv run bandit -r test phenoback -c .bandit
         if: ${{ always() }}
       - name: Run pytest
-        run: pipenv run python -m pytest --cov-report xml --cov=phenoback --cov-branch
+        run: pipenv run python -m pytest --cov-report xml --cov=main --cov=phenoback --cov-branch
         if: ${{ always() }}
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3

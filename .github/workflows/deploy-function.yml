@@ -17,31 +17,24 @@ on:
         type: choice
         options:
           - all
-          - process_observation_activity
-          - process_observation_create_analytics
-          - process_observation_update_analytics
-          - process_observation_delete_analytics
-          - process_user
-          - process_invite
-          - process_invite_register
-          - import_wld_data
-          - import_meteoswiss_data
-          - export_meteoswiss_data
-          - create_thumbnails
-          - rollover_phenoyear
-          - process_ts_user
-          - process_ts_observation
-          - process_ts_individual
-          - process_ts_definitions
-          - process_ts_invite
-          - enqueue_individual_map
-          - process_individual_map
-          - process_dragino_http
-          - process_dragino_phaenonet
-          - process_dragino_bq
-          - process_dragino_permarobotics
+          - fs_observations_write
+          - fs_users_write
+          - fs_invites_write
+          - fs_users_write__ts
+          - fs_observations_write__ts
+          - fs_individuals_write__ts
+          - fs_definitions_write__ts
+          - fs_invites_write__ts
+          - fs_individuals_write
+          - http_individuals_write
+          - st_appspot_finalize
+          - http_iot_dragino
+          - ps_iot_dragino
           - set_sensor
-          - promote_ranger
+          - http_promote_ranger
+          - ps_import_meteoswiss_data
+          - ps_export_meteoswiss_data
+          - ps_rollover_phenoyear
           - test
           - e2e_clear_individuals
       action:
@@ -81,86 +74,65 @@ jobs:
       max-parallel: 10
       matrix:
         include:
-          - name: process_observation_activity
-            entrypoint: process_observation_write_activity
+          - name: fs_observations_write
+            entrypoint: fs_observations_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{observation_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: process_observation_create_analytics
-            entrypoint: process_observation_create_analytics
-            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{observation_id}" --trigger-event providers/cloud.firestore/eventTypes/document.create
-          - name: process_observation_update_analytics
-            entrypoint: process_observation_update_analytics
-            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{observation_id}" --trigger-event providers/cloud.firestore/eventTypes/document.update
-          - name: process_observation_delete_analytics
-            entrypoint: process_observation_delete_analytics
-            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{observation_id}" --trigger-event providers/cloud.firestore/eventTypes/document.delete
-          - name: process_user
-            entrypoint: process_user_write
+          - name: fs_users_write
+            entrypoint: fs_users_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/users/{user_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: process_invite
-            entrypoint: process_invite_write
+          - name: fs_invites_write
+            entrypoint: fs_invites_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/invites/{invite_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: process_invite_register
-            entrypoint: process_user_write_update_invite
-            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/users/{user_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: import_wld_data
-            entrypoint: import_wld_data_finalize
-            trigger: --trigger-resource "$PROJECT.appspot.com" --trigger-event google.storage.object.finalize
-          - name: import_meteoswiss_data
-            entrypoint: import_meteoswiss_data_publish
+          - name: ps_import_meteoswiss_data
+            entrypoint: ps_import_meteoswiss_data
             trigger: --trigger-resource import_meteoswiss_data --trigger-event google.pubsub.topic.publish
-          - name: export_meteoswiss_data
-            entrypoint: export_meteoswiss_data_manual
+          - name: ps_export_meteoswiss_data
+            entrypoint: ps_export_meteoswiss_data
             trigger: --trigger-resource export_meteoswiss_data --trigger-event google.pubsub.topic.publish
-          - name: create_thumbnails
-            entrypoint: create_thumbnail_finalize
+          - name: st_appspot_finalize
+            entrypoint: st_appspot_finalize
             trigger: --trigger-resource "$PROJECT.appspot.com" --trigger-event google.storage.object.finalize
-          - name: rollover_phenoyear
-            entrypoint: rollover_manual
+          - name: ps_rollover_phenoyear
+            entrypoint: ps_rollover_phenoyear
             trigger: --trigger-resource rollover_phenoyear --trigger-event google.pubsub.topic.publish
-          - name: process_ts_user
-            entrypoint: process_document_ts_write
+          - name: fs_users_write__ts
+            entrypoint: fs_document_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/users/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: process_ts_observation
-            entrypoint: process_document_ts_write
+          - name: fs_observations_write__ts
+            entrypoint: fs_document_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: process_ts_individual
-            entrypoint: process_document_ts_write
+          - name: fs_individuals_write__ts
+            entrypoint: fs_document_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/individuals/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: process_ts_definitions
-            entrypoint: process_document_ts_write
+          - name: fs_definitions_write__ts
+            entrypoint: fs_document_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/definitions/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: process_ts_invite
-            entrypoint: process_document_ts_write
+          - name: fs_invites_write__ts
+            entrypoint: fs_document_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/invites/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: enqueue_individual_map
-            entrypoint: enqueue_individual_map_write
+          - name: fs_individuals_write
+            entrypoint: fs_individuals_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/individuals/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: process_individual_map
-            entrypoint: process_individual_map_http
+          - name: http_individuals_write
+            entrypoint: http_individuals_write
             trigger: --trigger-http
-          - name: process_dragino_http
-            entrypoint: process_dragino_http
+          - name: http_iot_dragino
+            entrypoint: http_iot_dragino
             trigger: --trigger-http --allow-unauthenticated
-          - name: process_dragino_phaenonet
-            entrypoint: process_dragino_phaenonet
-            trigger: --trigger-resource iot_dragino --trigger-event google.pubsub.topic.publish
-          - name: process_dragino_bq
-            entrypoint: process_dragino_bq
-            trigger: --trigger-resource iot_dragino --trigger-event google.pubsub.topic.publish
-          - name: process_dragino_permarobotics
-            entrypoint: process_dragino_permarobotics
+          - name: ps_iot_dragino
+            entrypoint: ps_iot_dragino
             trigger: --trigger-resource iot_dragino --trigger-event google.pubsub.topic.publish
           - name: set_sensor
-            entrypoint: set_sensor_http
+            entrypoint: http_set_sensor
             trigger: --trigger-http
-          - name: promote_ranger
-            entrypoint: promote_ranger_http
+          - name: http_promote_ranger
+            entrypoint: http_promote_ranger
             trigger: --trigger-http
           - name: test
             entrypoint: test
             trigger: --trigger-resource test --trigger-event google.pubsub.topic.publish
           - name: e2e_clear_individuals
-            entrypoint: e2e_clear_user_individuals_http
+            entrypoint: http_reset_e2e_data
             trigger: --trigger-http --allow-unauthenticated
             project: phaenonet-test
     env:

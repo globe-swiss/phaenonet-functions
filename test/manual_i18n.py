@@ -24,7 +24,9 @@ phenoback.load_credentials(
 def check_translation(lang: str):
     keys = get_keys(f.get_document("definitions", "config_static"))
     translations = json.loads(
-        requests.get(f"{PROJECT_URL}/{BRANCH}/src/assets/i18n/{lang}-CH.json").content
+        requests.get(
+            f"{PROJECT_URL}/{BRANCH}/src/assets/i18n/{lang}-CH.json", timeout=5
+        ).content
     )
 
     missing = [key for key in keys if not translations.get(key)]

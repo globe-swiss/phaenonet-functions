@@ -3,12 +3,35 @@ from typing import List
 
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
+from phenoback.utils import gcloud as g
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 INVITE_COLLECTION = "invites"
 LOOKUP_COLLECTION = "invites_lookup"
+
+
+def main(data, context):
+    """
+    Processes invite related documents if a user is created, modified or deleted.
+    """
+    user_id = g.get_document_id(context)
+    nickname = g.get_field(
+        data, "nickname", expected=False
+    )  # don't warn on delete event
+
+    if g.is_update_event(data) and g.is_field_updated(data, "nickname"):
+        log.debug("update nickname on invites for user %s", user_id)
+        change_nickname(user_id, nickname)
+    elif g.is_delete_event(data):
+        log.debug("delete invites for user %s", user_id)
+        delete_user(user_id)
+    elif g.is_create_event(data):
+        log.debug("update invites for user %s", user_id)
+        register_user(user_id)
+    else:
+        log.debug("Nothing to do for %s", user_id)
 
 
 def invite_id(user_id: str, email: str) -> str:

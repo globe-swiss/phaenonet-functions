@@ -12,6 +12,79 @@ from phenoback.functions import analytics
 from phenoback.utils.firestore import get_document, transaction_commit, write_document
 
 
+@pytest.mark.parametrize(
+    "phenophase, expected",
+    [
+        ("BEA", True),
+        ("BLA", True),
+        ("BFA", True),
+        ("BVA", True),
+        ("FRA", True),
+        ("XXX", False),
+    ],
+)
+def test_main__create(mocker, data, context, phenophase, expected):
+    mocker.patch("phenoback.utils.gcloud.is_create_event", return_value=True)
+    mocker.patch("phenoback.utils.gcloud.is_update_event", return_value=False)
+    mocker.patch("phenoback.utils.gcloud.is_delete_event", return_value=False)
+    mocker.patch("phenoback.utils.gcloud.get_field", return_value=phenophase)
+    mock = mocker.patch("phenoback.functions.analytics.process_observation")
+
+    analytics.main(data, context)
+    assert mock.called == expected
+
+
+@pytest.mark.parametrize(
+    "phenophase, date_updated, expected",
+    [
+        ("BEA", True, True),
+        ("BLA", True, True),
+        ("BFA", True, True),
+        ("BVA", True, True),
+        ("FRA", True, True),
+        ("XXX", True, False),
+        ("BEA", False, False),
+        ("BLA", False, False),
+        ("BFA", False, False),
+        ("BVA", False, False),
+        ("FRA", False, False),
+        ("XXX", False, False),
+    ],
+)
+def test_main__update(mocker, data, context, phenophase, date_updated, expected):
+    mocker.patch("phenoback.utils.gcloud.is_create_event", return_value=False)
+    mocker.patch("phenoback.utils.gcloud.is_update_event", return_value=True)
+    mocker.patch("phenoback.utils.gcloud.is_delete_event", return_value=False)
+    mocker.patch("phenoback.utils.gcloud.is_field_updated", return_value=date_updated)
+    mocker.patch("phenoback.utils.gcloud.get_field", return_value=phenophase)
+    mock = mocker.patch("phenoback.functions.analytics.process_observation")
+
+    analytics.main(data, context)
+    assert mock.called == expected
+
+
+@pytest.mark.parametrize(
+    "phenophase, expected",
+    [
+        ("BEA", True),
+        ("BLA", True),
+        ("BFA", True),
+        ("BVA", True),
+        ("FRA", True),
+        ("XXX", False),
+    ],
+)
+def test_main__delete(mocker, data, context, phenophase, expected):
+    mocker.patch("phenoback.utils.gcloud.is_create_event", return_value=False)
+    mocker.patch("phenoback.utils.gcloud.is_update_event", return_value=False)
+    mocker.patch("phenoback.utils.gcloud.is_delete_event", return_value=True)
+    mocker.patch("phenoback.utils.gcloud.get_field", return_value=phenophase)
+    mock = mocker.patch("phenoback.functions.analytics.process_remove_observation")
+
+    analytics.main(data, context)
+    assert mock.called == expected
+
+
 def _date(i: int) -> datetime:
     return datetime(i, i, i, i, tzinfo=timezone.utc)
 

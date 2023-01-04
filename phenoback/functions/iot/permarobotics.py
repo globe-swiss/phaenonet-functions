@@ -3,10 +3,17 @@ from collections import defaultdict
 
 import requests
 
+from phenoback.utils import gcloud as g
+
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 REQUEST_TIMEOUT = 5
+
+
+def main(event, context):  # pylint: disable=unused-argument
+    json_data = g.get_data(event)
+    send_permarobotics(json_data)
 
 
 def send_permarobotics(data: dict) -> bool:

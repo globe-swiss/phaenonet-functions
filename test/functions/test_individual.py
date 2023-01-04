@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 import pytest
 
 import phenoback.utils.data as d
-from phenoback.functions import observation
+from phenoback.functions import individual as i
 
 
 @pytest.fixture()
@@ -68,7 +68,7 @@ def create_last_observation(individual_id):
 
 def test_update_last_observation__individual(individual):
     last_observation = create_last_observation(individual[0])
-    observation.updated_observation(individual[0])
+    i.updated_observation(individual[0])
     updated_individual = d.get_individual(individual[0])
 
     assert updated_individual.get("last_observation_date") == last_observation[1].get(
@@ -80,20 +80,20 @@ def test_update_last_observation__individual(individual):
 
 
 def test_update_last_observation__no_observations(individual):
-    observation.updated_observation(individual[0])
+    i.updated_observation(individual[0])
     updated_individual = d.get_individual(individual[0])
     assert updated_individual.get("last_observation_date") is None
     assert updated_individual.get("last_phenophase") is None
 
 
 def test_update_last_observation__no_individual(capwarnings):
-    observation.updated_observation("not_existing_id")
+    i.updated_observation("not_existing_id")
     assert len(capwarnings.records) == 1
 
 
 def test_update_last_observation__station(station):
     last_observation = create_last_observation(station[0])
-    observation.updated_observation(station[0])
+    i.updated_observation(station[0])
     updated_station = d.get_individual(station[0])
     assert updated_station.get("last_observation_date") == last_observation[1].get(
         "date"
@@ -103,8 +103,8 @@ def test_update_last_observation__station(station):
 
 def test_get_last_observation():
     last_observation = create_last_observation("id")
-    assert observation._get_last_observation("id") == last_observation[1]
+    assert i._get_last_observation("id") == last_observation[1]
 
 
 def test_get_last_observation__no_observations():
-    assert observation._get_last_observation("no_observations") is None
+    assert i._get_last_observation("no_observations") is None

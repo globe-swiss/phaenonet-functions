@@ -2,7 +2,7 @@ import logging
 from http import HTTPStatus
 from typing import Optional
 
-from flask import Response
+from flask import Request, Response
 
 from phenoback.utils.data import (
     get_phenoyear,
@@ -22,6 +22,21 @@ from phenoback.utils.firestore import (
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
+
+
+def main(request: Request):
+    content_type = request.headers["content-type"]
+    if content_type == "application/json":
+        request_json = request.get_json(silent=True)
+        if not (request_json and "email" in request_json):
+            msg = "JSON is invalid, or missing a 'email' property"
+            log.warning(msg)
+            return Response(msg, HTTPStatus.BAD_REQUEST)
+    else:
+        msg = f"Unknown content type: {content_type}, application/json required"
+        return Response(msg, HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
+
+    return promote(request_json["email"])
 
 
 def promote(email: str) -> Response:

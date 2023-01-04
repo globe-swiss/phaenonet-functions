@@ -18,6 +18,7 @@ mock = "*"
 isort = "*"
 freezegun = "*"
 py = "*"
+strictyaml = "*"
 
 [packages]
 firebase-admin = "*"

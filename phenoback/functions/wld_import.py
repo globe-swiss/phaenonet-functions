@@ -49,6 +49,16 @@ PHASES_MAP = {
 }
 
 
+def main(data, context):  # pylint: disable=unused-argument
+    """
+    Import wld data on file upload to private/wld_import
+    """
+    pathfile = data["name"]
+    if pathfile.startswith("private/wld_import/"):
+        log.info("Import wld data for %s", pathfile)
+        import_data(pathfile)
+
+
 def check_zip_archive(input_zip: ZipFile) -> None:
     filenames = input_zip.namelist()
     log.debug("Files found: %s", str(filenames))

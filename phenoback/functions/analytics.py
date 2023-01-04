@@ -4,6 +4,7 @@ from typing import Optional
 
 import numpy as np
 
+from phenoback.utils import gcloud as g
 from phenoback.utils.data import get_individual
 from phenoback.utils.firestore import (
     DELETE_FIELD,
@@ -15,8 +16,93 @@ from phenoback.utils.firestore import (
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
+
+ANALYTIC_PHENOPHASES = ("BEA", "BLA", "BFA", "BVA", "FRA")
 STATE_COLLECTION = "analytics_state"
 RESULT_COLLECTION = "analytics_result"
+
+
+def main(data, context):
+    if g.is_create_event(data):
+        _main_create(data, context)
+    elif g.is_update_event(data):
+        _main_update(data, context)
+    elif g.is_delete_event(data):
+        _main_delete(data, context)
+    else:  # pragma: no cover
+        log.error("Unknown event type")
+
+
+def _main_create(data, context):
+    """
+    Updates analytic values in Firestore when an observation is created in Firestore.
+    """
+    observation_id = g.get_document_id(context)
+    phenophase = g.get_field(data, "phenophase")
+    individual_id = g.get_field(data, "individual_id")
+    source = g.get_field(data, "source")
+    year = g.get_field(data, "year")
+    species = g.get_field(data, "species")
+    observation_date = g.get_field(data, "date")
+
+    if phenophase in ANALYTIC_PHENOPHASES:
+        log.info(
+            "Process analytic values for %s, phenophase %s",
+            observation_id,
+            phenophase,
+        )
+        process_observation(
+            observation_id,
+            observation_date,
+            individual_id,
+            source,
+            year,
+            species,
+            phenophase,
+        )
+    else:
+        log.debug(
+            "No analytic values processed for %s, phenophase %s",
+            observation_id,
+            phenophase,
+        )
+
+
+def _main_update(data, context):
+    """
+    Updates analytical values in Firestore if the observation date was modified on a observation document.
+    """
+    if g.is_field_updated(data, "date") or g.is_field_updated(data, "reprocess"):
+        _main_create(data, context)
+
+
+def _main_delete(data, context):
+    """
+    Updates analytical values in Firestore if an observation was deleted.
+    """
+    observation_id = g.get_document_id(context)
+    phenophase = g.get_field(data, "phenophase", old_value=True)
+    individual_id = g.get_field(data, "individual_id", old_value=True)
+    source = g.get_field(data, "source", old_value=True)
+    year = g.get_field(data, "year", old_value=True)
+    species = g.get_field(data, "species", old_value=True)
+
+    if phenophase in ANALYTIC_PHENOPHASES:
+        log.info("Remove observation %s", observation_id)
+        process_remove_observation(
+            observation_id,
+            individual_id,
+            source,
+            year,
+            species,
+            phenophase,
+        )
+    else:
+        log.debug(
+            "No analytic values processed for %s, phenophase %s",
+            observation_id,
+            phenophase,
+        )
 
 
 def update_state(

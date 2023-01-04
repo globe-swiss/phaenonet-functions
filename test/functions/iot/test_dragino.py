@@ -3,6 +3,8 @@ from test.functions.iot.sample_data import DraginoData as dd
 from unittest.mock import ANY
 
 import pytest
+from flask import Request
+from werkzeug.test import EnvironBuilder
 
 from phenoback.functions.iot import dragino
 
@@ -15,6 +17,21 @@ def ps_client(mocker):
 @pytest.fixture(autouse=True)
 def task_client(mocker):
     return mocker.patch("phenoback.functions.iot.dragino.task_client").return_value
+
+
+def test_main(mocker):
+    process_mock = mocker.patch("phenoback.functions.iot.dragino.process_dragino")
+    payload = {"foo": "bar"}
+    request = Request(
+        EnvironBuilder(
+            method="POST",
+            json=payload,
+        ).get_environ()
+    )
+    result = dragino.main(request)
+
+    assert result.status_code == 200
+    process_mock.assert_called_with(payload)
 
 
 def test_process(ps_client):

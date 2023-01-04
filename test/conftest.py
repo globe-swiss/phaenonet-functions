@@ -1,4 +1,6 @@
+# pylint: disable=import-outside-toplevel
 import logging
+from collections import namedtuple
 from test import emulator
 
 import pytest
@@ -16,6 +18,20 @@ def clear_emulator_data():
         "http://localhost:8001/emulator/v1/projects/test/databases/(default)/documents",
         timeout=10,
     )
+
+
+@pytest.fixture(autouse=True)
+def mock_main(mocker):
+    import firebase_admin
+    import sentry_sdk
+
+    from phenoback.utils import glogging
+
+    firebase_admin.initialize_app = mocker.Mock()
+    glogging.init = mocker.Mock()
+    sentry_sdk.init = mocker.Mock()
+
+    import main  # pylint: disable=unused-import
 
 
 @pytest.fixture()
@@ -48,3 +64,19 @@ def gcp_location(mocker) -> None:
 def mock_requests(mocker):
     mocker.patch("requests.post")
     mocker.patch("requests.get")
+
+
+@pytest.fixture()
+def context():
+    Context = namedtuple("context", "event_id, resource")
+    return Context(event_id="ignored", resource="document_path/document_id")
+
+
+@pytest.fixture()
+def data():
+    return {"foo": "bar"}
+
+
+@pytest.fixture()
+def pubsub_event():
+    return {"data": b"eyJmb28iOiJiYXIifQ=="}  # {"foo": "bar"}

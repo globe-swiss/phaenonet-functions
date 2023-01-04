@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use, protected-access
+# pylint: disable=protected-access
 import csv
 import test
 from collections import namedtuple
@@ -45,6 +45,19 @@ def observation_data() -> str:
 
 
 class TestCommon:
+    def test_main(self, mocker, data, context):
+        stations_mock = mocker.patch(
+            "phenoback.functions.meteoswiss_import.process_stations"
+        )
+        observations_mock = mocker.patch(
+            "phenoback.functions.meteoswiss_import.process_observations"
+        )
+
+        meteoswiss.main(data, context)
+
+        stations_mock.assert_called_once()
+        observations_mock.assert_called_once()
+
     def test_get_hash(self):
         assert meteoswiss._get_hash("string1") == meteoswiss._get_hash("string1")
         assert meteoswiss._get_hash("string1") != meteoswiss._get_hash("string2")

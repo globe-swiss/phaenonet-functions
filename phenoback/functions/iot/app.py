@@ -1,13 +1,16 @@
 import datetime
+from http import HTTPStatus
 import logging
 from typing import Optional
 from zoneinfo import ZoneInfo
+from flask import Request, Response
 
 import google
 from tzlocal import get_localzone
 
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
+import phenoback.utils.gcloud as g
 from phenoback.functions.iot import dragino
 from phenoback.functions.iot.dragino import DraginoDecoder
 
@@ -15,6 +18,30 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 COLLECTION = "sensors"
+
+
+def main(event, context):  # pylint: disable=unused-argument
+    json_data = g.get_data(event)
+    process_dragino(json_data)
+
+
+def main_set_sensor(request: Request):
+    msg = "ok"
+    status = HTTPStatus.OK
+    individual = request.json.get("individual")
+    deveui = request.json.get("deveui")
+    year = request.json.get("year")
+
+    if request.is_json and deveui and individual and year:
+        if not set_sensor(individual, year, deveui):
+            msg = f"individual {individual} not found in {year}"
+            status = HTTPStatus.NOT_FOUND
+            log.error(msg)
+    else:
+        msg = f"Invalid request (json={request.is_json}, individual={individual}, year={year}, deveui={deveui}"
+        status = HTTPStatus.BAD_REQUEST
+        log.error(msg)
+    return Response(msg, status)
 
 
 def process_dragino(data: dict) -> None:

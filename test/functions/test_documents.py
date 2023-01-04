@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 
 import pytest
+from mock import ANY
 
 from phenoback.functions import documents
 from phenoback.utils import firestore as f
@@ -24,6 +25,73 @@ def doc_ts():
         },
     )
     return ("collection", "doc_id")
+
+
+@pytest.mark.parametrize(
+    "called, data",
+    [
+        (
+            "updated",
+            {
+                "updateMask": {"fieldPaths": ["modified"]},
+                "oldValue": {
+                    "fields": {"modified": {"timestampValue": str(datetime.now())}}
+                },
+                "value": {
+                    "fields": {"modified": {"timestampValue": str(datetime.now())}}
+                },
+            },
+        ),
+        (
+            "created",
+            {
+                "updateMask": {},
+                "oldValue": {},
+                "value": {
+                    "fields": {"modified": {"timestampValue": str(datetime.now())}}
+                },
+            },
+        ),
+        (
+            "deleted",
+            {
+                "updateMask": {"fieldPaths": ["modified"]},
+                "oldValue": {
+                    "fields": {"modified": {"timestampValue": str(datetime.now())}}
+                },
+                "value": {},
+            },
+        ),
+    ],
+)
+def test_main(mocker, called, data):
+    update_modified_document_mock = mocker.patch(
+        "phenoback.functions.documents.update_modified_document"
+    )
+    update_created_document_mock = mocker.patch(
+        "phenoback.functions.documents.update_created_document"
+    )
+    documents.main(data, mocker.MagicMock())
+    assert update_modified_document_mock.called == (called == "updated")
+    assert update_created_document_mock.called == (called == "created")
+    # nothing to do for delete
+
+
+def test_main__overwrite_created(mocker):
+    create_ts = datetime.utcnow().replace(tzinfo=timezone.utc)
+    data = {
+        "updateMask": {"fieldPaths": ["created", "somevalue"]},
+        "oldValue": {"fields": {"created": {"timestampValue": str(create_ts)}}},
+        "value": {"fields": {"somevalue": {"something"}}},
+    }
+    update_modified_document_mock = mocker.patch(
+        "phenoback.functions.documents.update_modified_document"
+    )
+
+    documents.main(data, mocker.MagicMock())
+    update_modified_document_mock.assert_called_once_with(
+        ANY, ANY, data["updateMask"]["fieldPaths"], create_ts
+    )
 
 
 def test_update_created_document(doc_nots):
