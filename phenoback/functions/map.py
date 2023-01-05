@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 QUEUE_NAME = "mapupdates"
-FUNCTION_NAME = "process_individual_map"
+FUNCTION_NAME = "http_individuals_write"
 
 DELETE_TOKEN = "__DELETE__"  # nosec
 

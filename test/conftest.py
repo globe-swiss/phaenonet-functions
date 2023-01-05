@@ -4,6 +4,7 @@ from collections import namedtuple
 from test import emulator
 
 import pytest
+import strictyaml as yaml
 from requests import delete
 
 
@@ -80,3 +81,28 @@ def data():
 @pytest.fixture()
 def pubsub_event():
     return {"data": b"eyJmb28iOiJiYXIifQ=="}  # {"foo": "bar"}
+
+
+def readfile(filename: str):
+    with open(filename, "r", encoding="utf-8") as file:
+        return file.read()
+
+
+@pytest.fixture
+def deploy_yaml():
+    return yaml.load(readfile(".github/workflows/deploy-function.yml"))
+
+
+@pytest.fixture
+def main_yaml():
+    return yaml.load(readfile(".github/workflows/main.yml"))
+
+
+@pytest.fixture
+def matrix_includes(deploy_yaml):
+    return deploy_yaml["jobs"]["deploy"]["strategy"]["matrix"]["include"]
+
+
+@pytest.fixture
+def gcf_names(matrix_includes):
+    return [matrix_include["name"].data for matrix_include in matrix_includes]

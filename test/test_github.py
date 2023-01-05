@@ -1,24 +1,8 @@
 from inspect import getmembers, isfunction
 
 import pytest
-import strictyaml as yaml
 
 import main
-
-
-def readfile(filename: str):
-    with open(filename, "r", encoding="utf-8") as file:
-        return file.read()
-
-
-@pytest.fixture
-def deploy_yaml():
-    return yaml.load(readfile(".github/workflows/deploy-function.yml"))
-
-
-@pytest.fixture
-def main_yaml():
-    return yaml.load(readfile(".github/workflows/main.yml"))
 
 
 @pytest.fixture
@@ -27,18 +11,8 @@ def main_functions():
 
 
 @pytest.fixture
-def matrix_includes(deploy_yaml):
-    return deploy_yaml["jobs"]["deploy"]["strategy"]["matrix"]["include"]
-
-
-@pytest.fixture
 def github_entrypoints(matrix_includes):
     return [matrix_include["entrypoint"].data for matrix_include in matrix_includes]
-
-
-@pytest.fixture
-def github_function_names(matrix_includes):
-    return [matrix_include["name"].data for matrix_include in matrix_includes]
 
 
 @pytest.fixture
@@ -52,11 +26,11 @@ def test_entrypoints(main_functions, github_entrypoints):
     ), f"Entrypoints not found in main: {set(github_entrypoints) - set(main_functions)}"
 
 
-def test_function_names(github_function_names, github_deploy_options):
+def test_function_names(gcf_names, github_deploy_options):
     deploy_option_set = set(github_deploy_options)
     assert "all" in deploy_option_set
     deploy_option_set.discard("all")
-    assert set(github_function_names) == deploy_option_set
+    assert set(gcf_names) == deploy_option_set
 
 
 def test_container__consistency(main_yaml):

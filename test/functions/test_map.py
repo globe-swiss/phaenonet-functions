@@ -33,12 +33,16 @@ def get_changepayload(initialdata, year, individual, key, value):
     return {"year": year, "values": data}
 
 
+def test_function_name(gcf_names):
+    assert pheno_map.FUNCTION_NAME in gcf_names
+
+
 def test_client(mocker):
     task_mock = mocker.patch("phenoback.utils.tasks.GCFClient")
 
     pheno_map.client()
 
-    task_mock.assert_called_with("mapupdates", "process_individual_map")
+    task_mock.assert_called_with("mapupdates", pheno_map.FUNCTION_NAME)
 
 
 @pytest.mark.parametrize("should_update", [True, False])
