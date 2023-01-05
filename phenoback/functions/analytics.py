@@ -1,10 +1,14 @@
 import logging
 from datetime import datetime
+from functools import lru_cache
+from http import HTTPStatus
 from typing import Optional
 
 import numpy as np
+from flask import Request, Response
 
 from phenoback.utils import gcloud as g
+from phenoback.utils import tasks
 from phenoback.utils.data import get_individual
 from phenoback.utils.firestore import (
     DELETE_FIELD,
@@ -16,10 +20,34 @@ from phenoback.utils.firestore import (
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
+QUEUE_NAME = "analyticupdates"
+FUNCTION_NAME = "http_observations_write__analytics"
 
 ANALYTIC_PHENOPHASES = ("BEA", "BLA", "BFA", "BVA", "FRA")
 STATE_COLLECTION = "analytics_state"
 RESULT_COLLECTION = "analytics_result"
+
+
+@lru_cache
+def client() -> tasks.GCFClient:
+    return tasks.GCFClient(QUEUE_NAME, FUNCTION_NAME)
+
+
+def main_enqueue(data, context):
+    phenophase = g.get_field(data, "phenophase") or g.get_field(
+        data, "phenophase", old_value=True
+    )
+    if phenophase in ANALYTIC_PHENOPHASES:
+        client().send({"data": data, "context": g.context2dict(context)})
+        log.debug("Enqueue event: phenophase=%s", phenophase)
+    else:
+        log.debug("Skip event: phenophase=%s", phenophase)
+
+
+def main_process(request: Request):
+    request_json = request.get_json(silent=True)
+    main(request_json["data"], g.dict2context(request_json["context"]))
+    return Response("accepted", HTTPStatus.ACCEPTED)
 
 
 def main(data, context):

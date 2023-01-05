@@ -2,6 +2,7 @@ import base64
 import json
 import logging
 import os
+from collections import namedtuple
 from datetime import datetime
 from typing import List, Union
 
@@ -55,6 +56,14 @@ def _get_field(value_dict: dict):
             str(value),
         )
         return str(value)
+
+
+def context2dict(context) -> dict:
+    return context._asdict()
+
+
+def dict2context(context_dict) -> namedtuple:
+    return namedtuple("context", context_dict.keys())(**context_dict)
 
 
 def get_document_id(context) -> str:

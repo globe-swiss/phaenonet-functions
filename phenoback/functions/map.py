@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 QUEUE_NAME = "mapupdates"
-FUNCTION_NAME = "http_individuals_write"
+FUNCTION_NAME = "http_individuals_write__map"
 
 DELETE_TOKEN = "__DELETE__"  # nosec
 
@@ -36,7 +36,7 @@ def main_enqueue(data, context):
         delete(g.get_field(data, "year", old_value=True), g.get_document_id(context))
 
 
-def main_process(request: Request):  # pylint: disable=unused-argument
+def main_process(request: Request):
     process_change(request.get_json(silent=True))
     return Response("ok", HTTPStatus.OK)
 
