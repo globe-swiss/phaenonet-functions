@@ -116,7 +116,7 @@ def _main_delete(data, context):
     species = g.get_field(data, "species", old_value=True)
 
     if phenophase in ANALYTIC_PHENOPHASES:
-        log.info("Remove observation %s", observation_id)
+        log.info("Remove analytic values for observation %s", observation_id)
         process_remove_observation(
             observation_id,
             individual_id,
@@ -188,14 +188,14 @@ def update_result(
     species: str,
     altitude_grp: str = None,
 ) -> None:
-    log.debug(
-        "Write results: (phase: %s, source: %s, year: %i, species: %s, altitude_grp: %s)",
-        phase,
-        source,
-        year,
-        species,
-        altitude_grp,
-    )
+    # log.debug(
+    #     "Write results: (phase: %s, source: %s, year: %i, species: %s, altitude_grp: %s)",
+    #     phase,
+    #     source,
+    #     year,
+    #     species,
+    #     altitude_grp,
+    # )
     document_id = get_analytics_document_id(year, species, source, altitude_grp)
     if observation_dates:
         values = {
@@ -262,7 +262,7 @@ def remove_observation(
     altitude_grp: str = None,
 ) -> None:
     log.debug(
-        "Remove Observation: (observation_id: %s, phase: %s, source: %s, year: %i, "
+        "Remove Observation state (observation_id: %s, phase: %s, source: %s, year: %i, "
         "species: %s, altitude_grp: %s)",
         observation_id,
         phase,
@@ -304,7 +304,7 @@ def remove_observation(
         )
     except KeyError:
         log.error(
-            "Observation not found in state for removal: (observation_id: %s, source: %s, year: %i, species: %s, "
+            "Observation not found in state document for removal: (observation_id: %s, source: %s, year: %i, species: %s, "
             "phase: %s)",
             observation_id,
             source,
@@ -355,7 +355,7 @@ def process_observation(
     species: str,
     phase: str,
 ):
-    log.info(
+    log.debug(
         "Process observation: (observation_id: %s, observation_date: %s, individual_id: %s, source: %s, "
         "year: %i, species: %s, phase: %s)",
         observation_id,
@@ -417,7 +417,7 @@ def process_remove_observation(
     species: str,
     phase: str,
 ):
-    log.info(
+    log.debug(
         "Remove observation: (observation_id: %s,  individual_id: %s, source: %s, "
         "year: %i, species: %s, phase: %s)",
         observation_id,
