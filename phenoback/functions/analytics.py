@@ -1,10 +1,14 @@
 import logging
 from datetime import datetime
+from functools import lru_cache
+from http import HTTPStatus
 from typing import Optional
 
 import numpy as np
+from flask import Request, Response
 
 from phenoback.utils import gcloud as g
+from phenoback.utils import tasks
 from phenoback.utils.data import get_individual
 from phenoback.utils.firestore import (
     DELETE_FIELD,
@@ -14,12 +18,36 @@ from phenoback.utils.firestore import (
 )
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.INFO)
+log.setLevel(logging.DEBUG)
 
+QUEUE_NAME = "analyticupdates"
+FUNCTION_NAME = "http_observations_write__analytics"
 
 ANALYTIC_PHENOPHASES = ("BEA", "BLA", "BFA", "BVA", "FRA")
 STATE_COLLECTION = "analytics_state"
 RESULT_COLLECTION = "analytics_result"
+
+
+@lru_cache
+def client() -> tasks.GCFClient:
+    return tasks.GCFClient(QUEUE_NAME, FUNCTION_NAME)
+
+
+def main_enqueue(data, context):
+    phenophase = g.get_field(data, "phenophase") or g.get_field(
+        data, "phenophase", old_value=True
+    )
+    if phenophase in ANALYTIC_PHENOPHASES:
+        client().send({"data": data, "context": g.context2dict(context)})
+        log.debug("Enqueue event: phenophase=%s", phenophase)
+    else:
+        log.debug("Skip event: phenophase=%s", phenophase)
+
+
+def main_process(request: Request):
+    request_json = request.get_json(silent=True)
+    main(request_json["data"], g.dict2context(request_json["context"]))
+    return Response("accepted", HTTPStatus.ACCEPTED)
 
 
 def main(data, context):
@@ -88,7 +116,7 @@ def _main_delete(data, context):
     species = g.get_field(data, "species", old_value=True)
 
     if phenophase in ANALYTIC_PHENOPHASES:
-        log.info("Remove observation %s", observation_id)
+        log.info("Remove analytic values for observation %s", observation_id)
         process_remove_observation(
             observation_id,
             individual_id,
@@ -160,14 +188,14 @@ def update_result(
     species: str,
     altitude_grp: str = None,
 ) -> None:
-    log.debug(
-        "Write results: (phase: %s, source: %s, year: %i, species: %s, altitude_grp: %s)",
-        phase,
-        source,
-        year,
-        species,
-        altitude_grp,
-    )
+    # log.debug(
+    #     "Write results: (phase: %s, source: %s, year: %i, species: %s, altitude_grp: %s)",
+    #     phase,
+    #     source,
+    #     year,
+    #     species,
+    #     altitude_grp,
+    # )
     document_id = get_analytics_document_id(year, species, source, altitude_grp)
     if observation_dates:
         values = {
@@ -234,7 +262,7 @@ def remove_observation(
     altitude_grp: str = None,
 ) -> None:
     log.debug(
-        "Remove Observation: (observation_id: %s, phase: %s, source: %s, year: %i, "
+        "Remove Observation state (observation_id: %s, phase: %s, source: %s, year: %i, "
         "species: %s, altitude_grp: %s)",
         observation_id,
         phase,
@@ -276,7 +304,7 @@ def remove_observation(
         )
     except KeyError:
         log.error(
-            "Observation not found in state for removal: (observation_id: %s, source: %s, year: %i, species: %s, "
+            "Observation not found in state document for removal: (observation_id: %s, source: %s, year: %i, species: %s, "
             "phase: %s)",
             observation_id,
             source,
@@ -327,7 +355,7 @@ def process_observation(
     species: str,
     phase: str,
 ):
-    log.info(
+    log.debug(
         "Process observation: (observation_id: %s, observation_date: %s, individual_id: %s, source: %s, "
         "year: %i, species: %s, phase: %s)",
         observation_id,
@@ -389,7 +417,7 @@ def process_remove_observation(
     species: str,
     phase: str,
 ):
-    log.info(
+    log.debug(
         "Remove observation: (observation_id: %s,  individual_id: %s, source: %s, "
         "year: %i, species: %s, phase: %s)",
         observation_id,

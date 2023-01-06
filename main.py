@@ -6,8 +6,8 @@ from contextlib import contextmanager
 from typing import Tuple, Union
 
 import firebase_admin
-import flask
 import sentry_sdk
+from flask import Request
 from google.api_core import exceptions, retry
 from google.api_core.retry import if_exception_type
 from sentry_sdk.integrations.gcp import GcpIntegration
@@ -42,7 +42,7 @@ log: logging.Logger = None  # pylint: disable=invalid-name
 
 
 @contextmanager  # workaround as stackdriver fails to capture stackstraces
-def setup(data: Union[dict, flask.Request], context=None, level=logging.DEBUG):
+def setup(data: Union[dict, Request], context=None, level=logging.DEBUG):
     try:
         global log  # pylint: disable=global-statement,invalid-name
         glogging.init()
@@ -51,7 +51,7 @@ def setup(data: Union[dict, flask.Request], context=None, level=logging.DEBUG):
         if context:
             log.debug(context)
         if data:
-            if isinstance(data, flask.Request):
+            if isinstance(data, Request):
                 data = data.json if data.is_json else data.data
             log.debug(data)
         yield
@@ -78,11 +78,20 @@ def fs_observations_write(data, context):
         with invoke():
             from phenoback.functions import analytics
 
-            analytics.main(data, context)
+            analytics.main_enqueue(data, context)
         with invoke():
             from phenoback.functions import individual
 
             individual.main(data, context)
+
+
+@retry.Retry()
+def http_observations_write__analytics(request: Request):
+    with setup(request):
+        with invoke():
+            from phenoback.functions import analytics
+
+            return analytics.main_process(request)
 
 
 @retry.Retry()
@@ -179,7 +188,7 @@ def fs_individuals_write(data, context):
             phenoback.functions.map.main_enqueue(data, context)
 
 
-def http_individuals_write(request: flask.Request):
+def http_individuals_write__map(request: Request):
     with setup(request):
         with invoke():
             import phenoback.functions.map
@@ -188,7 +197,7 @@ def http_individuals_write(request: flask.Request):
 
 
 @retry.Retry()
-def http_reset_e2e_data(request: flask.Request):
+def http_reset_e2e_data(request: Request):
     with setup(request):
         with invoke():
             from phenoback.functions import e2e
@@ -196,7 +205,7 @@ def http_reset_e2e_data(request: flask.Request):
             return e2e.main(request)
 
 
-def http_promote_ranger(request: flask.Request):
+def http_promote_ranger(request: Request):
     """
     Promotes a normal user to Ranger.
     """
@@ -207,7 +216,7 @@ def http_promote_ranger(request: flask.Request):
             return phenorangers.main(request)
 
 
-def http_iot_dragino(request: flask.Request):
+def http_iot_dragino(request: Request):
     with setup(request):
         with invoke():
             from phenoback.functions.iot import dragino
@@ -231,7 +240,7 @@ def ps_iot_dragino(event, context):
             bq.main(event, context)
 
 
-def http_set_sensor(request: flask.Request):
+def http_set_sensor(request: Request):
     with setup(request):
         with invoke():
             from phenoback.functions.iot import app

@@ -26,15 +26,16 @@ on:
           - fs_definitions_write__ts
           - fs_invites_write__ts
           - fs_individuals_write
-          - http_individuals_write
-          - st_appspot_finalize
+          - http_observations_write__analytics
+          - http_individuals_write__map
           - http_iot_dragino
-          - ps_iot_dragino
-          - set_sensor
           - http_promote_ranger
+          - ps_iot_dragino
           - ps_import_meteoswiss_data
           - ps_export_meteoswiss_data
           - ps_rollover_phenoyear
+          - st_appspot_finalize
+          - set_sensor
           - test
           - e2e_clear_individuals
       action:
@@ -77,6 +78,9 @@ jobs:
           - name: fs_observations_write
             entrypoint: fs_observations_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{observation_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+          - name: http_observations_write__analytics
+            entrypoint: http_observations_write__analytics
+            trigger: --trigger-http
           - name: fs_users_write
             entrypoint: fs_users_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/users/{user_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
@@ -113,8 +117,8 @@ jobs:
           - name: fs_individuals_write
             entrypoint: fs_individuals_write
             trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/individuals/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: http_individuals_write
-            entrypoint: http_individuals_write
+          - name: http_individuals_write__map
+            entrypoint: http_individuals_write__map
             trigger: --trigger-http
           - name: http_iot_dragino
             entrypoint: http_iot_dragino

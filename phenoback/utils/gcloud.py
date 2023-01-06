@@ -2,10 +2,12 @@ import base64
 import json
 import logging
 import os
+from collections import namedtuple
 from datetime import datetime
 from typing import List, Union
 
 import dateparser
+from google.cloud.functions.context import Context
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
@@ -55,6 +57,19 @@ def _get_field(value_dict: dict):
             str(value),
         )
         return str(value)
+
+
+def context2dict(context: Context) -> dict:
+    return context.__dict__
+
+
+def dict2context(context_dict) -> namedtuple:
+    return Context(
+        eventId=context_dict.get("event_id"),
+        timestamp=context_dict.get("timestamp"),
+        eventType=context_dict.get("event_type"),
+        resource=context_dict.get("resource"),
+    )
 
 
 def get_document_id(context) -> str:

@@ -5,11 +5,57 @@ from unittest.mock import Mock
 
 import deepdiff
 import pytest
+from flask import Request
 from google.api_core.datetime_helpers import DatetimeWithNanoseconds as datetime
 from google.cloud.firestore_v1.transaction import transactional
+from werkzeug.test import EnvironBuilder
 
+import phenoback.utils.gcloud as g
 from phenoback.functions import analytics
 from phenoback.utils.firestore import get_document, transaction_commit, write_document
+
+
+def test_function_name(gcf_names):
+    assert analytics.FUNCTION_NAME in gcf_names
+
+
+@pytest.mark.parametrize(
+    "phenophase, expected",
+    [
+        ("BEA", True),
+        ("BLA", True),
+        ("BFA", True),
+        ("BVA", True),
+        ("FRA", True),
+        ("XXX", False),
+    ],
+)
+def test_main_enqueue(mocker, data, context, phenophase, expected):
+    mocker.patch("phenoback.utils.gcloud.get_field", return_value=phenophase)
+    client_mock = mocker.patch("phenoback.functions.analytics.client")
+
+    analytics.main_enqueue(data, context)
+    if expected:
+        client_mock.return_value.send.assert_called_once_with(
+            {"data": data, "context": g.context2dict(context)}
+        )
+    else:
+        client_mock.assert_not_called()
+
+
+def test_main_process(mocker, data, context):
+    main_mock = mocker.patch("phenoback.functions.analytics.main")
+    request = Request(
+        EnvironBuilder(
+            method="POST",
+            json={"data": data, "context": g.context2dict(context)},
+        ).get_environ()
+    )
+
+    analytics.main_process(request)
+
+    assert main_mock.call_args[0][0] == data
+    assert str(main_mock.call_args[0][1]) == str(context)
 
 
 @pytest.mark.parametrize(
