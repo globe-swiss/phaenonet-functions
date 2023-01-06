@@ -53,7 +53,7 @@ on:
         type: string
 
 env:
-  RUNTIME: python39
+  RUNTIME: python310
   REGION: europe-west1
   TIMEOUT: 540s
   PROJECT: ${{ github.event.inputs.project }}
