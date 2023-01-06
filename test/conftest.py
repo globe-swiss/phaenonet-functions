@@ -7,6 +7,8 @@ import pytest
 import strictyaml as yaml
 from requests import delete
 
+import phenoback.utils.gcloud as g
+
 
 @pytest.fixture(scope="session", autouse=True)
 def emulator_process(xprocess):
@@ -69,8 +71,7 @@ def mock_requests(mocker):
 
 @pytest.fixture()
 def context():
-    Context = namedtuple("context", "event_id, resource")
-    return Context(event_id="ignored", resource="document_path/document_id")
+    return g.Context(eventId="ignored", resource="document_path/document_id")
 
 
 @pytest.fixture()

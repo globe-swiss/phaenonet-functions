@@ -10,6 +10,7 @@ from google.api_core.datetime_helpers import DatetimeWithNanoseconds as datetime
 from google.cloud.firestore_v1.transaction import transactional
 from werkzeug.test import EnvironBuilder
 
+import phenoback.utils.gcloud as g
 from phenoback.functions import analytics
 from phenoback.utils.firestore import get_document, transaction_commit, write_document
 
@@ -36,7 +37,7 @@ def test_main_enqueue(mocker, data, context, phenophase, expected):
     analytics.main_enqueue(data, context)
     if expected:
         client_mock.return_value.send.assert_called_once_with(
-            {"data": data, "context": context._asdict()}
+            {"data": data, "context": g.context2dict(context)}
         )
     else:
         client_mock.assert_not_called()
@@ -47,13 +48,14 @@ def test_main_process(mocker, data, context):
     request = Request(
         EnvironBuilder(
             method="POST",
-            json={"data": data, "context": context._asdict()},
+            json={"data": data, "context": g.context2dict(context)},
         ).get_environ()
     )
 
     analytics.main_process(request)
 
-    main_mock.assert_called_once_with(data, context)
+    assert main_mock.call_args[0][0] == data
+    assert str(main_mock.call_args[0][1]) == str(context)
 
 
 @pytest.mark.parametrize(

@@ -18,7 +18,7 @@ from phenoback.utils.firestore import (
 )
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.INFO)
+log.setLevel(logging.DEBUG)
 
 QUEUE_NAME = "analyticupdates"
 FUNCTION_NAME = "http_observations_write__analytics"
