@@ -35,7 +35,6 @@ on:
           - ps_export_meteoswiss_data
           - ps_rollover_phenoyear
           - st_appspot_finalize
-          - set_sensor
           - test
           - e2e_clear_individuals
       action:
@@ -126,9 +125,6 @@ jobs:
           - name: ps_iot_dragino
             entrypoint: ps_iot_dragino
             trigger: --trigger-resource iot_dragino --trigger-event google.pubsub.topic.publish
-          - name: set_sensor
-            entrypoint: http_set_sensor
-            trigger: --trigger-http
           - name: http_promote_ranger
             entrypoint: http_promote_ranger
             trigger: --trigger-http
