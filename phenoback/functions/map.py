@@ -31,6 +31,7 @@ def main_enqueue(data, context):
             g.get_field(data, "source"),
             g.get_field(data, "year"),
             g.get_field(data, "deveui", expected=False),
+            g.is_create_event(data),
         )
     else:
         delete(g.get_field(data, "year", old_value=True), g.get_document_id(context))
@@ -57,8 +58,9 @@ def enqueue_change(
     source: str,
     year: int,
     deveui: str,
+    is_create_event: bool,
 ) -> None:
-    if _should_update(updated_fields):
+    if _should_update(updated_fields, is_create_event):
         values = {
             individual_id: {
                 "t": individual_type,
@@ -78,15 +80,17 @@ def enqueue_change(
         payload = {"year": year, "values": values}
         client().send(payload)
         log.info(
-            "enqueue task for change on %s: fields=%s",
+            "enqueue task for change on %s: fields=%s, created=%s",
             individual_id,
             updated_fields,
+            is_create_event,
         )
     else:
         log.debug(
-            "nothing to do for change on %s: fields=%s",
+            "nothing to do for change on %s: fields=%s, created=%s",
             individual_id,
             updated_fields,
+            is_create_event,
         )
 
 
@@ -104,8 +108,8 @@ def replace_delete_tokens(payload: dict) -> None:
             individual_dict[key] = f.DELETE_FIELD if value == DELETE_TOKEN else value
 
 
-def _should_update(updated_fields: List[str]) -> bool:
-    return any(
+def _should_update(updated_fields: List[str], is_create_event: bool) -> bool:
+    return is_create_event or any(
         elem
         in [
             "geopos.lat",
