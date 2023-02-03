@@ -80,15 +80,17 @@ def enqueue_change(
         payload = {"year": year, "values": values}
         client().send(payload)
         log.info(
-            "enqueue task for change on %s: fields=%s",
+            "enqueue task for change on %s: fields=%s, created=%s",
             individual_id,
             updated_fields,
+            is_create_event,
         )
     else:
         log.debug(
-            "nothing to do for change on %s: fields=%s",
+            "nothing to do for change on %s: fields=%s, created=%s",
             individual_id,
             updated_fields,
+            is_create_event,
         )
 
 
