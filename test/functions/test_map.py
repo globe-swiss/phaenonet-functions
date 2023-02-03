@@ -63,6 +63,7 @@ def test_enqueue_change__should_update(mocker, should_update):
         "source",
         2020,
         "deveui",
+        False,
     )
 
     assert should_update_mock.called_with(["updated_fields"])
@@ -87,6 +88,7 @@ def test_enqueue_change__values(mocker):
         "source",
         2020,
         "deveui",
+        False,
     )
 
     client_mock.return_value.send.assert_called_with(
@@ -122,6 +124,7 @@ def test_enqueue_change__optional_fields_delete(mocker):
         "source",
         2020,
         None,
+        False,
     )
 
     client_mock.return_value.send.assert_called_with(
@@ -193,23 +196,24 @@ def test_process_change__new_value(mapdata, initialdata: dict):
 
 
 @pytest.mark.parametrize(
-    "updated_fields, expected",
+    "updated_fields, is_create_event, expected",
     [
-        (["geopos.lat"], True),
-        (["geopos.lng"], True),
-        (["station_species"], True),
-        (["species"], True),
-        (["type"], True),
-        (["last_phenophase"], True),
-        (["source"], True),
-        (["deveui"], True),
-        (["source", "other_values"], True),
-        (["other_values"], False),
-        (["reprocess"], True),
+        (["geopos.lat"], False, True),
+        (["geopos.lng"], False, True),
+        (["station_species"], False, True),
+        (["species"], False, True),
+        (["type"], False, True),
+        (["last_phenophase"], False, True),
+        (["source"], False, True),
+        (["deveui"], False, True),
+        (["source", "other_values"], False, True),
+        (["other_values"], False, False),
+        (["other_values"], True, True),
+        (["reprocess"], False, True),
     ],
 )
-def test_should_update(updated_fields, expected):
-    assert pheno_map._should_update(updated_fields) == expected
+def test_should_update(updated_fields, is_create_event, expected):
+    assert pheno_map._should_update(updated_fields, is_create_event) == expected
 
 
 def test_delete(mapdata):
