@@ -64,4 +64,4 @@ tzlocal==4.2
 uritemplate==4.1.1 ; python_version >= '3.6'
 urllib3==1.26.13 ; python_version >= '3.6'
 watchdog==2.2.1 ; python_version >= '3.6'
-werkzeug==2.2.2 ; python_version >= '3.7'
+werkzeug==2.2.3 ; python_version >= '3.7'
