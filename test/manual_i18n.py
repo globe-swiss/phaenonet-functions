@@ -41,8 +41,7 @@ def check_translation(lang: str):
 
 def get_keys(d: dict) -> Set[str]:  # pylint: disable=invalid-name
     result = set()
-    for (key, value) in d.items():
-
+    for key, value in d.items():
         if isinstance(value, dict):
             result = result.union(get_keys(value))
         else:

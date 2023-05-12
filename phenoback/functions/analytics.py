@@ -34,8 +34,8 @@ def client() -> tasks.GCFClient:
 
 
 def main_enqueue(data, context):
-    phenophase = g.get_field(data, "phenophase") or g.get_field(
-        data, "phenophase", old_value=True
+    phenophase = g.get_field(data, "phenophase", expected=False) or g.get_field(
+        data, "phenophase", old_value=True, expected=False
     )
     if phenophase in ANALYTIC_PHENOPHASES:
         client().send({"data": data, "context": g.context2dict(context)})
