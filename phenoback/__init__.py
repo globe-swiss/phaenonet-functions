@@ -20,7 +20,6 @@ def load_credentials(
     credential_file: str = default_credential_file,
 ) -> None:  # pragma: no cover
     if os.path.isfile(credential_file):
-
         cred = credentials.Certificate(credential_file)
         firebase_admin.initialize_app(
             cred, {"storageBucket": f"{cred.project_id}.appspot.com"}
