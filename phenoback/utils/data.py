@@ -1,6 +1,9 @@
+from datetime import datetime
 from functools import lru_cache
 from typing import Any, List
+from zoneinfo import ZoneInfo
 
+import tzlocal
 from firebase_admin import auth
 
 from phenoback.utils.firestore import (
@@ -156,3 +159,13 @@ def has_observations(individual: dict) -> bool:
 
 def has_sensor(individual: dict) -> bool:
     return individual.get("sensor") is not None
+
+
+def localtime(timestamp: datetime = None):
+    if not timestamp:
+        timestamp = datetime.now(tz=tzlocal.get_localzone())
+    return timestamp.astimezone(ZoneInfo("Europe/Zurich"))
+
+
+def localdate(timestamp: datetime = None):
+    return localtime(timestamp).date()

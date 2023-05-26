@@ -72,7 +72,7 @@ def process_observation(
             "phenophase": phenophase,
             "source": source,
             "species": species,
-            "activity_date": datetime.now(),
+            "activity_date": d.localtime(),
             "individual_name": individual_dict["name"],
             "phenophase_name": d.get_phenophase(species, phenophase)["de"],
             "species_name": d.get_species(species)["de"],

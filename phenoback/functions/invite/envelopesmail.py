@@ -2,10 +2,10 @@ import logging
 import os
 from datetime import datetime
 
-import pytz
 from envelopes import Envelope
 
 from phenoback.functions.invite.content import InviteMail
+from phenoback.utils import data as d
 from phenoback.utils import gsecrets
 
 log = logging.getLogger(__name__)
@@ -30,9 +30,7 @@ def _sendmail(maildef: InviteMail) -> dict:
         html_body=maildef.html_body,
         headers={
             "reply-to": maildef.reply_to,
-            "Date": datetime.now(tz=pytz.timezone("CET")).strftime(
-                "%a, %d %b %Y %T %z"
-            ),
+            "Date": d.localtime().strftime("%a, %d %b %Y %T %z"),
         },
     ).send(
         os.environ["mailer_host"],

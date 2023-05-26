@@ -1,12 +1,11 @@
 import datetime
-from http import HTTPStatus
 import logging
+from http import HTTPStatus
 from typing import Optional
 from zoneinfo import ZoneInfo
-from flask import Request, Response
 
 import google
-from tzlocal import get_localzone
+from flask import Request, Response
 
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
@@ -99,7 +98,7 @@ def update_history(
     air_humidity: float,
     air_temperature: float,
 ):
-    today = local_today()
+    today = d.localdate()
     data_today = {}
     data_today[f"data.{today}.shs"] = f.Increment(soil_humidity)
     data_today[f"data.{today}.sts"] = f.Increment(soil_temperature)
@@ -201,7 +200,7 @@ def clear_sensors(year: int) -> int:
 
 def increase_uplink_frequency(deveui: str):
     dragino.set_uplink_frequency(deveui, 600)
-    tomorrow = local_today() + datetime.timedelta(days=1)
+    tomorrow = d.localdate() + datetime.timedelta(days=1)
     dragino.set_uplink_frequency(
         deveui,
         3600,
@@ -212,7 +211,3 @@ def increase_uplink_frequency(deveui: str):
             tzinfo=ZoneInfo("Europe/Zurich"),
         ),
     )
-
-
-def local_today() -> datetime.date:
-    return datetime.datetime.now(tz=get_localzone()).date()
