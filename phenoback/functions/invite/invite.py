@@ -49,13 +49,13 @@ def process(
     else:
         if sent_date is not None:
             delta = d.localtime() - sent_date
-            if delta.seconds < 600:  # resent only every 10 minutes
+            if delta.total_seconds() < 600:  # resent only every 10 minutes
                 log.info(
                     "Invite %s by %s to %s failed: Resend time of %i seconds to short",
                     doc_id,
                     user_id,
                     to_mail,
-                    delta.seconds,
+                    delta.total_seconds(),
                 )
             else:
                 send = True
