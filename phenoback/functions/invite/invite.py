@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timezone
+from datetime import datetime
 
 from phenoback.functions.invite import envelopesmail as mailer
 from phenoback.functions.invite import register

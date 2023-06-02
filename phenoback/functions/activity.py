@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime
 from typing import Set
 
 from phenoback.utils import data as d
