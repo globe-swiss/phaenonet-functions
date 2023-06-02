@@ -254,7 +254,7 @@ def test_clear_sensors(individual_id):
     assert not d.get_individual(individual_id).get("sensor")
 
 
-@freeze_time("2020-01-01 23:59:00")
+@freeze_time(datetime.datetime(2020, 1, 1, tzinfo=ZoneInfo("Europe/Zurich")))
 def test_increase_uplink_frequency(set_uplink_frequency_mock):
     app.increase_uplink_frequency(dd.DEVEUI)
 
@@ -263,21 +263,3 @@ def test_increase_uplink_frequency(set_uplink_frequency_mock):
     set_uplink_frequency_mock.assert_any_call(
         dd.DEVEUI, 3600, datetime.datetime(2020, 1, 2, tzinfo=ZoneInfo("Europe/Zurich"))
     )
-
-
-@pytest.mark.parametrize(
-    "timestr, expected",
-    [
-        (
-            "2020-01-01 00:00:00",
-            datetime.datetime(2020, 1, 1),
-        ),
-        (
-            "2020-01-01 23:59:00",
-            datetime.datetime(2020, 1, 1),
-        ),
-    ],
-)
-def test_local_today(timestr, expected):
-    with freeze_time(timestr):
-        assert app.local_today() == expected

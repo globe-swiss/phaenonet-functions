@@ -50,11 +50,11 @@ def process(year: int = None):
                     "MEAS_SPEC_ID": o["species"],
                     "MEAS_PPH_1": o["phenophase"],
                     "MEAS_ID": "",
-                    "MEAS_DATE": o["date"].strftime("%d.%m.%Y"),
+                    "MEAS_DATE": d.localtime(o["date"]).strftime("%d.%m.%Y"),
                     "MEAS_ALTGRP": "",
                     "MEAS_INCR": "",
-                    "CREATED": o["created"].strftime("%d.%m.%Y %H:%M:%S"),
-                    "MODIFIED": o["modified"].strftime("%d.%m.%Y %H:%M:%S")
+                    "CREATED": d.localtime(o["created"]).strftime("%d.%m.%Y %H:%M:%S"),
+                    "MODIFIED": d.localtime(o["modified"]).strftime("%d.%m.%Y %H:%M:%S")
                     if o["modified"]
                     else "",
                     "GEOPOS": f"{i['geopos']['lat']},{i['geopos']['lng']}",

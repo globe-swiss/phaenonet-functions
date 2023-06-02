@@ -34,8 +34,8 @@ flask = "*"
 google-cloud-tasks = "*"
 google-cloud-pubsub = "*"
 google-cloud-bigquery = "*"
-tzlocal = "*"
 functions-framework = "*"
+tzlocal = "*"
 
 [requires]
 python_version = "3.10"

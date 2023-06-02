@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timezone
+from datetime import datetime
 
 from phenoback.functions.invite import envelopesmail as mailer
 from phenoback.functions.invite import register
@@ -48,14 +48,14 @@ def process(
         register.register_user_invite(doc_id, invitee_user_id)
     else:
         if sent_date is not None:
-            delta = datetime.now().replace(tzinfo=timezone.utc) - sent_date
-            if delta.seconds < 600:  # resent only every 10 minutes
+            delta = d.localtime() - sent_date
+            if delta.total_seconds() < 600:  # resent only every 10 minutes
                 log.info(
                     "Invite %s by %s to %s failed: Resend time of %i seconds to short",
                     doc_id,
                     user_id,
                     to_mail,
-                    delta.seconds,
+                    delta.total_seconds(),
                 )
             else:
                 send = True
