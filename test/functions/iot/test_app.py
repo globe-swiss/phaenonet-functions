@@ -1,3 +1,4 @@
+# pylint: disable=unused-argument
 import datetime
 from test.functions.iot.sample_data import DraginoData as dd
 from zoneinfo import ZoneInfo
@@ -17,22 +18,6 @@ INDIVIDUAL = "individual"
 @pytest.fixture(autouse=True)
 def set_phenoyear():
     f.write_document("definitions", "config_dynamic", {"phenoyear": YEAR})
-
-
-# @pytest.fixture()
-# def individual_id():
-#     individual_id = "id"
-#     d.write_individual(
-#         individual_id, {"deveui": dd.DEVEUI, "year": YEAR, "individual": INDIVIDUAL}
-#     )
-#     return individual_id
-
-
-# @pytest.fixture()
-# def individual_id_no_deveui():
-#     individual_id = "id_no_deveui"
-#     d.write_individual(individual_id, {"year": YEAR, "individual": INDIVIDUAL})
-#     return individual_id
 
 
 def add_individual(individual_id, individual, year, deveui=None):
