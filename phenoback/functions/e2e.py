@@ -19,6 +19,7 @@ def main(request: Request):  # pylint: disable=unused-argument
 
 def delete_user_data(user_ids: str) -> None:
     log.info("Delete all data for %s", user_ids)
+    f.delete_batch("observations", "user", "in", user_ids)
     f.delete_batch("individuals", "user", "in", user_ids)
     f.delete_batch("invites", "user", "in", user_ids)
     for user_id in user_ids:
