@@ -73,7 +73,10 @@ def test_executes__pubsub(mocker, entrypoint, functions, pubsub_event, context):
         ),
         (
             main.fs_individuals_write,
-            ["phenoback.functions.map.main_enqueue"],
+            [
+                "phenoback.functions.map.main_enqueue",
+                "phenoback.functions.iot.app.main_individual_updated",
+            ],
         ),
         (
             main.fs_observations_write,
@@ -127,12 +130,6 @@ def test_executes__firestore(mocker, entrypoint, functions, data, context):
             main.http_iot_dragino,
             [
                 "phenoback.functions.iot.dragino.main",
-            ],
-        ),
-        (
-            main.http_set_sensor,
-            [
-                "phenoback.functions.iot.app.main_set_sensor",
             ],
         ),
     ],

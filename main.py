@@ -186,6 +186,10 @@ def fs_individuals_write(data, context):
             import phenoback.functions.map
 
             phenoback.functions.map.main_enqueue(data, context)
+        with invoke():
+            import phenoback.functions.iot.app
+
+            phenoback.functions.iot.app.main_individual_updated(data, context)
 
 
 def http_individuals_write__map(request: Request):
@@ -238,14 +242,6 @@ def ps_iot_dragino(event, context):
             from phenoback.functions.iot import bq
 
             bq.main(event, context)
-
-
-def http_set_sensor(request: Request):
-    with setup(request):
-        with invoke():
-            from phenoback.functions.iot import app
-
-            return app.main_set_sensor(request)
 
 
 def test(data, context):  # pragma: no cover
