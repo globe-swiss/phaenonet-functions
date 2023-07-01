@@ -1,0 +1,6 @@
+[submodule ".devcontainer"]
+	path = .devcontainer
+	url = git@github.com:globe-swiss/phaenonet-functions-devcontainer.git
+[submodule "maintenance"]
+	path = maintenance
+	url = git@github.com:globe-swiss/phaenonet-maintenance.git

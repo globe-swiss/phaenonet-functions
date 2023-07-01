@@ -1,9 +1,7 @@
-.devcontainer
 .idea
 credentials
 foto_uploads
 .xprocess
-maintenance/
 *.pickle
 
 # general python ignores
