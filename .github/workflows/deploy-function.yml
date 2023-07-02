@@ -191,3 +191,23 @@ jobs:
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           tag: ${{ env.TAG }}
+  import-fs-data:
+    runs-on: ubuntu-latest
+    # needs: remove-fs-data
+    steps:
+      - uses: actions/checkout@v3.5.2
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1.1.1
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1.1.1
+        with:
+          project_id: phaenonet-test
+      - name: get last backup
+        run: echo "backup-folder=$(gsutil ls gs://phaenonet_backup_daily | tail -1)" >> $GITHUB_ENV
+      # - name: import data
+      #   run: gcloud --project=phaenonet-test --account=firestore-backup@phaenonet-test.iam.gserviceaccount.com firestore import ${{ env.backup-folder }}
+      - run: echo "restored data from ${{ env.backup-folder }}"
