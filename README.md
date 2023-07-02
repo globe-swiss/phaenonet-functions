@@ -63,6 +63,10 @@ gcloud --project=phaenonet --account=firestore-backup@phaenonet.iam.gserviceacco
 gcloud --project=phaenonet-test --account=firestore-backup@phaenonet-test.iam.gserviceaccount.com firestore import gs://phaenonet_[backup_daily|backup_weekly]/[backup-folder] --collection-ids=[collection_ids]
 ```
 
+## Execute GitHub actions localy
+
+Use `act -j <job>`
+
 ## Related resources
 
 - [phaenonet-client](https://github.com/globe-swiss/phaenonet-client)
