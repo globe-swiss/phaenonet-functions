@@ -1,6 +1,6 @@
 name: Build and test
 
-on: push
+on: workflow_dispatch
 
 env:
   LANG: en_US.UTF-8

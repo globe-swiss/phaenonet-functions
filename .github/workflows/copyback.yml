@@ -4,83 +4,91 @@ on: [workflow_dispatch, pull_request]
 
 env:
   NODE_VERSION: "18"
+  REGION: europe-west1
+
+concurrency: copyback
 
 permissions:
   contents: read
   id-token: write
 
 jobs:
-  # fs-function-matrix:
-  #   runs-on: ubuntu-latest
-  #   # container: gcr.io/google.com/cloudsdktool/google-cloud-cli:latest
-  #   outputs:
-  #     fs-functions: ${{ steps.fs-functions.outputs.functions }}
-  #   steps:
-  #     # - id: auth
-  #     #   name: Authenticate to Google Cloud
-  #     #   uses: google-github-actions/auth@v1.1.1
-  #     #   with:
-  #     #     workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-  #     #     service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-  #     #     create_credentials_file: true
-  #     - id: fs-functions
-  #       name: list firestore functions
-  #       # run: echo 'functions=$(gcloud functions list --filter fs_ --format="json(NAME)" --project phaenonet-test)' >> $GITHUB_OUTPUT
-  #       run: |
-  #         echo 'functions=[      {              "name": "projects/phaenonet-test/locations/europe-west1/functions/fs_definitions_write__ts"            },            {              "name": "projects/phaenonet-test/locations/europe-west1/functions/fs_individuals_write"            },            {              "name": "projects/phaenonet-test/locations/europe-west1/functions/fs_individuals_write__ts"            },            {              "name": "projects/phaenonet-test/locations/europe-west1/functions/fs_invites_write"            },            {              "name": "projects/phaenonet-test/locations/europe-west1/functions/fs_invites_write__ts"            },            {              "name": "projects/phaenonet-test/locations/europe-west1/functions/fs_observations_write"            },            {              "name": "projects/phaenonet-test/locations/europe-west1/functions/fs_observations_write__ts"            },            {              "name": "projects/phaenonet-test/locations/europe-west1/functions/fs_users_write"            },            {              "name": "projects/phaenonet-test/locations/europe-west1/functions/fs_users_write__ts"            }          ]' >> $GITHUB_OUTPUT
-  # # say_hello:
-  # #   runs-on: ubuntu-latest
-  # #   needs: fs-function-matrix
-  # #   strategy:
-  # #     matrix:
-  # #     function: ${{ fromJson(needs.fs-function-matrix.outputs.fs-functions) }}
-  # # steps:
-  # #   - run: echo ${{ matrix.function.name }}
-  # delete-fs-functions:
-  #   runs-on: ubuntu-latest
-  #   # container: gcr.io/google.com/cloudsdktool/google-cloud-cli:latest
-  #   needs: fs-function-matrix
-  #   strategy:
-  #     matrix:
-  #       function: ${{ fromJson(needs.fs-function-matrix.outputs.fs-functions) }}
-  #   steps:
-  #     # - id: auth
-  #     #   name: Authenticate to Google Cloud
-  #     #   uses: google-github-actions/auth@v1.1.1
-  #     #   with:
-  #     #     workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-  #     #     service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-  #     #     create_credentials_file: true
-  #     # - id: fs-functions
-  #     #   name: list firestore functions
-  #     #   run: gcloud functions list --filter fs_ --format="value(NAME)" --project phaenonet-test
-  #     - run: echo remove function ${{ matrix.function.name }}
-  # remove-fs-data:
-  #   runs-on: ubuntu-latest
-  #   # container: andreysenov/firebase-tools:latest-node-18
-  #   needs: delete-fs-functions
-  #   steps:
-  #     # - uses: actions/setup-node@v3.6.0
-  #     #   with:
-  #     #     node-version: ${{ env.NODE_VERSION }}
-  #     # - name: install firebase-tools
-  #     #   run: npm i --no-save firebase-tools
-  #     # - id: auth
-  #     #   name: Authenticate to Google Cloud
-  #     #   uses: google-github-actions/auth@v1.1.1
-  #     #   with:
-  #     #     workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-  #     #     service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-  #     #     create_credentials_file: true
-  #     # - name: Firebase data
-  #     #   run: firebase firestore:delete --all-collections --project phaenonet-test
-  #     - run: echo delete firebase data
-  import-fs-data:
+  fs-function-matrix:
     runs-on: ubuntu-latest
-    # needs: remove-fs-data
+    environment: phaenonet-test
+    outputs:
+      fs-functions: ${{ steps.fs-functions.outputs.functions }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1.1.1
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1.1.1
+        with:
+          project_id: phaenonet-test
+      - id: fs-functions
+        name: List Functions
+        run: |
+          echo 'functions<<EOF' >> $GITHUB_OUTPUT
+          gcloud functions list --filter fs_ --format='json(name)' --project phaenonet-test >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+  delete-fs-functions:
+    runs-on: ubuntu-latest
+    needs: fs-function-matrix
+    environment: phaenonet-test
+    strategy:
+      matrix:
+        function: ${{ fromJson(needs.fs-function-matrix.outputs.fs-functions) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1.1.1
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1.1.1
+        with:
+          project_id: phaenonet-test
+      # - name: Delete Function ${{ matrix.function.name }}
+      #   run: gcloud functions delete $(echo ${{ matrix.function.name }} | cut -d/ -f6) --region $(echo ${{ matrix.function.name }} | cut -d/ -f4) --quiet --project phaenonet-test
+  remove-fs-data:
+    runs-on: ubuntu-latest
+    needs: delete-fs-functions
     environment: phaenonet-test
     steps:
-      - uses: actions/checkout@v3.5.2
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
+      - name: Setup Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: install firebase-tools
+        run: npm i -g firebase-tools
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1.1.1
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_BACKUP_ACCOUNT }}
+          create_credentials_file: true
+      - name: Delete Firestore Data
+        run: firebase firestore:delete activities --shallow --force --project phaenonet-test
+        #--all-collections
+  import-fs-data:
+    runs-on: ubuntu-latest
+    needs: remove-fs-data
+    environment: phaenonet-test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
       - id: auth
         name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1.1.1
@@ -91,17 +99,20 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1.1.1
         with:
           project_id: phaenonet-test
-      - name: get last backup
-        run: echo "backup-folder=$(gsutil ls gs://phaenonet_backup_daily | tail -1)" >> $GITHUB_ENV
-      # - name: import data
-      #   run: gcloud --project=phaenonet-test --account=firestore-backup@phaenonet-test.iam.gserviceaccount.com firestore import ${{ env.backup-folder }}
-      - run: echo "restored data from -> ${{ env.backup-folder }}"
+      - name: Last Backup
+        # run: echo "backup-folder=$(gsutil ls gs://phaenonet_backup_daily | tail -1)" >> $GITHUB_ENV
+        run: echo "backup-folder=gs://phaenonet_backup_daily/test_activities/" >> $GITHUB_ENV
+      - name: Import Data
+        run: gcloud --project=phaenonet-test firestore import ${{ env.backup-folder }} --collection-ids=activities
   # install-functions:
   #   runs-on: ubuntu-latest
   #   needs: import-fs-data
   #   steps:
-  #     - uses: actions/checkout@v3.5.2
+  #     - name: Checkout
+  #       uses: actions/checkout@v3.5.2
   #     - name: trigger function installation
   #       run: gh workflow run -f function=all "deploy cloud functions"
   #       env:
   #         GH_TOKEN: ${{ github.token }}
+  # reinstate-users:
+  # ...
