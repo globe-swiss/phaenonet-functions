@@ -2,6 +2,7 @@
 
 Launch Codespaces on this branch.
 It will:
+
 - set the correct repository permissions
 - switch to the main branch
 - initialize the submodules
