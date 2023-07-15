@@ -114,6 +114,21 @@ def query_observation(field_path: str, op_string: str, value: Any) -> Query:
     return query_collection("observations", field_path, op_string, value)
 
 
+def create_user(
+    uid, nickname, firstname="Firstname", lastname="Lastname", locale="de-CH"
+):
+    write_document(
+        "users",
+        uid,
+        {
+            "firstname": firstname,
+            "lastname": lastname,
+            "locale": locale,
+            "nickname": nickname,
+        },
+    )
+
+
 def get_user(user_id: str, transaction: Transaction = None) -> dict:
     return get_document("users", user_id, transaction=transaction)
 

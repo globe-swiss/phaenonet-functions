@@ -207,7 +207,16 @@ def http_reset_e2e_data(request: Request):
         with invoke():
             from phenoback.functions import e2e
 
-            return e2e.main(request)
+            return e2e.main_reset(request)
+
+
+@retry.Retry()
+def http_restore_e2e_users(request: Request):
+    with setup(request):
+        with invoke():
+            from phenoback.functions import e2e
+
+            return e2e.main_restore(request)
 
 
 def http_promote_ranger(request: Request):

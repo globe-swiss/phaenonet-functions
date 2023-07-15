@@ -3,17 +3,26 @@ from http import HTTPStatus
 
 from flask import Request, Response
 
+import phenoback.utils.data as d
 import phenoback.utils.firestore as f
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 
-def main(request: Request):  # pylint: disable=unused-argument
+def main_reset(request: Request):  # pylint: disable=unused-argument
     """
     Clear all individuals for the e2e test user. This is used for assuring the firestore state before running e2e tests.
     """
     delete_user_data(["q7lgBm5nm7PUkof20UdZ9D4d0CV2", "JIcn8kFpI4fYYcbdi9QzPlrHomn1"])
+    return Response("ok", HTTPStatus.OK)
+
+
+def main_restore(request: Request):  # pylint: disable=unused-argument
+    """
+    Restore test users after database copyback
+    """
+    restore_test_users()
     return Response("ok", HTTPStatus.OK)
 
 
@@ -32,3 +41,32 @@ def delete_user_data(user_ids: str) -> None:
             },
             merge=True,
         )
+
+
+def restore_test_users() -> None:
+    d.create_user(
+        "q7lgBm5nm7PUkof20UdZ9D4d0CV2",
+        "e2e-test-nick",
+        "e2e-name",
+        "e2e-surname",
+        "de-CH",
+    )
+    d.create_user(
+        "JIcn8kFpI4fYYcbdi9QzPlrHomn1",
+        "e2e-ranger-nick",
+        "e2e-ranger-name",
+        "e2e-ranger-surname",
+        "de-CH",
+    )
+    d.create_user(
+        "y0UlQGuKudgm9bcozmSx2F51N9G3",
+        "dev",
+    )
+    d.create_user(
+        "e6441936-45bc-11e1-93d8-00505689",
+        "dev-big",
+    )
+    d.create_user(
+        "3NOG91ip31ZdzdIjEdhaoA925U72",
+        "ranger-demo",
+    )
