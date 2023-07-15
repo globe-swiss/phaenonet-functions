@@ -1,5 +1,6 @@
 {
   "name": "Codespace Launcher",
+  "image": "mcr.microsoft.com/vscode/devcontainers/base:alpine",
   "customizations": {
     "codespaces": {
       "globe-swiss/phaenonet-maintenance": {
