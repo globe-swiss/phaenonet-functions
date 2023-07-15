@@ -1,17 +1,15 @@
 {
   "name": "Codespace Launcher",
-  "image": "mcr.microsoft.com/vscode/devcontainers/base:alpine",
   "customizations": {
     "codespaces": {
-      "globe-swiss/phaenonet-maintenance": {
-      "permissions": "write-all"
-    },
-      "globe-swiss/phaenonet-functions-devcontainer": {
-      "permissions": "write-all"
+      "repositories": {
+        "globe-swiss/phaenonet-functions-devcontainer": {
+          "permissions": "write-all"
+        },
+        "globe-swiss/phaenonet-maintenance": {
+          "permissions": "write-all"
+        }
       }
     }
-  },
-  "features": {
-    "github-cli": "latest"
   }
 }
