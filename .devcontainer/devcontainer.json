@@ -1,4 +1,5 @@
 {
+  "name": "Codespace Launcher",
   "customizations": {
     "codespaces": {
       "globe-swiss/phaenonet-maintenance": {
