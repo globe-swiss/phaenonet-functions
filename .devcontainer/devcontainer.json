@@ -1,0 +1,15 @@
+{
+  "customizations": {
+    "codespaces": {
+      "globe-swiss/phaenonet-maintenance": {
+      "permissions": "write-all"
+    },
+      "globe-swiss/phaenonet-functions-devcontainer": {
+      "permissions": "write-all"
+      }
+    }
+  },
+  "features": {
+    "github-cli": "latest"
+  }
+}

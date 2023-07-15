@@ -1,1 +1,0 @@
-gcloud functions deploy process_activity --runtime python37 --trigger-resource "projects/phaenonet/databases/(default)/documents/activities/{activities}" --trigger-event providers/cloud.firestore/eventTypes/document.create --region europe-west1
