@@ -6,6 +6,10 @@
 
 The image can be modified in [Google Cloud Architecture Diagramming Tool](https://bit.ly/GCPArchitecture)
 
+## Develop in GitHub Codespaces
+
+Launch the Codespace in GitHub using the `codespace` branch. It will checkout the master branch, initialize the submodules, and rebuild the container. This process may take some minutes to finish.
+
 ## Deploy Cloud Functions
 
 Use [Github Actions](https://github.com/globe-swiss/phaenonet-functions/actions?query=workflow%3A%22deploy+cloud+functions%22) to manage cloud functions. Deployment actions are configured in `.github/workflows/deploy.yml`.
