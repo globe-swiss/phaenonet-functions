@@ -1,5 +1,6 @@
 {
   "name": "Codespace Launcher",
+  "postAttachCommand": "./setup.sh",
   "customizations": {
     "codespaces": {
       "repositories": {
