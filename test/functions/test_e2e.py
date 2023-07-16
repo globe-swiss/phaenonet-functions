@@ -68,13 +68,24 @@ def test_remove_following():
             assert not user.to_dict().get("following_users"), user.to_dict()
 
 
-def test_restore_test_users():
-    e2e.restore_test_users()
-    for user_id in [
+@pytest.mark.parametrize(
+    "user_id",
+    [
         "q7lgBm5nm7PUkof20UdZ9D4d0CV2",
         "JIcn8kFpI4fYYcbdi9QzPlrHomn1",
-        "y0UlQGuKudgm9bcozmSx2F51N9G3",
-        "e6441936-45bc-11e1-93d8-00505689",
         "3NOG91ip31ZdzdIjEdhaoA925U72",
-    ]:
-        assert d.get_user(user_id), f"user_id {user_id} not found"
+    ],
+)
+def test_restore_test_users(user_id):
+    e2e.restore_test_users()
+    assert d.get_user(user_id), f"user_id {user_id} not found"
+
+
+@pytest.mark.parametrize(
+    "user_id",
+    ["JIcn8kFpI4fYYcbdi9QzPlrHomn1", "3NOG91ip31ZdzdIjEdhaoA925U72"],
+)
+def test_restore_test_users__ranger(user_id):
+    e2e.restore_test_users()
+    public_user = f.get_document("public_users", user_id)
+    assert public_user["roles"] == ["ranger"], public_user["roles"]

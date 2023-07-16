@@ -5,6 +5,7 @@ from flask import Request, Response
 
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
+from phenoback.functions import phenorangers, users  # exception: allow functions import
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
@@ -58,15 +59,11 @@ def restore_test_users() -> None:
         "e2e-ranger-surname",
         "de-CH",
     )
-    d.create_user(
-        "y0UlQGuKudgm9bcozmSx2F51N9G3",
-        "dev",
-    )
-    d.create_user(
-        "e6441936-45bc-11e1-93d8-00505689",
-        "dev-big",
-    )
+    users.process_new_user("JIcn8kFpI4fYYcbdi9QzPlrHomn1", "e2e-ranger-nick")
+    phenorangers.set_ranger("JIcn8kFpI4fYYcbdi9QzPlrHomn1")
     d.create_user(
         "3NOG91ip31ZdzdIjEdhaoA925U72",
         "ranger-demo",
     )
+    users.process_new_user("3NOG91ip31ZdzdIjEdhaoA925U72", "ranger-demo")
+    phenorangers.set_ranger("3NOG91ip31ZdzdIjEdhaoA925U72")
