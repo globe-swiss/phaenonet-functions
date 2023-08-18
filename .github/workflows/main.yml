@@ -21,6 +21,8 @@ jobs:
         run: pipenv sync --dev
       - name: Check requirements file
         run: diff -w <(pipenv requirements | grep '==') <(grep '==' requirements.txt)
+        # allow dependabot fixes on master
+        if: github.ref != 'refs/heads/master' && github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]'        
       - name: Check bandit
         run: pipenv run bandit -r test phenoback -c .bandit
         if: always()
@@ -58,7 +60,13 @@ jobs:
           file: ./coverage.xml
           flags: unittests
           env_vars: OS,PYTHON
-        if: always()
+        if: always() && github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]'
+      - name: Run codacy-coverage-reporter
+        uses: codacy/codacy-coverage-reporter-action@v1.3.0
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: ./coverage.xml
+        if: always() && github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]'
   test-updated:
     runs-on: ubuntu-latest
     container: globeswiss/cloud-sdk:py3.10-latest
