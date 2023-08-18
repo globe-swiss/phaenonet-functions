@@ -10,6 +10,11 @@ from phenoback.utils import firestore as f
 CONFIG_STATIC_RESOURCE = "test/resources/config_static.json"
 CONFIG_DYNAMIC_RESOURCE = "test/resources/config_dynamic.json"
 
+"""
+To update resource files needed for tests from phaenonet test instance
+see maintenance repo @ maintenance/checks/update_test_data.py.
+"""
+
 
 @pytest.fixture
 def static_config():
@@ -101,32 +106,3 @@ def test_follow_user():
     assert d.follow_user(follower, followee)
     assert followee in d.get_user(follower).get("following_users")
     assert len(d.get_user(follower).get("following_users")) == 2
-
-
-def update_resources():
-    """
-    Updates resource files needed for tests from phaenonet test instance.
-    Run from the base folder for the file to be written in the correct
-    location e.g. `python /workspaces/phaenonet-functions/test/test_data.py`.
-    """
-    import phenoback  # pylint: disable=import-outside-toplevel
-
-    phenoback.load_credentials()
-    with open(CONFIG_STATIC_RESOURCE, "w", encoding="utf-8") as file:
-        file.write(
-            json.dumps(
-                f.get_document("definitions", "config_static"), indent=2, sort_keys=True
-            )
-        )
-    with open(CONFIG_DYNAMIC_RESOURCE, "w", encoding="utf-8") as file:
-        file.write(
-            json.dumps(
-                f.get_document("definitions", "config_dynamic"),
-                indent=2,
-                sort_keys=True,
-            )
-        )
-
-
-if __name__ == "__main__":
-    update_resources()
