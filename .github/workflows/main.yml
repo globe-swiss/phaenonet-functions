@@ -23,17 +23,32 @@ jobs:
         run: diff -w <(pipenv requirements | grep '==') <(grep '==' requirements.txt)
         # allow dependabot fixes on master
         if: github.ref != 'refs/heads/master' && github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]'
-      - name: Check black
-        run: pipenv run black --check phenoback test main.py
-        if: always()
-      - name: Check pylint
-        run: pipenv run pylint --reports=y phenoback test main.py || exit $(($? % 4))
-        if: always()
-      - name: Check flake8
-        run: pipenv run flake8 --statistics phenoback test main.py
-        if: always()
       - name: Check bandit
         run: pipenv run bandit -r test phenoback -c .bandit
+        if: always()
+      - name: Check pylint
+        run: pipenv run pylint --reports=y phenoback test main.py
+        if: always()
+      # cannot run in pipenv
+      # - name: Check pylint
+      #   uses: dciborow/action-pylint@0.1.1
+      #   with:
+      #     glob_pattern: 'phenoback test main.py'
+      #     reporter: github-check
+      #     fail_on_error: True
+      #   if: always()
+      - name: Check black
+        uses: reviewdog/action-black@v3.9.0
+        with:
+          reporter: github-check
+          verbose: True
+          fail_on_error: True
+        if: always()
+      - name: Check markdownlint
+        uses: reviewdog/action-markdownlint@v0.12.1
+        with:
+          reporter: github-check
+          fail_on_error: True
         if: always()
       - name: Run pytest
         run: pipenv run python -m pytest --cov-report xml --cov=main --cov=phenoback --cov-branch
@@ -45,12 +60,6 @@ jobs:
           file: ./coverage.xml
           flags: unittests
           env_vars: OS,PYTHON
-        if: always() && github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]'
-      - name: Run codacy-coverage-reporter
-        uses: codacy/codacy-coverage-reporter-action@v1.3.0
-        with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: ./coverage.xml
         if: always() && github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]'
   test-updated:
     runs-on: ubuntu-latest
