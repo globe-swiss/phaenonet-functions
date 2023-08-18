@@ -24,35 +24,28 @@ jobs:
       - name: Check bandit
         run: pipenv run bandit -r test phenoback -c .bandit
         if: always()
+      - name: Check pylint
+        run: pipenv run pylint --reports=y phenoback test main.py
+        if: always()
+      # cannot run in pipenv
+      # - name: Check pylint
+      #   uses: dciborow/action-pylint@0.1.1
+      #   with:
+      #     glob_pattern: 'phenoback test main.py'
+      #     reporter: github-check
+      #     fail_on_error: True
+      #   if: always()
       - name: Check black
         uses: reviewdog/action-black@v3.9.0
         with:
-          black_args: '--check phenoback test main.py'
-          reporter: github-pr-review
+          reporter: github-check
           verbose: True
-          fail_on_error: True
-        if: always()
-      - name: Check pylint
-        uses: dciborow/action-pylint@0.1.1
-        with:
-          pylint_args: 'phenoback test main.py'
-          reporter: github-pr-review
-          level: warning
-          fail_on_error: True
-        if: always()
-      - name: Check flake8
-        uses: reviewdog/action-flake8@v3.7.0
-        with:
-          flake8_args: '--statistics phenoback test main.py'
-          reporter: github-pr-review
-          level: warning
           fail_on_error: True
         if: always()
       - name: Check markdownlint
         uses: reviewdog/action-markdownlint@v0.12.1
         with:
-          reporter: github-pr-review
-          level: warning
+          reporter: github-check
           fail_on_error: True
         if: always()
       - name: Run pytest
