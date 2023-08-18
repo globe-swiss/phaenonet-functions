@@ -1,6 +1,5 @@
 # pylint: disable=import-outside-toplevel
 import logging
-from collections import namedtuple
 from test import emulator
 
 import pytest
