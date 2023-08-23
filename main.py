@@ -19,9 +19,9 @@ from phenoback.utils import glogging
 def _sentry_environment() -> Tuple[str, float]:
     project = g.get_project()
     if project == "phaenonet":
-        return ("production", 1.0)
+        return ("production", 0.0)
     elif project == "phaenonet-test":
-        return ("test", 1.0)
+        return ("test", 0.0)
     else:
         return ("local", 0.0)
 
