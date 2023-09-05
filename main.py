@@ -16,22 +16,23 @@ import phenoback.utils.gcloud as g
 from phenoback.utils import glogging
 
 
-def _sentry_environment() -> Tuple[str, float]:
+def sentry_environment() -> Tuple[str, float]:
     project = g.get_project()
     if project == "phaenonet":
-        return ("production", 1.0)
+        return ("production", 1.0, 0.0)
     elif project == "phaenonet-test":
-        return ("test", 1.0)
+        return ("test", 1.0, 0.0)
     else:
-        return ("local", 0.0)
+        return ("local", 0.0, 0.0)
 
 
 sentry_sdk.init(
     release=g.get_version(),
-    environment=_sentry_environment()[0],
+    environment=sentry_environment()[0],
     dsn="https://2f043e3c7dd54efa831b9d44b20cf742@o510696.ingest.sentry.io/5606957",
     integrations=[GcpIntegration()],
-    traces_sample_rate=_sentry_environment()[1],
+    sample_rate=sentry_environment()[1],
+    traces_sample_rate=sentry_environment()[2],
 )
 
 firebase_admin.initialize_app(
