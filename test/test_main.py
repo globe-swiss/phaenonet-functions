@@ -1,5 +1,6 @@
 # pylint: disable=too-many-arguments, wrong-import-position
 import pytest
+from mock import ANY
 
 import main  # mocked via fixture
 
@@ -9,7 +10,7 @@ def test_invoke__exception(data, context):
         with main.setup(data, context):
             value = False
             with main.invoke():
-                raise Exception("Some error")
+                raise KeyError("Some error")
             with main.invoke():
                 value = True
             return value
@@ -169,3 +170,16 @@ def test_executes__storage(mocker, entrypoint, functions, data, context):
 
     for mock in mocks:
         mock.assert_called_once_with(data, context)
+
+
+@pytest.mark.parametrize(
+    "project, result",
+    [
+        ("phaenonet", ("production", 1.0, ANY)),
+        ("phaenonet-test", ("test", ANY, ANY)),
+        (None, ("local", 0.0, 0.0)),
+    ],
+)
+def test_sentry_environment(mocker, project, result):
+    mocker.patch("phenoback.utils.gcloud.get_project", return_value=project)
+    assert main.sentry_environment() == result
