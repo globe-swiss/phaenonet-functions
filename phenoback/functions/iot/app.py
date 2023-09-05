@@ -81,6 +81,14 @@ def update(data: dict, year: int, individual_id: str):
     )
 
 
+def valid_temperature(temperature):
+    return -50 <= temperature <= 50
+
+
+def valid_humidity(humidity):
+    return 0 <= humidity <= 100
+
+
 def update_history(
     year: int,
     individual_id: str,
@@ -89,20 +97,35 @@ def update_history(
     air_humidity: float,
     air_temperature: float,
 ):
-    today = d.localdate()
-    data_today = {}
-    data_today[f"data.{today}.shs"] = f.Increment(soil_humidity)
-    data_today[f"data.{today}.sts"] = f.Increment(soil_temperature)
-    data_today[f"data.{today}.ahs"] = f.Increment(air_humidity)
-    data_today[f"data.{today}.ats"] = f.Increment(air_temperature)
-    data_today[f"data.{today}.n"] = f.Increment(1)
+    if (
+        valid_humidity(air_humidity)
+        and valid_humidity(soil_humidity)
+        and valid_temperature(air_temperature)
+        and valid_temperature(soil_temperature)
+    ):
+        today = d.localdate()
+        data_today = {}
+        data_today[f"data.{today}.shs"] = f.Increment(soil_humidity)
+        data_today[f"data.{today}.sts"] = f.Increment(soil_temperature)
+        data_today[f"data.{today}.ahs"] = f.Increment(air_humidity)
+        data_today[f"data.{today}.ats"] = f.Increment(air_temperature)
+        data_today[f"data.{today}.n"] = f.Increment(1)
 
-    try:
-        f.update_document(COLLECTION, individual_id, data_today)
-    except google.api_core.exceptions.NotFound:
-        # create document and try again
-        f.write_document(COLLECTION, individual_id, {"year": year})
-        f.update_document(COLLECTION, individual_id, data_today)
+        try:
+            f.update_document(COLLECTION, individual_id, data_today)
+        except google.api_core.exceptions.NotFound:
+            # create document and try again
+            f.write_document(COLLECTION, individual_id, {"year": year})
+            f.update_document(COLLECTION, individual_id, data_today)
+    else:
+        log.error(
+            "Invalid sensor data for %s (air_temperature=%i, soil_temperature=%i, air_humidity=%i, soil_humidity=%i)",
+            individual_id,
+            air_temperature,
+            soil_temperature,
+            air_humidity,
+            soil_humidity,
+        )
 
 
 def update_individual(
