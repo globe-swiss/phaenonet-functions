@@ -211,6 +211,21 @@ def test_update_history__two():
     assert result.get("n") == 2, result
 
 
+@pytest.mark.parametrize(
+    "data",
+    [(9999, 0, 0, 0), (0, 0, 9999, 0), (0, 9999, 0, 0), (0, 0, 0, 9999)],
+)
+def test_update_history__invalid_data(
+    data,
+    caperrors,
+):
+    individual_id = "something"
+    app.update_history(YEAR, individual_id, data[0], data[1], data[2], data[3])
+
+    assert not f.get_document("sensors", individual_id)
+    assert len(caperrors.records) == 1
+
+
 def test_update_individual():
     individual_id = "ind_id"
     add_individual(individual_id, "individual", 2000)
@@ -295,3 +310,19 @@ def test_increase_uplink_frequency(set_uplink_frequency_mock):
     set_uplink_frequency_mock.assert_any_call(
         dd.DEVEUI, 3600, datetime.datetime(2020, 1, 2, tzinfo=ZoneInfo("Europe/Zurich"))
     )
+
+
+@pytest.mark.parametrize(
+    "value, result",
+    [(-50, True), (0, True), (50, True), (-51, False), (51, False)],
+)
+def test_valid_temperature(value, result):
+    assert app.valid_temperature(value) == result
+
+
+@pytest.mark.parametrize(
+    "value, result",
+    [(0, True), (50, True), (100, True), (-1, False), (101, False)],
+)
+def test_valid_humidity(value, result):
+    assert app.valid_humidity(value) == result
