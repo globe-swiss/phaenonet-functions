@@ -24,15 +24,15 @@ def process(year: int = None):
         year = d.get_phenoyear()
 
     observations = []
-    for observation_doc in (
-        query_observation("year", "==", year).where("source", "==", "globe").stream()
+    for observation_doc in query_observation("year", "==", year).where(
+        filter=f.FieldFilter("source", "==", "globe").stream()
     ):
         observation_dict = observation_doc.to_dict()
         observations.append(observation_dict)
 
     individuals_map = {}
-    for individual_doc in (
-        query_individuals("year", "==", year).where("source", "==", "globe").stream()
+    for individual_doc in query_individuals("year", "==", year).where(
+        filter=f.FieldFilter("source", "==", "globe").stream()
     ):
         individual_dict = individual_doc.to_dict()
         individuals_map[individual_dict["individual"]] = individual_dict

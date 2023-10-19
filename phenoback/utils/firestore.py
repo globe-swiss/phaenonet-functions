@@ -10,6 +10,7 @@ from google.cloud.firestore_v1 import ArrayUnion as _ArrayUnion
 from google.cloud.firestore_v1 import Increment as _Increment
 from google.cloud.firestore_v1 import Query as _Query
 from google.cloud.firestore_v1 import transactional as _transactional
+from google.cloud.firestore_v1.base_query import FieldFilter as _FieldFilter
 from google.cloud.firestore_v1.batch import WriteBatch
 from google.cloud.firestore_v1.client import Client as _Client
 from google.cloud.firestore_v1.collection import (
@@ -32,6 +33,7 @@ Client = _Client
 CollectionReference = _CollectionReference
 Transaction = _Transaction
 transactional = _transactional
+FieldFilter = _FieldFilter
 
 
 def firestore_client() -> Client:
@@ -227,7 +229,11 @@ def query_collection(
     collection: str, field_path: str, op_string: str, value: Any
 ) -> Query:
     log.debug("Query %s where %s %s %s", collection, field_path, op_string, value)
-    return firestore_client().collection(collection).where(field_path, op_string, value)
+    return (
+        firestore_client()
+        .collection(collection)
+        .where(filter=FieldFilter(field_path, op_string, value))
+    )
 
 
 def get_collection(collection: str) -> CollectionReference:

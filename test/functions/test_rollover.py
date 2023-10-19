@@ -94,9 +94,9 @@ def current_phenoyear():
 
 
 def get_amt(year: int, field: str = None):
-    query = f.collection("individuals").where("year", "==", year)
+    query = f.collection("individuals").where(filter=f.FieldFilter("year", "==", year))
     if field and field.startswith("_"):
-        query = query.where(field, "==", True)
+        query = query.where(filter=f.FieldFilter(field, "==", True))
     elif field:
         query = query.order_by(field)
     return len(list(query.stream()))
