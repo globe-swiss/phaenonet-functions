@@ -4,6 +4,7 @@ from typing import List
 from phenoback.functions import map as pheno_map
 from phenoback.functions.iot import app
 from phenoback.utils import data as d
+from phenoback.utils import firestore as f
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -44,7 +45,7 @@ def get_rollover_individuals(
     new_individuals = []
     query = d.query_individuals("year", "==", source_phenoyear)
     if individual is not None:  # debuging or fixing
-        query = query.where("individual", "==", individual)
+        query = query.where(filter=f.FieldFilter("individual", "==", individual))
     for individual_doc in query.stream():
         individual = individual_doc.to_dict()
         if does_rollover(individual):

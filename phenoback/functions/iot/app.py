@@ -50,7 +50,7 @@ def get_individual_id(year: int, deveui: str) -> Optional[str]:
     individual_id = None
     for doc in (
         d.query_individuals("deveui", "==", deveui)
-        .where("year", "==", year)
+        .where(filter=f.FieldFilter("year", "==", year))
         .limit(1)
         .stream()
     ):

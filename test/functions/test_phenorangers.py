@@ -113,7 +113,7 @@ def test_update_individuals(public_user):
     cnt = 0
     for doc in (
         d.query_individuals("user", "==", public_user.doc_id)
-        .where("year", "==", current_year)
+        .where(filter=f.FieldFilter("year", "==", current_year))
         .stream()
     ):
         assert doc.to_dict().get("source") == "ranger"
@@ -133,7 +133,7 @@ def test_get_observation_absent(public_user):
 def test_promote__email_not_found(mocker, public_user):
     d.write_observation("some_id", {"user": public_user.doc_id, "year": 2000})
     mocker.patch(
-        "phenoback.functions.phenorangers.user_exists",
+        "phenoback.utils.data.user_exists",
         return_value=False,
     )
     set_ranger_spy = mocker.spy(phenorangers, "set_ranger")
@@ -144,15 +144,15 @@ def test_promote__email_not_found(mocker, public_user):
 def test_promote__observations_found(mocker, public_user):
     d.write_observation("some_id", {"user": public_user.doc_id, "year": 2000})
     mocker.patch(
-        "phenoback.functions.phenorangers.user_exists",
+        "phenoback.utils.data.user_exists",
         return_value=True,
     )
     mocker.patch(
-        "phenoback.functions.phenorangers.get_user_id_by_email",
+        "phenoback.utils.data.get_user_id_by_email",
         return_value=public_user.doc_id,
     )
     mocker.patch(
-        "phenoback.functions.phenorangers.get_phenoyear",
+        "phenoback.utils.data.get_phenoyear",
         return_value=2000,
     )
     set_ranger_spy = mocker.spy(phenorangers, "set_ranger")
@@ -162,15 +162,15 @@ def test_promote__observations_found(mocker, public_user):
 
 def check_promote_updated(mocker, user_id, year, num):
     mocker.patch(
-        "phenoback.functions.phenorangers.user_exists",
+        "phenoback.utils.data.user_exists",
         return_value=True,
     )
     mocker.patch(
-        "phenoback.functions.phenorangers.get_user_id_by_email",
+        "phenoback.utils.data.get_user_id_by_email",
         return_value=user_id,
     )
     mocker.patch(
-        "phenoback.functions.phenorangers.get_phenoyear",
+        "phenoback.utils.data.get_phenoyear",
         return_value=year,
     )
     set_ranger_spy = mocker.spy(phenorangers, "set_ranger")
