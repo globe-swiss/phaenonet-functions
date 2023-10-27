@@ -6,6 +6,7 @@ import pytest
 import strictyaml as yaml
 from requests import delete
 
+import phenoback.utils.firestore as f
 import phenoback.utils.gcloud as g
 
 
@@ -60,6 +61,13 @@ def gcp_location(mocker) -> None:
     location = "location"
     mocker.patch("phenoback.utils.gcloud.get_location", return_value=location)
     return location
+
+
+@pytest.fixture(autouse=False)
+def phenoyear():
+    year = 2000
+    f.write_document("definitions", "config_dynamic", {"phenoyear": year})
+    return year
 
 
 @pytest.fixture(autouse=True)

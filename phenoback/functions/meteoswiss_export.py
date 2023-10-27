@@ -8,6 +8,7 @@ import io
 import logging
 
 import phenoback.utils.data as d
+import phenoback.utils.firestore as f
 from phenoback.utils import storage
 from phenoback.utils.data import query_individuals, query_observation
 
@@ -24,15 +25,19 @@ def process(year: int = None):
         year = d.get_phenoyear()
 
     observations = []
-    for observation_doc in query_observation("year", "==", year).where(
-        filter=f.FieldFilter("source", "==", "globe").stream()
+    for observation_doc in (
+        query_observation("year", "==", year)
+        .where(filter=f.FieldFilter("source", "==", "globe"))
+        .stream()
     ):
         observation_dict = observation_doc.to_dict()
         observations.append(observation_dict)
 
     individuals_map = {}
-    for individual_doc in query_individuals("year", "==", year).where(
-        filter=f.FieldFilter("source", "==", "globe").stream()
+    for individual_doc in (
+        query_individuals("year", "==", year)
+        .where(filter=f.FieldFilter("source", "==", "globe"))
+        .stream()
     ):
         individual_dict = individual_doc.to_dict()
         individuals_map[individual_dict["individual"]] = individual_dict
@@ -93,14 +98,17 @@ def process(year: int = None):
         except Exception:  # pylint: disable=broad-except
             log.error("Error processing observation, skipping %s", o, exc_info=True)
 
-    with io.StringIO() as csv_string:
-        dict_writer = csv.DictWriter(csv_string, results[0].keys(), delimiter=";")
-        dict_writer.writeheader()
-        dict_writer.writerows(results)
+    if results:
+        with io.StringIO() as csv_string:
+            dict_writer = csv.DictWriter(csv_string, results[0].keys(), delimiter=";")
+            dict_writer.writeheader()
+            dict_writer.writerows(results)
 
-        storage.upload_string(
-            None,
-            f"public/meteoswiss/export_{year}.csv",
-            csv_string.getvalue(),
-            content_type="text/csv",
-        )
+            storage.upload_string(
+                None,
+                f"public/meteoswiss/export_{year}.csv",
+                csv_string.getvalue(),
+                content_type="text/csv",
+            )
+    else:
+        log.error("No data to export for %i", year)
