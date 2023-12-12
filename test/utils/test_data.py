@@ -106,3 +106,20 @@ def test_follow_user():
     assert d.follow_user(follower, followee)
     assert followee in d.get_user(follower).get("following_users")
     assert len(d.get_user(follower).get("following_users")) == 2
+
+
+def test_create_user():
+    user_id = "uid"
+    nickname = "nick"
+    firstname = "first"
+    lastname = "last"
+    locale = "fr-CH"
+    d.create_user(user_id, nickname, firstname, lastname, locale)
+    assert d.get_user(user_id) == {
+        "nickname": nickname,
+        "firstname": firstname,
+        "lastname": lastname,
+        "lang": locale,
+    }
+    assert d.get_document("public_users", user_id) == {"nickname": nickname}
+    assert d.get_document("nicknames", nickname) == {"user": user_id}

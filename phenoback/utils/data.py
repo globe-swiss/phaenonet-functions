@@ -123,10 +123,12 @@ def create_user(
         {
             "firstname": firstname,
             "lastname": lastname,
-            "locale": locale,
+            "lang": locale,
             "nickname": nickname,
         },
     )
+    write_document("public_users", uid, {"nickname": nickname})
+    write_document("nicknames", nickname, {"user": uid})
 
 
 def get_user(user_id: str, transaction: Transaction = None) -> dict:
