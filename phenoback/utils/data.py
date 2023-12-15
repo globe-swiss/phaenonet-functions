@@ -127,8 +127,6 @@ def create_user(
             "nickname": nickname,
         },
     )
-    write_document("public_users", uid, {"nickname": nickname})
-    write_document("nicknames", nickname, {"user": uid})
 
 
 def get_user(user_id: str, transaction: Transaction = None) -> dict:

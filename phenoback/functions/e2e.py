@@ -52,6 +52,7 @@ def restore_test_users() -> None:
         "e2e-surname",
         "de-CH",
     )
+    users.process_new_user("q7lgBm5nm7PUkof20UdZ9D4d0CV2", "e2e-test-nick")
     d.create_user(
         "JIcn8kFpI4fYYcbdi9QzPlrHomn1",
         "e2e-ranger-nick",

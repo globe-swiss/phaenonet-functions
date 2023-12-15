@@ -121,5 +121,3 @@ def test_create_user():
         "lastname": lastname,
         "lang": locale,
     }
-    assert d.get_document("public_users", user_id) == {"nickname": nickname}
-    assert d.get_document("nicknames", nickname) == {"user": user_id}

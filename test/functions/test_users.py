@@ -97,8 +97,8 @@ def test_main__delete(mocker, data, context, user_id, nickname):
 def test_new_user(user_id, nickname):
     users.process_new_user(user_id, nickname)
 
-    assert f.get_document("public_users", user_id).get("nickname") == nickname
-    assert f.get_document("nicknames", nickname).get("user") == user_id
+    assert f.get_document("public_users", user_id) == {"nickname": nickname}
+    assert f.get_document("nicknames", nickname) == {"user": user_id}
 
 
 def test_update_nickname(user_id, nickname, nickname2):

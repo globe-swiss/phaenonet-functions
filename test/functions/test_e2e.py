@@ -78,7 +78,16 @@ def test_remove_following():
 )
 def test_restore_test_users(user_id):
     e2e.restore_test_users()
-    assert d.get_user(user_id), f"user_id {user_id} not found"
+    user = d.get_user(user_id)
+    assert user, f"users document for user_id {user_id} not found"
+    assert f.get_document(
+        "public_users", user_id
+    ), f"public_users document for user_id {user_id} not found"
+    assert f.get_document(
+        "nicknames", user["nickname"]
+    ), f"nicknames document for nickname {user['nickname']} not found"
+    assert f.get_document("public_users", user_id)["nickname"] == user["nickname"]
+    assert f.get_document("nicknames", user["nickname"]) == {"user": user_id}
 
 
 @pytest.mark.parametrize(
