@@ -21,6 +21,17 @@ def setup_source(source: str, rolled_source: bool):
     )
 
     d.write_individual(
+        f"2011_2_{source}",
+        {
+            "individual": f"2_{source}",
+            "source": source,
+            "year": 2011,
+            "_rolled": False,
+            "_remove": True,
+        },
+    )
+
+    d.write_individual(
         f"2012_2_{source}",
         {
             "individual": f"2_{source}",
@@ -180,13 +191,19 @@ def test_rollover__individuals_created(current_phenoyear):
     assert roll_amt == rolled_amt
 
 
-def test_rollover__individuals_removed(current_phenoyear):
+def test_remove_stale_individuals__current_phenoyear(current_phenoyear):
     individuals_kept_amt = get_amt(current_phenoyear) - get_amt(
         current_phenoyear, "_remove"
     )
     rollover.rollover()
     rollover.remove_stale_individuals()
     assert get_amt(current_phenoyear) == individuals_kept_amt
+
+
+def test_remove_stale_individuals__specific_phenoyear(current_phenoyear):
+    individuals_kept_amt = get_amt(2011) - get_amt(2011, "_remove")
+    rollover.remove_stale_individuals(2011)
+    assert get_amt(2011) == individuals_kept_amt
 
 
 def test_rollover__update_year(current_phenoyear):
