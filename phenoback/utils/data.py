@@ -115,11 +115,11 @@ def query_observation(field_path: str, op_string: str, value: Any) -> Query:
 
 
 def create_user(
-    uid, nickname, firstname="Firstname", lastname="Lastname", locale="de-CH"
+    user_id, nickname, firstname="Firstname", lastname="Lastname", locale="de-CH"
 ):
     write_document(
         "users",
-        uid,
+        user_id,
         {
             "firstname": firstname,
             "lastname": lastname,
