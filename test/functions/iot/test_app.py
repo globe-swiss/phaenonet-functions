@@ -306,7 +306,7 @@ def test_increase_uplink_frequency(set_uplink_frequency_mock):
     app.increase_uplink_frequency(dd.DEVEUI)
 
     assert set_uplink_frequency_mock.call_count == 2
-    set_uplink_frequency_mock.assert_any_call(dd.DEVEUI, 600)
+    set_uplink_frequency_mock.assert_any_call(dd.DEVEUI, 3600)
     set_uplink_frequency_mock.assert_any_call(
         dd.DEVEUI, 3600, datetime.datetime(2020, 1, 2, tzinfo=ZoneInfo("Europe/Zurich"))
     )
