@@ -37,6 +37,7 @@ on:
           - st_appspot_finalize
           - test
           - e2e_clear_individuals
+          - e2e_restore_users
       action:
         description: Action
         required: true
@@ -133,6 +134,10 @@ jobs:
             trigger: --trigger-resource test --trigger-event google.pubsub.topic.publish
           - name: e2e_clear_individuals
             entrypoint: http_reset_e2e_data
+            trigger: --trigger-http --allow-unauthenticated
+            project: phaenonet-test
+          - name: e2e_restore_users
+            entrypoint: http_restore_e2e_users
             trigger: --trigger-http --allow-unauthenticated
             project: phaenonet-test
     env:

@@ -88,11 +88,11 @@ def update_individuals(user: str, year: int, transaction: f.Transaction) -> int:
     return updated
 
 
-def set_ranger(user: str, transaction: f.Transaction):
+def set_ranger(user_id: str, transaction: f.Transaction = None):
     f.update_document(
         "public_users",
-        user,
+        user_id,
         {"roles": f.ArrayUnion(["ranger"])},
         transaction=transaction,
     )
-    log.debug("promoted %s to Ranger", user)
+    log.debug("promoted %s to Ranger", user_id)

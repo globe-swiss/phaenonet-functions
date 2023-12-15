@@ -1,0 +1,123 @@
+name: data copyback
+
+on: workflow_dispatch
+
+env:
+  NODE_VERSION: "18"
+  REGION: europe-west1
+
+concurrency: copyback
+
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  fs-function-matrix:
+    runs-on: ubuntu-latest
+    environment: phaenonet-test
+    outputs:
+      fs-functions: ${{ steps.fs-functions.outputs.functions }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1.1.1
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1.1.1
+        with:
+          project_id: phaenonet-test
+      - id: fs-functions
+        name: List Functions
+        run: |
+          echo 'functions<<EOF' >> $GITHUB_OUTPUT
+          gcloud functions list --filter fs_ --format='json(name)' --project phaenonet-test >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+  delete-fs-functions:
+    runs-on: ubuntu-latest
+    needs: fs-function-matrix
+    environment: phaenonet-test
+    strategy:
+      matrix:
+        function: ${{ fromJson(needs.fs-function-matrix.outputs.fs-functions) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1.1.1
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1.1.1
+        with:
+          project_id: phaenonet-test
+      - name: Delete Function ${{ matrix.function.name }}
+        run: gcloud functions delete $(echo ${{ matrix.function.name }} | cut -d/ -f6) --region $(echo ${{ matrix.function.name }} | cut -d/ -f4) --quiet --project phaenonet-test
+  remove-fs-data:
+    runs-on: ubuntu-latest
+    needs: delete-fs-functions
+    environment: phaenonet-test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
+      - name: Setup Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: install firebase-tools
+        run: npm i -g firebase-tools
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1.1.1
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_BACKUP_ACCOUNT }}
+          create_credentials_file: true
+      - name: Delete Firestore Data
+        run: firebase firestore:delete --all-collections --force --project phaenonet-test
+  import-fs-data:
+    runs-on: ubuntu-latest
+    needs: remove-fs-data
+    environment: phaenonet-test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1.1.1
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_BACKUP_ACCOUNT }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1.1.1
+        with:
+          project_id: phaenonet-test
+      - name: Find last backup
+        run: echo "backup-folder=$(gsutil ls gs://phaenonet_backup_daily | tail -1)" >> $GITHUB_ENV
+      - name: Import Data
+        run: gcloud --project=phaenonet-test firestore import ${{ env.backup-folder }}
+  install-functions:
+    runs-on: ubuntu-latest
+    needs: import-fs-data
+    permissions:
+      actions: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
+      - name: trigger function installation
+        run: gh workflow run -f function=all "deploy cloud functions"
+        env:
+          GH_TOKEN: ${{ github.token }}
+  restore-users:
+    runs-on: ubuntu-latest
+    needs: install-functions
+    steps:
+      - name: call restore function
+        uses: fjogeleit/http-request-action@v1.14.1
+        with:
+          url: "https://europe-west1-phaenonet-test.cloudfunctions.net/e2e_restore_users"
