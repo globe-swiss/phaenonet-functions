@@ -74,6 +74,19 @@ def setup_source(source: str, rolled_source: bool):
         },
     )
 
+    d.write_individual(
+        f"2012_6_{source}",
+        {
+            "individual": f"6_{source}",
+            "source": source,
+            "year": 2012,
+            "deveui": f"deveui_6_{source}",
+            "sensor": {},
+            "_rolled": rolled_source,
+            "_remove": False,
+        },
+    )
+
 
 @pytest.fixture(autouse=True)
 def setup() -> None:
@@ -167,12 +180,12 @@ def test_rollover__individuals_created(current_phenoyear):
     assert roll_amt == rolled_amt
 
 
-@pytest.mark.skip("Disabled remove individuals on rollover")
 def test_rollover__individuals_removed(current_phenoyear):
     individuals_kept_amt = get_amt(current_phenoyear) - get_amt(
         current_phenoyear, "_remove"
     )
     rollover.rollover()
+    rollover.remove_stale_individuals()
     assert get_amt(current_phenoyear) == individuals_kept_amt
 
 

@@ -66,21 +66,6 @@ def get_rollover_individuals(
     return new_individuals
 
 
-def get_stale_individuals(year: int) -> List[str]:
-    """
-    Remove all individuals in Firestore that have no observations for all
-    sources (globe and meteoswiss) for the given phenoyear year.
-    :param year: the phenoyear
-    """
-    stale_list = []
-    # split querying and deleting to avoid stream timeouts
-    for individual_doc in d.query_individuals("year", "==", year).stream():
-        individual = individual_doc.to_dict()
-        if not (d.has_observations(individual) or d.has_sensor(individual)):
-            stale_list.append(individual_doc.id)
-    return stale_list
-
-
 def rollover():
     source_phenoyear = d.get_phenoyear()
     target_phenoyear = source_phenoyear + 1
@@ -88,9 +73,6 @@ def rollover():
         "Gather rollover individuals of %i to %i", source_phenoyear, target_phenoyear
     )
     new_individuals = get_rollover_individuals(source_phenoyear, target_phenoyear)
-
-    # log.info("Gather stale individuals for %i", source_phenoyear)
-    # stale_individuals = get_stale_individuals(source_phenoyear)
 
     log.info("Create maps document for %i", target_phenoyear)
     pheno_map.init(target_phenoyear)
@@ -100,19 +82,43 @@ def rollover():
     )
     d.write_individuals(new_individuals, "id")
 
-    # log.info(
-    #     "Remove %i stale individuals for %i", len(stale_individuals), source_phenoyear
-    # )
-    # for individual_id in stale_individuals:
-    #     log.debug("Remove individual %s", individual_id)
-    #     d.delete_individual(individual_id)
+    log.info(
+        "Setting current phenoyear from %i to %i", source_phenoyear, target_phenoyear
+    )
+    d.update_phenoyear(target_phenoyear)
 
     cleared_sensors = app.clear_sensors(source_phenoyear)
     log.info(
         "Cleared %i sensors from individuals for %i", cleared_sensors, source_phenoyear
     )
 
+
+def get_stale_individuals(year: int) -> List[str]:
+    """
+    Remove all individuals in Firestore that have no observations for any
+    sources or sensor data for the given phenoyear year.
+    :param year: the phenoyear
+    """
+    stale_list = []
+    for individual_doc in d.query_individuals("year", "==", year).stream():
+        individual = individual_doc.to_dict()
+        if not (d.has_observations(individual) or d.has_sensor(individual)):
+            stale_list.append(individual_doc.id)
+    return stale_list
+
+
+def remove_stale_individuals(year: int = None):
+    # split querying and deleting to avoid stream timeouts
+    if not year:
+        year = d.get_phenoyear() - 1
+    log.info("Gather stale individuals for %i", year)
+    stale_individuals = get_stale_individuals(year)
+
     log.info(
-        "Setting current phenoyear from %i to %i", source_phenoyear, target_phenoyear
+        "Remove %i stale individuals for %i",
+        len(stale_individuals),
+        year,
     )
-    d.update_phenoyear(target_phenoyear)
+    for individual_id in stale_individuals:
+        log.debug("Remove individual %s", individual_id)
+        d.delete_individual(individual_id)
