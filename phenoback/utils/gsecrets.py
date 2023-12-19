@@ -7,7 +7,6 @@ from phenoback.utils import gcloud
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
-project_id = gcloud.get_project()
 
 
 @lru_cache()
@@ -15,7 +14,7 @@ def get_secret(key: str):
     log.debug("Access %s", key)
     client = secretmanager.SecretManagerServiceClient()
     response = client.access_secret_version(
-        name=f"projects/{project_id}/secrets/{key}/versions/latest"
+        name=f"projects/{gcloud.get_project()}/secrets/{key}/versions/latest"
     )
     payload = response.payload.data.decode("UTF-8")
     return payload
