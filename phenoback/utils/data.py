@@ -123,7 +123,7 @@ def create_user(
         {
             "firstname": firstname,
             "lastname": lastname,
-            "lang": locale,
+            "locale": locale,
             "nickname": nickname,
         },
     )
