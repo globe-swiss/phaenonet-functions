@@ -119,5 +119,5 @@ def test_create_user():
         "nickname": nickname,
         "firstname": firstname,
         "lastname": lastname,
-        "lang": locale,
+        "locale": locale,
     }
