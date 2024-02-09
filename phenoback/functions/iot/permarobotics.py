@@ -22,7 +22,12 @@ def send_permarobotics(data: dict) -> bool:
     result["end_device_ids"]["dev_eui"] = deveui
     result["uplink_message"]["received_at"] = data["DevEUI_uplink"]["Time"]
     result["uplink_message"]["rx_metadata"] = [
-        {"rssi": data["DevEUI_uplink"]["LrrRSSI"]}
+        {
+            "rssi": data["DevEUI_uplink"]["LrrRSSI"],
+            "snr": data["DevEUI_uplink"]["LrrSNR"],
+            "esp": data["DevEUI_uplink"]["LrrESP"],
+            "spfact": data["DevEUI_uplink"]["SpFact"],
+        }
     ]
     result["uplink_message"]["f_port"] = data["DevEUI_uplink"]["FPort"]
     result["uplink_message"]["f_cnt"] = data["DevEUI_uplink"]["FCntUp"]
