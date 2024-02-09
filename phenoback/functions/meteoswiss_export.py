@@ -3,6 +3,7 @@ Meteoswiss phenology data export
 
 New PhaenoNet data mapped as good as possible to the previously existing export structure for meteoswiss.
 """
+
 import csv
 import io
 import logging
@@ -59,9 +60,11 @@ def process(year: int = None):
                     "MEAS_ALTGRP": "",
                     "MEAS_INCR": "",
                     "CREATED": d.localtime(o["created"]).strftime("%d.%m.%Y %H:%M:%S"),
-                    "MODIFIED": d.localtime(o["modified"]).strftime("%d.%m.%Y %H:%M:%S")
-                    if o["modified"]
-                    else "",
+                    "MODIFIED": (
+                        d.localtime(o["modified"]).strftime("%d.%m.%Y %H:%M:%S")
+                        if o["modified"]
+                        else ""
+                    ),
                     "GEOPOS": f"{i['geopos']['lat']},{i['geopos']['lng']}",
                     "ALTITUDE": i["altitude"],
                     "DESCRIPTION": i["description"],

@@ -11,6 +11,9 @@ def raw_data():
             "DevEUI": "cb773133e929f8a7",
             "payload_hex": "01620205000108000503e824",
             "LrrRSSI": -107,
+            "LrrESP": -109,
+            "LrrSNR": 0,
+            "SpFact": 7,
             "FCntUp": 32,
             "Time": "2022-12-14T18:15:28.409+01:00",
             "FPort": 2,
@@ -78,7 +81,7 @@ def test_send_permarobotics__payload_format(mocker, data):
         "end_device_ids": {"dev_eui": "cb773133e929f8a7"},
         "uplink_message": {
             "received_at": "2022-12-14T18:15:28.409+01:00",
-            "rx_metadata": [{"rssi": -107}],
+            "rx_metadata": [{"rssi": -107, "esp": -109, "spfact": 7, "snr": 0}],
             "f_port": 2,
             "f_cnt": 32,
             "frm_payload": "01620205000108000503e824",
