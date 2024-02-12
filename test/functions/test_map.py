@@ -66,7 +66,7 @@ def test_enqueue_change__should_update(mocker, should_update):
         False,
     )
 
-    assert should_update_mock.called_with(["updated_fields"])
+    should_update_mock.assert_called_with(["updated_fields"], False)
     if should_update:
         client_mock.return_value.send.assert_called()
     else:

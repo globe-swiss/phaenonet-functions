@@ -477,7 +477,7 @@ class TestMail:
         # explicit test for empty dict
         assert envelopesmail.sendmail(invite_mail) == {}  # pylint: disable=C1803
         assert send_mock.call_count == 1
-        assert reset_mock.not_called()
+        reset_mock.assert_not_called()
 
     def test_sendmail__refresh_credentials(self, mocker, invite_mail):
         send_mock = mocker.patch(
