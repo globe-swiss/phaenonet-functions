@@ -19,15 +19,15 @@ jobs:
       fs-functions: ${{ steps.fs-functions.outputs.functions }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v4.1.1
       - id: auth
         name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1.1.1
+        uses: google-github-actions/auth@v2.1.1
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1.1.1
+        uses: google-github-actions/setup-gcloud@v2.1.0
         with:
           project_id: phaenonet-test
       - id: fs-functions
@@ -45,15 +45,15 @@ jobs:
         function: ${{ fromJson(needs.fs-function-matrix.outputs.fs-functions) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v4.1.1
       - id: auth
         name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1.1.1
+        uses: google-github-actions/auth@v2.1.1
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1.1.1
+        uses: google-github-actions/setup-gcloud@v2.1.0
         with:
           project_id: phaenonet-test
       - name: Delete Function ${{ matrix.function.name }}
@@ -64,16 +64,16 @@ jobs:
     environment: phaenonet-test
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v4.1.1
       - name: Setup Node ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3.6.0
+        uses: actions/setup-node@v4.0.2
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: install firebase-tools
         run: npm i -g firebase-tools
       - id: auth
         name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1.1.1
+        uses: google-github-actions/auth@v2.1.1
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_BACKUP_ACCOUNT }}
@@ -86,15 +86,15 @@ jobs:
     environment: phaenonet-test
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v4.1.1
       - id: auth
         name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1.1.1
+        uses: google-github-actions/auth@v2.1.1
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_BACKUP_ACCOUNT }}
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1.1.1
+        uses: google-github-actions/setup-gcloud@v2.1.0
         with:
           project_id: phaenonet-test
       - name: Find last backup
@@ -108,7 +108,7 @@ jobs:
       actions: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v4.1.1
       - name: trigger function installation
         run: gh workflow run -f function=all "deploy cloud functions"
         env:
@@ -118,6 +118,6 @@ jobs:
     needs: install-functions
     steps:
       - name: call restore function
-        uses: fjogeleit/http-request-action@v1.14.1
+        uses: fjogeleit/http-request-action@v1.15.2
         with:
           url: "https://europe-west1-phaenonet-test.cloudfunctions.net/e2e_restore_users"
