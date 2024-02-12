@@ -116,11 +116,11 @@ def get_app_host() -> str:
 
 
 def get_version() -> str:  # pragma: no cover
-    return os.getenv("version")
+    return os.getenv("version", "Unknown")
 
 
 def get_location() -> str:  # pragma: no cover
-    return os.getenv("location")
+    return os.getenv("location", "Unknown")
 
 
 def get_data(pubsub_event):

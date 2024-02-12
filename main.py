@@ -261,23 +261,31 @@ def test(data, context):  # pragma: no cover
         log.info("Environment: %s", str(os.environ))
         sleep(1)
         log.log(
-            level=logging.ERROR if g.get_function_name() != "test" else logging.INFO,
-            msg=("Function Name: %s", g.get_function_name()),
+            logging.ERROR if g.get_function_name() != "test" else logging.INFO,
+            "Function Name: %s",
+            g.get_function_name(),
         )
         sleep(1)
         log.log(
-            level=logging.ERROR if g.get_project() == "Unknown" else logging.INFO,
-            msg=("Project: %s", g.get_project()),
+            logging.ERROR if g.get_project() != "phaenonet-test" else logging.INFO,
+            "Project: %s",
+            g.get_project(),
         )
         sleep(1)
         log.log(
-            level=logging.ERROR if g.get_app_host() == "Unknown" else logging.INFO,
-            msg=("App Host: %s", g.get_app_host()),
+            (
+                logging.ERROR
+                if g.get_app_host() != "phaenonet-test.web.app"
+                else logging.INFO
+            ),
+            "App Host: %s",
+            g.get_app_host(),
         )
         sleep(1)
         log.log(
-            level=logging.ERROR if g.get_version() == "Unknown" else logging.INFO,
-            msg=("Version: %s", g.get_version()),
+            logging.ERROR if not g.get_version().startswith("test@") else logging.INFO,
+            "Version: %s",
+            g.get_version(),
         )
         sleep(1)
         log.debug("L - debug")
