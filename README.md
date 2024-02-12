@@ -41,6 +41,26 @@ gcloud --project=phaenonet-test --account=firestore-backup@phaenonet-test.iam.gs
 
 Use `act -j <job>`
 
+## Upgrade actions
+
+### Update python version
+
+1. update and rebuild, publish docker images
+1. rebuild devcontainer
+1. update `Pipfile` on minor version change & rebuild environment
+1. update `RUNTIME` variable in `deploy-functions.yml`
+1. update container versions in `main.yml` (2x)
+
+#### Rebuild pipenv on minor update
+
+Edit `Pipfile` and set new version
+
+```sh
+pipenv --rm
+PIPENV_VENV_IN_PROJECT=1 pipenv update
+pipenv sync --dev
+```
+
 ## Related resources
 
 - [phaenonet-client](https://github.com/globe-swiss/phaenonet-client)
