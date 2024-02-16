@@ -98,7 +98,7 @@ jobs:
         with:
           project_id: phaenonet-test
       - name: Find last backup
-        run: echo "backup-folder=$(gsutil ls gs://phaenonet_backup_daily | tail -1)" >> $GITHUB_ENV
+        run: echo "backup-folder=$(gsutil ls gs://phaenonet-backup-daily | tail -1)" >> $GITHUB_ENV
       - name: Import Data
         run: gcloud --project=phaenonet-test firestore import ${{ env.backup-folder }}
   install-functions:
