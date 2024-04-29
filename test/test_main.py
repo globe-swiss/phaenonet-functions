@@ -41,7 +41,7 @@ def test_invoke__exception(data, context):
             [
                 "phenoback.functions.iot.app.main",
                 "phenoback.functions.iot.bq.main",
-                "phenoback.functions.iot.permarobotics.main",
+                # "phenoback.functions.iot.permarobotics.main", -> not called: only for productive environment
             ],
         ),
     ],
@@ -55,6 +55,23 @@ def test_executes__pubsub(mocker, entrypoint, functions, pubsub_event, context):
 
     for mock in mocks:
         mock.assert_called_once_with(pubsub_event, context)
+
+
+@pytest.mark.parametrize(
+    "project",
+    ["phaenonet", "phaenonet-test", None],
+)
+def test_executes__ps_iot_dragino__environments(mocker, project, pubsub_event, context):
+    mocker.patch("phenoback.utils.gcloud.get_project", return_value=project)
+    mock_app_main = mocker.patch("phenoback.functions.iot.app.main")
+    mock_bq_main = mocker.patch("phenoback.functions.iot.bq.main")
+    mock_permarobotics_main = mocker.patch("phenoback.functions.iot.permarobotics.main")
+
+    main.ps_iot_dragino(pubsub_event, context)
+
+    assert mock_app_main.called
+    assert mock_bq_main.called
+    assert mock_permarobotics_main.called == (project == "phaenonet")
 
 
 @pytest.mark.parametrize(
