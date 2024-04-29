@@ -247,7 +247,9 @@ def ps_iot_dragino(event, context):
         with invoke():
             from phenoback.functions.iot import permarobotics
 
-            permarobotics.main(event, context)
+            # only sent data from production environment to permarobotics
+            if g.get_project() == "phaenonet":
+                permarobotics.main(event, context)
         with invoke():
             from phenoback.functions.iot import bq
 

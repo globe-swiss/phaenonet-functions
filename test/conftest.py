@@ -50,14 +50,14 @@ def capwarnings(caplog):
 
 
 @pytest.fixture(autouse=True)
-def gcp_project(mocker) -> None:
-    project = "project"
+def gcp_project(mocker) -> str:
+    project = "project-name"
     mocker.patch("phenoback.utils.gcloud.get_project", return_value=project)
     return project
 
 
 @pytest.fixture(autouse=True)
-def gcp_location(mocker) -> None:
+def gcp_location(mocker) -> str:
     location = "location"
     mocker.patch("phenoback.utils.gcloud.get_location", return_value=location)
     return location
