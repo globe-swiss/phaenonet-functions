@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     container: globeswiss/cloud-sdk:py3.12.2-463.0.0
     steps:
-      - uses: actions/checkout@v4.1.5
+      - uses: actions/checkout@v4.1.7
       - name: Install dependencies
         run: pip3 install pipenv
       - name: Sync dev dependencies
@@ -38,14 +38,14 @@ jobs:
       #     fail_on_error: True
       #   if: always()
       - name: Check black
-        uses: reviewdog/action-black@v3.15.0
+        uses: reviewdog/action-black@v3.16.2
         with:
           reporter: github-check
           verbose: True
           fail_on_error: True
         if: always()
       - name: Check markdownlint
-        uses: reviewdog/action-markdownlint@v0.18.0
+        uses: reviewdog/action-markdownlint@v0.20.0
         with:
           reporter: github-check
           fail_on_error: True
@@ -54,7 +54,7 @@ jobs:
         run: pipenv run python -m pytest --cov-report xml --cov=main --cov=phenoback --cov-branch
         if: always()
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4.3.1
+        uses: codecov/codecov-action@v4.4.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.xml
@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     container: globeswiss/cloud-sdk:py3.12.2-463.0.0
     steps:
-      - uses: actions/checkout@v4.1.5
+      - uses: actions/checkout@v4.1.7
       - name: install dependencies
         run: pip3 install pipenv
       - name: Update pipenv environment
