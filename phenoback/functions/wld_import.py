@@ -70,7 +70,7 @@ def check_file_size(blob: Blob) -> None:
     size = blob.size
     log.debug("Import file size %ib", size)
     if size > MAX_ARCHIVE_BYTES:
-        raise OverflowError(f"File bigger than {MAX_ARCHIVE_BYTES/1000}kb")
+        raise OverflowError(f"File bigger than {MAX_ARCHIVE_BYTES / 1000}kb")
 
 
 def load_data(input_zip: ZipFile) -> Dict[str, List[dict]]:
