@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from unittest.mock import PropertyMock
 
 import pytest
-from google.api.context_pb2 import Context
+from google.api.context_pb2 import Context  # pylint: disable=no-name-in-module
 
 from phenoback.utils.gcloud import (
     get_app_host,
