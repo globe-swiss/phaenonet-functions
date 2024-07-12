@@ -63,5 +63,4 @@ jobs:
           use_oidc: true
           file: ./coverage.xml
           flags: unittests
-          env_vars: OS,PYTHON
         if: always() && github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]'
