@@ -13,6 +13,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     container: globeswiss/cloud-sdk:py3.12.2-463.0.0
+    permissions:
+      id-token: write # codecov oicd
+      contents: read # checkout
+      pull-requests: write # reviewdog
     steps:
       - uses: actions/checkout@v4.1.7
       - name: Install dependencies
@@ -56,8 +60,7 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4.5.0
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
           file: ./coverage.xml
           flags: unittests
-          env_vars: OS,PYTHON
         if: always() && github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]'
