@@ -33,8 +33,10 @@ def test_function_names(gcf_names, github_deploy_options):
     assert set(gcf_names) == deploy_option_set
 
 
-def test_container__consistency(main_yaml):
+def test_runtime__consistency(main_yaml, deploy_yaml):
+    python_runtime = deploy_yaml["env"]["RUNTIME"][6:]
+    print(f"py{python_runtime[0]}.{python_runtime[1:]}")
     assert (
-        main_yaml["jobs"]["test"]["container"]
-        == main_yaml["jobs"]["test-updated"]["container"]
+        f"py{python_runtime[0]}.{python_runtime[1:]}"
+        in main_yaml["jobs"]["test"]["container"]
     )
