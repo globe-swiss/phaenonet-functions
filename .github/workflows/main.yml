@@ -13,6 +13,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     container: globeswiss/cloud-sdk:py3.12.2-463.0.0
+    permissions:
+      id-token: write # codecov oicd
+      contents: read # checkout
+      pull-requests: write # reviewdog
     steps:
       - uses: actions/checkout@v4.1.7
       - name: Install dependencies
