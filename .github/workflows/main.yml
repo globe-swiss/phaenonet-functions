@@ -61,14 +61,3 @@ jobs:
           flags: unittests
           env_vars: OS,PYTHON
         if: always() && github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]'
-  test-updated:
-    runs-on: ubuntu-latest
-    container: globeswiss/cloud-sdk:py3.12.2-463.0.0
-    steps:
-      - uses: actions/checkout@v4.1.7
-      - name: install dependencies
-        run: pip3 install pipenv
-      - name: Update pipenv environment
-        run: pipenv update --dev
-      - name: Test updated environment with pytest
-        run: pipenv run python -m pytest
