@@ -66,7 +66,9 @@ def test_enqueue_change__should_update(mocker, should_update):
         False,
     )
 
-    should_update_mock.assert_called_with(["updated_fields"], False)
+    should_update_mock.assert_called_with(
+        ["updated_fields"], False, ["station_species"], "last_phenophase"
+    )
     if should_update:
         client_mock.return_value.send.assert_called()
     else:
@@ -196,24 +198,37 @@ def test_process_change__new_value(mapdata, initialdata: dict):
 
 
 @pytest.mark.parametrize(
-    "updated_fields, is_create_event, expected",
+    "station_species, last_phenophase, expected",
     [
-        (["geopos.lat"], False, True),
-        (["geopos.lng"], False, True),
-        (["station_species"], False, True),
-        (["species"], False, True),
-        (["type"], False, True),
-        (["last_phenophase"], False, True),
-        (["source"], False, True),
-        (["deveui"], False, True),
-        (["source", "other_values"], False, True),
-        (["other_values"], False, False),
-        (["other_values"], True, True),
-        (["reprocess"], False, True),
+        (["HS"], None, True),
+        (None, "BLA", True),
+        (None, None, False),
     ],
 )
-def test_should_update(updated_fields, is_create_event, expected):
-    assert pheno_map._should_update(updated_fields, is_create_event) == expected
+def test_should_update__on_create(station_species, last_phenophase, expected):
+    assert (
+        pheno_map._should_update([], True, station_species, last_phenophase) == expected
+    )
+
+
+@pytest.mark.parametrize(
+    "updated_fields, expected",
+    [
+        (["geopos.lat"], True),
+        (["geopos.lng"], True),
+        (["station_species"], True),
+        (["species"], True),
+        (["type"], True),
+        (["last_phenophase"], True),
+        (["source"], True),
+        (["deveui"], True),
+        (["source", "other_values"], True),
+        (["other_values"], False),
+        (["reprocess"], True),
+    ],
+)
+def test_should_update__on_update(updated_fields, expected):
+    assert pheno_map._should_update(updated_fields, False, None, None) == expected
 
 
 def test_delete(mapdata):

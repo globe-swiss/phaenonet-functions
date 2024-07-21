@@ -59,7 +59,9 @@ def enqueue_change(
     deveui: str,
     is_create_event: bool,
 ) -> None:
-    if _should_update(updated_fields, is_create_event):
+    if _should_update(
+        updated_fields, is_create_event, station_species, last_phenophase
+    ):
         values = {
             individual_id: {
                 "t": individual_type,
@@ -107,8 +109,17 @@ def replace_delete_tokens(payload: dict) -> None:
             individual_dict[key] = f.DELETE_FIELD if value == DELETE_TOKEN else value
 
 
-def _should_update(updated_fields: list[str], is_create_event: bool) -> bool:
-    return is_create_event or any(
+def _should_update(
+    updated_fields: list[str], is_create_event: bool, station_species, last_phenophase
+) -> bool:
+    """
+    Update if
+    * a new individual/station is created which would be shown on the map
+    * data is updated that is relevant on the map
+    """
+    return (
+        is_create_event and (station_species is not None or last_phenophase is not None)
+    ) or any(
         elem
         in [
             "geopos.lat",
