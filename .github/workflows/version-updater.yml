@@ -27,10 +27,12 @@ jobs:
     container: globeswiss/cloud-sdk:py3.12.2-463.0.0
     steps:
       - uses: actions/checkout@v4.1.7
+      - name: Work around https://github.com/actions/checkout/issues/766
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: install dependencies
         run: pip3 install pipenv
       - name: Update pipenv environment
-        run: pipenv update --dev
+        run: pipenv lock --dev
       - name: Update requirements.txt
         run: pipenv requirements > requirements.txt
       - name: Check for changes
