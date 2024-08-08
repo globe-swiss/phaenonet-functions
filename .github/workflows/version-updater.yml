@@ -1,22 +1,52 @@
-name: GitHub Actions Version Updater
+name: Version Updater
 
-on: 
+on:
   workflow_dispatch:
   schedule:
-  - cron: '30 5 * * 5'
+    - cron: "30 5 * * 5"
 
 jobs:
-  build:
+  actions-update:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4.1.7
         with:
           # [Required] Access token with `workflow` scope.
           token: ${{ secrets.WORKFLOW_ACCESS_TOKEN }}
-
       - name: Run GitHub Actions Version Updater
         uses: saadmk11/github-actions-version-updater@v0.8.1
         with:
           # [Required] Access token with `workflow` scope.
           token: ${{ secrets.WORKFLOW_ACCESS_TOKEN }}
+          pull_request_title: "[Automated] Update GitHub Action Versions"
+  python-update:
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    container: globeswiss/cloud-sdk:py3.12.2-463.0.0
+    steps:
+      - uses: actions/checkout@v4.1.7
+      - name: Work around https://github.com/actions/checkout/issues/766
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: install dependencies
+        run: pip3 install pipenv
+      - name: Update pipenv environment
+        run: pipenv lock --dev
+      - name: Update requirements.txt
+        run: pipenv requirements > requirements.txt
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --exit-code || echo "changes=true" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        if: ${{ steps.git-check.outputs.changes == 'true' }}
+        uses: peter-evans/create-pull-request@v5
+        with:
+          # required to trigger test workflow
+          token: ${{ secrets.WORKFLOW_ACCESS_TOKEN }}
+          commit-message: "Update packages"
+          title: "[Automated] Update Python Packages"
+          body: "Automated changes by GitHub Actions"
+          branch: automated-update
+          delete-branch: true
