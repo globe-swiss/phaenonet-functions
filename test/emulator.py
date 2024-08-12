@@ -1,9 +1,9 @@
 import os
 import re
 import sys
+from unittest import mock
 
 import google.auth.credentials
-import mock
 from google.cloud import firestore
 from xprocess import ProcessStarter
 

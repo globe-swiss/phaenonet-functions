@@ -1,5 +1,4 @@
 import logging
-from typing import Set
 
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
@@ -88,7 +87,7 @@ def process_observation(
         return False
 
 
-def get_followers(individual: str, user_id: str) -> Set[str]:
+def get_followers(individual: str, user_id: str) -> set[str]:
     following_users_query = f.query_collection(
         "users", "following_users", "array_contains", user_id
     )

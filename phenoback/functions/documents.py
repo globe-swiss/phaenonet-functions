@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime
-from typing import List
 
 from phenoback.utils import firestore as f
 from phenoback.utils import gcloud as g
@@ -51,7 +50,7 @@ def update_created_document(collection: str, document_id: str):
 def update_modified_document(
     collection: str,
     document_id: str,
-    updated_fields: List[str],
+    updated_fields: list[str],
     created: datetime = None,
 ):
     log.debug(
@@ -83,7 +82,7 @@ def update_modified_document(
         log.debug("update event: nothing to do: fields=%s", updated_fields)
 
 
-def _should_update_modified(updated_fields: List[str]):
+def _should_update_modified(updated_fields: list[str]):
     return not (
         all(field in [CREATED_KEY, MODIFIED_KEY] for field in updated_fields)
         or any(field.startswith("sensor.") for field in updated_fields)

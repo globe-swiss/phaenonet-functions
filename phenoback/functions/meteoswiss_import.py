@@ -3,7 +3,6 @@ import io
 import logging
 from datetime import datetime
 from hashlib import md5
-from typing import Dict, List, Optional
 
 from requests import get
 
@@ -64,7 +63,7 @@ def _clean_station_csv(text):
     return text.split("\n\n")[0]
 
 
-def _get_individuals_dicts(phenoyear: int, stations: csv.DictReader) -> List[Dict]:
+def _get_individuals_dicts(phenoyear: int, stations: csv.DictReader) -> list[dict]:
     return [
         {
             "id": f"{phenoyear}_{station['Abbr.']}",
@@ -117,7 +116,7 @@ def process_observations_response(response_text: str, response_elapsed: float) -
         return False
 
 
-def _get_observations_dicts(observations: csv.DictReader) -> List[Dict]:
+def _get_observations_dicts(observations: csv.DictReader) -> list[dict]:
     mapping = get_document("definitions", "meteoswiss_mapping")
     return [
         {
@@ -136,7 +135,7 @@ def _get_observations_dicts(observations: csv.DictReader) -> List[Dict]:
     ]
 
 
-def _get_station_species(observations: List[dict]) -> Dict[str, Optional[List[str]]]:
+def _get_station_species(observations: list[dict]) -> dict[str, list[str] | None]:
     station_species: dict = {}
     for observation in observations:
         station_species.setdefault(observation["individual_id"], []).append(
@@ -159,7 +158,7 @@ def _set_hash(key: str, data: str):
     log.debug("set hash for %s to %s", key, hashed_data)
 
 
-def _load_hash(key: str) -> Optional[str]:
+def _load_hash(key: str) -> str | None:
     doc = get_document("definitions", "meteoswiss_import")
     loaded_hash = doc.get(f"hash_{key}") if doc else None
     log.debug("loaded hash for %s to %s", key, loaded_hash)

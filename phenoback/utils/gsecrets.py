@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 
-@lru_cache()
+@lru_cache
 def get_secret(key: str):
     log.debug("Access %s", key)
     client = secretmanager.SecretManagerServiceClient()

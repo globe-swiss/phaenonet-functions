@@ -1,6 +1,7 @@
 # pylint: disable=too-many-arguments, wrong-import-position
+from unittest.mock import ANY
+
 import pytest
-from mock import ANY
 
 import main  # mocked via fixture
 

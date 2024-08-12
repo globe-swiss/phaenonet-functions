@@ -1,6 +1,5 @@
 import datetime
 import logging
-from typing import Optional
 from zoneinfo import ZoneInfo
 
 import google
@@ -46,7 +45,7 @@ def process_dragino(data: dict) -> None:
         log.warning("No individual found for %s in %i", decoder.devuei, year)
 
 
-def get_individual_id(year: int, deveui: str) -> Optional[str]:
+def get_individual_id(year: int, deveui: str) -> str | None:
     individual_id = None
     for doc in (
         d.query_individuals("deveui", "==", deveui)

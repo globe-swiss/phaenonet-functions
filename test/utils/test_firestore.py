@@ -1,5 +1,4 @@
 from test.util import get_random_string
-from typing import Dict
 
 import google.api_core.exceptions
 import pytest
@@ -19,12 +18,12 @@ def doc_id2() -> str:
 
 
 @pytest.fixture()
-def doc() -> Dict[str, str]:
+def doc() -> dict[str, str]:
     return {get_random_string(5): get_random_string(5)}
 
 
 @pytest.fixture()
-def doc2() -> Dict[str, str]:
+def doc2() -> dict[str, str]:
     return {get_random_string(6): get_random_string(6)}
 
 

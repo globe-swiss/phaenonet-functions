@@ -3,7 +3,6 @@ import io
 import logging
 from datetime import datetime
 from functools import lru_cache
-from typing import Dict, List, Set
 from zipfile import ZipFile
 
 from google.cloud.storage import Blob
@@ -73,7 +72,7 @@ def check_file_size(blob: Blob) -> None:
         raise OverflowError(f"File bigger than {MAX_ARCHIVE_BYTES / 1000}kb")
 
 
-def load_data(input_zip: ZipFile) -> Dict[str, List[dict]]:
+def load_data(input_zip: ZipFile) -> dict[str, list[dict]]:
     return {
         name: list(
             csv.DictReader(
@@ -153,16 +152,16 @@ def import_data(pathfile: str, bucket=None):
     insert_data("observations", observations(year))
 
 
-@lru_cache()
-def station_species() -> Dict[str, Set[str]]:
+@lru_cache
+def station_species() -> dict[str, set[str]]:
     result = {}
     for tree in DATA["tree.csv"]:
         result.setdefault(tree["site_id"], set()).add(map_species(tree["species_id"]))
     return result
 
 
-@lru_cache()
-def tree_species() -> Dict[str, Dict[str, str]]:
+@lru_cache
+def tree_species() -> dict[str, dict[str, str]]:
     result = {}
     for tree in DATA["tree.csv"]:
         result.setdefault(tree["site_id"], {})[tree["tree_id"]] = map_species(
@@ -171,15 +170,15 @@ def tree_species() -> Dict[str, Dict[str, str]]:
     return result
 
 
-@lru_cache()
-def site_users() -> Dict[str, Dict[str, str]]:
+@lru_cache
+def site_users() -> dict[str, dict[str, str]]:
     result = {}
     for obs in DATA["observation_phaeno.csv"]:
         result.setdefault(obs["site_id"], {})[obs["year"]] = obs["user_id"]
     return result
 
 
-def get_site_species(site_id: str) -> List[str]:
+def get_site_species(site_id: str) -> list[str]:
     return list(filter(lambda species: species, station_species()[site_id]))
 
 
@@ -260,7 +259,7 @@ def public_users():
     ]
 
 
-def insert_data(collection: str, documents: List[dict]) -> None:
+def insert_data(collection: str, documents: list[dict]) -> None:
     if len(documents) == 0:
         log.error(
             "no data present on collection %s",

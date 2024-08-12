@@ -18,7 +18,7 @@ def main(event, context):  # pylint: disable=unused-argument
 
 def send_permarobotics(data: dict) -> bool:
     deveui = data["DevEUI_uplink"]["DevEUI"]
-    result = defaultdict(lambda: {})
+    result = defaultdict(dict)
     result["end_device_ids"]["dev_eui"] = deveui
     result["uplink_message"]["received_at"] = data["DevEUI_uplink"]["Time"]
     result["uplink_message"]["rx_metadata"] = [

@@ -1,5 +1,4 @@
 import logging
-from typing import List
 
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
@@ -38,7 +37,7 @@ def invite_id(user_id: str, email: str) -> str:
     return f"{user_id}_{email}"
 
 
-def get_invite_ids(user_id: str) -> List[str]:
+def get_invite_ids(user_id: str) -> list[str]:
     """
     Get all invite ids that invited the given user.
     """

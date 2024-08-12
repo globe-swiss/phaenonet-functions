@@ -1,6 +1,5 @@
 import json
 import logging
-from typing import Dict, Union
 
 from google.cloud import pubsub_v1
 
@@ -19,7 +18,7 @@ class Publisher:
         log.debug("Publisher created for topic %s", self.topic)
 
     def send(
-        self, payload: Union[Dict, str], metadata: Dict[str, Union[bytes, str]] = None
+        self, payload: dict | str, metadata: dict[str, bytes | str] = None
     ) -> None:
         if metadata is None:
             metadata = {}

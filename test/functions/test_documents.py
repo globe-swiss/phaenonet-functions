@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
+from unittest.mock import ANY
 
 import pytest
-from mock import ANY
 
 from phenoback.functions import documents
 from phenoback.utils import firestore as f

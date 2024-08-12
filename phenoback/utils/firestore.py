@@ -1,7 +1,7 @@
 import logging
 from contextlib import contextmanager
 from time import sleep
-from typing import Any, List, Optional
+from typing import Any
 
 from firebase_admin import firestore
 from google.cloud.firestore_v1 import DELETE_FIELD as _DELETE_FIELD
@@ -94,7 +94,7 @@ def delete_batch(
 def _write_batch(
     collection: str,
     key: str,
-    data: List[dict],
+    data: list[dict],
     merge: bool,
     commit_size: int,
     writebatch: WriteBatch,
@@ -122,7 +122,7 @@ def _write_batch(
 def write_batch(
     collection: str,
     key: str,
-    data: List[dict],
+    data: list[dict],
     merge: bool = False,
     commit_size: int = None,
     transaction: Transaction = None,
@@ -165,7 +165,7 @@ def write_batch(
 
 def write_document(
     collection: str,
-    document_id: Optional[str],
+    document_id: str | None,
     data: dict,
     merge: bool = False,
     transaction: Transaction = None,
@@ -204,7 +204,7 @@ def update_document(
 
 def get_document(
     collection: str, document_id: str, transaction: Transaction = None
-) -> Optional[dict]:
+) -> dict | None:
     log.debug(
         "Get document %s in %s (%s)",
         document_id,
@@ -241,7 +241,7 @@ def get_collection(collection: str) -> CollectionReference:
     return firestore_client().collection(collection)
 
 
-def get_collection_documents(collection: str) -> List[dict]:
+def get_collection_documents(collection: str) -> list[dict]:
     return [location.to_dict() for location in get_collection(collection).stream()]
 
 

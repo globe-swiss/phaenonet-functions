@@ -2,7 +2,6 @@ import datetime
 import json
 import logging
 import urllib.parse
-from typing import Dict, Union
 
 import google.cloud.tasks_v2.types.task
 from google.cloud import tasks_v2
@@ -32,7 +31,7 @@ class HTTPClient:
 
     def send(
         self,
-        payload: Union[Dict, str],
+        payload: dict | str,
         params: dict = None,
         task_name: str = None,
         at: datetime.datetime = None,
@@ -109,7 +108,7 @@ class GCFClient:
 
     def send(
         self,
-        payload: Union[Dict, str],
+        payload: dict | str,
         task_name: str = None,
         at: datetime.datetime = None,
         deadline: int = None,

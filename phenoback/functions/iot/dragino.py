@@ -66,7 +66,7 @@ def set_uplink_frequency(deveui: str, interval: int, at: datetime = None):
 
 
 class DraginoDecoder(Decoder):
-    result = defaultdict(lambda: {})
+    result = defaultdict(dict)
 
     def set(self, field: str, value: float, precision: int, unit: str):
         self.result[field]["value"] = round(value, precision)
