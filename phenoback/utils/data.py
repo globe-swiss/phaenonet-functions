@@ -1,6 +1,6 @@
 from datetime import datetime
 from functools import lru_cache
-from typing import Any, List
+from typing import Any
 from zoneinfo import ZoneInfo
 
 import tzlocal
@@ -20,7 +20,7 @@ from phenoback.utils.firestore import (
 )
 
 
-@lru_cache()
+@lru_cache
 def _get_static_config() -> dict:
     return get_document("definitions", "config_static")
 
@@ -68,7 +68,7 @@ def query_individuals(field_path: str, op_string: str, value: Any) -> Query:
 
 
 def write_individuals(
-    individuals: List[dict], key: str, transaction: Transaction = None
+    individuals: list[dict], key: str, transaction: Transaction = None
 ) -> None:
     if transaction is not None:
         write_batch("individuals", key, individuals, transaction=transaction)

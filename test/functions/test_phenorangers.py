@@ -1,5 +1,4 @@
 from test.util import Doc, get_random_string
-from typing import List
 
 import pytest
 from flask import Request
@@ -18,7 +17,7 @@ def public_user() -> Doc:
     return Doc(doc_id, user)
 
 
-def insert_individuals(user: str, source: str, year: int, num: int = 1) -> List[str]:
+def insert_individuals(user: str, source: str, year: int, num: int = 1) -> list[str]:
     doc_ids = []
     for _ in range(num):
         doc_id = get_random_string(12)

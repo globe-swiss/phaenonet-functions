@@ -1,7 +1,6 @@
 import logging
 from functools import lru_cache
 from http import HTTPStatus
-from typing import Dict, List
 
 from flask import Request, Response
 
@@ -49,12 +48,12 @@ def client() -> tasks.GCFClient:
 
 def enqueue_change(
     individual_id: str,
-    updated_fields: List[str],
+    updated_fields: list[str],
     species: str,
-    station_species: List[str],
+    station_species: list[str],
     individual_type: str,
     last_phenophase: str,
-    geopos: Dict[str, float],
+    geopos: dict[str, float],
     source: str,
     year: int,
     deveui: str,
@@ -108,7 +107,7 @@ def replace_delete_tokens(payload: dict) -> None:
             individual_dict[key] = f.DELETE_FIELD if value == DELETE_TOKEN else value
 
 
-def _should_update(updated_fields: List[str], is_create_event: bool) -> bool:
+def _should_update(updated_fields: list[str], is_create_event: bool) -> bool:
     return is_create_event or any(
         elem
         in [

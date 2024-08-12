@@ -3,7 +3,6 @@
 import logging
 import os
 from contextlib import contextmanager
-from typing import Tuple, Union
 
 import firebase_admin
 import sentry_sdk
@@ -16,7 +15,7 @@ import phenoback.utils.gcloud as g
 from phenoback.utils import glogging
 
 
-def sentry_environment() -> Tuple[str, float]:
+def sentry_environment() -> tuple[str, float]:
     project = g.get_project()
     if project == "phaenonet":
         return ("production", 1.0, 0.0)
@@ -43,7 +42,7 @@ log: logging.Logger = None  # pylint: disable=invalid-name
 
 
 @contextmanager  # workaround as stackdriver fails to capture stackstraces
-def setup(data: Union[dict, Request], context=None, level=logging.DEBUG):
+def setup(data: dict | Request, context=None, level=logging.DEBUG):
     try:
         global log  # pylint: disable=global-statement,invalid-name
         glogging.init()

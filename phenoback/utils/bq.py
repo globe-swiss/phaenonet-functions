@@ -1,6 +1,5 @@
 import logging
 from functools import lru_cache
-from typing import List, Union
 
 from google.cloud import bigquery
 
@@ -13,7 +12,7 @@ def client():
     return bigquery.Client()  # pragma: no cover
 
 
-def insert_data(table: str, data: Union[dict, List[dict]]):
+def insert_data(table: str, data: dict | list[dict]):
     if isinstance(data, dict):
         data = [data]
     log.debug("Insert %i rows into %s", len(data), table)

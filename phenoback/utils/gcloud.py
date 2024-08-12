@@ -4,7 +4,6 @@ import logging
 import os
 from collections import namedtuple
 from datetime import datetime
-from typing import List, Union
 
 import dateparser
 from google.cloud.functions.context import Context
@@ -15,7 +14,7 @@ log.setLevel(logging.INFO)
 
 def get_field(
     data: dict, fieldname: str, old_value: bool = False, expected=True
-) -> Union[str, int, datetime, None]:
+) -> str | int | datetime | None:
     value_type = "oldValue" if old_value else "value"
     value_dict = data[value_type].get("fields", {}).get(fieldname)
     if value_dict is not None:
@@ -96,7 +95,7 @@ def is_field_updated(data: dict, fieldname) -> bool:
     return fieldname in get_fields_updated(data)
 
 
-def get_fields_updated(data: dict) -> List[str]:
+def get_fields_updated(data: dict) -> list[str]:
     return data.get("updateMask", {}).get("fieldPaths", [])
 
 

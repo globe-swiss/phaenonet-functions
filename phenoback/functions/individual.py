@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
@@ -49,7 +48,7 @@ def updated_observation(individual_id: str):
         )
 
 
-def _get_last_observation(individual_id: str) -> Optional[dict]:
+def _get_last_observation(individual_id: str) -> dict | None:
     last_obs_query = d.query_observation("individual_id", "==", individual_id)
     result = None
     for observation_doc in last_obs_query.stream():

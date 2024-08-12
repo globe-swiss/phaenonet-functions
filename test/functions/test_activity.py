@@ -1,5 +1,4 @@
 from collections import namedtuple
-from typing import List
 
 import google
 import pytest
@@ -132,5 +131,5 @@ def test_get_followers(mocker, user_following, individuals_following):
     assert expected == activity.get_followers("ignored", "ignored")
 
 
-def _user_str_to_namedtupel(users: List[str]):
+def _user_str_to_namedtupel(users: list[str]):
     return [User(id=user) for user in users]

@@ -2,7 +2,6 @@ import logging
 from datetime import datetime
 from functools import lru_cache
 from http import HTTPStatus
-from typing import Optional
 
 import numpy as np
 from flask import Request, Response
@@ -314,7 +313,7 @@ def remove_observation(
         )
 
 
-def get_altitude_grp(individual_id: str) -> Optional[str]:
+def get_altitude_grp(individual_id: str) -> str | None:
     individual = get_individual(individual_id)
     if not individual:
         log.error("Individual %s not found to lookup altitude group", individual_id)
