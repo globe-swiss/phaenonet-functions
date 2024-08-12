@@ -19,7 +19,7 @@ see maintenance repo @ maintenance/checks/update_test_data.py.
 @pytest.fixture
 def static_config():
     d._get_static_config.cache_clear()
-    with open(CONFIG_STATIC_RESOURCE, "r", encoding="utf-8") as file:
+    with open(CONFIG_STATIC_RESOURCE, encoding="utf-8") as file:
         data = json.loads(file.read())
         f.write_document("definitions", "config_static", data)
         return data
@@ -27,7 +27,7 @@ def static_config():
 
 @pytest.fixture
 def dynamic_config():
-    with open(CONFIG_DYNAMIC_RESOURCE, "r", encoding="utf-8") as file:
+    with open(CONFIG_DYNAMIC_RESOURCE, encoding="utf-8") as file:
         data = json.loads(file.read())
         f.write_document("definitions", "config_dynamic", data)
         return data

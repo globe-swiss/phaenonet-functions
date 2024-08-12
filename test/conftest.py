@@ -92,7 +92,7 @@ def pubsub_event():
 
 
 def readfile(filename: str):
-    with open(filename, "r", encoding="utf-8") as file:
+    with open(filename, encoding="utf-8") as file:
         return file.read()
 
 

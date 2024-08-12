@@ -31,7 +31,7 @@ def set_phenoyear():
 @pytest.fixture
 def station_data() -> str:
     with open(
-        test.get_resource_path("meteoswiss_stations.csv"), "r", encoding="utf-8"
+        test.get_resource_path("meteoswiss_stations.csv"), encoding="utf-8"
     ) as csv_file:
         return csv_file.read()
 
@@ -39,7 +39,7 @@ def station_data() -> str:
 @pytest.fixture
 def observation_data() -> str:
     with open(
-        test.get_resource_path("meteoswiss_observations.csv"), "r", encoding="utf-8"
+        test.get_resource_path("meteoswiss_observations.csv"), encoding="utf-8"
     ) as csv_file:
         return csv_file.read()
 
