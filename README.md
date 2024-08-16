@@ -45,11 +45,10 @@ Use `act -j <job>`
 
 ### Update python version
 
-1. update and rebuild, publish docker images
+1. check if new python version is suggested: <https://cloud.google.com/functions/docs/runtime-support#python>
+1. Upgrade containers, workflows, Pipfile: `./maintenance/upgrade-environment.sh`
 1. rebuild devcontainer
-1. update `Pipfile` on minor version change & rebuild environment
-1. update `RUNTIME` variable in `deploy-functions.yml`
-1. update container versions in `main.yml` (2x)
+1. `pipenv update`
 
 #### Rebuild pipenv on minor update
 
