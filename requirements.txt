@@ -15,7 +15,7 @@ envelopes==0.4
 firebase-admin==6.5.0; python_version >= '3.7'
 flask==3.0.3; python_version >= '3.8'
 functions-framework==3.8.1; python_version >= '3.5' and python_version < '4'
-google-api-core[grpc]==2.19.1; platform_python_implementation != 'PyPy'
+google-api-core[grpc]==2.19.1; python_version >= '3.7'
 google-api-python-client==2.141.0; python_version >= '3.7'
 google-auth==2.33.0; python_version >= '3.7'
 google-auth-httplib2==0.2.0
