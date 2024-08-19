@@ -37,10 +37,6 @@ gcloud --project=phaenonet --account=firestore-backup@phaenonet.iam.gserviceacco
 gcloud --project=phaenonet-test --account=firestore-backup@phaenonet-test.iam.gserviceaccount.com firestore import gs://phaenonet-[backup-daily|backup-archive]/[backup-folder] --collection-ids=[collection_ids]
 ```
 
-## Execute GitHub actions localy
-
-Use `act -j <job>`
-
 ## Upgrade actions
 
 ### Update python version
@@ -48,7 +44,7 @@ Use `act -j <job>`
 1. check if new python version is suggested: <https://cloud.google.com/functions/docs/runtime-support#python>
 1. Upgrade containers, workflows, Pipfile: `./maintenance/upgrade-environment.sh`
 1. rebuild devcontainer
-1. `pipenv update`
+1. rebuild pipenv environment
 
 #### Rebuild pipenv on minor update
 
