@@ -118,6 +118,6 @@ jobs:
     needs: install-functions
     steps:
       - name: call restore function
-        uses: fjogeleit/http-request-action@v1.16.1
+        uses: fjogeleit/http-request-action@v1.16.2
         with:
           url: "https://europe-west1-phaenonet-test.cloudfunctions.net/e2e_restore_users"
