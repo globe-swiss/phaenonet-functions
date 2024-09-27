@@ -18,7 +18,7 @@ jobs:
       contents: read # checkout
       pull-requests: write # reviewdog
     steps:
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4.2.0
       - name: Install dependencies
         run: pip3 install pipenv
       - name: Sync dev dependencies
@@ -42,14 +42,14 @@ jobs:
       #     fail_on_error: True
       #   if: always()
       - name: Check black
-        uses: reviewdog/action-black@v3.20.0
+        uses: reviewdog/action-black@v3.21.0
         with:
           reporter: github-check
           verbose: True
           fail_on_error: True
         if: always()
       - name: Check markdownlint
-        uses: reviewdog/action-markdownlint@v0.24.0
+        uses: reviewdog/action-markdownlint@v0.25.0
         with:
           reporter: github-check
           fail_on_error: True
