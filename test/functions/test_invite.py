@@ -1,4 +1,4 @@
-# pylint: disable=protected-access, too-many-arguments
+# pylint: disable=protected-access, too-many-positional-arguments
 import os
 from datetime import datetime, timezone
 from unittest.mock import MagicMock

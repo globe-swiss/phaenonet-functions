@@ -88,6 +88,7 @@ def valid_humidity(humidity):
     return 0 <= humidity <= 100
 
 
+# pylint: disable=too-many-positional-arguments
 def update_history(
     year: int,
     individual_id: str,

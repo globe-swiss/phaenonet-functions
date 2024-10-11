@@ -95,12 +95,12 @@ def _write_batch(
     collection: str,
     key: str,
     data: list[dict],
+    *,
     merge: bool,
     commit_size: int,
     writebatch: WriteBatch,
     commit_sleep: float = 0,
 ) -> int:
-    # pylint: disable=too-many-arguments
     cnt = 0
     for item in data:
         cnt += 1
@@ -123,12 +123,12 @@ def write_batch(
     collection: str,
     key: str,
     data: list[dict],
+    *,
     merge: bool = False,
     commit_size: int = None,
     transaction: Transaction = None,
     commit_sleep: float = 0,
 ) -> int:
-    # pylint: disable=too-many-arguments
     if transaction is not None:
         log.info(
             "Batch-write %i documents to %s within transaction",

@@ -1,3 +1,4 @@
+# pylint: disable=too-many-positional-arguments
 import pytest
 
 from phenoback.functions import users

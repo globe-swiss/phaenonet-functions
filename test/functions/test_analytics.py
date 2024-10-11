@@ -1,4 +1,4 @@
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-positional-arguments
 import copy
 from datetime import timezone
 from unittest.mock import Mock

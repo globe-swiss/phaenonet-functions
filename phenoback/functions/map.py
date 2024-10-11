@@ -20,17 +20,17 @@ DELETE_TOKEN = "__DELETE__"  # nosec
 def main_enqueue(data, context):
     if not g.is_delete_event(data):
         enqueue_change(
-            g.get_document_id(context),
-            g.get_fields_updated(data),
-            g.get_field(data, "species", expected=False),
-            g.get_field(data, "station_species", expected=False),
-            g.get_field(data, "type"),
-            g.get_field(data, "last_phenophase", expected=False),
-            g.get_field(data, "geopos"),
-            g.get_field(data, "source"),
-            g.get_field(data, "year"),
-            g.get_field(data, "deveui", expected=False),
-            g.is_create_event(data),
+            individual_id=g.get_document_id(context),
+            updated_fields=g.get_fields_updated(data),
+            species=g.get_field(data, "species", expected=False),
+            station_species=g.get_field(data, "station_species", expected=False),
+            individual_type=g.get_field(data, "type"),
+            last_phenophase=g.get_field(data, "last_phenophase", expected=False),
+            geopos=g.get_field(data, "geopos"),
+            source=g.get_field(data, "source"),
+            year=g.get_field(data, "year"),
+            deveui=g.get_field(data, "deveui", expected=False),
+            is_create_event=g.is_create_event(data),
         )
     else:
         delete(g.get_field(data, "year", old_value=True), g.get_document_id(context))
@@ -47,6 +47,7 @@ def client() -> tasks.GCFClient:
 
 
 def enqueue_change(
+    *,
     individual_id: str,
     updated_fields: list[str],
     species: str,
