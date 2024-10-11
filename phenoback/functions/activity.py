@@ -43,6 +43,7 @@ def _main(data, context, action):
 
 
 def process_observation(
+    *,
     event_id: str,
     observation_id: str,
     individual_id: str,

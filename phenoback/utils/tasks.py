@@ -32,6 +32,7 @@ class HTTPClient:
     def send(
         self,
         payload: dict | str,
+        *,
         params: dict = None,
         task_name: str = None,
         at: datetime.datetime = None,

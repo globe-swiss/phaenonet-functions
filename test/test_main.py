@@ -1,4 +1,4 @@
-# pylint: disable=too-many-arguments, wrong-import-position
+# pylint: disable=wrong-import-position
 from unittest.mock import ANY
 
 import pytest

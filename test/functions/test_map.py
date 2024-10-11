@@ -53,17 +53,17 @@ def test_enqueue_change__should_update(mocker, should_update):
     )
 
     pheno_map.enqueue_change(
-        "individual_id",
-        ["updated_fields"],
-        "species",
-        ["station_species"],
-        "individual_type",
-        "last_phenophase",
-        {"lng": 1, "lat": 2},
-        "source",
-        2020,
-        "deveui",
-        False,
+        individual_id="individual_id",
+        updated_fields=["updated_fields"],
+        species="species",
+        station_species=["station_species"],
+        individual_type="individual_type",
+        last_phenophase="last_phenophase",
+        geopos={"lng": 1, "lat": 2},
+        source="source",
+        year=2020,
+        deveui="deveui",
+        is_create_event=False,
     )
 
     should_update_mock.assert_called_with(
@@ -80,17 +80,17 @@ def test_enqueue_change__values(mocker):
     mocker.patch("phenoback.functions.map._should_update", return_value=True)
 
     pheno_map.enqueue_change(
-        "individual_id",
-        ["updated_fields"],
-        "species",
-        ["station_species"],
-        "individual_type",
-        "last_phenophase",
-        {"lng": 1, "lat": 2},
-        "source",
-        2020,
-        "deveui",
-        False,
+        individual_id="individual_id",
+        updated_fields=["updated_fields"],
+        species="species",
+        station_species=["station_species"],
+        individual_type="individual_type",
+        last_phenophase="last_phenophase",
+        geopos={"lng": 1, "lat": 2},
+        source="source",
+        year=2020,
+        deveui="deveui",
+        is_create_event=False,
     )
 
     client_mock.return_value.send.assert_called_with(
@@ -116,17 +116,17 @@ def test_enqueue_change__optional_fields_delete(mocker):
     mocker.patch("phenoback.functions.map._should_update", return_value=True)
 
     pheno_map.enqueue_change(
-        "individual_id",
-        ["updated_fields"],
-        None,
-        None,
-        "individual_type",
-        None,
-        {"lng": 1, "lat": 2},
-        "source",
-        2020,
-        None,
-        False,
+        individual_id="individual_id",
+        updated_fields=["updated_fields"],
+        species=None,
+        station_species=None,
+        individual_type="individual_type",
+        last_phenophase=None,
+        geopos={"lng": 1, "lat": 2},
+        source="source",
+        year=2020,
+        deveui=None,
+        is_create_event=False,
     )
 
     client_mock.return_value.send.assert_called_with(

@@ -1,3 +1,4 @@
+# pylint: disable=too-many-positional-arguments
 from collections import namedtuple
 
 import google
@@ -43,15 +44,15 @@ def test_process_observation__status(mocker, followers, expected):
     update_mock = mocker.patch("phenoback.utils.firestore.write_document")
 
     assert expected == activity.process_observation(
-        "ignored",
-        "ignored",
-        "ignored",
-        "ignored",
-        "ignored",
-        "ignored",
-        "ignored",
-        "ignored",
-        "ignored",
+        event_id="ignored",
+        observation_id="ignored",
+        individual_id="ignored",
+        user_id="ignored",
+        phenophase="ignored",
+        source="ignored",
+        species="ignored",
+        individual="ignored",
+        action="ignored",
     )
     assert update_mock.called == expected
 
@@ -66,15 +67,15 @@ def test_process_observation__values(mocker):
     update_mock = mocker.patch("phenoback.utils.firestore.write_document")
 
     activity.process_observation(
-        "event_id",
-        "ignored",
-        "ignored",
-        "ignored",
-        "ignored",
-        "ignored",
-        "ignored",
-        "ignored",
-        "ignored",
+        event_id="event_id",
+        observation_id="ignored",
+        individual_id="ignored",
+        user_id="ignored",
+        phenophase="ignored",
+        source="ignored",
+        species="ignored",
+        individual="ignored",
+        action="ignored",
     )
     assert update_mock.call_args[0][0] == "activities"
     assert update_mock.call_args[0][1] == "event_id"
@@ -86,15 +87,15 @@ def test_process_observation__no_individual_found(mocker):
     activity.log = mocker.Mock()
 
     activity.process_observation(
-        "ignored",
-        "ignored",
-        "ignored",
-        "ignored",
-        "ignored",
-        "ignored",
-        "ignored",
-        "ignored",
-        "ignored",
+        event_id="ignored",
+        observation_id="ignored",
+        individual_id="ignored",
+        user_id="ignored",
+        phenophase="ignored",
+        source="ignored",
+        species="ignored",
+        individual="ignored",
+        action="ignored",
     )
 
     activity.log.error.assert_called()
