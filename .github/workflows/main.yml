@@ -18,7 +18,7 @@ jobs:
       contents: read # checkout
       pull-requests: write # reviewdog
     steps:
-      - uses: actions/checkout@v4.2.0
+      - uses: actions/checkout@v4.2.1
       - name: Install dependencies
         run: pip3 install pipenv
       - name: Sync dev dependencies
