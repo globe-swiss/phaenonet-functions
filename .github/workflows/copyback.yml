@@ -19,7 +19,7 @@ jobs:
       fs-functions: ${{ steps.fs-functions.outputs.functions }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.1
+        uses: actions/checkout@v4.2.2
       - id: auth
         name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2.1.6
@@ -45,7 +45,7 @@ jobs:
         function: ${{ fromJson(needs.fs-function-matrix.outputs.fs-functions) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.1
+        uses: actions/checkout@v4.2.2
       - id: auth
         name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2.1.6
@@ -64,9 +64,9 @@ jobs:
     environment: phaenonet-test
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.1
+        uses: actions/checkout@v4.2.2
       - name: Setup Node ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4.0.4
+        uses: actions/setup-node@v4.1.0
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: install firebase-tools
@@ -86,7 +86,7 @@ jobs:
     environment: phaenonet-test
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.1
+        uses: actions/checkout@v4.2.2
       - id: auth
         name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2.1.6
@@ -108,7 +108,7 @@ jobs:
       actions: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.1
+        uses: actions/checkout@v4.2.2
       - name: trigger function installation
         run: gh workflow run -f function=all "deploy cloud functions"
         env:
