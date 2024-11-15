@@ -58,9 +58,9 @@ jobs:
         run: pipenv run python -m pytest --cov-report xml --cov=main --cov=phenoback --cov-branch
         if: always()
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4.6.0
+        uses: codecov/codecov-action@v5.0.0
         with:
           use_oidc: true
-          file: ./coverage.xml
+          files: ./coverage.xml
           flags: unittests
         if: always() && github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]'
