@@ -42,14 +42,14 @@ jobs:
       #     fail_on_error: True
       #   if: always()
       - name: Check black
-        uses: reviewdog/action-black@v3.21.0
+        uses: reviewdog/action-black@v3.22.2
         with:
           reporter: github-check
           verbose: True
           fail_on_error: True
         if: always()
       - name: Check markdownlint
-        uses: reviewdog/action-markdownlint@v0.25.0
+        uses: reviewdog/action-markdownlint@v0.26.0
         with:
           reporter: github-check
           fail_on_error: True
@@ -58,7 +58,7 @@ jobs:
         run: pipenv run python -m pytest --cov-report xml --cov=main --cov=phenoback --cov-branch
         if: always()
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5.0.7
+        uses: codecov/codecov-action@v5.1.1
         with:
           use_oidc: true
           files: ./coverage.xml
