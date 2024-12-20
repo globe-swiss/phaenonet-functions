@@ -159,6 +159,12 @@ def test_executes__firestore(mocker, entrypoint, functions, data, context):
                 "phenoback.functions.iot.dragino.main",
             ],
         ),
+        (
+            main.http_process_statistics,
+            [
+                "phenoback.functions.statistics.main",
+            ],
+        ),
     ],
 )
 def test_executes__http(mocker, entrypoint, functions):
