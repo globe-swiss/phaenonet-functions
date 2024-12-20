@@ -169,7 +169,7 @@ jobs:
         run: gcloud functions delete ${{ matrix.name }} --region ${{ env.REGION }} --quiet
         if: ${{ (env.ACTION == 'undeploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == 'all') && (matrix.project == env.PROJECT || matrix.project == null) }}
       - name: deploy
-        run: gcloud functions deploy ${{ matrix.name }} --entry-point ${{ matrix.entrypoint }} --runtime ${{ env.RUNTIME }} ${{ matrix.trigger }} --timeout ${{ env.TIMEOUT }} --region ${{ env.REGION }} --quiet --env-vars-file env.${{ env.PROJECT }}.yaml
+        run: gcloud functions deploy ${{ matrix.name }} --no-gen2 --entry-point ${{ matrix.entrypoint }} --runtime ${{ env.RUNTIME }} ${{ matrix.trigger }} --timeout ${{ env.TIMEOUT }} --region ${{ env.REGION }} --quiet --env-vars-file env.${{ env.PROJECT }}.yaml
         if: ${{ (env.ACTION == 'deploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == 'all') && (matrix.project == env.PROJECT || matrix.project == null) }}
       - name: Sentry release
         run: |
