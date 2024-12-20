@@ -2,6 +2,7 @@ import logging
 
 from phenoback.functions import map as pheno_map
 from phenoback.functions.iot import app
+from phenoback.functions.statistics import process_year_aggregate_statistics
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
 
@@ -81,15 +82,18 @@ def rollover():
     )
     d.write_individuals(new_individuals, "id")
 
-    log.info(
-        "Setting current phenoyear from %i to %i", source_phenoyear, target_phenoyear
-    )
-    d.update_phenoyear(target_phenoyear)
-
     cleared_sensors = app.clear_sensors(source_phenoyear)
     log.info(
         "Cleared %i sensors from individuals for %i", cleared_sensors, source_phenoyear
     )
+
+    log.info("Process year aggregate statistics for %i", target_phenoyear)
+    process_year_aggregate_statistics(target_phenoyear)
+
+    log.info(
+        "Setting current phenoyear from %i to %i", source_phenoyear, target_phenoyear
+    )
+    d.update_phenoyear(target_phenoyear)
 
 
 def get_stale_individuals(year: int) -> list[str]:
