@@ -123,9 +123,12 @@ def get_location() -> str:  # pragma: no cover
 
 
 def get_data(pubsub_event) -> dict:
+    """
+    Returns a dictionary of the base64 encoded data fiels from a pubsub event
+    """
     try:
         data = base64.b64decode(pubsub_event["data"])
         return json.loads(data)
-    except (TypeError, json.JSONDecodeError) as e:
+    except (KeyError, TypeError, json.JSONDecodeError) as e:
         log.error("Error decoding pubsub event: %s, Error: %s", pubsub_event, e)
         return {}
