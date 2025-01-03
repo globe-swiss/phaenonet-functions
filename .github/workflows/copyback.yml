@@ -13,7 +13,7 @@ permissions:
   id-token: write
 jobs:
   fs-function-matrix:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     environment: phaenonet-test
     outputs:
       fs-functions: ${{ steps.fs-functions.outputs.functions }}
@@ -37,7 +37,7 @@ jobs:
           gcloud functions list --filter fs_ --format='json(name)' --project phaenonet-test >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
   delete-fs-functions:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: fs-function-matrix
     environment: phaenonet-test
     strategy:
@@ -59,7 +59,7 @@ jobs:
       - name: Delete Function ${{ matrix.function.name }}
         run: gcloud functions delete $(echo ${{ matrix.function.name }} | cut -d/ -f6) --region $(echo ${{ matrix.function.name }} | cut -d/ -f4) --quiet --project phaenonet-test
   remove-fs-data:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: delete-fs-functions
     environment: phaenonet-test
     steps:
@@ -81,7 +81,7 @@ jobs:
       - name: Delete Firestore Data
         run: firebase firestore:delete --all-collections --force --project phaenonet-test
   import-fs-data:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: remove-fs-data
     environment: phaenonet-test
     steps:
@@ -102,7 +102,7 @@ jobs:
       - name: Import Data
         run: gcloud --project=phaenonet-test firestore import ${{ env.backup-folder }}
   install-functions:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: import-fs-data
     permissions:
       actions: write
@@ -114,7 +114,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
   restore-users:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: install-functions
     steps:
       - name: call restore function

@@ -67,7 +67,7 @@ permissions:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     container: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
     continue-on-error: false
     strategy:
@@ -186,7 +186,7 @@ jobs:
   tag:
     name: Tag
     needs: deploy
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: ${{ github.event.inputs.tag }}
     permissions:
       contents: write
