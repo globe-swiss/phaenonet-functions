@@ -122,6 +122,10 @@ def get_location() -> str:  # pragma: no cover
     return os.getenv("location", "Unknown")
 
 
-def get_data(pubsub_event):
-    data = base64.b64decode(pubsub_event["data"])
-    return json.loads(data)
+def get_data(pubsub_event) -> dict:
+    try:
+        data = base64.b64decode(pubsub_event["data"])
+        return json.loads(data)
+    except (TypeError, json.JSONDecodeError) as e:
+        log.error("Error decoding pubsub event: %s, Error: %s", pubsub_event, e)
+        return {}

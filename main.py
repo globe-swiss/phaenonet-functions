@@ -42,7 +42,11 @@ log: logging.Logger = None  # pylint: disable=invalid-name
 
 
 @contextmanager  # workaround as stackdriver fails to capture stackstraces
-def setup(data: dict | Request, context=None, level=logging.DEBUG):
+def setup(data: dict | Request | None, context=None, level=logging.DEBUG):
+    """
+    Setup logging and and capture exceptions.
+    :param data: May be a dict, a http request or None.
+    """
     try:
         global log  # pylint: disable=global-statement,invalid-name
         glogging.init()
@@ -260,7 +264,7 @@ def ps_iot_dragino(event, context):
 
 
 def ps_process_statistics(event, context):
-    with setup(g.get_data(event), context):
+    with setup(event, context):
         with invoke():
             from phenoback.functions import statistics
 
