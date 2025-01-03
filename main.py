@@ -318,5 +318,13 @@ def test(data, context):  # pragma: no cover
         log.exception("L - exception", exc_info=Exception("myException"))
         sleep(1)
 
-        with setup("test data", "test context"):
-            raise KeyError("Should log")
+        with setup(
+            "test data: with setup/invoke: should log Key Error", "test context"
+        ):
+            with invoke():
+                raise KeyError("Should log - setup/invoke first")
+            with invoke():
+                raise KeyError("Should log - setup/invoke second")
+
+        with setup("test data: with setup: should log Key Error", "test context"):
+            raise KeyError("Should log - setup")
