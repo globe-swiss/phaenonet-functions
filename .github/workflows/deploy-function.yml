@@ -30,7 +30,7 @@ on:
           - http_individuals_write__map
           - http_iot_dragino
           - http_promote_ranger
-          - http_process_statistics
+          - ps_process_statistics
           - ps_iot_dragino
           - ps_import_meteoswiss_data
           - ps_export_meteoswiss_data
@@ -141,9 +141,9 @@ jobs:
             entrypoint: http_restore_e2e_users
             trigger: --trigger-http --allow-unauthenticated
             project: phaenonet-test
-          - name: http_process_statistics
-            entrypoint: http_process_statistics
-            trigger: --trigger-http --allow-unauthenticated
+          - name: ps_process_statistics
+            entrypoint: ps_process_statistics
+            trigger: --trigger-resource process_statistics --trigger-event google.pubsub.topic.publish
     env:
       VERSION: "${{ matrix.name }}@${{ github.event.inputs.tag && github.event.inputs.tag || github.sha }}"
     environment: ${{ github.event.inputs.project }}
