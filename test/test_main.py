@@ -45,6 +45,12 @@ def test_invoke__exception(data, context):
                 # "phenoback.functions.iot.permarobotics.main", -> not called: only for productive environment
             ],
         ),
+        (
+            main.ps_process_statistics,
+            [
+                "phenoback.functions.statistics.main",
+            ],
+        ),
     ],
 )
 def test_executes__pubsub(
@@ -157,12 +163,6 @@ def test_executes__firestore(mocker, entrypoint, functions, data, context):
             main.http_iot_dragino,
             [
                 "phenoback.functions.iot.dragino.main",
-            ],
-        ),
-        (
-            main.http_process_statistics,
-            [
-                "phenoback.functions.statistics.main",
             ],
         ),
     ],

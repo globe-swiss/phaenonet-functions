@@ -7,17 +7,18 @@ from http import HTTPStatus
 from flask import Request, Response
 
 import phenoback.utils.data as d
+import phenoback.utils.gcloud as g
 from maintenance.maintenance import firebase
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def main(request: Request):  # pylint: disable=unused-argument
-    request_json = request.get_json(silent=True)
-    year = request_json.get("year")
-    process_year_statistics(year)
-    return Response("accepted", HTTPStatus.ACCEPTED)
+def main(data, context):  # pylint: disable=unused-argument
+    log.info(context)
+    log.info(data)
+    # process_year_statistics(year) # fixme
+    process_year_statistics()
 
 
 @cache
