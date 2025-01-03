@@ -259,12 +259,12 @@ def ps_iot_dragino(event, context):
             bq.main(data, context)
 
 
-def http_process_statistics(request: Request):
-    with setup(request):
+def ps_process_statistics(event, context):
+    with setup(g.get_data(event), context):
         with invoke():
             from phenoback.functions import statistics
 
-            return statistics.main(request)
+            return statistics.main(event, context)
 
 
 def test(data, context):  # pragma: no cover
