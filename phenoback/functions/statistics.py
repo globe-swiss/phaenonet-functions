@@ -2,22 +2,14 @@ import logging
 from collections import defaultdict
 from datetime import datetime
 from functools import cache
-from http import HTTPStatus
-
-from flask import Request, Response
 
 import phenoback.utils.data as d
-import phenoback.utils.gcloud as g
-from maintenance.maintenance import firebase
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
 def main(data, context):  # pylint: disable=unused-argument
-    log.info(context)
-    log.info(data)
-    # process_year_statistics(year) # fixme
     process_year_statistics()
 
 
