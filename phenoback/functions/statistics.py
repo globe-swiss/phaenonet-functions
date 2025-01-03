@@ -161,8 +161,8 @@ def process_year_statistics(year: int = None) -> None:
     log.debug(
         "process yearly statistics for %i: Observations=%i, statistics=%i",
         year,
-        {len(observations)},
-        {len(statistics)},
+        len(observations),
+        len(statistics),
     )
 
     for key, data in statistics.items():
