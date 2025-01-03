@@ -1,3 +1,5 @@
+import base64
+import json
 import os
 from datetime import datetime, timezone
 from unittest.mock import PropertyMock
@@ -170,3 +172,29 @@ def test_get_app_host__env(mocker):
     mocker.patch("phenoback.utils.gcloud.get_project", return_value="myprojectname")
     os.environ["appHost"] = "specifichost.com"
     assert g.get_app_host() == "specifichost.com"
+
+
+def test_get_data(pubsub_event):
+    assert g.get_data(pubsub_event) == {"foo": "bar"}
+
+
+def test_get_data__data_missing(caperrors):
+    data = base64.b64encode(json.dumps({"foo": "bar"}).encode("ascii"))
+    assert g.get_data(data) == {}
+    assert len(caperrors.records) == 1, caperrors.records
+
+
+def test_get_data__no_dict(caperrors):
+    data = base64.b64encode("foo".encode("ascii"))
+    assert g.get_data(data) == {}
+    assert len(caperrors.records) == 1, caperrors.records
+
+
+def test_get_data__str(caperrors):
+    assert g.get_data("foo") == {}
+    assert len(caperrors.records) == 1, caperrors.records
+
+
+def test_get_data__none(caperrors):
+    assert g.get_data(None) == {}
+    assert len(caperrors.records) == 1, caperrors.records
