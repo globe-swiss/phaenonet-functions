@@ -58,7 +58,7 @@ jobs:
         run: pipenv run python -m pytest --cov-report xml --cov=main --cov=phenoback --cov-branch
         if: always()
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5.1.2
+        uses: codecov/codecov-action@v5.3.0
         with:
           use_oidc: true
           files: ./coverage.xml
