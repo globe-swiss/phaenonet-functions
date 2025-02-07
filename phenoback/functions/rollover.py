@@ -1,8 +1,8 @@
 import logging
 
 from phenoback.functions import map as pheno_map
+from phenoback.functions import statistics
 from phenoback.functions.iot import app
-from phenoback.functions.statistics import process_year_aggregate_statistics
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
 
@@ -88,7 +88,7 @@ def rollover():
     )
 
     log.info("Process year aggregate statistics for %i", target_phenoyear)
-    process_year_aggregate_statistics(target_phenoyear)
+    statistics.process_1y_aggregate_statistics(target_phenoyear)
 
     log.info(
         "Setting current phenoyear from %i to %i", source_phenoyear, target_phenoyear
