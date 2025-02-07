@@ -28,7 +28,7 @@ jobs:
         # allow dependabot fixes on master
         if: github.ref != 'refs/heads/master' && github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]'
       - name: Check bandit
-        run: pipenv run bandit -r test phenoback -c .bandit
+        run: pipenv run bandit -r test phenoback main.py -c .bandit
         if: always()
       - name: Check pylint
         run: pipenv run pylint --reports=y phenoback test main.py
