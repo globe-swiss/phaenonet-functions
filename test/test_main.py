@@ -1,4 +1,4 @@
-# pylint: disable=wrong-import-position
+# pylint: disable=wrong-import-position, too-many-positional-arguments
 from unittest.mock import ANY
 
 import pytest
@@ -47,7 +47,9 @@ def test_invoke__exception(data, context):
         ),
     ],
 )
-def test_executes__pubsub(mocker, entrypoint, functions, pubsub_event, context):
+def test_executes__pubsub(
+    mocker, entrypoint, functions, pubsub_event, pubsub_event_data, context
+):
     mocks = []
     for function in functions:
         mocks.append(mocker.patch(function))
@@ -55,7 +57,7 @@ def test_executes__pubsub(mocker, entrypoint, functions, pubsub_event, context):
     entrypoint(pubsub_event, context)
 
     for mock in mocks:
-        mock.assert_called_once_with(pubsub_event, context)
+        mock.assert_called_once_with(pubsub_event_data, context)
 
 
 @pytest.mark.parametrize(

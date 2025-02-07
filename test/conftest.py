@@ -91,6 +91,11 @@ def pubsub_event():
     return {"data": b"eyJmb28iOiJiYXIifQ=="}  # {"foo": "bar"}
 
 
+@pytest.fixture()
+def pubsub_event_data():
+    return g.get_data({"data": b"eyJmb28iOiJiYXIifQ=="})  # {"foo": "bar"}
+
+
 def readfile(filename: str):
     with open(filename, encoding="utf-8") as file:
         return file.read()

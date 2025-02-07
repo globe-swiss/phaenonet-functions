@@ -115,11 +115,12 @@ def ps_import_meteoswiss_data(event, context):
     """
     Imports meteoswiss stations and observations.
     """
-    with setup(event, context):
+    data = g.get_data(event)
+    with setup(data, context):
         with invoke():
             from phenoback.functions import meteoswiss_import
 
-            meteoswiss_import.main(event, context)
+            meteoswiss_import.main(data, context)
 
 
 @retry.Retry()
@@ -150,12 +151,13 @@ def ps_rollover_phenoyear(event, context):
     Rollover is based on the year defined in the dynamic configuration
     definition in firestore.
     """
-    with setup(event, context):
+    data = g.get_data(event)
+    with setup(data, context):
         with invoke():
             from phenoback.functions import meteoswiss_export, rollover
 
-            meteoswiss_export.main(event, context)
-            rollover.main(event, context)
+            meteoswiss_export.main(data, context)
+            rollover.main(data, context)
 
 
 @retry.Retry()
@@ -163,11 +165,12 @@ def ps_export_meteoswiss_data(event, context):
     """
     Manually trigger a meteoswiss export for a given year.
     """
-    with setup(event, context):
+    data = g.get_data(event)
+    with setup(data, context):
         with invoke():
             from phenoback.functions import meteoswiss_export
 
-            meteoswiss_export.main(event, context)
+            meteoswiss_export.main(data, context)
 
 
 @retry.Retry()
@@ -238,21 +241,22 @@ def http_iot_dragino(request: Request):
 
 
 def ps_iot_dragino(event, context):
-    with setup(g.get_data(event), context):
+    data = g.get_data(event)
+    with setup(data, context):
         with invoke():
             from phenoback.functions.iot import app
 
-            app.main(event, context)
+            app.main(data, context)
         with invoke():
             from phenoback.functions.iot import permarobotics
 
             # only sent data from production environment to permarobotics
             if g.get_project() == "phaenonet":
-                permarobotics.main(event, context)
+                permarobotics.main(data, context)
         with invoke():
             from phenoback.functions.iot import bq
 
-            bq.main(event, context)
+            bq.main(data, context)
 
 
 def test(data, context):  # pragma: no cover
