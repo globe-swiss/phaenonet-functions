@@ -5,7 +5,6 @@ from functools import cache
 
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
-import phenoback.utils.gcloud as g
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -13,8 +12,8 @@ log.setLevel(logging.DEBUG)
 _fbr = defaultdict(int)
 
 
-def main(event, context):  # pylint: disable=unused-argument
-    year = g.get_data(event).get("year")
+def main(data, context):  # pylint: disable=unused-argument
+    year = data.get("year")
     process_1y_aggregate_statistics(year)
 
 
@@ -110,14 +109,17 @@ def get_1y_agg_statistics(start_year: int, end_year: int) -> list:
         log.debug("load stats: %s %s", year, len(statistics))
         query_result = [
             doc.to_dict()
-            for doc in d.query_collection("statistics", "year", "==", year)
+            for doc in d.query_collection("statistics", "end_year", "==", year)
             .where(filter=f.FieldFilter("agg_range", "==", 1))
             .stream()
         ]
         _fbr["statistics"] += len(query_result)
         statistics.extend(query_result)
-    log.debug(
-        "retrieved %i statistics for years %i-%i", len(statistics), start_year, end_year
+    log.info(
+        "retrieved %i statistics for years %i-%i",
+        len(statistics),
+        start_year,
+        end_year - 1,
     )
     return statistics
 
@@ -133,7 +135,7 @@ def calculate_statistics_aggregates(
 
     # Iterate over each entry in the statistics
     for year_agg_statistic in year_agg_statistics:
-        year = year_agg_statistic["year"]
+        year = year_agg_statistic["end_year"]
         species = year_agg_statistic["species"]
         altitude_grp = year_agg_statistic["altitude_grp"]
         phenophase = year_agg_statistic["phenophase"]
@@ -161,11 +163,11 @@ def calculate_statistics_aggregates(
                 agg_statistics_result[agg_key]["obs_woy"][woy] += count
 
             # Update the years field with the sum for this year
-            agg_statistics_result[agg_key]["year_obs_sum"][
-                str(year)
-            ] += year_agg_statistic["obs_sum"]
+            agg_statistics_result[agg_key]["year_obs_sum"][str(year)] = (
+                year_agg_statistic["agg_obs_sum"]
+            )
             agg_statistics_result[agg_key]["agg_obs_sum"] += year_agg_statistic[
-                "obs_sum"
+                "agg_obs_sum"
             ]
 
     # After the loop, update "years" field with the count of unique years
@@ -187,8 +189,8 @@ def process_1y_aggregate_statistics(year: int = None) -> None:
     observations = get_observations(year)
     statistics = calculate_1y_agg_statistics(observations)
 
-    log.debug(
-        "process weeky statistics for %i: Observations=%i, statistics=%i",
+    log.info(
+        "process weekly statistics for %i: Observations=%i, statistics=%i",
         year,
         len(observations),
         len(statistics),
@@ -207,7 +209,7 @@ def process_5y_30y_aggregate_statistics(current_year: int) -> None:
     agg5y = calculate_statistics_aggregates(all_stats, current_year - 5, current_year)
     agg30y = calculate_statistics_aggregates(all_stats, current_year - 30, current_year)
 
-    log.debug(
+    log.info(
         "process aggregate statistics for %i: stats=%i, 5y=%i, 30y=%i",
         current_year,
         len(all_stats),
