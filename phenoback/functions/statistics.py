@@ -4,18 +4,24 @@ from datetime import datetime
 from functools import cache
 
 import phenoback.utils.data as d
+import phenoback.utils.firestore as f
+import phenoback.utils.gcloud as g
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
+_fbr = defaultdict(int)
 
-def main(data, context):  # pylint: disable=unused-argument
-    process_year_statistics()
+
+def main(event, context):  # pylint: disable=unused-argument
+    year = g.get_data(event).get("year")
+    process_1y_aggregate_statistics(year)
 
 
 @cache
 def get_altitude_grp(individual_id: str) -> str:
     individual = d.get_individual(individual_id)
+    _fbr["individuals"] += 1
     if not individual:
         log.error("Individual %s not found to lookup altitude group", individual_id)
         raise KeyError(individual_id)
@@ -47,13 +53,15 @@ def date_to_woy(phenoyear: int, date: datetime) -> int:
 
 
 def get_observations(phenoyear: int):
-    return [
+    result = [
         doc.to_dict() for doc in d.query_observation("year", "==", phenoyear).stream()
     ]
+    _fbr["observations"] += len(result)
+    return result
 
 
-def calculate_statistics(observations: list) -> list:
-    statistics = {}
+def calculate_1y_agg_statistics(observations: list) -> list:
+    statistics_result = {}
 
     for obs in observations:
         try:
@@ -62,42 +70,52 @@ def calculate_statistics(observations: list) -> list:
             species = obs["species"]
             phenophase = obs["phenophase"]
             altitude_grp = get_altitude_grp(individual_id)
-            key = f"{year}_{species}_{altitude_grp}_{phenophase}"
+            agg_key = f"{year}_{year}_{species}_{altitude_grp}_{phenophase}"
 
-            observation = statistics.setdefault(
-                key,
+            statistic_doc = statistics_result.setdefault(
+                agg_key,
                 {
-                    "year": year,
+                    "agg_range": 1,
+                    "start_year": year,
+                    "end_year": year,
                     "species": species,
                     "altitude_grp": altitude_grp,
                     "phenophase": phenophase,
                     "obs_woy": defaultdict(int),
-                    "obs_sum": 0,
+                    "year_obs_sum": defaultdict(int),
+                    "agg_obs_sum": 0,
+                    "years": 1,
                 },
             )
 
             woy = date_to_woy(year, obs["date"])
-            observation["obs_woy"][str(woy)] += 1
-            observation["obs_sum"] += 1
+            statistic_doc["obs_woy"][str(woy)] += 1
+            statistic_doc["year_obs_sum"][str(year)] += 1
+            statistic_doc["agg_obs_sum"] += 1
         except (KeyError, TypeError, ValueError) as e:
             # Log the error and continue with the next observation
             log.error(
                 "Unexpected error processing observation (skipping) %s: %s", obs, e
             )
-    return statistics
+    return statistics_result
 
 
-@cache
-def get_statistics(start_year: int, end_year: int) -> list:
+@cache  # only for initial processing of all years
+def get_1y_agg_statistics(start_year: int, end_year: int) -> list:
+    """
+    Retrieve preprocessed 1-year aggregate statistics for the given year range. (end_year is excluded)
+    """
     statistics = []
     for year in range(start_year, end_year):
-        print("load stats:", year, len(statistics))
-        statistics.extend(
-            [
-                doc.to_dict()
-                for doc in d.query_collection("statistics", "year", "==", year).stream()
-            ]
-        )
+        log.debug("load stats: %s %s", year, len(statistics))
+        query_result = [
+            doc.to_dict()
+            for doc in d.query_collection("statistics", "year", "==", year)
+            .where(filter=f.FieldFilter("agg_range", "==", 1))
+            .stream()
+        ]
+        _fbr["statistics"] += len(query_result)
+        statistics.extend(query_result)
     log.debug(
         "retrieved %i statistics for years %i-%i", len(statistics), start_year, end_year
     )
@@ -105,25 +123,28 @@ def get_statistics(start_year: int, end_year: int) -> list:
 
 
 def calculate_statistics_aggregates(
-    statistics: list, year_range_start, year_range_end
+    year_agg_statistics: list, year_range_start, year_range_end
 ) -> dict:
+    """
+    Take the 1-year aggregate statistics and aggregate them over a range of years. (year_range_end is excluded)
+    """
     # Create a defaultdict to store the aggregated results
-    agg_statistics = {}
+    agg_statistics_result = {}
 
     # Iterate over each entry in the statistics
-    for statistic in statistics:
-        year = statistic["year"]
-        species = statistic["species"]
-        altitude_grp = statistic["altitude_grp"]
-        phenophase = statistic["phenophase"]
+    for year_agg_statistic in year_agg_statistics:
+        year = year_agg_statistic["year"]
+        species = year_agg_statistic["species"]
+        altitude_grp = year_agg_statistic["altitude_grp"]
+        phenophase = year_agg_statistic["phenophase"]
 
         # Only process the entries for the years between start_year and end_year
         if year_range_start <= year < year_range_end:
-            agg_key = f"{year_range_start}_{year_range_end}_{species}_{altitude_grp}_{phenophase}"
+            agg_key = f"{year_range_start}_{year_range_end - 1}_{species}_{altitude_grp}_{phenophase}"
 
             # Initialize the entry in aggregated_results if not already present
-            if agg_key not in agg_statistics:
-                agg_statistics[agg_key] = {
+            if agg_key not in agg_statistics_result:
+                agg_statistics_result[agg_key] = {
                     "agg_range": year_range_end - year_range_start,
                     "start_year": year_range_start,
                     "end_year": year_range_end - 1,
@@ -136,30 +157,38 @@ def calculate_statistics_aggregates(
                 }
 
             # Aggregate the counts from obs_cnt
-            for woy, count in statistic["obs_woy"].items():
-                agg_statistics[agg_key]["obs_woy"][woy] += count
+            for woy, count in year_agg_statistic["obs_woy"].items():
+                agg_statistics_result[agg_key]["obs_woy"][woy] += count
 
             # Update the years field with the sum for this year
-            agg_statistics[agg_key]["year_obs_sum"][str(year)] += statistic["obs_sum"]
-            agg_statistics[agg_key]["agg_obs_sum"] += statistic["obs_sum"]
+            agg_statistics_result[agg_key]["year_obs_sum"][
+                str(year)
+            ] += year_agg_statistic["obs_sum"]
+            agg_statistics_result[agg_key]["agg_obs_sum"] += year_agg_statistic[
+                "obs_sum"
+            ]
 
     # After the loop, update "years" field with the count of unique years
-    for agg_key, data in agg_statistics.items():
+    for agg_key, data in agg_statistics_result.items():
         data["years"] = len(data["year_obs_sum"])  # Count of unique years with data
         data["valid"] = (  # todo: remove, debug information
             data["years"] == data["agg_range"] and data["agg_obs_sum"] / 20 > 1
         )
-    return agg_statistics
+    return agg_statistics_result
 
 
-def process_year_statistics(year: int = None) -> None:
+def process_1y_aggregate_statistics(year: int = None) -> None:
+    """
+    Process and write the 1-year aggregate statistics for the given year to statistics collection.
+    """
     if not year:
         year = d.get_phenoyear()
+        _fbr["phenoyear"] += 1
     observations = get_observations(year)
-    statistics = calculate_statistics(observations)
+    statistics = calculate_1y_agg_statistics(observations)
 
     log.debug(
-        "process yearly statistics for %i: Observations=%i, statistics=%i",
+        "process weeky statistics for %i: Observations=%i, statistics=%i",
         year,
         len(observations),
         len(statistics),
@@ -169,11 +198,12 @@ def process_year_statistics(year: int = None) -> None:
         d.write_document("statistics", key, data)
 
 
-def process_year_aggregate_statistics(current_year: int) -> None:
+def process_5y_30y_aggregate_statistics(current_year: int) -> None:
     """
-    Process the aggregates for the past years not including the current year. Invoked on phenoyear roll-over.
+    Process and write the 5-year and 30-year aggregates to the statistics collection. (current_year is excluded)
+    Invoked on phenoyear roll-over.
     """
-    all_stats = get_statistics(1900, 2024)  # current_year-30
+    all_stats = get_1y_agg_statistics(current_year - 30, current_year)
     agg5y = calculate_statistics_aggregates(all_stats, current_year - 5, current_year)
     agg30y = calculate_statistics_aggregates(all_stats, current_year - 30, current_year)
 
@@ -186,6 +216,10 @@ def process_year_aggregate_statistics(current_year: int) -> None:
     )
 
     for key, data in agg5y.items():
-        d.write_document("statistics_agg", key, data)
+        d.write_document("statistics", key, data)
     for key, data in agg30y.items():
-        d.write_document("statistics_agg", key, data)
+        d.write_document("statistics", key, data)
+
+
+def get_firebase_reads():
+    return _fbr

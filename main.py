@@ -264,7 +264,7 @@ def ps_iot_dragino(event, context):
 
 
 def ps_process_statistics(event, context):
-    with setup(event, context):
+    with setup(g.get_data(event), context):
         with invoke():
             from phenoback.functions import statistics
 
