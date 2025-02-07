@@ -57,10 +57,10 @@ def today() -> str:
     return datetime.date.today().strftime("%Y-%m-%d")
 
 
-def test_main(mocker, pubsub_event, context):
+def test_main(mocker, pubsub_event_data, context):
     process_mock = mocker.patch("phenoback.functions.iot.app.process_dragino")
 
-    app.main(pubsub_event, context)
+    app.main(pubsub_event_data, context)
 
     process_mock.assert_called_with({"foo": "bar"})
 

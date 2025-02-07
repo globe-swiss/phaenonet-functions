@@ -16,9 +16,8 @@ log.setLevel(logging.DEBUG)
 COLLECTION = "sensors"
 
 
-def main(event, context):  # pylint: disable=unused-argument
-    json_data = g.get_data(event)
-    process_dragino(json_data)
+def main(data, context):  # pylint: disable=unused-argument
+    process_dragino(data)
 
 
 def main_individual_updated(data, context):

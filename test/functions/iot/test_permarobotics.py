@@ -38,12 +38,12 @@ def data(raw_data, decoded_payload):
     return raw_data
 
 
-def test_main(mocker, pubsub_event, context):
+def test_main(mocker, pubsub_event_data, context):
     send_permarobotics_mock = mocker.patch(
         "phenoback.functions.iot.permarobotics.send_permarobotics"
     )
 
-    permarobotics.main(pubsub_event, context)
+    permarobotics.main(pubsub_event_data, context)
 
     send_permarobotics_mock.assert_called_once_with({"foo": "bar"})
 
