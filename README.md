@@ -44,16 +44,15 @@ gcloud --project=phaenonet-test --account=firestore-backup@phaenonet-test.iam.gs
 1. check if new python version is suggested: <https://cloud.google.com/functions/docs/runtime-support#python>
 1. Upgrade containers, workflows, Pipfile: `./maintenance/upgrade-environment.sh`
 1. rebuild devcontainer
-1. rebuild pipenv environment
+1. rebuild python environment
 
-#### Rebuild pipenv on minor update
+#### Rebuild python environement
 
-Edit `Pipfile` and set new version
+Edit `project.toml` and set new version
 
 ```sh
-pipenv --rm
-PIPENV_VENV_IN_PROJECT=1 pipenv update
-pipenv sync --dev
+rm -r .venv
+uv sync
 ```
 
 ## Related resources
