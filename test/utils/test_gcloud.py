@@ -5,15 +5,7 @@ from unittest.mock import PropertyMock
 import pytest
 from google.api.context_pb2 import Context  # pylint: disable=no-name-in-module
 
-from phenoback.utils.gcloud import (
-    get_app_host,
-    get_collection_path,
-    get_document_id,
-    get_field,
-    is_create_event,
-    is_delete_event,
-    is_update_event,
-)
+import phenoback.utils.gcloud as g
 
 
 @pytest.mark.parametrize(
@@ -36,7 +28,7 @@ from phenoback.utils.gcloud import (
 def test_get_document_id(expected, resource):
     context = Context
     context.resource = PropertyMock(return_value=resource)
-    assert get_document_id(context) == expected
+    assert g.get_document_id(context) == expected
 
 
 @pytest.mark.parametrize(
@@ -59,7 +51,7 @@ def test_get_document_id(expected, resource):
 def test_get_collection_path(expected, resource):
     context = Context
     context.resource = PropertyMock(return_value=resource)
-    assert get_collection_path(context) == expected
+    assert g.get_collection_path(context) == expected
 
 
 @pytest.fixture()
@@ -125,11 +117,11 @@ def request_data():
     ],
 )
 def test_get_field(expected, fieldname, request_data):
-    assert get_field(request_data, fieldname) == expected
+    assert g.get_field(request_data, fieldname) == expected
 
 
 def test_get_field__invalid(request_data, caperrors):
-    assert get_field(request_data, "set") == "set()"
+    assert g.get_field(request_data, "set") == "set()"
     assert len(caperrors.records) == 1, caperrors.records
 
 
@@ -142,7 +134,7 @@ def test_get_field__invalid(request_data, caperrors):
     ],
 )
 def test_is_create_event(expected, data):
-    assert is_create_event(data) == expected
+    assert g.is_create_event(data) == expected
 
 
 @pytest.mark.parametrize(
@@ -154,7 +146,7 @@ def test_is_create_event(expected, data):
     ],
 )
 def test_is_update_event(expected, data):
-    assert is_update_event(data) == expected
+    assert g.is_update_event(data) == expected
 
 
 @pytest.mark.parametrize(
@@ -166,15 +158,33 @@ def test_is_update_event(expected, data):
     ],
 )
 def test_is_delete_event(expected, data):
-    assert is_delete_event(data) == expected
+    assert g.is_delete_event(data) == expected
 
 
 def test_get_app_host__project(mocker):
     mocker.patch("phenoback.utils.gcloud.get_project", return_value="myprojectname")
-    assert get_app_host() == "myprojectname.web.app"
+    assert g.get_app_host() == "myprojectname.web.app"
 
 
 def test_get_app_host__env(mocker):
     mocker.patch("phenoback.utils.gcloud.get_project", return_value="myprojectname")
     os.environ["appHost"] = "specifichost.com"
-    assert get_app_host() == "specifichost.com"
+    assert g.get_app_host() == "specifichost.com"
+
+
+@pytest.mark.parametrize(
+    "pubsub_event, expected",
+    [
+        (None, None),
+        (123, None),
+        ("foo", None),
+        ({"foo": "bar"}, None),
+        ({"data": None}, None),
+        ({"data": 123}, None),
+        ({"data": "%2f"}, None),
+        ({"data": "Zm9v"}, None),  # base64("foo")
+        ({"data": b"eyJmb28iOiJiYXIifQ=="}, {"foo": "bar"}),
+    ],
+)
+def test_get_data(pubsub_event, expected):
+    assert g.get_data(pubsub_event) == expected

@@ -1,4 +1,5 @@
 import base64
+import binascii
 import json
 import logging
 import os
@@ -122,6 +123,10 @@ def get_location() -> str:  # pragma: no cover
     return os.getenv("location", "Unknown")
 
 
-def get_data(pubsub_event):
-    data = base64.b64decode(pubsub_event["data"])
-    return json.loads(data)
+def get_data(pubsub_event) -> dict | None:
+    try:
+        data = pubsub_event["data"]
+        return json.loads(base64.b64decode(data)) if data is not None else None
+    except (TypeError, KeyError, binascii.Error, json.decoder.JSONDecodeError) as e:
+        log.exception("invalid data for pubsub event: %s", pubsub_event, exc_info=e)
+        return None
