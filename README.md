@@ -52,7 +52,7 @@ Edit `project.toml` and set new version
 
 ```sh
 rm -r .venv
-uv sync
+uv sync --frozen
 ```
 
 ## Related resources
