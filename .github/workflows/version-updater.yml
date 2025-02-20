@@ -24,17 +24,17 @@ jobs:
       contents: write
       pull-requests: write
     runs-on: ubuntu-22.04
-    container: globeswiss/cloud-sdk:py3.12.7-496.0.0
+    container: globeswiss/cloud-sdk:py3.12.9-511.0.0
     steps:
       - uses: actions/checkout@v4.2.2
       - name: Work around https://github.com/actions/checkout/issues/766
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-      - name: install dependencies
-        run: pip3 install pipenv
-      - name: Update pipenv environment
-        run: pipenv lock --dev
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Update environment
+        run: uv lock --upgrade
       - name: Update requirements.txt
-        run: pipenv requirements > requirements.txt
+        run: uv export --format requirements-txt --no-hashes --no-dev > requirements.txt
       - name: Check for changes
         id: git-check
         run: |

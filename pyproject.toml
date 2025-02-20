@@ -5,3 +5,53 @@ force_grid_wrap = 0
 use_parentheses = true
 ensure_newline_before_comments = true
 line_length = 88
+
+[tool.setuptools]
+py-modules = []
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+default = true
+
+[project]
+name = "phaenonet-functions"
+dynamic = ["version"]
+requires-python = "==3.12.9"
+dependencies = [
+    "firebase-admin",
+    "numpy",
+    "dateparser",
+    "google-cloud-logging",
+    "sentry-sdk",
+    "jinja2",
+    "envelopes",
+    "tinify",
+    "google-cloud-secret-manager",
+    "flask",
+    "google-cloud-tasks",
+    "google-cloud-pubsub",
+    "google-cloud-bigquery",
+    "functions-framework",
+    "tzlocal"
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-mock",
+    "pytest-cov",
+    "codecov",
+    "deepdiff",
+    "pylint",
+    "black",
+    "flake8",
+    "bandit",
+    "pytest-xprocess",
+    "mock",
+    "isort",
+    "freezegun",
+    "py",
+    "strictyaml"
+]
