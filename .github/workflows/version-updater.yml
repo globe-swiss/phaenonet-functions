@@ -24,7 +24,7 @@ jobs:
       contents: write
       pull-requests: write
     runs-on: ubuntu-22.04
-    container: globeswiss/cloud-sdk:py3.12.7-496.0.0
+    container: globeswiss/cloud-sdk:py3.12.9-511.0.0
     steps:
       - uses: actions/checkout@v4.2.2
       - name: Work around https://github.com/actions/checkout/issues/766

@@ -18,7 +18,7 @@ default = true
 [project]
 name = "phaenonet-functions"
 dynamic = ["version"]
-requires-python = "==3.12.7"
+requires-python = "==3.12.9"
 dependencies = [
     "firebase-admin",
     "numpy",

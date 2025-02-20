@@ -13,7 +13,7 @@ defaults:
 jobs:
   test:
     runs-on: ubuntu-22.04
-    container: globeswiss/cloud-sdk:py3.12.7-496.0.0
+    container: globeswiss/cloud-sdk:py3.12.9-511.0.0
     permissions:
       id-token: write # codecov oicd
       contents: read # checkout
