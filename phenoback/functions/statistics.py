@@ -74,6 +74,7 @@ def calculate_1y_agg_statistics(observations: list) -> list:
             statistic_doc = statistics_result.setdefault(
                 agg_key,
                 {
+                    "display_year": year,
                     "agg_range": 1,
                     "start_year": year,
                     "end_year": year,
@@ -147,6 +148,7 @@ def calculate_statistics_aggregates(
             # Initialize the entry in aggregated_results if not already present
             if agg_key not in agg_statistics_result:
                 agg_statistics_result[agg_key] = {
+                    "display_year": year_range_end,
                     "agg_range": year_range_end - year_range_start,
                     "start_year": year_range_start,
                     "end_year": year_range_end - 1,
@@ -218,9 +220,9 @@ def process_5y_30y_aggregate_statistics(current_year: int) -> None:
     )
 
     for key, data in agg5y.items():
-        d.write_document("statistics", key, data)
+        d.write_document("statistics", key, data)  # batch write
     for key, data in agg30y.items():
-        d.write_document("statistics", key, data)
+        d.write_document("statistics", key, data)  # batch write
 
 
 def get_firebase_reads():
