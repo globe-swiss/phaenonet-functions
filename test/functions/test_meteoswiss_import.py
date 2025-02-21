@@ -225,8 +225,11 @@ class TestStations:
             ),
         )
 
-        assert meteoswiss.process_stations()
-        process_response_mock.assert_called_once_with(response_text, response_elapsed)
+        year = 2000
+        assert meteoswiss.process_stations(year)
+        process_response_mock.assert_called_once_with(
+            year, response_text, response_elapsed
+        )
 
     def test_process_stations__nok(self, mocker):
         mocker.patch(
@@ -234,13 +237,13 @@ class TestStations:
             return_value=Response(ok=False, text=None, elapsed=None, status_code="5xx"),
         )
         try:
-            meteoswiss.process_stations()
+            meteoswiss.process_stations(2000)
         except meteoswiss.ResourceNotFoundException:
             pass  # expected
 
     def test_process_stations_response__write(self, station_data):
         phenoyear = d.get_phenoyear()
-        meteoswiss.process_stations_response(station_data, 0)
+        meteoswiss.process_stations_response(phenoyear, station_data, 0)
         station = d.get_individual(f"{phenoyear}_ADB")
         assert station is not None
         assert d.get_individual(f"{phenoyear}_ALC") is not None
@@ -269,13 +272,15 @@ class TestStations:
             "phenoback.functions.meteoswiss_import._clean_station_csv",
             side_effect=[data1, data2],
         )
-        assert meteoswiss.process_stations_response(data1, 0)
+        assert meteoswiss.process_stations_response(2000, data1, 0)
         clean_station_mock.assert_called_once_with(data1)
-        assert meteoswiss.process_stations_response(data2, 0) == is_processed_expected
+        assert (
+            meteoswiss.process_stations_response(2000, data2, 0)
+            == is_processed_expected
+        )
 
     def test_process_stations_response__cache_year_change(self):
         data = "some_data"
-        assert meteoswiss.process_stations_response(data, 0)
-        assert not meteoswiss.process_stations_response(data, 0)
-        d.update_phenoyear(2001)
-        assert meteoswiss.process_stations_response(data, 0)
+        assert meteoswiss.process_stations_response(2000, data, 0)
+        assert not meteoswiss.process_stations_response(2000, data, 0)
+        assert meteoswiss.process_stations_response(2001, data, 0)

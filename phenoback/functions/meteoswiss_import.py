@@ -23,27 +23,29 @@ class ResourceNotFoundException(Exception):
 
 
 def main(data, context):  # pylint: disable=unused-argument
+    phenoyear = get_phenoyear()
     log.info("Import meteoswiss stations")
-    process_stations()
+    process_stations(phenoyear)
     log.info("Import meteoswiss observations")
     process_observations()
 
 
-def process_stations() -> bool:
+def process_stations(year: int) -> bool:
     response = get(
         "https://data.geo.admin.ch/ch.meteoschweiz.messnetz-phaenologie/ch.meteoschweiz.messnetz-phaenologie_en.csv",
         timeout=60,
     )
     if response.ok:
-        return process_stations_response(response.text, response.elapsed)
+        return process_stations_response(year, response.text, response.elapsed)
     else:
         msg = f"Could not fetch station data ({response.status_code})"
         log.error(msg)
         raise ResourceNotFoundException(msg)
 
 
-def process_stations_response(response_text: str, response_elapsed: float) -> bool:
-    phenoyear = get_phenoyear()
+def process_stations_response(
+    phenoyear: int, response_text: str, response_elapsed: float
+) -> bool:
     csv_string = _clean_station_csv(response_text)
     if _load_hash("stations") != _get_hash(str(phenoyear) + csv_string):
         reader = csv.DictReader(io.StringIO(csv_string), delimiter=";")

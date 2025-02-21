@@ -247,3 +247,7 @@ def get_collection_documents(collection: str) -> list[dict]:
 
 def docs2str(docs):  # pragma: no cover
     return [f"({doc.id}, {doc.to_dict()})" for doc in docs]
+
+
+def get_count(query: Query) -> int:
+    return query.count().get()[0][0].value
