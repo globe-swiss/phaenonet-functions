@@ -261,3 +261,8 @@ def test_get_collection_documents(collection):
     assert len(result) == 2
     assert docs[0] in result
     assert docs[1] in result
+
+
+def test_get_count(collection, doc_id, doc):
+    f.write_document(collection, doc_id, doc)
+    assert f.get_count(f.get_collection(collection)) == 1

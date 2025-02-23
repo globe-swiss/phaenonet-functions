@@ -6,12 +6,13 @@ from zoneinfo import ZoneInfo
 import tzlocal
 from firebase_admin import auth
 
-from phenoback.utils.firestore import (
+from phenoback.utils.firestore import (  # pylint: disable=unused-import
     ArrayUnion,
     Query,
     Transaction,
     delete_batch,
     delete_document,
+    get_count,
     get_document,
     query_collection,
     update_document,
