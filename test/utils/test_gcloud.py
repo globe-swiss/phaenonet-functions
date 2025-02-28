@@ -1,5 +1,3 @@
-import base64
-import json
 import os
 from datetime import datetime, timezone
 from unittest.mock import PropertyMock

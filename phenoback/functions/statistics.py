@@ -9,6 +9,8 @@ import phenoback.utils.firestore as f
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
+STATISTIC_PHENOPHASES = ("BEA", "BES", "BFA", "BLA", "BLB", "BVA", "BVS", "FRA")
+
 _fbr = defaultdict(int)
 
 
@@ -51,9 +53,16 @@ def date_to_woy(phenoyear: int, date: datetime) -> int:
     return (doy - 1) // 7 + 1
 
 
+def write_statistics(data: dict) -> None:
+    d.write_batch("statistics", "id", d.to_id_array(data))
+
+
 def get_observations(phenoyear: int):
     result = [
-        doc.to_dict() for doc in d.query_observation("year", "==", phenoyear).stream()
+        doc.to_dict()
+        for doc in d.query_observation("year", "==", phenoyear)
+        .where(filter=f.FieldFilter("phenophase", "in", STATISTIC_PHENOPHASES))
+        .stream()
     ]
     _fbr["observations"] += len(result)
     return result
@@ -112,6 +121,7 @@ def get_1y_agg_statistics(start_year: int, end_year: int) -> list:
             doc.to_dict()
             for doc in d.query_collection("statistics", "end_year", "==", year)
             .where(filter=f.FieldFilter("agg_range", "==", 1))
+            .where(filter=f.FieldFilter("phenophase", "in", STATISTIC_PHENOPHASES))
             .stream()
         ]
         _fbr["statistics"] += len(query_result)
@@ -198,16 +208,19 @@ def process_1y_aggregate_statistics(year: int = None) -> None:
         len(statistics),
     )
 
-    for key, data in statistics.items():
-        d.write_document("statistics", key, data)
+    write_statistics(statistics)
 
 
-def process_5y_30y_aggregate_statistics(current_year: int) -> None:
+def process_5y_30y_aggregate_statistics(
+    current_year: int, obs_start=None, obs_end=None
+) -> None:
     """
     Process and write the 5-year and 30-year aggregates to the statistics collection. (current_year is excluded)
     Invoked on phenoyear roll-over.
     """
-    all_stats = get_1y_agg_statistics(current_year - 30, current_year)
+    all_stats = get_1y_agg_statistics(
+        obs_start or current_year - 30, obs_end or current_year
+    )
     agg5y = calculate_statistics_aggregates(all_stats, current_year - 5, current_year)
     agg30y = calculate_statistics_aggregates(all_stats, current_year - 30, current_year)
 
@@ -219,10 +232,8 @@ def process_5y_30y_aggregate_statistics(current_year: int) -> None:
         len(agg30y),
     )
 
-    for key, data in agg5y.items():
-        d.write_document("statistics", key, data)  # batch write
-    for key, data in agg30y.items():
-        d.write_document("statistics", key, data)  # batch write
+    write_statistics(agg5y)
+    write_statistics(agg30y)
 
 
 def get_firebase_reads():

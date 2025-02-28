@@ -185,3 +185,7 @@ def localtime(timestamp: datetime = None):
 
 def localdate(timestamp: datetime = None):
     return localtime(timestamp).date()
+
+
+def to_id_array(data: dict[dict], key="id") -> list[dict]:
+    return [{key: k, **v} for k, v in data.items()]

@@ -121,3 +121,18 @@ def test_create_user():
         "lastname": lastname,
         "locale": locale,
     }
+
+
+@pytest.mark.parametrize(
+    "input_data, expected_output",
+    [
+        ({}, []),
+        ({"a": {"x": "y"}}, [{"id": "a", "x": "y"}]),
+        (
+            {"a": {"x": "y"}, "b": {"x": "z"}},
+            [{"id": "a", "x": "y"}, {"id": "b", "x": "z"}],
+        ),
+    ],
+)
+def test_to_id_array(input_data, expected_output):
+    assert d.to_id_array(input_data) == expected_output
