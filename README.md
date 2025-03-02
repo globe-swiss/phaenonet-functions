@@ -1,61 +1,112 @@
-# PhaenoNet Cloud Functions [![build](https://img.shields.io/github/actions/workflow/status/globe-swiss/phaenonet-functions/main.yml?branch=master)](undefined) [![codecov](https://codecov.io/gh/globe-swiss/phaenonet-functions/graph/badge.svg?token=K45OXCML80)](https://codecov.io/gh/globe-swiss/phaenonet-functions)
+# PhaenoNet Cloud Functions
 
-## Data Processing Overview
+[![Build Status](https://img.shields.io/github/actions/workflow/status/globe-swiss/phaenonet-functions/main.yml?branch=master)](https://github.com/globe-swiss/phaenonet-functions/actions/workflows/main.yml)
+[![Codecov Coverage](https://codecov.io/gh/globe-swiss/phaenonet-functions/graph/badge.svg?token=K45OXCML80)](https://codecov.io/gh/globe-swiss/phaenonet-functions)
 
-![Alt text](/docs/processing_overview.svg "PhaenoNet processing overview")
+## Overview
 
-The image can be modified in [Excalidraw](https://excalidraw.com)/[Google Cloud Architecture Diagramming Tool](https://bit.ly/GCPArchitecture)
+PhaenoNet is a phenology observation platform developed by GLOBE Switzerland. This repository contains the cloud functions responsible for data processing, integration, and management within the PhaenoNet ecosystem.
 
-## Develop in GitHub Codespaces
+### Data Processing Workflow
 
-Launch the Codespace in GitHub using the `codespace` branch. It will checkout the master branch, initialize the submodules, and rebuild the container. This process may take some minutes to finish.
+![PhaenoNet Processing Overview](/docs/processing_overview.svg)
 
-## Deploy Cloud Functions
+*Created with [Excalidraw](https://excalidraw.com)*
 
-Use [Github Action](https://github.com/globe-swiss/phaenonet-functions/actions/workflows/deploy-function.yml) to manage cloud functions.
+### Data Model Documentation
 
-### Set export scheduler
+For detailed information on the data structures and schemas used in PhaenoNet:
 
-```commandline
-gcloud scheduler jobs update pubsub import_meteoswiss_data --project $PROJECT --schedule="5 1 * * *" --topic="import_meteoswiss_data" --message-body="none" --time-zone="Europe/Zurich" --description="Trigger cloud function to import meteoswiss data"
+- [Data Model Documentation](./docs/datamodel.md)
+
+## Development Environment
+
+### GitHub Codespaces
+
+To set up a development environment using GitHub Codespaces:
+
+1. Launch a new Codespace based on the `codespace` branch.
+2. The setup process will:
+   - Checkout the `master` branch.
+   - Initialize submodules.
+   - Rebuild the development container.
+
+*Note: Initialization may take several minutes.*
+
+## Deployment
+
+### Deploying Cloud Functions
+
+Cloud functions are managed via GitHub Actions:
+
+- **Deployment Workflow:** [deploy-function.yml](https://github.com/globe-swiss/phaenonet-functions/actions/workflows/deploy-function.yml)
+
+### Setting Up the Export Scheduler
+
+To schedule regular imports of MeteoSwiss data:
+
+```bash
+gcloud scheduler jobs update pubsub import_meteoswiss_data \
+  --project $PROJECT \
+  --schedule="5 1 * * *" \
+  --topic="import_meteoswiss_data" \
+  --message-body="none" \
+  --time-zone="Europe/Zurich" \
+  --description="Trigger cloud function to import MeteoSwiss data"
 ```
 
-## Update phaenonet-test data
+## Updating Test Data
 
-Instructions to update data-sets in the Firestore test instance from production.
+### Production Copyback
 
-### Production copyback
+To replicate the production environment in the test instance:
 
-Use [Github Action](https://github.com/globe-swiss/phaenonet-functions/actions/workflows/copyback.yml) to create a clean test environment from the last production backup.
+- Use the [copyback.yml](https://github.com/globe-swiss/phaenonet-functions/actions/workflows/copyback.yml) GitHub Action.
 
-### Copy data partial
+### Partial Data Copy
 
-Check if cloud functions should be deployed or not depending on the use-case and what data is imported. Alternatively there is an UI available in Firestore.
+For selective data updates:
 
-```commandline
-gcloud --project=phaenonet --account=firestore-backup@phaenonet.iam.gserviceaccount.com firestore export gs://phaenonet-[backup-daily|backup-archive]/[backup-folder] --collection-ids=[collection_ids]
-gcloud --project=phaenonet-test --account=firestore-backup@phaenonet-test.iam.gserviceaccount.com firestore import gs://phaenonet-[backup-daily|backup-archive]/[backup-folder] --collection-ids=[collection_ids]
+1. Determine if cloud functions need deployment based on the data being imported.
+2. Alternatively, use the Firestore UI for data management.
+
+Commands for exporting and importing specific collections:
+
+```bash
+# Export from production
+gcloud --project=phaenonet \
+  --account=firestore-backup@phaenonet.iam.gserviceaccount.com \
+  firestore export gs://phaenonet-[backup-daily|backup-archive]/[backup-folder] \
+  --collection-ids=[collection_ids]
+
+# Import into test
+gcloud --project=phaenonet-test \
+  --account=firestore-backup@phaenonet-test.iam.gserviceaccount.com \
+  firestore import gs://phaenonet-[backup-daily|backup-archive]/[backup-folder] \
+  --collection-ids=[collection_ids]
 ```
 
-## Upgrade actions
+## Maintenance
 
-### Update python version
+### Updating Python Version
 
-1. check if new python version is suggested: <https://cloud.google.com/functions/docs/runtime-support#python>
-1. Upgrade containers, workflows, Pipfile: `./maintenance/upgrade-environment.sh`
-1. rebuild devcontainer
-1. rebuild python environment
+To align with the latest supported Python versions:
 
-#### Rebuild python environement
+1. Check for updates: [Google Cloud Python Runtime Support](https://cloud.google.com/functions/docs/runtime-support#python)
+2. Upgrade environments:
+   - Run: `./maintenance/upgrade-environment.sh`
+3. Rebuild the development container.
+4. Rebuild the Python environment.
 
-Edit `project.toml` and set new version
+#### Rebuilding the Python Environment
 
-```sh
+After updating `project.toml` with the new version:
+
+```bash
 rm -r .venv
 uv sync --frozen
 ```
 
-## Related resources
+## Related Resources
 
-- [phaenonet-client](https://github.com/globe-swiss/phaenonet-client)
-- [data model documentation](https://dbdocs.io/pgoellnitz/phaenonet)
+- [PhaenoNet Client](https://github.com/globe-swiss/phaenonet-client)
