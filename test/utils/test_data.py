@@ -35,9 +35,9 @@ def dynamic_config():
 
 def test_update_phenoyear(dynamic_config):
     current_year = dynamic_config["phenoyear"]
-    assert d.get_phenoyear() == current_year
+    assert d.get_phenoyear(True) == current_year
     d.update_phenoyear(current_year + 1)
-    assert d.get_phenoyear() == current_year + 1
+    assert d.get_phenoyear(False) == current_year + 1
 
 
 def test_update_phenoyear__preserve_data(dynamic_config):

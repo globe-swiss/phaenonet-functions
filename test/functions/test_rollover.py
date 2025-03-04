@@ -208,7 +208,7 @@ def test_remove_stale_individuals__specific_phenoyear(current_phenoyear):
 
 def test_rollover__update_year(current_phenoyear):
     rollover.rollover()
-    assert d.get_phenoyear() == current_phenoyear + 1
+    assert d.get_phenoyear(True) == current_phenoyear + 1
 
 
 def test_rollover__sensor_field(current_phenoyear):

@@ -242,7 +242,7 @@ class TestStations:
             pass  # expected
 
     def test_process_stations_response__write(self, station_data):
-        phenoyear = d.get_phenoyear()
+        phenoyear = d.get_phenoyear(True)
         meteoswiss.process_stations_response(phenoyear, station_data, 0)
         station = d.get_individual(f"{phenoyear}_ADB")
         assert station is not None

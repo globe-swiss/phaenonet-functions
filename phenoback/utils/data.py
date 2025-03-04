@@ -26,6 +26,7 @@ def _get_static_config() -> dict:
     return get_document("definitions", "config_static")
 
 
+@lru_cache
 def _get_dynamic_config() -> dict:
     return get_document("definitions", "config_dynamic")
 
@@ -38,7 +39,9 @@ def get_species(species: str) -> dict:
     return _get_static_config()["species"][species]
 
 
-def get_phenoyear() -> int:
+def get_phenoyear(reset_cache=False) -> int:
+    if reset_cache:
+        _get_dynamic_config.cache_clear()
     return _get_dynamic_config()["phenoyear"]
 
 
@@ -50,6 +53,7 @@ def update_phenoyear(year: int, transaction: Transaction = None) -> None:
         merge=True,
         transaction=transaction,
     )
+    _get_dynamic_config.cache_clear()
 
 
 def get_individual(individual_id: str, transaction: Transaction = None) -> dict:
