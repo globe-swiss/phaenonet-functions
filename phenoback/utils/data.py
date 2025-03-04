@@ -39,6 +39,11 @@ def get_species(species: str) -> dict:
     return _get_static_config()["species"][species]
 
 
+def is_actual_observation(comment: str) -> bool:
+    """Check if the comment indicates an actual observation that should be counted in statistics."""
+    return _get_static_config()["comments"].get(comment, {"stats": True})["stats"]
+
+
 def get_phenoyear(reset_cache=False) -> int:
     if reset_cache:
         _get_dynamic_config.cache_clear()

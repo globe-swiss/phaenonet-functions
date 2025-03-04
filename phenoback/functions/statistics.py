@@ -11,8 +11,6 @@ log.setLevel(logging.DEBUG)
 
 STATISTIC_PHENOPHASES = ("BEA", "BES", "BFA", "BLA", "BLB", "BVA", "BVS", "FRA")
 
-_fbr = defaultdict(int)
-
 
 def main(data, context):  # pylint: disable=unused-argument
     year = data.get("year")
@@ -22,7 +20,6 @@ def main(data, context):  # pylint: disable=unused-argument
 @cache
 def get_altitude_grp(individual_id: str) -> str:
     individual = d.get_individual(individual_id)
-    _fbr["individuals"] += 1
     if not individual:
         log.error("Individual %s not found to lookup altitude group", individual_id)
         raise KeyError(individual_id)
@@ -58,13 +55,17 @@ def write_statistics(data: dict) -> None:
 
 
 def get_observations(phenoyear: int):
+    """
+    Returns all observations for the given year that are relevant for statistics.
+    Excludes observations with comments that should not be counted.
+    """
     result = [
         doc.to_dict()
         for doc in d.query_observation("year", "==", phenoyear)
         .where(filter=f.FieldFilter("phenophase", "in", STATISTIC_PHENOPHASES))
         .stream()
+        if d.is_actual_observation(doc.to_dict().get("comment"))
     ]
-    _fbr["observations"] += len(result)
     return result
 
 
@@ -109,7 +110,7 @@ def calculate_1y_agg_statistics(observations: list) -> list:
     return statistics_result
 
 
-@cache  # only for initial processing of all years
+@cache  # needed only for initial processing of all years
 def get_1y_agg_statistics(start_year: int, end_year: int) -> list:
     """
     Retrieve preprocessed 1-year aggregate statistics for the given year range. (end_year is excluded)
@@ -124,7 +125,6 @@ def get_1y_agg_statistics(start_year: int, end_year: int) -> list:
             .where(filter=f.FieldFilter("phenophase", "in", STATISTIC_PHENOPHASES))
             .stream()
         ]
-        _fbr["statistics"] += len(query_result)
         statistics.extend(query_result)
     log.info(
         "retrieved %i statistics for years %i-%i",
@@ -197,7 +197,6 @@ def process_1y_aggregate_statistics(year: int = None) -> None:
     """
     if not year:
         year = d.get_phenoyear()
-        _fbr["phenoyear"] += 1
     observations = get_observations(year)
     statistics = calculate_1y_agg_statistics(observations)
 
@@ -234,7 +233,3 @@ def process_5y_30y_aggregate_statistics(
 
     write_statistics(agg5y)
     write_statistics(agg30y)
-
-
-def get_firebase_reads():
-    return _fbr
