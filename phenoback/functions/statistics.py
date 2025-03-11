@@ -54,7 +54,7 @@ def write_statistics(data: dict) -> None:
     d.write_batch("statistics", "id", d.to_id_array(data))
 
 
-def get_observations(phenoyear: int):
+def get_observations(phenoyear: int) -> list:
     """
     Returns all observations for the given year that are relevant for statistics.
     Excludes observations with comments that should not be counted.
@@ -69,7 +69,11 @@ def get_observations(phenoyear: int):
     return result
 
 
-def calculate_1y_agg_statistics(observations: list) -> list:
+def calculate_1y_agg_statistics(observations: list) -> dict:
+    """
+    Calculate 1-year aggregate statistics from the given observations.
+    Observations for multiple years can be provided.
+    """
     statistics_result = {}
 
     for obs in observations:
@@ -117,7 +121,6 @@ def get_1y_agg_statistics(start_year: int, end_year: int) -> list:
     """
     statistics = []
     for year in range(start_year, end_year):
-        log.debug("load stats: %s %s", year, len(statistics))
         query_result = [
             doc.to_dict()
             for doc in d.query_collection("statistics", "end_year", "==", year)
@@ -125,6 +128,7 @@ def get_1y_agg_statistics(start_year: int, end_year: int) -> list:
             .where(filter=f.FieldFilter("phenophase", "in", STATISTIC_PHENOPHASES))
             .stream()
         ]
+        log.debug("loaded stats: %s %s", year, len(query_result))
         statistics.extend(query_result)
     log.info(
         "retrieved %i statistics for years %i-%i",
@@ -185,13 +189,10 @@ def calculate_statistics_aggregates(
     # After the loop, update "years" field with the count of unique years
     for agg_key, data in agg_statistics_result.items():
         data["years"] = len(data["year_obs_sum"])  # Count of unique years with data
-        data["valid"] = (  # todo: remove, debug information
-            data["years"] == data["agg_range"] and data["agg_obs_sum"] / 20 > 1
-        )
     return agg_statistics_result
 
 
-def process_1y_aggregate_statistics(year: int = None) -> None:
+def process_1y_aggregate_statistics(year: int | None = None) -> None:
     """
     Process and write the 1-year aggregate statistics for the given year to statistics collection.
     """
@@ -211,14 +212,20 @@ def process_1y_aggregate_statistics(year: int = None) -> None:
 
 
 def process_5y_30y_aggregate_statistics(
-    current_year: int, obs_start=None, obs_end=None
+    current_year: int,
+    stat_start_range: int | None = None,
+    stat_end_range: int | None = None,
 ) -> None:
     """
     Process and write the 5-year and 30-year aggregates to the statistics collection. (current_year is excluded)
     Invoked on phenoyear roll-over.
+    Loaded statistics are cached. Override range for processing of multiple years.
+    @param current_year: The current year for which the 5-year and 30-year aggregates are calculated.
+    @param stat_start_range: The first year to load statistics from (inclusive). Default is 30 years before current_year.
+    @param stat_end_range: The last year to load statistics from (exclusive). Default is current_year.
     """
     all_stats = get_1y_agg_statistics(
-        obs_start or current_year - 30, obs_end or current_year
+        stat_start_range or current_year - 30, stat_end_range or current_year
     )
     agg5y = calculate_statistics_aggregates(all_stats, current_year - 5, current_year)
     agg30y = calculate_statistics_aggregates(all_stats, current_year - 30, current_year)

@@ -197,4 +197,8 @@ def localdate(timestamp: datetime = None):
 
 
 def to_id_array(data: dict[dict], key="id") -> list[dict]:
+    """
+    Convert a dictionary to an array of dictionaries with an additional key.
+    Useful for writing data in batch mode.
+    """
     return [{key: k, **v} for k, v in data.items()]
