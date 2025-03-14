@@ -267,9 +267,9 @@ def ps_process_statistics(event, context):
     data = g.get_data(event)
     with setup(data, context):
         with invoke():
-            from phenoback.functions import statistics
+            from phenoback.functions.statistics import weekly
 
-            return statistics.main(data, context)
+            return weekly.main(data, context)
 
 
 def test(data, context):  # pragma: no cover

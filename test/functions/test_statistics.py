@@ -4,16 +4,16 @@ import pytest
 
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
-from phenoback.functions import statistics
+from phenoback.functions.statistics import weekly
 
 
 def test_main(mocker, data, context):
     data["year"] = 2000
     process_1y_aggregate_statistics_mock = mocker.patch(
-        "phenoback.functions.statistics.process_1y_aggregate_statistics"
+        "phenoback.functions.statistics.weekly.process_1y_aggregate_statistics"
     )
 
-    statistics.main(data, context)
+    weekly.main(data, context)
 
     process_1y_aggregate_statistics_mock.assert_called_once_with(data["year"])
 
@@ -33,15 +33,15 @@ def test_main(mocker, data, context):
 )
 def test_get_altitude_grp(mocker, altitude_value, expected):
     mocker.patch(
-        "phenoback.functions.statistics.d.get_individual",
+        "phenoback.functions.statistics.weekly.d.get_individual",
         return_value={"altitude": altitude_value},
     )
-    statistics.get_altitude_grp.cache_clear()
+    weekly.get_altitude_grp.cache_clear()
 
-    result = statistics.get_altitude_grp("1")
+    result = weekly.get_altitude_grp("1")
 
     assert result == expected
-    assert statistics.get_altitude_grp.cache_info().hits == 0
+    assert weekly.get_altitude_grp.cache_info().hits == 0
 
 
 @pytest.mark.parametrize(
@@ -57,7 +57,7 @@ def test_get_altitude_grp(mocker, altitude_value, expected):
     ],
 )
 def test_date_to_woy(year, date, expected):
-    result = statistics.date_to_woy(year, date)
+    result = weekly.date_to_woy(year, date)
 
     assert result == expected
 
@@ -65,7 +65,7 @@ def test_date_to_woy(year, date, expected):
 def test_write_statistics():
     data = {"id1": {"foo1": "bar1"}, "id2": {"foo2": "bar2"}}
 
-    statistics.write_statistics(data)
+    weekly.write_statistics(data)
 
     num_docs = 0
     for doc in f.get_collection("statistics").stream():
@@ -76,14 +76,15 @@ def test_write_statistics():
 
 def test_get_observations(mocker):
     mocker.patch(
-        "phenoback.functions.statistics.d.is_actual_observation", return_value=True
+        "phenoback.functions.statistics.weekly.d.is_actual_observation",
+        return_value=True,
     )
     add_observation(1999, "BEA")
     add_observation(1999, "FRB")
     add_observation(2000, "BEA")
     add_observation(2000, "FRB")
 
-    result = statistics.get_observations(2000)
+    result = weekly.get_observations(2000)
 
     assert len(result) == 1
     assert result[0]["year"] == 2000
@@ -92,18 +93,21 @@ def test_get_observations(mocker):
 
 def test_get_observations__comment_false(mocker):
     mocker.patch(
-        "phenoback.functions.statistics.d.is_actual_observation", return_value=False
+        "phenoback.functions.statistics.weekly.d.is_actual_observation",
+        return_value=False,
     )
     add_observation(2000, "BEA")
     add_observation(2000, "FRB")
 
-    result = statistics.get_observations(2000)
+    result = weekly.get_observations(2000)
 
     assert len(result) == 0
 
 
 def test_calculate_1y_agg_statistics(mocker):
-    mocker.patch("phenoback.functions.statistics.get_altitude_grp", return_value="alt1")
+    mocker.patch(
+        "phenoback.functions.statistics.weekly.get_altitude_grp", return_value="alt1"
+    )
     observations = [
         {
             "year": 2000,
@@ -142,7 +146,7 @@ def test_calculate_1y_agg_statistics(mocker):
         },
     ]
 
-    result = statistics.calculate_1y_agg_statistics(observations)
+    result = weekly.calculate_1y_agg_statistics(observations)
 
     assert len(result) == 3
 
@@ -243,7 +247,7 @@ def test_get_1y_agg_statistics(start_year, end_year, expected):
         },
     )
 
-    result = statistics.get_1y_agg_statistics(start_year, end_year)
+    result = weekly.get_1y_agg_statistics(start_year, end_year)
 
     assert len(result) == expected
     for statistic_content in result:
@@ -278,7 +282,7 @@ def test_calculate_statistics_aggregates():
         },
     ]
 
-    result = statistics.calculate_statistics_aggregates(year_agg_statistics, 1995, 2005)
+    result = weekly.calculate_statistics_aggregates(year_agg_statistics, 1995, 2005)
 
     assert len(result) == 2
     assert result["1995_2004_foo_alt1_BEA"]["display_year"] == 2005
@@ -298,18 +302,18 @@ def test_process_1y_aggregate_statistics(mocker, phenoyear):
     observations_return = ["observation1", "observation2"]
     statistics_return = {"statistic1": "statistic1", "statistic2": "statistic2"}
     get_observations_mock = mocker.patch(
-        "phenoback.functions.statistics.get_observations",
+        "phenoback.functions.statistics.weekly.get_observations",
         return_value=observations_return,
     )
     calculate_1y_agg_statistics_mock = mocker.patch(
-        "phenoback.functions.statistics.calculate_1y_agg_statistics",
+        "phenoback.functions.statistics.weekly.calculate_1y_agg_statistics",
         return_value=statistics_return,
     )
     write_statistics_mock = mocker.patch(
-        "phenoback.functions.statistics.write_statistics"
+        "phenoback.functions.statistics.weekly.write_statistics"
     )
 
-    statistics.process_1y_aggregate_statistics()
+    weekly.process_1y_aggregate_statistics()
 
     get_observations_mock.assert_called_once_with(phenoyear)
     calculate_1y_agg_statistics_mock.assert_called_once_with(observations_return)
@@ -318,12 +322,12 @@ def test_process_1y_aggregate_statistics(mocker, phenoyear):
 
 def test_process_1y_aggregate_statistics__year_default(mocker):
     get_observations_mock = mocker.patch(
-        "phenoback.functions.statistics.get_observations"
+        "phenoback.functions.statistics.weekly.get_observations"
     )
-    mocker.patch("phenoback.functions.statistics.calculate_1y_agg_statistics")
-    mocker.patch("phenoback.functions.statistics.write_statistics")
+    mocker.patch("phenoback.functions.statistics.weekly.calculate_1y_agg_statistics")
+    mocker.patch("phenoback.functions.statistics.weekly.write_statistics")
 
-    statistics.process_1y_aggregate_statistics(1234)
+    weekly.process_1y_aggregate_statistics(1234)
 
     get_observations_mock.assert_called_once_with(1234)
 
@@ -334,18 +338,18 @@ def test_30y_aggregate_statistics(mocker):
     aggregates_5y_return = {"5y_1": "aggregate1", "5y_2": "aggregate2"}
     aggregates_30y_return = {"30y_1": "aggregate1", "30y_2": "aggregate2"}
     get_1y_agg_statistics_mock = mocker.patch(
-        "phenoback.functions.statistics.get_1y_agg_statistics",
+        "phenoback.functions.statistics.weekly.get_1y_agg_statistics",
         return_value=statistics_return,
     )
     calculate_statistics_mock = mocker.patch(
-        "phenoback.functions.statistics.calculate_statistics_aggregates",
+        "phenoback.functions.statistics.weekly.calculate_statistics_aggregates",
         side_effect=[aggregates_5y_return, aggregates_30y_return],
     )
     write_statistics_mock = mocker.patch(
-        "phenoback.functions.statistics.write_statistics"
+        "phenoback.functions.statistics.weekly.write_statistics"
     )
 
-    statistics.process_5y_30y_aggregate_statistics(current_year)
+    weekly.process_5y_30y_aggregate_statistics(current_year)
 
     get_1y_agg_statistics_mock.assert_called_once_with(current_year - 30, current_year)
     assert calculate_statistics_mock.call_count == 2

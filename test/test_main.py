@@ -48,7 +48,7 @@ def test_invoke__exception(data, context):
         (
             main.ps_process_statistics,
             [
-                "phenoback.functions.statistics.main",
+                "phenoback.functions.statistics.weekly.main",
             ],
         ),
     ],
