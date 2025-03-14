@@ -25,7 +25,7 @@ from phenoback.utils.firestore import (  # pylint: disable=unused-import
 def _get_static_config() -> dict:
     config = get_document("definitions", "config_static")
     if not config:
-        raise ValueError("config_static not found")
+        raise ValueError("config_static not found")  # pragma: no cover
     return config
 
 
@@ -33,7 +33,7 @@ def _get_static_config() -> dict:
 def _get_dynamic_config() -> dict:
     config = get_document("definitions", "config_dynamic")
     if not config:
-        raise ValueError("config_static not found")
+        raise ValueError("config_dynamic not found")  # pragma: no cover
     return config
 
 
