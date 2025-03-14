@@ -45,6 +45,12 @@ def test_invoke__exception(data, context):
                 # "phenoback.functions.iot.permarobotics.main", -> not called: only for productive environment
             ],
         ),
+        (
+            main.ps_process_statistics,
+            [
+                "phenoback.functions.statistics.weekly.main",
+            ],
+        ),
     ],
 )
 def test_executes__pubsub(

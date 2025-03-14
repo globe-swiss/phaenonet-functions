@@ -30,6 +30,7 @@ on:
           - http_individuals_write__map
           - http_iot_dragino
           - http_promote_ranger
+          - ps_process_statistics
           - ps_iot_dragino
           - ps_import_meteoswiss_data
           - ps_export_meteoswiss_data
@@ -140,6 +141,9 @@ jobs:
             entrypoint: http_restore_e2e_users
             trigger: --trigger-http --allow-unauthenticated
             project: phaenonet-test
+          - name: ps_process_statistics
+            entrypoint: ps_process_statistics
+            trigger: --trigger-resource process_statistics --trigger-event google.pubsub.topic.publish
     env:
       VERSION: "${{ matrix.name }}@${{ github.event.inputs.tag && github.event.inputs.tag || github.sha }}"
     environment: ${{ github.event.inputs.project }}
@@ -165,7 +169,7 @@ jobs:
         run: gcloud functions delete ${{ matrix.name }} --region ${{ env.REGION }} --quiet
         if: ${{ (env.ACTION == 'undeploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == 'all') && (matrix.project == env.PROJECT || matrix.project == null) }}
       - name: deploy
-        run: gcloud functions deploy ${{ matrix.name }} --entry-point ${{ matrix.entrypoint }} --runtime ${{ env.RUNTIME }} ${{ matrix.trigger }} --timeout ${{ env.TIMEOUT }} --region ${{ env.REGION }} --quiet --env-vars-file env.${{ env.PROJECT }}.yaml
+        run: gcloud functions deploy ${{ matrix.name }} --no-gen2 --entry-point ${{ matrix.entrypoint }} --runtime ${{ env.RUNTIME }} ${{ matrix.trigger }} --timeout ${{ env.TIMEOUT }} --region ${{ env.REGION }} --quiet --env-vars-file env.${{ env.PROJECT }}.yaml
         if: ${{ (env.ACTION == 'deploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == 'all') && (matrix.project == env.PROJECT || matrix.project == null) }}
       - name: Sentry release
         run: |

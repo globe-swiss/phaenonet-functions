@@ -42,7 +42,11 @@ log: logging.Logger = None  # pylint: disable=invalid-name
 
 
 @contextmanager  # workaround as stackdriver fails to capture stackstraces
-def setup(data: dict | Request, context=None, level=logging.DEBUG):
+def setup(data: dict | Request | None, context=None, level=logging.DEBUG):
+    """
+    Setup logging and and capture exceptions.
+    :param data: May be a dict, a http request or None.
+    """
     try:
         global log  # pylint: disable=global-statement,invalid-name
         glogging.init()
@@ -259,6 +263,15 @@ def ps_iot_dragino(event, context):
             bq.main(data, context)
 
 
+def ps_process_statistics(event, context):
+    data = g.get_data(event)
+    with setup(data, context):
+        with invoke():
+            from phenoback.functions.statistics import weekly
+
+            return weekly.main(data, context)
+
+
 def test(data, context):  # pragma: no cover
     from time import sleep
 
@@ -306,5 +319,13 @@ def test(data, context):  # pragma: no cover
         log.exception("L - exception", exc_info=Exception("myException"))
         sleep(1)
 
-        with setup("test data", "test context"):
-            raise KeyError("Should log")
+        with setup(
+            "test data: with setup/invoke: should log Key Error", "test context"
+        ):
+            with invoke():
+                raise KeyError("Should log - setup/invoke first")
+            with invoke():
+                raise KeyError("Should log - setup/invoke second")
+
+        with setup("test data: with setup: should log Key Error", "test context"):
+            raise KeyError("Should log - setup")

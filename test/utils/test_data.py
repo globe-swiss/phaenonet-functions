@@ -1,4 +1,4 @@
-# pylint: disable=unused-argument,protected-access
+# pylint: disable=protected-access
 import json
 from datetime import datetime
 
@@ -12,11 +12,11 @@ CONFIG_DYNAMIC_RESOURCE = "test/resources/config_dynamic.json"
 
 """
 To update resource files needed for tests from phaenonet test instance
-see maintenance repo @ maintenance/checks/update_test_data.py.
+see maintenance repo @ maintenance/config/generate_config_static.py.
 """
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def static_config():
     d._get_static_config.cache_clear()
     with open(CONFIG_STATIC_RESOURCE, encoding="utf-8") as file:
@@ -25,7 +25,7 @@ def static_config():
         return data
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def dynamic_config():
     with open(CONFIG_DYNAMIC_RESOURCE, encoding="utf-8") as file:
         data = json.loads(file.read())
@@ -35,9 +35,9 @@ def dynamic_config():
 
 def test_update_phenoyear(dynamic_config):
     current_year = dynamic_config["phenoyear"]
-    assert d.get_phenoyear() == current_year
+    assert d.get_phenoyear(True) == current_year
     d.update_phenoyear(current_year + 1)
-    assert d.get_phenoyear() == current_year + 1
+    assert d.get_phenoyear(False) == current_year + 1
 
 
 def test_update_phenoyear__preserve_data(dynamic_config):
@@ -60,7 +60,7 @@ def test_has_observation_date(individual, expected):
     assert d.has_observations(individual) == expected
 
 
-def test_get_phenophase__cache(mocker, static_config):
+def test_get_phenophase__cache(mocker):
     spy = mocker.spy(d, "get_document")
     assert d.get_phenophase("HS", "BEA")
     assert d.get_phenophase("HS", "BES")
@@ -68,7 +68,7 @@ def test_get_phenophase__cache(mocker, static_config):
     spy.assert_called_once()  # assert results are cached
 
 
-def test_get_species__cache(mocker, static_config):
+def test_get_species__cache(mocker):
     spy = mocker.spy(d, "get_document")
     assert d.get_species("HS")
     assert d.get_species("BA")
@@ -121,3 +121,30 @@ def test_create_user():
         "lastname": lastname,
         "locale": locale,
     }
+
+
+@pytest.mark.parametrize(
+    "input_data, expected_output",
+    [
+        ({}, []),
+        ({"a": {"x": "y"}}, [{"id": "a", "x": "y"}]),
+        (
+            {"a": {"x": "y"}, "b": {"x": "z"}},
+            [{"id": "a", "x": "y"}, {"id": "b", "x": "z"}],
+        ),
+    ],
+)
+def test_to_id_array(input_data, expected_output):
+    assert d.to_id_array(input_data) == expected_output
+
+
+@pytest.mark.parametrize(
+    "comment, expected",
+    [
+        ("None", True),
+        ("Any Comment", True),
+        ("102", False),
+    ],
+)
+def test_is_actual_observation(comment, expected):
+    assert d.is_actual_observation(comment) == expected

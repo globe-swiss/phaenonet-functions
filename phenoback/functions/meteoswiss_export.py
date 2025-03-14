@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 
-def main(data, context):  # pylint: disable=unused-argument
+def main(event, context):  # pylint: disable=unused-argument
     process()
 
 
