@@ -1,69 +1,135 @@
 {
   "comments": {
     "101": {
-      "de": "versp\u00e4tet (Sp\u00e4tfrostschaden)",
-      "seq": 101
+      "date": true,
+      "de": "verspätet (Spätfrostschaden)",
+      "enabled": true,
+      "seq": 101,
+      "stats": true
     },
     "102": {
-      "de": "keine Bl\u00fcte (Hagel)",
-      "seq": 102
+      "date": false,
+      "de": "keine Blüte (Hagel)",
+      "enabled": true,
+      "seq": 102,
+      "stats": false
     },
     "103": {
-      "de": "keine Bl\u00fcte (krank)",
-      "seq": 103
+      "date": false,
+      "de": "keine Blüte (krank)",
+      "enabled": true,
+      "seq": 103,
+      "stats": false
     },
     "104": {
-      "de": "keine Bl\u00fcte (Sp\u00e4tfrost)",
-      "seq": 104
+      "date": false,
+      "de": "keine Blüte (Spätfrost)",
+      "enabled": true,
+      "seq": 104,
+      "stats": false
     },
     "105": {
-      "de": "keine Bl\u00fcte (anderes)",
-      "seq": 105
+      "date": false,
+      "de": "keine Blüte (anderes)",
+      "enabled": true,
+      "seq": 105,
+      "stats": false
     },
     "106": {
-      "de": "Fruchtreife versp\u00e4tet (krank)",
-      "seq": 106
+      "date": true,
+      "de": "Fruchtreife verspätet (krank)",
+      "enabled": true,
+      "seq": 106,
+      "stats": false
     },
     "108": {
-      "de": "keine Fr\u00fcchte (krank)",
-      "seq": 108
+      "date": false,
+      "de": "keine Früchte (krank)",
+      "enabled": true,
+      "seq": 108,
+      "stats": false
     },
     "109": {
-      "de": "keine Fr\u00fcchte (anderes)",
-      "seq": 109
+      "date": false,
+      "de": "keine Früchte (anderes)",
+      "enabled": true,
+      "seq": 109,
+      "stats": false
     },
     "110": {
-      "de": "fr\u00fchzeitig (Trockenheit/Hitze)",
-      "seq": 110
+      "date": true,
+      "de": "frühzeitig (Trockenheit/Hitze)",
+      "enabled": true,
+      "seq": 110,
+      "stats": true
     },
     "111": {
+      "date": true,
       "de": "sofort braun (Frost)",
-      "seq": 111
+      "enabled": true,
+      "seq": 111,
+      "stats": true
     },
     "112": {
-      "de": "zu fr\u00fch (Sch\u00e4dlingsbefall oder krank)",
-      "seq": 112
+      "date": true,
+      "de": "zu früh (Schädlingsbefall oder krank)",
+      "enabled": true,
+      "seq": 112,
+      "stats": false
     },
     "113": {
-      "de": "fr\u00fchzeitig (Sturm)",
-      "seq": 113
+      "date": true,
+      "de": "frühzeitig (Sturm)",
+      "enabled": true,
+      "seq": 113,
+      "stats": false
     },
     "114": {
-      "de": "fr\u00fchzeitig (Frost)",
-      "seq": 114
+      "date": true,
+      "de": "frühzeitig (Frost)",
+      "enabled": true,
+      "seq": 114,
+      "stats": true
     },
     "116": {
-      "de": "ungew\u00f6hnlich sp\u00e4t",
-      "seq": 116
+      "date": true,
+      "de": "ungewöhnlich spät",
+      "enabled": false,
+      "seq": 116,
+      "stats": true
+    },
+    "cmst1": {
+      "date": true,
+      "de": "Fehlmast",
+      "enabled": true,
+      "seq": 1
+    },
+    "cmst2": {
+      "date": true,
+      "de": "Sprengmast",
+      "enabled": true,
+      "seq": 2
+    },
+    "cmst3": {
+      "date": true,
+      "de": "Halbmast",
+      "enabled": true,
+      "seq": 3
+    },
+    "cmst4": {
+      "date": true,
+      "de": "Vollmast",
+      "enabled": true,
+      "seq": 4
     }
   },
   "description": {
     "LA": {
-      "de": "l\u00e4ndlich",
+      "de": "ländlich",
       "seq": 4
     },
     "SG": {
-      "de": "unber\u00fchrt/Schutzgebiet",
+      "de": "unberührt/Schutzgebiet",
       "seq": 5
     },
     "ST": {
@@ -97,15 +163,15 @@
       "seq": 5
     },
     "S": {
-      "de": "S\u00fcd",
+      "de": "Süd",
       "seq": 7
     },
     "SE": {
-      "de": "S\u00fcdost",
+      "de": "Südost",
       "seq": 6
     },
     "SW": {
-      "de": "S\u00fcdwest",
+      "de": "Südwest",
       "seq": 8
     },
     "W": {
@@ -133,7 +199,7 @@
   },
   "habitat": {
     "BG": {
-      "de": "Blumen- oder Gem\u00fcsegarten",
+      "de": "Blumen- oder Gemüsegarten",
       "seq": 3
     },
     "BW": {
@@ -161,7 +227,7 @@
       "seq": 4
     },
     "WA": {
-      "de": "Wald (mehr als 10% B\u00e4ume)",
+      "de": "Wald (mehr als 10% Bäume)",
       "seq": 7
     },
     "WR": {
@@ -171,15 +237,23 @@
   },
   "less100": {
     "0": {
-      "de": "mehr als 100m zu Geb\u00e4ude/Strasse",
-      "seq": "0"
+      "de": "mehr als 100m zu Gebäude/Strasse",
+      "seq": 0
     },
     "1": {
-      "de": "weniger als 100m zu Geb\u00e4ude/Strasse",
-      "seq": "1"
+      "de": "weniger als 100m zu Gebäude/Strasse",
+      "seq": 1
     }
   },
   "phenophases": {
+    "AAP": {
+      "color": "#f7f5f2",
+      "icon_index": 1
+    },
+    "AWP": {
+      "color": "#f7f5f2",
+      "icon_index": 1
+    },
     "BEA": {
       "color": "#7bb53b",
       "icon_index": 2
@@ -204,6 +278,10 @@
       "color": "#e8d439",
       "icon_index": 3
     },
+    "BTF": {
+      "color": "#f7f5f2",
+      "icon_index": 1
+    },
     "BVA": {
       "color": "#b29976",
       "icon_index": 5
@@ -220,6 +298,10 @@
       "color": "#e8b658",
       "icon_index": 4
     },
+    "JUF": {
+      "color": "#f7f5f2",
+      "icon_index": 1
+    },
     "KNS": {
       "color": "#4b9f6f",
       "icon_index": 1
@@ -227,20 +309,32 @@
     "KNV": {
       "color": "#4b9f6f",
       "icon_index": 1
+    },
+    "MST": {
+      "color": "#eb5b23",
+      "icon_index": 7
+    },
+    "STR": {
+      "color": "#f7f5f2",
+      "icon_index": 1
+    },
+    "SZP": {
+      "color": "#f7f5f2",
+      "icon_index": 1
     }
   },
   "shade": {
     "B2": {
-      "de": "beschattet (weniger als 2 Std/Tag",
-      "seq": 4
+      "de": "beschattet (weniger als 2 Std/Tag direktes Sonnenlicht)",
+      "seq": 1
     },
     "DIR": {
       "de": "direktes Sonnenlicht (mehr als 5 Std/Tag)",
-      "seq": 2
+      "seq": 3
     },
     "TWB": {
       "de": "teilweise beschattet",
-      "seq": 3
+      "seq": 2
     }
   },
   "species": {
@@ -248,278 +342,112 @@
       "de": "Bergahorn",
       "groups": {
         "BA10": {
-          "color": "#4b9f6f;",
+          "color": "#4b9f6f",
           "de": "Knospung",
           "seq": 1
         },
         "BA40": {
-          "color": "#7bb53b;",
+          "color": "#7bb53b",
           "de": "Blattentfaltung",
           "seq": 2
         },
         "BA50": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+          "color": "#e8d439",
+          "de": "Blüte",
           "seq": 3
         },
         "BA60": {
-          "color": "#e8b658;",
+          "color": "#e8b658",
           "de": "Fruchtreife",
           "seq": 4
         },
         "BA70": {
-          "color": "#b29976;",
-          "de": "Herbstverf\u00e4rbung",
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
           "seq": 5
         },
         "BA75": {
-          "color": "#868072;",
+          "color": "#868072",
           "de": "Blattfall",
           "seq": 6
         }
       },
       "phenophases": {
         "BEA": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Allgemeine Blattentfaltung",
-          "description_de": "50% der Bl\u00e4tter des Baumes sind entfaltet",
+          "description_de": "50% der Blätter des Baumes sind entfaltet",
           "group_id": "BA40",
-          "limits": {
-            "altitude_grp_1_end_day": 130,
-            "altitude_grp_1_start_day": 100,
-            "altitude_grp_2_end_day": 130,
-            "altitude_grp_2_start_day": 100,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 100,
-            "altitude_grp_4_end_day": 150,
-            "altitude_grp_4_start_day": 100,
-            "altitude_grp_5_end_day": 150,
-            "altitude_grp_5_start_day": 100
-          },
           "seq": 4
         },
         "BES": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Beginn der Blattentfaltung",
-          "description_de": "Aus 3 Knospen haben sich die ersten Bl\u00e4tter entfaltet",
+          "description_de": "Aus 3 Knospen haben sich die ersten Blätter entfaltet",
           "group_id": "BA40",
-          "limits": {
-            "altitude_grp_1_end_day": 90,
-            "altitude_grp_1_start_day": 60,
-            "altitude_grp_2_end_day": 100,
-            "altitude_grp_2_start_day": 60,
-            "altitude_grp_3_end_day": 110,
-            "altitude_grp_3_start_day": 70,
-            "altitude_grp_4_end_day": 110,
-            "altitude_grp_4_start_day": 70,
-            "altitude_grp_5_end_day": 110,
-            "altitude_grp_5_start_day": 80
-          },
           "seq": 3
         },
         "BFA": {
-          "comments": [
-            "113",
-            "114"
-          ],
+          "comments": ["113", "114"],
           "de": "Allgemeiner Blattfall",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist abgefallen",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
           "group_id": "BA75",
-          "limits": {
-            "altitude_grp_1_end_day": 330,
-            "altitude_grp_1_start_day": 250,
-            "altitude_grp_2_end_day": 330,
-            "altitude_grp_2_start_day": 250,
-            "altitude_grp_3_end_day": 320,
-            "altitude_grp_3_start_day": 250,
-            "altitude_grp_4_end_day": 320,
-            "altitude_grp_4_start_day": 250,
-            "altitude_grp_5_end_day": 320,
-            "altitude_grp_5_start_day": 260
-          },
           "seq": 12
         },
         "BLA": {
-          "comments": [
-            "102",
-            "103",
-            "104",
-            "105"
-          ],
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der Bl\u00fcten offen oder schon verbl\u00fcht",
+          "comments": ["102", "103", "104", "105"],
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blüten offen oder schon verblüht",
           "group_id": "BA50",
-          "limits": {
-            "altitude_grp_1_end_day": 150,
-            "altitude_grp_1_start_day": 80,
-            "altitude_grp_2_end_day": 150,
-            "altitude_grp_2_start_day": 80,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 90,
-            "altitude_grp_4_end_day": 150,
-            "altitude_grp_4_start_day": 90,
-            "altitude_grp_5_end_day": 150,
-            "altitude_grp_5_start_day": 90
-          },
           "seq": 6
         },
         "BLB": {
-          "comments": [
-            "102",
-            "103",
-            "104",
-            "105"
-          ],
-          "de": "Beginn der Bl\u00fcte",
-          "description_de": "Erste Bl\u00fcten offen, an 3 Orten im Baum",
+          "comments": ["102", "103", "104", "105"],
+          "de": "Beginn der Blüte",
+          "description_de": "Erste Blüten offen, an 3 Orten im Baum",
           "group_id": "BA50",
-          "limits": {
-            "altitude_grp_1_end_day": 110,
-            "altitude_grp_1_start_day": 70,
-            "altitude_grp_2_end_day": 110,
-            "altitude_grp_2_start_day": 70,
-            "altitude_grp_3_end_day": 120,
-            "altitude_grp_3_start_day": 80,
-            "altitude_grp_4_end_day": 120,
-            "altitude_grp_4_start_day": 80,
-            "altitude_grp_5_end_day": 120,
-            "altitude_grp_5_start_day": 80
-          },
           "seq": 5
         },
         "BLE": {
-          "comments": [
-            "102",
-            "103",
-            "104",
-            "105"
-          ],
-          "de": "Ende der Bl\u00fcte",
-          "description_de": "95% der Bl\u00fcten verbl\u00fcht oder abgefallen",
+          "comments": ["102", "103", "104", "105"],
+          "de": "Ende der Blüte",
+          "description_de": "95% der Blüten verblüht oder abgefallen",
           "group_id": "BA50",
-          "limits": {
-            "altitude_grp_1_end_day": 160,
-            "altitude_grp_1_start_day": 110,
-            "altitude_grp_2_end_day": 160,
-            "altitude_grp_2_start_day": 110,
-            "altitude_grp_3_end_day": 160,
-            "altitude_grp_3_start_day": 120,
-            "altitude_grp_4_end_day": 170,
-            "altitude_grp_4_start_day": 130,
-            "altitude_grp_5_end_day": 170,
-            "altitude_grp_5_start_day": 130
-          },
           "seq": 7
         },
         "BVA": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Allgemeine Blattverf\u00e4rbung",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "BA70",
-          "limits": {
-            "altitude_grp_1_end_day": 320,
-            "altitude_grp_1_start_day": 220,
-            "altitude_grp_2_end_day": 320,
-            "altitude_grp_2_start_day": 220,
-            "altitude_grp_3_end_day": 300,
-            "altitude_grp_3_start_day": 210,
-            "altitude_grp_4_end_day": 270,
-            "altitude_grp_4_start_day": 200,
-            "altitude_grp_5_end_day": 300,
-            "altitude_grp_5_start_day": 220
-          },
           "seq": 11
         },
         "BVS": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Beginn der Blattverf\u00e4rbung",
-          "description_de": "10% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Beginn der Blattverfärbung",
+          "description_de": "10% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "BA70",
-          "limits": {
-            "altitude_grp_1_end_day": 300,
-            "altitude_grp_1_start_day": 210,
-            "altitude_grp_2_end_day": 300,
-            "altitude_grp_2_start_day": 210,
-            "altitude_grp_3_end_day": 300,
-            "altitude_grp_3_start_day": 210,
-            "altitude_grp_4_end_day": 280,
-            "altitude_grp_4_start_day": 200,
-            "altitude_grp_5_end_day": 250,
-            "altitude_grp_5_start_day": 210
-          },
           "seq": 10
         },
         "FRA": {
           "comments": [],
           "de": "Beginn Fruchtfall",
-          "description_de": "Erste Fl\u00fcgeln\u00fcsschen unter dem Baum",
+          "description_de": "Erste Flügelnüsschen unter dem Baum",
           "group_id": "BA60",
-          "limits": {
-            "altitude_grp_1_end_day": 270,
-            "altitude_grp_1_start_day": 220,
-            "altitude_grp_2_end_day": 270,
-            "altitude_grp_2_start_day": 220,
-            "altitude_grp_3_end_day": 280,
-            "altitude_grp_3_start_day": 220,
-            "altitude_grp_4_end_day": 290,
-            "altitude_grp_4_start_day": 220,
-            "altitude_grp_5_end_day": 280,
-            "altitude_grp_5_start_day": 220
-          },
           "seq": 9
         },
         "FRB": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Beginn der Fruchtreife",
-          "description_de": "3 Einzelfr\u00fcchte sind arttypisch reif (braun)",
+          "description_de": "3 Einzelfrüchte sind arttypisch reif (braun)",
           "group_id": "BA60",
-          "limits": {
-            "altitude_grp_1_end_day": 250,
-            "altitude_grp_1_start_day": 190,
-            "altitude_grp_2_end_day": 250,
-            "altitude_grp_2_start_day": 190,
-            "altitude_grp_3_end_day": 260,
-            "altitude_grp_3_start_day": 200,
-            "altitude_grp_4_end_day": 270,
-            "altitude_grp_4_start_day": 210,
-            "altitude_grp_5_end_day": 280,
-            "altitude_grp_5_start_day": 220
-          },
           "seq": 8
         },
         "KNS": {
           "comments": [],
           "de": "Beginn der Knospung",
-          "description_de": "Kleine gr\u00fcne Spitzchen sind ersichtlich an drei Orten im Baum",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an drei Orten im Baum",
           "group_id": "BA10",
-          "limits": {
-            "altitude_grp_1_end_day": 110,
-            "altitude_grp_1_start_day": 50,
-            "altitude_grp_2_end_day": 120,
-            "altitude_grp_2_start_day": 50,
-            "altitude_grp_3_end_day": 120,
-            "altitude_grp_3_start_day": 50,
-            "altitude_grp_4_end_day": 130,
-            "altitude_grp_4_start_day": 60,
-            "altitude_grp_5_end_day": 130,
-            "altitude_grp_5_start_day": 60
-          },
           "seq": 2
         },
         "KNV": {
@@ -527,384 +455,202 @@
           "de": "Vor der Knospung",
           "description_de": "Knospung steht kurz bevor",
           "group_id": "BA10",
-          "limits": {
-            "altitude_grp_1_end_day": 90,
-            "altitude_grp_1_start_day": 30,
-            "altitude_grp_2_end_day": 90,
-            "altitude_grp_2_start_day": 30,
-            "altitude_grp_3_end_day": 100,
-            "altitude_grp_3_start_day": 30,
-            "altitude_grp_4_end_day": 100,
-            "altitude_grp_4_start_day": 40,
-            "altitude_grp_5_end_day": 100,
-            "altitude_grp_5_start_day": 40
-          },
           "seq": 1
         }
       },
-      "tenant": "all"
+      "sources": ["globe", "meteoswiss", "ranger", "wld"]
+    },
+    "BL": {
+      "de": "Bärlauch",
+      "groups": {
+        "BE": {
+          "color": "#7bb53b",
+          "de": "Blattentfaltung",
+          "seq": 1
+        },
+        "BL": {
+          "color": "#e8d439",
+          "de": "Blüte",
+          "seq": 2
+        }
+      },
+      "phenophases": {
+        "BEA": {
+          "de": "Allgemeine Blattentfaltung",
+          "description_de": "50% der Blätter erreichen ihre finale Grösse von ca. 15 cm",
+          "group_id": "BE",
+          "seq": 2
+        },
+        "BES": {
+          "de": "Beginn der Blattentfaltung",
+          "description_de": "Drei erste Blätter erkennbar über der Streuschicht",
+          "group_id": "BE",
+          "seq": 1
+        },
+        "BLA": {
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blüten offen oder schon verblüht",
+          "group_id": "BL",
+          "seq": 4
+        },
+        "BLB": {
+          "de": "Beginn der Blüte",
+          "description_de": "Erste Blüten offen, an mindestens drei Individuen",
+          "group_id": "BL",
+          "seq": 3
+        }
+      },
+      "sources": ["ranger"]
     },
     "BR": {
-      "de": "Buschwindr\u00f6schen",
+      "de": "Buschwindröschen",
       "groups": {
         "BR01": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+          "color": "#e8d439",
+          "de": "Blüte",
           "seq": 1
         }
       },
       "phenophases": {
         "BLA": {
-          "comments": [
-            "105"
-          ],
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der Bl\u00fcten offen oder schon verbl\u00fcht",
+          "comments": ["105"],
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blüten offen oder schon verblüht",
           "group_id": "BR01",
-          "limits": {
-            "altitude_grp_1_end_day": 120,
-            "altitude_grp_1_start_day": 60,
-            "altitude_grp_2_end_day": 130,
-            "altitude_grp_2_start_day": 60,
-            "altitude_grp_3_end_day": 130,
-            "altitude_grp_3_start_day": 70,
-            "altitude_grp_4_end_day": 140,
-            "altitude_grp_4_start_day": 80,
-            "altitude_grp_5_end_day": 150,
-            "altitude_grp_5_start_day": 80
-          },
           "seq": 2
         },
         "BLB": {
-          "comments": [
-            "105"
-          ],
-          "de": "Beginn der Bl\u00fcte",
-          "description_de": "Erste Bl\u00fcten offen, an 3 Orten im Bestand",
+          "comments": ["105"],
+          "de": "Beginn der Blüte",
+          "description_de": "Erste Blüten offen, an 3 Orten im Bestand",
           "group_id": "BR01",
-          "limits": {
-            "altitude_grp_1_end_day": 100,
-            "altitude_grp_1_start_day": 30,
-            "altitude_grp_2_end_day": 100,
-            "altitude_grp_2_start_day": 30,
-            "altitude_grp_3_end_day": 120,
-            "altitude_grp_3_start_day": 40,
-            "altitude_grp_4_end_day": 120,
-            "altitude_grp_4_start_day": 40,
-            "altitude_grp_5_end_day": 120,
-            "altitude_grp_5_start_day": 40
-          },
           "seq": 1
         },
         "BLE": {
-          "comments": [
-            "105"
-          ],
-          "de": "Ende der Bl\u00fcte",
-          "description_de": "95% der Bl\u00fcten verbl\u00fcht oder abgefallen",
+          "comments": ["105"],
+          "de": "Ende der Blüte",
+          "description_de": "95% der Blüten verblüht oder abgefallen",
           "group_id": "BR01",
-          "limits": {
-            "altitude_grp_1_end_day": 160,
-            "altitude_grp_1_start_day": 80,
-            "altitude_grp_2_end_day": 160,
-            "altitude_grp_2_start_day": 80,
-            "altitude_grp_3_end_day": 170,
-            "altitude_grp_3_start_day": 80,
-            "altitude_grp_4_end_day": 170,
-            "altitude_grp_4_start_day": 90,
-            "altitude_grp_5_end_day": 170,
-            "altitude_grp_5_start_day": 80
-          },
           "seq": 3
         }
       },
-      "tenant": "globe"
+      "sources": ["globe", "meteoswiss", "ranger"]
     },
     "BU": {
       "de": "Rotbuche",
       "groups": {
         "BU10": {
-          "color": "#4b9f6f;",
+          "color": "#4b9f6f",
           "de": "Knospung",
           "seq": 1
         },
         "BU40": {
-          "color": "#7bb53b;",
+          "color": "#7bb53b",
           "de": "Blattentfaltung",
           "seq": 2
         },
         "BU50": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+          "color": "#e8d439",
+          "de": "Blüte",
           "seq": 3
         },
         "BU60": {
-          "color": "#e8b658;",
+          "color": "#e8b658",
           "de": "Fruchtreife",
-          "seq": 4
-        },
-        "BU70": {
-          "color": "#b29976;",
-          "de": "Herbstverf\u00e4rbung",
           "seq": 5
         },
-        "BU75": {
-          "color": "#868072;",
-          "de": "Blattfall",
+        "BU70": {
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
           "seq": 6
+        },
+        "BU75": {
+          "color": "#868072",
+          "de": "Blattfall",
+          "seq": 7
+        },
+        "BUMST": {
+          "color": "#eb5b23",
+          "de": "Mast",
+          "seq": 4
         }
       },
       "phenophases": {
         "BEA": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Allgemeine Blattentfaltung",
-          "description_de": "50% der Bl\u00e4tter des Baumes sind entfaltet",
+          "description_de": "50% der Blätter des Baumes sind entfaltet",
           "group_id": "BU40",
-          "limits": {
-            "altitude_grp_1_end_day": 140,
-            "altitude_grp_1_start_day": 90,
-            "altitude_grp_2_end_day": 150,
-            "altitude_grp_2_start_day": 90,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 100,
-            "altitude_grp_4_end_day": 150,
-            "altitude_grp_4_start_day": 110,
-            "altitude_grp_5_end_day": 160,
-            "altitude_grp_5_start_day": 110
-          },
           "seq": 4
         },
         "BES": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Beginn der Blattentfaltung",
-          "description_de": "Aus 3 Knospen haben sich die ersten Bl\u00e4tter entfaltet",
+          "description_de": "Aus 3 Knospen haben sich die ersten Blätter entfaltet",
           "group_id": "BU40",
-          "limits": {
-            "altitude_grp_1_end_day": 130,
-            "altitude_grp_1_start_day": 80,
-            "altitude_grp_2_end_day": 130,
-            "altitude_grp_2_start_day": 80,
-            "altitude_grp_3_end_day": 130,
-            "altitude_grp_3_start_day": 80,
-            "altitude_grp_4_end_day": 130,
-            "altitude_grp_4_start_day": 80,
-            "altitude_grp_5_end_day": 130,
-            "altitude_grp_5_start_day": 80
-          },
           "seq": 3
         },
         "BFA": {
-          "comments": [
-            "112",
-            "113",
-            "114",
-            "116"
-          ],
+          "comments": ["112", "113", "114", "116"],
           "de": "Allgemeiner Blattfall",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist abgefallen",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
           "group_id": "BU75",
-          "limits": {
-            "altitude_grp_1_end_day": 350,
-            "altitude_grp_1_start_day": 250,
-            "altitude_grp_2_end_day": 350,
-            "altitude_grp_2_start_day": 250,
-            "altitude_grp_3_end_day": 350,
-            "altitude_grp_3_start_day": 250,
-            "altitude_grp_4_end_day": 340,
-            "altitude_grp_4_start_day": 250,
-            "altitude_grp_5_end_day": 340,
-            "altitude_grp_5_start_day": 240
-          },
           "seq": 12
         },
         "BLA": {
-          "comments": [
-            "102",
-            "103",
-            "104",
-            "105"
-          ],
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der Bl\u00fcten st\u00e4uben oder sind schon verbl\u00fcht",
+          "comments": ["102", "103", "104", "105"],
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blüten stäuben oder sind schon verblüht",
           "group_id": "BU50",
-          "limits": {
-            "altitude_grp_1_end_day": 140,
-            "altitude_grp_1_start_day": 90,
-            "altitude_grp_2_end_day": 150,
-            "altitude_grp_2_start_day": 90,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 100,
-            "altitude_grp_4_end_day": 150,
-            "altitude_grp_4_start_day": 110,
-            "altitude_grp_5_end_day": 160,
-            "altitude_grp_5_start_day": 110
-          },
           "seq": 6
         },
         "BLB": {
-          "comments": [
-            "102",
-            "103",
-            "104",
-            "105"
-          ],
-          "de": "Beginn der Bl\u00fcte",
-          "description_de": "Erste Bl\u00fcten sind an 3 Orten im Baum vollst\u00e4ndig ge\u00f6ffnet",
+          "comments": ["102", "103", "104", "105"],
+          "de": "Beginn der Blüte",
+          "description_de": "Erste Blüten sind an 3 Orten im Baum vollständig geöffnet",
           "group_id": "BU50",
-          "limits": {
-            "altitude_grp_1_end_day": 130,
-            "altitude_grp_1_start_day": 80,
-            "altitude_grp_2_end_day": 130,
-            "altitude_grp_2_start_day": 80,
-            "altitude_grp_3_end_day": 140,
-            "altitude_grp_3_start_day": 80,
-            "altitude_grp_4_end_day": 140,
-            "altitude_grp_4_start_day": 90,
-            "altitude_grp_5_end_day": 140,
-            "altitude_grp_5_start_day": 90
-          },
           "seq": 5
         },
         "BLE": {
-          "comments": [
-            "102",
-            "103",
-            "104",
-            "105"
-          ],
-          "de": "Ende der Bl\u00fcte",
-          "description_de": "95 % der Blu\u0308ten sind abgestorben oder abgefallen",
+          "comments": ["102", "103", "104", "105"],
+          "de": "Ende der Blüte",
+          "description_de": "95 % der Blüten sind abgestorben oder abgefallen",
           "group_id": "BU50",
-          "limits": {
-            "altitude_grp_1_end_day": 170,
-            "altitude_grp_1_start_day": 100,
-            "altitude_grp_2_end_day": 170,
-            "altitude_grp_2_start_day": 100,
-            "altitude_grp_3_end_day": 180,
-            "altitude_grp_3_start_day": 110,
-            "altitude_grp_4_end_day": 180,
-            "altitude_grp_4_start_day": 120,
-            "altitude_grp_5_end_day": 180,
-            "altitude_grp_5_start_day": 120
-          },
           "seq": 7
         },
         "BVA": {
-          "comments": [
-            "110",
-            "111",
-            "112",
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Allgemeine Blattverf\u00e4rbung",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "110", "111", "111", "112", "112"],
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "BU70",
-          "limits": {
-            "altitude_grp_1_end_day": 340,
-            "altitude_grp_1_start_day": 210,
-            "altitude_grp_2_end_day": 340,
-            "altitude_grp_2_start_day": 210,
-            "altitude_grp_3_end_day": 320,
-            "altitude_grp_3_start_day": 220,
-            "altitude_grp_4_end_day": 300,
-            "altitude_grp_4_start_day": 210,
-            "altitude_grp_5_end_day": 300,
-            "altitude_grp_5_start_day": 230
-          },
           "seq": 11
         },
         "BVS": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Beginn der Blattverf\u00e4rbung",
-          "description_de": "10% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Beginn der Blattverfärbung",
+          "description_de": "10% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "BU70",
-          "limits": {
-            "altitude_grp_1_end_day": 290,
-            "altitude_grp_1_start_day": 200,
-            "altitude_grp_2_end_day": 290,
-            "altitude_grp_2_start_day": 200,
-            "altitude_grp_3_end_day": 280,
-            "altitude_grp_3_start_day": 190,
-            "altitude_grp_4_end_day": 270,
-            "altitude_grp_4_start_day": 190,
-            "altitude_grp_5_end_day": 260,
-            "altitude_grp_5_start_day": 220
-          },
           "seq": 10
         },
         "FRA": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Allgemeine Fruchtreife",
-          "description_de": "50% der Einzelfr\u00fcchte haben sich ge\u00f6ffnet und die Buchn\u00fcsschen (Buchecker) fallen heraus",
+          "description_de": "50% der Einzelfrüchte haben sich geöffnet und die Buchnüsschen (Buchecker) fallen heraus",
           "group_id": "BU60",
-          "limits": {
-            "altitude_grp_1_end_day": 300,
-            "altitude_grp_1_start_day": 210,
-            "altitude_grp_2_end_day": 300,
-            "altitude_grp_2_start_day": 210,
-            "altitude_grp_3_end_day": 290,
-            "altitude_grp_3_start_day": 220,
-            "altitude_grp_4_end_day": 280,
-            "altitude_grp_4_start_day": 220,
-            "altitude_grp_5_end_day": 300,
-            "altitude_grp_5_start_day": 240
-          },
           "seq": 9
         },
         "FRB": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Beginn der Fruchtreife",
-          "description_de": "3 Einzelfr\u00fcchte haben sich ge\u00f6ffnet und die Buchn\u00fcsschen fallen heraus",
+          "description_de": "3 Einzelfrüchte haben sich geöffnet und die Buchnüsschen fallen heraus",
           "group_id": "BU60",
-          "limits": {
-            "altitude_grp_1_end_day": 250,
-            "altitude_grp_1_start_day": 200,
-            "altitude_grp_2_end_day": 250,
-            "altitude_grp_2_start_day": 200,
-            "altitude_grp_3_end_day": 260,
-            "altitude_grp_3_start_day": 190,
-            "altitude_grp_4_end_day": 260,
-            "altitude_grp_4_start_day": 190,
-            "altitude_grp_5_end_day": 260,
-            "altitude_grp_5_start_day": 230
-          },
           "seq": 8
         },
         "KNS": {
           "comments": [],
           "de": "Beginn der Knospung",
-          "description_de": "Kleine gr\u00fcne Spitzchen sind ersichtlich an drei Orten im Baum",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an drei Orten im Baum",
           "group_id": "BU10",
-          "limits": {
-            "altitude_grp_1_end_day": 110,
-            "altitude_grp_1_start_day": 70,
-            "altitude_grp_2_end_day": 110,
-            "altitude_grp_2_start_day": 70,
-            "altitude_grp_3_end_day": 120,
-            "altitude_grp_3_start_day": 70,
-            "altitude_grp_4_end_day": 120,
-            "altitude_grp_4_start_day": 80,
-            "altitude_grp_5_end_day": 120,
-            "altitude_grp_5_start_day": 80
-          },
           "seq": 2
         },
         "KNV": {
@@ -912,280 +658,121 @@
           "de": "Vor der Knospung",
           "description_de": "Knospung steht kurz bevor",
           "group_id": "BU10",
-          "limits": {
-            "altitude_grp_1_end_day": 110,
-            "altitude_grp_1_start_day": 60,
-            "altitude_grp_2_end_day": 110,
-            "altitude_grp_2_start_day": 60,
-            "altitude_grp_3_end_day": 110,
-            "altitude_grp_3_start_day": 70,
-            "altitude_grp_4_end_day": 110,
-            "altitude_grp_4_start_day": 70,
-            "altitude_grp_5_end_day": 110,
-            "altitude_grp_5_start_day": 70
-          },
+          "seq": 1
+        },
+        "MST": {
+          "comments": ["cmst1", "cmst2", "cmst3", "cmst4"],
+          "de": "Mastausprägung",
+          "description_de": "Mastausprägung anhand Beobachtungsanleitung als Kommentar eintragen",
+          "group_id": "BUMST",
           "seq": 1
         }
       },
-      "tenant": "all"
+      "sources": ["globe", "meteoswiss", "ranger", "wld"]
     },
     "EK": {
       "de": "Edelkastanie",
       "groups": {
         "EK10": {
-          "color": "#4b9f6f;",
+          "color": "#4b9f6f",
           "de": "Knospung",
           "seq": 1
         },
         "EK40": {
-          "color": "#7bb53b;",
+          "color": "#7bb53b",
           "de": "Blattentfaltung",
           "seq": 2
         },
         "EK50": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+          "color": "#e8d439",
+          "de": "Blüte",
           "seq": 3
         },
         "EK60": {
-          "color": "#e8b658;",
+          "color": "#e8b658",
           "de": "Fruchtreife",
           "seq": 4
         },
         "EK70": {
-          "color": "#b29976;",
-          "de": "Herbstverf\u00e4rbung",
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
           "seq": 5
         },
         "EK75": {
-          "color": "#868072;",
+          "color": "#868072",
           "de": "Blattfall",
           "seq": 6
         }
       },
       "phenophases": {
         "BEA": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Allgemeine Blattentfaltung",
-          "description_de": "50% der Bl\u00e4tter des Baumes sind entfaltet",
+          "description_de": "50% der Blätter des Baumes sind entfaltet",
           "group_id": "EK40",
-          "limits": {
-            "altitude_grp_1_end_day": 130,
-            "altitude_grp_1_start_day": 100,
-            "altitude_grp_2_end_day": 140,
-            "altitude_grp_2_start_day": 100,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 110,
-            "altitude_grp_4_end_day": 999,
-            "altitude_grp_4_start_day": 999,
-            "altitude_grp_5_end_day": 999,
-            "altitude_grp_5_start_day": 999
-          },
           "seq": 4
         },
         "BES": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Beginn der Blattentfaltung",
-          "description_de": "Aus 3 Knospen haben sich die ersten Bl\u00e4tter entfaltet",
+          "description_de": "Aus 3 Knospen haben sich die ersten Blätter entfaltet",
           "group_id": "EK40",
-          "limits": {
-            "altitude_grp_1_end_day": 130,
-            "altitude_grp_1_start_day": 90,
-            "altitude_grp_2_end_day": 130,
-            "altitude_grp_2_start_day": 90,
-            "altitude_grp_3_end_day": 130,
-            "altitude_grp_3_start_day": 90,
-            "altitude_grp_4_end_day": 130,
-            "altitude_grp_4_start_day": 100,
-            "altitude_grp_5_end_day": 130,
-            "altitude_grp_5_start_day": 100
-          },
           "seq": 3
         },
         "BFA": {
-          "comments": [
-            "112",
-            "113",
-            "114",
-            "116"
-          ],
+          "comments": ["112", "113", "114", "116"],
           "de": "Allgemeiner Blattfall",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist abgefallen",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
           "group_id": "EK75",
-          "limits": {
-            "altitude_grp_1_end_day": 350,
-            "altitude_grp_1_start_day": 220,
-            "altitude_grp_2_end_day": 350,
-            "altitude_grp_2_start_day": 220,
-            "altitude_grp_3_end_day": 350,
-            "altitude_grp_3_start_day": 220,
-            "altitude_grp_4_end_day": 999,
-            "altitude_grp_4_start_day": 999,
-            "altitude_grp_5_end_day": 999,
-            "altitude_grp_5_start_day": 999
-          },
           "seq": 12
         },
         "BLA": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der Bl\u00fcten offen oder schon verbl\u00fcht",
+          "comments": ["103", "105"],
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blüten offen oder schon verblüht",
           "group_id": "EK50",
-          "limits": {
-            "altitude_grp_1_end_day": 180,
-            "altitude_grp_1_start_day": 140,
-            "altitude_grp_2_end_day": 190,
-            "altitude_grp_2_start_day": 140,
-            "altitude_grp_3_end_day": 200,
-            "altitude_grp_3_start_day": 140,
-            "altitude_grp_4_end_day": 999,
-            "altitude_grp_4_start_day": 999,
-            "altitude_grp_5_end_day": 999,
-            "altitude_grp_5_start_day": 999
-          },
           "seq": 6
         },
         "BLB": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Beginn der Bl\u00fcte",
-          "description_de": "Erste Bl\u00fcten offen, an 3 Orten im Baum",
+          "comments": ["103", "105"],
+          "de": "Beginn der Blüte",
+          "description_de": "Erste Blüten offen, an 3 Orten im Baum",
           "group_id": "EK50",
-          "limits": {
-            "altitude_grp_1_end_day": 180,
-            "altitude_grp_1_start_day": 140,
-            "altitude_grp_2_end_day": 190,
-            "altitude_grp_2_start_day": 140,
-            "altitude_grp_3_end_day": 200,
-            "altitude_grp_3_start_day": 140,
-            "altitude_grp_4_end_day": 999,
-            "altitude_grp_4_start_day": 999,
-            "altitude_grp_5_end_day": 999,
-            "altitude_grp_5_start_day": 999
-          },
           "seq": 5
         },
         "BLE": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Ende der Bl\u00fcte",
-          "description_de": "95% der Bl\u00fcten verbl\u00fcht oder abgefallen",
+          "comments": ["103", "105"],
+          "de": "Ende der Blüte",
+          "description_de": "95% der Blüten verblüht oder abgefallen",
           "group_id": "EK50",
-          "limits": {
-            "altitude_grp_1_end_day": 210,
-            "altitude_grp_1_start_day": 160,
-            "altitude_grp_2_end_day": 210,
-            "altitude_grp_2_start_day": 160,
-            "altitude_grp_3_end_day": 210,
-            "altitude_grp_3_start_day": 160,
-            "altitude_grp_4_end_day": 210,
-            "altitude_grp_4_start_day": 160,
-            "altitude_grp_5_end_day": 210,
-            "altitude_grp_5_start_day": 160
-          },
           "seq": 7
         },
         "BVA": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Allgemeine Blattverf\u00e4rbung",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "EK70",
-          "limits": {
-            "altitude_grp_1_end_day": 350,
-            "altitude_grp_1_start_day": 220,
-            "altitude_grp_2_end_day": 340,
-            "altitude_grp_2_start_day": 220,
-            "altitude_grp_3_end_day": 330,
-            "altitude_grp_3_start_day": 220,
-            "altitude_grp_4_end_day": 999,
-            "altitude_grp_4_start_day": 999,
-            "altitude_grp_5_end_day": 999,
-            "altitude_grp_5_start_day": 999
-          },
           "seq": 11
         },
         "BVS": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Beginn der Blattverf\u00e4rbung",
-          "description_de": "10% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Beginn der Blattverfärbung",
+          "description_de": "10% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "EK70",
-          "limits": {
-            "altitude_grp_1_end_day": 310,
-            "altitude_grp_1_start_day": 240,
-            "altitude_grp_2_end_day": 310,
-            "altitude_grp_2_start_day": 240,
-            "altitude_grp_3_end_day": 310,
-            "altitude_grp_3_start_day": 240,
-            "altitude_grp_4_end_day": 310,
-            "altitude_grp_4_start_day": 240,
-            "altitude_grp_5_end_day": 300,
-            "altitude_grp_5_start_day": 240
-          },
           "seq": 10
         },
         "FRA": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Beginn Fruchtfall",
-          "description_de": "Erste Fl\u00fcgeln\u00fcsschen unter dem Baum",
+          "description_de": "Erste Flügelnüsschen unter dem Baum",
           "group_id": "EK60",
-          "limits": {
-            "altitude_grp_1_end_day": 300,
-            "altitude_grp_1_start_day": 220,
-            "altitude_grp_2_end_day": 300,
-            "altitude_grp_2_start_day": 220,
-            "altitude_grp_3_end_day": 300,
-            "altitude_grp_3_start_day": 230,
-            "altitude_grp_4_end_day": 999,
-            "altitude_grp_4_start_day": 999,
-            "altitude_grp_5_end_day": 999,
-            "altitude_grp_5_start_day": 999
-          },
           "seq": 9
         },
         "FRB": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Beginn der Fruchtreife",
-          "description_de": "3 offene Fruchtbecher oder erste Einzelfru\u0308chte unter dem Baum",
+          "description_de": "3 offene Fruchtbecher oder erste Einzelfrüchte unter dem Baum",
           "group_id": "EK60",
-          "limits": {
-            "altitude_grp_1_end_day": 270,
-            "altitude_grp_1_start_day": 210,
-            "altitude_grp_2_end_day": 270,
-            "altitude_grp_2_start_day": 210,
-            "altitude_grp_3_end_day": 270,
-            "altitude_grp_3_start_day": 200,
-            "altitude_grp_4_end_day": 270,
-            "altitude_grp_4_start_day": 230,
-            "altitude_grp_5_end_day": 270,
-            "altitude_grp_5_start_day": 230
-          },
           "seq": 8
         },
         "KNS": {
@@ -1193,18 +780,6 @@
           "de": "Beginn der Knospung",
           "description_de": "An 3 Orten im Baum",
           "group_id": "EK10",
-          "limits": {
-            "altitude_grp_1_end_day": 110,
-            "altitude_grp_1_start_day": 70,
-            "altitude_grp_2_end_day": 110,
-            "altitude_grp_2_start_day": 70,
-            "altitude_grp_3_end_day": 110,
-            "altitude_grp_3_start_day": 70,
-            "altitude_grp_4_end_day": 110,
-            "altitude_grp_4_start_day": 70,
-            "altitude_grp_5_end_day": 110,
-            "altitude_grp_5_start_day": 70
-          },
           "seq": 2
         },
         "KNV": {
@@ -1212,196 +787,216 @@
           "de": "Vor der Knospung",
           "description_de": "Knospung steht kurz bevor",
           "group_id": "EK10",
-          "limits": {
-            "altitude_grp_1_end_day": 90,
-            "altitude_grp_1_start_day": 60,
-            "altitude_grp_2_end_day": 90,
-            "altitude_grp_2_start_day": 60,
-            "altitude_grp_3_end_day": 90,
-            "altitude_grp_3_start_day": 60,
-            "altitude_grp_4_end_day": 90,
-            "altitude_grp_4_start_day": 60,
-            "altitude_grp_5_end_day": 90,
-            "altitude_grp_5_start_day": 60
-          },
           "seq": 1
         }
       },
-      "tenant": "all"
+      "sources": ["globe", "meteoswiss", "ranger"]
+    },
+    "EW": {
+      "de": "Eingriffeliger Weissdorn",
+      "groups": {
+        "BE": {
+          "color": "#7bb53b",
+          "de": "Blattentfaltung",
+          "seq": 2
+        },
+        "BF": {
+          "color": "#868072",
+          "de": "Blattfall",
+          "seq": 4
+        },
+        "HV": {
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
+          "seq": 3
+        },
+        "KN": {
+          "color": "#4b9f6f",
+          "de": "Knospung",
+          "seq": 1
+        }
+      },
+      "phenophases": {
+        "BEA": {
+          "de": "Allgemeine Blattentfaltung",
+          "description_de": "50% der Blätter des Strauches entfaltet",
+          "group_id": "BE",
+          "seq": 4
+        },
+        "BES": {
+          "de": "Beginn der Blattentfaltung",
+          "description_de": "Aus 3 Knospen haben sich die ersten Blätter entfaltet",
+          "group_id": "BE",
+          "seq": 3
+        },
+        "BFA": {
+          "de": "Allgemeiner Blattfall",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
+          "group_id": "BF",
+          "seq": 6
+        },
+        "BVA": {
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
+          "group_id": "HV",
+          "seq": 5
+        },
+        "KNS": {
+          "de": "Beginn der Knospung",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an 3 Orten im Strauch",
+          "group_id": "KN",
+          "seq": 2
+        },
+        "KNV": {
+          "de": "Vor der Knospung",
+          "description_de": "Knospung steht kurz bevor",
+          "group_id": "KN",
+          "seq": 1
+        }
+      },
+      "sources": ["ranger"]
+    },
+    "FE": {
+      "de": "Flaum-Eiche",
+      "groups": {
+        "BE": {
+          "color": "#7bb53b",
+          "de": "Blattentfaltung",
+          "seq": 2
+        },
+        "BF": {
+          "color": "#868072",
+          "de": "Blattfall",
+          "seq": 4
+        },
+        "HV": {
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
+          "seq": 3
+        },
+        "KN": {
+          "color": "#4b9f6f",
+          "de": "Knospung",
+          "seq": 1
+        }
+      },
+      "phenophases": {
+        "BEA": {
+          "de": "Allgemeine Blattentfaltung",
+          "description_de": "50% der Blätter des Baumes sind entfaltet",
+          "group_id": "BE",
+          "seq": 4
+        },
+        "BES": {
+          "de": "Beginn der Blattentfaltung",
+          "description_de": "Aus 3 Knospen haben sich die ersten Blätter entfaltet",
+          "group_id": "BE",
+          "seq": 3
+        },
+        "BFA": {
+          "de": "Allgemeiner Blattfall",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
+          "group_id": "BF",
+          "seq": 6
+        },
+        "BVA": {
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
+          "group_id": "HV",
+          "seq": 5
+        },
+        "KNS": {
+          "de": "Beginn der Knospung",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an drei Orten im Baum",
+          "group_id": "KN",
+          "seq": 2
+        },
+        "KNV": {
+          "de": "Vor der Knospung",
+          "description_de": "Knospung steht kurz bevor",
+          "group_id": "KN",
+          "seq": 1
+        }
+      },
+      "sources": ["ranger"]
     },
     "FI": {
       "de": "Fichte",
       "groups": {
         "FI10": {
-          "color": "#4b9f6f;",
+          "color": "#4b9f6f",
           "de": "Knospung",
           "seq": 1
         },
         "FI40": {
-          "color": "#7bb53b;",
+          "color": "#7bb53b",
           "de": "Triebentwicklung",
           "seq": 2
         },
         "FI50": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+          "color": "#e8d439",
+          "de": "Blüte",
           "seq": 3
         },
         "FI60": {
-          "color": "#e8b658;",
+          "color": "#e8b658",
           "de": "Fruchtreife",
+          "seq": 5
+        },
+        "FIMST": {
+          "color": "#eb5b23",
+          "de": "Mast",
           "seq": 4
         }
       },
       "phenophases": {
         "BEA": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Allgemeiner Nadelaustrieb",
-          "description_de": "An 50% der Knospen entfalten sich die Nadelb\u00fcschel",
+          "description_de": "An 50% der Knospen entfalten sich die Nadelbüschel",
           "group_id": "FI40",
-          "limits": {
-            "altitude_grp_1_end_day": 150,
-            "altitude_grp_1_start_day": 90,
-            "altitude_grp_2_end_day": 160,
-            "altitude_grp_2_start_day": 100,
-            "altitude_grp_3_end_day": 170,
-            "altitude_grp_3_start_day": 110,
-            "altitude_grp_4_end_day": 180,
-            "altitude_grp_4_start_day": 120,
-            "altitude_grp_5_end_day": 180,
-            "altitude_grp_5_start_day": 120
-          },
           "seq": 4
         },
         "BES": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Beginn des Nadelaustriebs",
-          "description_de": "An ersten Knospen an 3 Orten im Baum entfalten sich die Nadelb\u00fcschel",
+          "description_de": "An ersten Knospen an 3 Orten im Baum entfalten sich die Nadelbüschel",
           "group_id": "FI40",
-          "limits": {
-            "altitude_grp_1_end_day": 140,
-            "altitude_grp_1_start_day": 80,
-            "altitude_grp_2_end_day": 140,
-            "altitude_grp_2_start_day": 80,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 80,
-            "altitude_grp_4_end_day": 150,
-            "altitude_grp_4_start_day": 80,
-            "altitude_grp_5_end_day": 150,
-            "altitude_grp_5_start_day": 90
-          },
           "seq": 3
         },
         "BLA": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der Bl\u00fctenst\u00e4nde st\u00e4uben",
+          "comments": ["103", "105"],
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blütenstände stäuben",
           "group_id": "FI50",
-          "limits": {
-            "altitude_grp_1_end_day": 160,
-            "altitude_grp_1_start_day": 110,
-            "altitude_grp_2_end_day": 160,
-            "altitude_grp_2_start_day": 110,
-            "altitude_grp_3_end_day": 170,
-            "altitude_grp_3_start_day": 110,
-            "altitude_grp_4_end_day": 170,
-            "altitude_grp_4_start_day": 110,
-            "altitude_grp_5_end_day": 170,
-            "altitude_grp_5_start_day": 110
-          },
           "seq": 6
         },
         "BLB": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Beginn der Bl\u00fcte",
-          "description_de": "An ersten Bl\u00fctenst\u00e4nden an 3 Orten im Baum sind die Staubbeutel reif und st\u00e4uben",
+          "comments": ["103", "105"],
+          "de": "Beginn der Blüte",
+          "description_de": "An ersten Blütenständen an 3 Orten im Baum sind die Staubbeutel reif und stäuben",
           "group_id": "FI50",
-          "limits": {
-            "altitude_grp_1_end_day": 150,
-            "altitude_grp_1_start_day": 100,
-            "altitude_grp_2_end_day": 150,
-            "altitude_grp_2_start_day": 100,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 100,
-            "altitude_grp_4_end_day": 150,
-            "altitude_grp_4_start_day": 100,
-            "altitude_grp_5_end_day": 150,
-            "altitude_grp_5_start_day": 100
-          },
           "seq": 5
         },
         "BLE": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Ende der Bl\u00fcte",
-          "description_de": "95% der Bl\u00fctenst\u00e4nde sind verbl\u00fcht oder schon abgefallen",
+          "comments": ["103", "105"],
+          "de": "Ende der Blüte",
+          "description_de": "95% der Blütenstände sind verblüht oder schon abgefallen",
           "group_id": "FI50",
-          "limits": {
-            "altitude_grp_1_end_day": 170,
-            "altitude_grp_1_start_day": 120,
-            "altitude_grp_2_end_day": 170,
-            "altitude_grp_2_start_day": 120,
-            "altitude_grp_3_end_day": 180,
-            "altitude_grp_3_start_day": 120,
-            "altitude_grp_4_end_day": 180,
-            "altitude_grp_4_start_day": 120,
-            "altitude_grp_5_end_day": 180,
-            "altitude_grp_5_start_day": 130
-          },
           "seq": 7
         },
         "FRB": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Beginn der Fruchtreife",
-          "description_de": "3 Zapfen sind arttypisch reif und erste Fr\u00fcchte sind abgefallen",
+          "description_de": "3 Zapfen sind arttypisch reif und erste Früchte sind abgefallen",
           "group_id": "FI60",
-          "limits": {
-            "altitude_grp_1_end_day": 250,
-            "altitude_grp_1_start_day": 190,
-            "altitude_grp_2_end_day": 250,
-            "altitude_grp_2_start_day": 190,
-            "altitude_grp_3_end_day": 260,
-            "altitude_grp_3_start_day": 190,
-            "altitude_grp_4_end_day": 260,
-            "altitude_grp_4_start_day": 190,
-            "altitude_grp_5_end_day": 260,
-            "altitude_grp_5_start_day": 190
-          },
           "seq": 8
         },
         "KNS": {
           "comments": [],
           "de": "Beginn der Knospung",
-          "description_de": "Kleine gr\u00fcne Spitzchen sind ersichtlich an drei Orten im Baum",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an drei Orten im Baum",
           "group_id": "FI10",
-          "limits": {
-            "altitude_grp_1_end_day": 110,
-            "altitude_grp_1_start_day": 70,
-            "altitude_grp_2_end_day": 110,
-            "altitude_grp_2_start_day": 70,
-            "altitude_grp_3_end_day": 120,
-            "altitude_grp_3_start_day": 70,
-            "altitude_grp_4_end_day": 120,
-            "altitude_grp_4_start_day": 70,
-            "altitude_grp_5_end_day": 120,
-            "altitude_grp_5_start_day": 70
-          },
           "seq": 2
         },
         "KNV": {
@@ -1409,248 +1004,109 @@
           "de": "Vor der Knospung",
           "description_de": "Knospung steht kurz bevor",
           "group_id": "FI10",
-          "limits": {
-            "altitude_grp_1_end_day": 110,
-            "altitude_grp_1_start_day": 60,
-            "altitude_grp_2_end_day": 110,
-            "altitude_grp_2_start_day": 60,
-            "altitude_grp_3_end_day": 110,
-            "altitude_grp_3_start_day": 70,
-            "altitude_grp_4_end_day": 110,
-            "altitude_grp_4_start_day": 70,
-            "altitude_grp_5_end_day": 110,
-            "altitude_grp_5_start_day": 70
-          },
+          "seq": 1
+        },
+        "MST": {
+          "comments": ["cmst1", "cmst2", "cmst3", "cmst4"],
+          "de": "Mastausprägung",
+          "description_de": "Mastausprägung anhand Beobachtungsanleitung als Kommentar eintragen",
+          "group_id": "FIMST",
           "seq": 1
         }
       },
-      "tenant": "all"
+      "sources": ["globe", "meteoswiss", "ranger", "wld"]
     },
     "FL": {
       "de": "Flieder",
       "groups": {
         "FL10": {
-          "color": "#4b9f6f;",
+          "color": "#4b9f6f",
           "de": "Knospung",
           "seq": 1
         },
         "FL40": {
-          "color": "#7bb53b;",
+          "color": "#7bb53b",
           "de": "Blattentfaltung",
           "seq": 2
         },
         "FL50": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+          "color": "#e8d439",
+          "de": "Blüte",
           "seq": 3
         },
         "FL70": {
-          "color": "#b29976;",
-          "de": "Herbstverf\u00e4rbung",
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
           "seq": 4
         },
         "FL75": {
-          "color": "#868072;",
+          "color": "#868072",
           "de": "Blattfall",
           "seq": 5
         }
       },
       "phenophases": {
         "BEA": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Volle Blattentfaltung",
-          "description_de": "Aus beinahe allen Knospen haben sich die ersten Bl\u00e4tter entwickelt",
+          "description_de": "Aus beinahe allen Knospen haben sich die ersten Blätter entwickelt",
           "group_id": "FL40",
-          "limits": {
-            "altitude_grp_1_end_day": 130,
-            "altitude_grp_1_start_day": 70,
-            "altitude_grp_2_end_day": 130,
-            "altitude_grp_2_start_day": 70,
-            "altitude_grp_3_end_day": 140,
-            "altitude_grp_3_start_day": 70,
-            "altitude_grp_4_end_day": 140,
-            "altitude_grp_4_start_day": 70,
-            "altitude_grp_5_end_day": 140,
-            "altitude_grp_5_start_day": 80
-          },
           "seq": 4
         },
         "BES": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Erstes Blatt",
           "description_de": "Das erste Blatt ist mehrheitlich entfaltet. Mittelrippe und Blattnerven sind sichtbar",
           "group_id": "FL40",
-          "limits": {
-            "altitude_grp_1_end_day": 120,
-            "altitude_grp_1_start_day": 50,
-            "altitude_grp_2_end_day": 120,
-            "altitude_grp_2_start_day": 50,
-            "altitude_grp_3_end_day": 120,
-            "altitude_grp_3_start_day": 60,
-            "altitude_grp_4_end_day": 120,
-            "altitude_grp_4_start_day": 60,
-            "altitude_grp_5_end_day": 120,
-            "altitude_grp_5_start_day": 60
-          },
           "seq": 3
         },
         "BFA": {
-          "comments": [
-            "113",
-            "114"
-          ],
+          "comments": ["113", "114"],
           "de": "Allgemeiner Blattfall",
-          "description_de": "Die H\u00e4lfte der Bl\u00e4tter sind abgefallen",
+          "description_de": "Die Hälfte der Blätter sind abgefallen",
           "group_id": "FL75",
-          "limits": {
-            "altitude_grp_1_end_day": 320,
-            "altitude_grp_1_start_day": 240,
-            "altitude_grp_2_end_day": 320,
-            "altitude_grp_2_start_day": 240,
-            "altitude_grp_3_end_day": 320,
-            "altitude_grp_3_start_day": 240,
-            "altitude_grp_4_end_day": 320,
-            "altitude_grp_4_start_day": 240,
-            "altitude_grp_5_end_day": 320,
-            "altitude_grp_5_start_day": 240
-          },
           "seq": 10
         },
         "BLA": {
           "comments": [],
-          "de": "Volle Bl\u00fcte",
-          "description_de": "95% der Bl\u00fctentrauben haben keine unge\u00f6ffneten Einzelbl\u00fcten mehr",
+          "de": "Volle Blüte",
+          "description_de": "95% der Blütentrauben haben keine ungeöffneten Einzelblüten mehr",
           "group_id": "FL50",
-          "limits": {
-            "altitude_grp_1_end_day": 180,
-            "altitude_grp_1_start_day": 90,
-            "altitude_grp_2_end_day": 180,
-            "altitude_grp_2_start_day": 90,
-            "altitude_grp_3_end_day": 180,
-            "altitude_grp_3_start_day": 100,
-            "altitude_grp_4_end_day": 180,
-            "altitude_grp_4_start_day": 100,
-            "altitude_grp_5_end_day": 180,
-            "altitude_grp_5_start_day": 100
-          },
           "seq": 6
         },
         "BLB": {
-          "comments": [
-            "103",
-            "104",
-            "105",
-            "103",
-            "104",
-            "105"
-          ],
-          "de": "Erste Bl\u00fcten",
-          "description_de": "Auf 50% der Bl\u00fctentrauben ist mindestens 1 Einzelbl\u00fcte ge\u00f6ffnet",
+          "comments": ["103", "103", "104", "104", "105", "105"],
+          "de": "Erste Blüten",
+          "description_de": "Auf 50% der Blütentrauben ist mindestens 1 Einzelblüte geöffnet",
           "group_id": "FL50",
-          "limits": {
-            "altitude_grp_1_end_day": 150,
-            "altitude_grp_1_start_day": 70,
-            "altitude_grp_2_end_day": 150,
-            "altitude_grp_2_start_day": 80,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 80,
-            "altitude_grp_4_end_day": 150,
-            "altitude_grp_4_start_day": 90,
-            "altitude_grp_5_end_day": 150,
-            "altitude_grp_5_start_day": 90
-          },
           "seq": 5
         },
         "BLE": {
-          "comments": [
-            "103",
-            "104",
-            "105"
-          ],
-          "de": "Ende der Bl\u00fcte",
-          "description_de": "95% der Bl\u00fctentrauben sind verwelkt und vertrocknet",
+          "comments": ["103", "104", "105"],
+          "de": "Ende der Blüte",
+          "description_de": "95% der Blütentrauben sind verwelkt und vertrocknet",
           "group_id": "FL50",
-          "limits": {
-            "altitude_grp_1_end_day": 190,
-            "altitude_grp_1_start_day": 100,
-            "altitude_grp_2_end_day": 190,
-            "altitude_grp_2_start_day": 100,
-            "altitude_grp_3_end_day": 190,
-            "altitude_grp_3_start_day": 100,
-            "altitude_grp_4_end_day": 190,
-            "altitude_grp_4_start_day": 110,
-            "altitude_grp_5_end_day": 190,
-            "altitude_grp_5_start_day": 110
-          },
           "seq": 7
         },
         "BVA": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Allgemeine Blattverf\u00e4rbung",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "FL70",
-          "limits": {
-            "altitude_grp_1_end_day": 320,
-            "altitude_grp_1_start_day": 230,
-            "altitude_grp_2_end_day": 320,
-            "altitude_grp_2_start_day": 230,
-            "altitude_grp_3_end_day": 310,
-            "altitude_grp_3_start_day": 230,
-            "altitude_grp_4_end_day": 300,
-            "altitude_grp_4_start_day": 230,
-            "altitude_grp_5_end_day": 300,
-            "altitude_grp_5_start_day": 230
-          },
           "seq": 9
         },
         "BVS": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Beginn der Blattverf\u00e4rbung",
-          "description_de": "10% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Beginn der Blattverfärbung",
+          "description_de": "10% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "FL70",
-          "limits": {
-            "altitude_grp_1_end_day": 290,
-            "altitude_grp_1_start_day": 220,
-            "altitude_grp_2_end_day": 290,
-            "altitude_grp_2_start_day": 220,
-            "altitude_grp_3_end_day": 280,
-            "altitude_grp_3_start_day": 220,
-            "altitude_grp_4_end_day": 270,
-            "altitude_grp_4_start_day": 220,
-            "altitude_grp_5_end_day": 270,
-            "altitude_grp_5_start_day": 220
-          },
           "seq": 8
         },
         "KNS": {
           "comments": [],
           "de": "Beginn der Knospung",
-          "description_de": "Kleine gr\u00fcne Spitzchen sind ersichtlich an drei Orten im Baum",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an drei Orten im Baum",
           "group_id": "FL10",
-          "limits": {
-            "altitude_grp_1_end_day": 100,
-            "altitude_grp_1_start_day": 40,
-            "altitude_grp_2_end_day": 100,
-            "altitude_grp_2_start_day": 40,
-            "altitude_grp_3_end_day": 110,
-            "altitude_grp_3_start_day": 40,
-            "altitude_grp_4_end_day": 110,
-            "altitude_grp_4_start_day": 50,
-            "altitude_grp_5_end_day": 110,
-            "altitude_grp_5_start_day": 50
-          },
           "seq": 2
         },
         "KNV": {
@@ -1658,296 +1114,238 @@
           "de": "Vor der Knospung",
           "description_de": "Knospung steht kurz bevor",
           "group_id": "FL10",
-          "limits": {
-            "altitude_grp_1_end_day": 80,
-            "altitude_grp_1_start_day": 30,
-            "altitude_grp_2_end_day": 80,
-            "altitude_grp_2_start_day": 30,
-            "altitude_grp_3_end_day": 90,
-            "altitude_grp_3_start_day": 30,
-            "altitude_grp_4_end_day": 100,
-            "altitude_grp_4_start_day": 40,
-            "altitude_grp_5_end_day": 100,
-            "altitude_grp_5_start_day": 30
-          },
           "seq": 1
         }
       },
-      "tenant": "globe"
+      "sources": ["globe", "ranger"]
+    },
+    "GE": {
+      "de": "Gemeine Esche",
+      "groups": {
+        "BE": {
+          "color": "#7bb53b",
+          "de": "Blattentfaltung",
+          "seq": 1
+        },
+        "BF": {
+          "color": "#868072",
+          "de": "Blattfall",
+          "seq": 3
+        },
+        "BL": {
+          "color": "#e8d439",
+          "de": "Blüte",
+          "seq": 2
+        }
+      },
+      "phenophases": {
+        "BEA": {
+          "de": "Allgemeine Blattentfaltung",
+          "description_de": "50% der Blätter des Baumes sind entfaltet",
+          "group_id": "BE",
+          "seq": 2
+        },
+        "BES": {
+          "de": "Beginn der Blattentfaltung",
+          "description_de": "Aus 3 Knospen haben sich die ersten Blätter entfaltet",
+          "group_id": "BE",
+          "seq": 1
+        },
+        "BFA": {
+          "de": "Allgemeiner Blattfall",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
+          "group_id": "BF",
+          "seq": 5
+        },
+        "BLA": {
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blüten offen oder schon verblüht",
+          "group_id": "BL",
+          "seq": 4
+        },
+        "BLB": {
+          "de": "Beginn der Blüte",
+          "description_de": "Die Blüten von 3 Blütenständen im Baum sind offen",
+          "group_id": "BL",
+          "seq": 3
+        }
+      },
+      "sources": ["wld", "wld"]
+    },
+    "GP": {
+      "de": "Gemeines Pfaffenhütchen",
+      "groups": {
+        "BE": {
+          "color": "#7bb53b",
+          "de": "Blattentfaltung",
+          "seq": 2
+        },
+        "BF": {
+          "color": "#868072",
+          "de": "Blattfall",
+          "seq": 4
+        },
+        "HV": {
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
+          "seq": 3
+        },
+        "KN": {
+          "color": "#4b9f6f",
+          "de": "Knospung",
+          "seq": 1
+        }
+      },
+      "phenophases": {
+        "BEA": {
+          "de": "Allgemeine Blattentfaltung",
+          "description_de": "50% der Blätter des Strauches entfaltet",
+          "group_id": "BE",
+          "seq": 4
+        },
+        "BES": {
+          "de": "Beginn der Blattentfaltung",
+          "description_de": "Aus 3 Knospen haben sich die ersten Blätter entfaltet",
+          "group_id": "BE",
+          "seq": 3
+        },
+        "BFA": {
+          "de": "Allgemeiner Blattfall",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
+          "group_id": "BF",
+          "seq": 6
+        },
+        "BVA": {
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
+          "group_id": "HV",
+          "seq": 5
+        },
+        "KNS": {
+          "de": "Beginn der Knospung",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an 3 Orten im Strauch",
+          "group_id": "KN",
+          "seq": 2
+        },
+        "KNV": {
+          "de": "Vor der Knospung",
+          "description_de": "Knospung steht kurz bevor",
+          "group_id": "KN",
+          "seq": 1
+        }
+      },
+      "sources": ["ranger"]
     },
     "HB": {
-      "de": "H\u00e4ngebirke",
+      "de": "Hängebirke",
       "groups": {
         "HB10": {
-          "color": "#4b9f6f;",
+          "color": "#4b9f6f",
           "de": "Knospung",
           "seq": 1
         },
         "HB40": {
-          "color": "#7bb53b;",
+          "color": "#7bb53b",
           "de": "Blattentfaltung",
           "seq": 2
         },
         "HB50": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+          "color": "#e8d439",
+          "de": "Blüte",
           "seq": 3
         },
         "HB60": {
-          "color": "#e8b658;",
+          "color": "#e8b658",
           "de": "Fruchtreife",
           "seq": 4
         },
         "HB70": {
-          "color": "#b29976;",
-          "de": "Herbstverf\u00e4rbung",
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
           "seq": 5
         },
         "HB75": {
-          "color": "#868072;",
+          "color": "#868072",
           "de": "Blattfall",
           "seq": 6
         }
       },
       "phenophases": {
         "BEA": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Allgemeine Blattentfaltung",
-          "description_de": "50% der Bl\u00e4tter des Baumes sind entfaltet",
+          "description_de": "50% der Blätter des Baumes sind entfaltet",
           "group_id": "HB40",
-          "limits": {
-            "altitude_grp_1_end_day": 130,
-            "altitude_grp_1_start_day": 80,
-            "altitude_grp_2_end_day": 130,
-            "altitude_grp_2_start_day": 80,
-            "altitude_grp_3_end_day": 140,
-            "altitude_grp_3_start_day": 90,
-            "altitude_grp_4_end_day": 150,
-            "altitude_grp_4_start_day": 90,
-            "altitude_grp_5_end_day": 150,
-            "altitude_grp_5_start_day": 100
-          },
           "seq": 4
         },
         "BES": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Beginn der Blattentfaltung",
           "description_de": "An ersten Knospen an 3 Orten im Baum hat sich ein Blatt entfaltet",
           "group_id": "HB40",
-          "limits": {
-            "altitude_grp_1_end_day": 110,
-            "altitude_grp_1_start_day": 50,
-            "altitude_grp_2_end_day": 120,
-            "altitude_grp_2_start_day": 50,
-            "altitude_grp_3_end_day": 120,
-            "altitude_grp_3_start_day": 50,
-            "altitude_grp_4_end_day": 120,
-            "altitude_grp_4_start_day": 60,
-            "altitude_grp_5_end_day": 120,
-            "altitude_grp_5_start_day": 70
-          },
           "seq": 3
         },
         "BFA": {
-          "comments": [
-            "112",
-            "113",
-            "114",
-            "116"
-          ],
+          "comments": ["112", "113", "114", "116"],
           "de": "Allgemeiner Blattfall",
-          "description_de": "50% der Bl\u00e4tter sind abgefallen",
+          "description_de": "50% der Blätter sind abgefallen",
           "group_id": "HB75",
-          "limits": {
-            "altitude_grp_1_end_day": 360,
-            "altitude_grp_1_start_day": 250,
-            "altitude_grp_2_end_day": 360,
-            "altitude_grp_2_start_day": 250,
-            "altitude_grp_3_end_day": 350,
-            "altitude_grp_3_start_day": 250,
-            "altitude_grp_4_end_day": 340,
-            "altitude_grp_4_start_day": 250,
-            "altitude_grp_5_end_day": 300,
-            "altitude_grp_5_start_day": 240
-          },
           "seq": 12
         },
         "BLA": {
-          "comments": [
-            "105"
-          ],
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der m\u00e4nnlichen K\u00e4tzchen st\u00e4uben",
+          "comments": ["105"],
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der männlichen Kätzchen stäuben",
           "group_id": "HB50",
-          "limits": {
-            "altitude_grp_1_end_day": 150,
-            "altitude_grp_1_start_day": 70,
-            "altitude_grp_2_end_day": 150,
-            "altitude_grp_2_start_day": 70,
-            "altitude_grp_3_end_day": 160,
-            "altitude_grp_3_start_day": 70,
-            "altitude_grp_4_end_day": 160,
-            "altitude_grp_4_start_day": 80,
-            "altitude_grp_5_end_day": 170,
-            "altitude_grp_5_start_day": 90
-          },
           "seq": 6
         },
         "BLB": {
-          "comments": [
-            "105"
-          ],
-          "de": "Beginn der Bl\u00fcte",
-          "description_de": "Erste m\u00e4nnliche K\u00e4tzchen st\u00e4uben an 3 Orten im Baum",
+          "comments": ["105"],
+          "de": "Beginn der Blüte",
+          "description_de": "Erste männliche Kätzchen stäuben an 3 Orten im Baum",
           "group_id": "HB50",
-          "limits": {
-            "altitude_grp_1_end_day": 140,
-            "altitude_grp_1_start_day": 60,
-            "altitude_grp_2_end_day": 140,
-            "altitude_grp_2_start_day": 60,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 60,
-            "altitude_grp_4_end_day": 150,
-            "altitude_grp_4_start_day": 70,
-            "altitude_grp_5_end_day": 160,
-            "altitude_grp_5_start_day": 80
-          },
           "seq": 5
         },
         "BLE": {
-          "comments": [
-            "105"
-          ],
-          "de": "Ende der Bl\u00fcte",
-          "description_de": "95% der m\u00e4nnlichen K\u00e4tzchen sind verbl\u00fcht oder schon abgefallen",
+          "comments": ["105"],
+          "de": "Ende der Blüte",
+          "description_de": "95% der männlichen Kätzchen sind verblüht oder schon abgefallen",
           "group_id": "HB50",
-          "limits": {
-            "altitude_grp_1_end_day": 190,
-            "altitude_grp_1_start_day": 90,
-            "altitude_grp_2_end_day": 190,
-            "altitude_grp_2_start_day": 90,
-            "altitude_grp_3_end_day": 190,
-            "altitude_grp_3_start_day": 90,
-            "altitude_grp_4_end_day": 190,
-            "altitude_grp_4_start_day": 100,
-            "altitude_grp_5_end_day": 190,
-            "altitude_grp_5_start_day": 100
-          },
           "seq": 7
         },
         "BVA": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Allgemeine Blattverf\u00e4rbung",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "HB70",
-          "limits": {
-            "altitude_grp_1_end_day": 350,
-            "altitude_grp_1_start_day": 220,
-            "altitude_grp_2_end_day": 350,
-            "altitude_grp_2_start_day": 220,
-            "altitude_grp_3_end_day": 340,
-            "altitude_grp_3_start_day": 210,
-            "altitude_grp_4_end_day": 330,
-            "altitude_grp_4_start_day": 210,
-            "altitude_grp_5_end_day": 290,
-            "altitude_grp_5_start_day": 200
-          },
           "seq": 11
         },
         "BVS": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Beginn der Blattverf\u00e4rbung",
-          "description_de": "10% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Beginn der Blattverfärbung",
+          "description_de": "10% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "HB70",
-          "limits": {
-            "altitude_grp_1_end_day": 330,
-            "altitude_grp_1_start_day": 200,
-            "altitude_grp_2_end_day": 330,
-            "altitude_grp_2_start_day": 200,
-            "altitude_grp_3_end_day": 300,
-            "altitude_grp_3_start_day": 200,
-            "altitude_grp_4_end_day": 300,
-            "altitude_grp_4_start_day": 190,
-            "altitude_grp_5_end_day": 290,
-            "altitude_grp_5_start_day": 190
-          },
           "seq": 10
         },
         "FRA": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Allgemeine Fruchtreife",
-          "description_de": "50% der Fruchtst\u00e4nde sind reif und die Fl\u00fcgel der Einzelfr\u00fcchte stehen ab",
+          "description_de": "50% der Fruchtstände sind reif und die Flügel der Einzelfrüchte stehen ab",
           "group_id": "HB60",
-          "limits": {
-            "altitude_grp_1_end_day": 300,
-            "altitude_grp_1_start_day": 170,
-            "altitude_grp_2_end_day": 300,
-            "altitude_grp_2_start_day": 170,
-            "altitude_grp_3_end_day": 300,
-            "altitude_grp_3_start_day": 170,
-            "altitude_grp_4_end_day": 290,
-            "altitude_grp_4_start_day": 180,
-            "altitude_grp_5_end_day": 280,
-            "altitude_grp_5_start_day": 190
-          },
           "seq": 9
         },
         "FRB": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Beginn der Fruchtreife",
-          "description_de": "Erste Fruchtst\u00e4nde an 3 Orten sind arttypisch reif und die Fl\u00fcgel der Einzelfr\u00fcchte stehen ab",
+          "description_de": "Erste Fruchtstände an 3 Orten sind arttypisch reif und die Flügel der Einzelfrüchte stehen ab",
           "group_id": "HB60",
-          "limits": {
-            "altitude_grp_1_end_day": 270,
-            "altitude_grp_1_start_day": 160,
-            "altitude_grp_2_end_day": 270,
-            "altitude_grp_2_start_day": 160,
-            "altitude_grp_3_end_day": 270,
-            "altitude_grp_3_start_day": 160,
-            "altitude_grp_4_end_day": 270,
-            "altitude_grp_4_start_day": 170,
-            "altitude_grp_5_end_day": 250,
-            "altitude_grp_5_start_day": 190
-          },
           "seq": 8
         },
         "KNS": {
           "comments": [],
           "de": "Beginn der Knospung",
-          "description_de": "Kleine gr\u00fcne Spitzchen sind ersichtlich an drei Orten im Baum",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an drei Orten im Baum",
           "group_id": "HB10",
-          "limits": {
-            "altitude_grp_1_end_day": 110,
-            "altitude_grp_1_start_day": 60,
-            "altitude_grp_2_end_day": 110,
-            "altitude_grp_2_start_day": 60,
-            "altitude_grp_3_end_day": 110,
-            "altitude_grp_3_start_day": 60,
-            "altitude_grp_4_end_day": 110,
-            "altitude_grp_4_start_day": 70,
-            "altitude_grp_5_end_day": 110,
-            "altitude_grp_5_start_day": 70
-          },
           "seq": 2
         },
         "KNV": {
@@ -1955,295 +1353,249 @@
           "de": "Vor der Knospung",
           "description_de": "Knospung steht kurz bevor",
           "group_id": "HB10",
-          "limits": {
-            "altitude_grp_1_end_day": 100,
-            "altitude_grp_1_start_day": 50,
-            "altitude_grp_2_end_day": 100,
-            "altitude_grp_2_start_day": 50,
-            "altitude_grp_3_end_day": 100,
-            "altitude_grp_3_start_day": 50,
-            "altitude_grp_4_end_day": 100,
-            "altitude_grp_4_start_day": 60,
-            "altitude_grp_5_end_day": 100,
-            "altitude_grp_5_start_day": 60
-          },
           "seq": 1
         }
       },
-      "tenant": "all"
+      "sources": ["globe", "meteoswiss", "ranger"]
+    },
+    "HE": {
+      "de": "Heidelbeere",
+      "groups": {
+        "BE": {
+          "color": "#7bb53b",
+          "de": "Blattentfaltung",
+          "seq": 2
+        },
+        "BF": {
+          "color": "#868072",
+          "de": "Blattfall",
+          "seq": 4
+        },
+        "HV": {
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
+          "seq": 3
+        },
+        "KN": {
+          "color": "#4b9f6f",
+          "de": "Knospung",
+          "seq": 1
+        }
+      },
+      "phenophases": {
+        "BEA": {
+          "de": "Allgemeine Blattentfaltung",
+          "description_de": "50% der Blätter des Strauches entfaltet",
+          "group_id": "BE",
+          "seq": 4
+        },
+        "BES": {
+          "de": "Beginn der Blattentfaltung",
+          "description_de": "Aus 3 Knospen haben sich die ersten Blätter entfaltet",
+          "group_id": "BE",
+          "seq": 3
+        },
+        "BFA": {
+          "de": "Allgemeiner Blattfall",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
+          "group_id": "BF",
+          "seq": 6
+        },
+        "BVA": {
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
+          "group_id": "HV",
+          "seq": 5
+        },
+        "KNS": {
+          "de": "Beginn der Knospung",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an 3 Orten im Strauch",
+          "group_id": "KN",
+          "seq": 2
+        },
+        "KNV": {
+          "de": "Vor der Knospung",
+          "description_de": "Knospung steht kurz bevor",
+          "group_id": "KN",
+          "seq": 1
+        }
+      },
+      "sources": ["ranger"]
+    },
+    "HR": {
+      "de": "Hartriegel",
+      "groups": {
+        "BE": {
+          "color": "#7bb53b",
+          "de": "Blattentfaltung",
+          "seq": 2
+        },
+        "BF": {
+          "color": "#868072",
+          "de": "Blattfall",
+          "seq": 4
+        },
+        "HV": {
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
+          "seq": 3
+        },
+        "KN": {
+          "color": "#4b9f6f",
+          "de": "Knospung",
+          "seq": 1
+        }
+      },
+      "phenophases": {
+        "BEA": {
+          "de": "Allgemeine Blattentfaltung",
+          "description_de": "50% der Blätter des Strauches entfaltet",
+          "group_id": "BE",
+          "seq": 4
+        },
+        "BES": {
+          "de": "Beginn der Blattentfaltung",
+          "description_de": "Aus 3 Knospen haben sich die ersten Blätter entfaltet",
+          "group_id": "BE",
+          "seq": 3
+        },
+        "BFA": {
+          "de": "Allgemeiner Blattfall",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
+          "group_id": "BF",
+          "seq": 6
+        },
+        "BVA": {
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
+          "group_id": "HV",
+          "seq": 5
+        },
+        "KNS": {
+          "de": "Beginn der Knospung",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an 3 Orten im Strauch",
+          "group_id": "KN",
+          "seq": 2
+        },
+        "KNV": {
+          "de": "Vor der Knospung",
+          "description_de": "Knospung steht kurz bevor",
+          "group_id": "KN",
+          "seq": 1
+        }
+      },
+      "sources": ["ranger"]
     },
     "HS": {
       "de": "Hasel",
       "groups": {
         "HS01": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+          "color": "#e8d439",
+          "de": "Blüte",
           "seq": 1
         },
         "HS20": {
-          "color": "#4b9f6f;",
+          "color": "#4b9f6f",
           "de": "Knospung",
           "seq": 2
         },
         "HS50": {
-          "color": "#7bb53b;",
+          "color": "#7bb53b",
           "de": "Blattentfaltung",
           "seq": 3
         },
         "HS60": {
-          "color": "#e8b658;",
+          "color": "#e8b658",
           "de": "Fruchtreife",
           "seq": 4
         },
         "HS70": {
-          "color": "#b29976;",
-          "de": "Herbstverf\u00e4rbung",
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
           "seq": 5
         },
         "HS75": {
-          "color": "#868072;",
+          "color": "#868072",
           "de": "Blattfall",
           "seq": 6
         }
       },
       "phenophases": {
         "BEA": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Allgemeine Blattentfaltung",
-          "description_de": "50% der Bl\u00e4tter des Strauches entfaltet",
+          "description_de": "50% der Blätter des Strauches entfaltet",
           "group_id": "HS50",
-          "limits": {
-            "altitude_grp_1_end_day": 120,
-            "altitude_grp_1_start_day": 40,
-            "altitude_grp_2_end_day": 130,
-            "altitude_grp_2_start_day": 40,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 60,
-            "altitude_grp_4_end_day": 160,
-            "altitude_grp_4_start_day": 60,
-            "altitude_grp_5_end_day": 160,
-            "altitude_grp_5_start_day": 70
-          },
           "seq": 7
         },
         "BES": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Beginn der Blattentfaltung",
-          "description_de": "Aus 3 Knospen haben sich die ersten Bl\u00e4tter entfaltet",
+          "description_de": "Aus 3 Knospen haben sich die ersten Blätter entfaltet",
           "group_id": "HS50",
-          "limits": {
-            "altitude_grp_1_end_day": 150,
-            "altitude_grp_1_start_day": 40,
-            "altitude_grp_2_end_day": 150,
-            "altitude_grp_2_start_day": 40,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 40,
-            "altitude_grp_4_end_day": 150,
-            "altitude_grp_4_start_day": 50,
-            "altitude_grp_5_end_day": 150,
-            "altitude_grp_5_start_day": 50
-          },
           "seq": 6
         },
         "BFA": {
-          "comments": [
-            "112",
-            "113",
-            "114"
-          ],
+          "comments": ["112", "113", "114"],
           "de": "Allgemeiner Blattfall",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist abgefallen",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
           "group_id": "HS75",
-          "limits": {
-            "altitude_grp_1_end_day": 360,
-            "altitude_grp_1_start_day": 240,
-            "altitude_grp_2_end_day": 360,
-            "altitude_grp_2_start_day": 240,
-            "altitude_grp_3_end_day": 360,
-            "altitude_grp_3_start_day": 240,
-            "altitude_grp_4_end_day": 340,
-            "altitude_grp_4_start_day": 240,
-            "altitude_grp_5_end_day": 330,
-            "altitude_grp_5_start_day": 250
-          },
           "seq": 12
         },
         "BLA": {
-          "comments": [
-            "105"
-          ],
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der K\u00e4tzchen st\u00e4uben",
+          "comments": ["105"],
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Kätzchen stäuben",
           "group_id": "HS01",
-          "limits": {
-            "altitude_grp_1_end_day": 110,
-            "altitude_grp_1_start_day": -20,
-            "altitude_grp_2_end_day": 120,
-            "altitude_grp_2_start_day": -20,
-            "altitude_grp_3_end_day": 120,
-            "altitude_grp_3_start_day": -10,
-            "altitude_grp_4_end_day": 120,
-            "altitude_grp_4_start_day": 0,
-            "altitude_grp_5_end_day": 130,
-            "altitude_grp_5_start_day": 10
-          },
           "seq": 2
         },
         "BLB": {
-          "comments": [
-            "105"
-          ],
-          "de": "Beginn der Bl\u00fcte",
-          "description_de": "3 K\u00e4tzchen im Strauch st\u00e4uben",
+          "comments": ["105"],
+          "de": "Beginn der Blüte",
+          "description_de": "3 Kätzchen im Strauch stäuben",
           "group_id": "HS01",
-          "limits": {
-            "altitude_grp_1_end_day": 90,
-            "altitude_grp_1_start_day": -20,
-            "altitude_grp_2_end_day": 100,
-            "altitude_grp_2_start_day": -20,
-            "altitude_grp_3_end_day": 100,
-            "altitude_grp_3_start_day": -10,
-            "altitude_grp_4_end_day": 110,
-            "altitude_grp_4_start_day": 0,
-            "altitude_grp_5_end_day": 130,
-            "altitude_grp_5_start_day": 10
-          },
           "seq": 1
         },
         "BLE": {
-          "comments": [
-            "105"
-          ],
-          "de": "Ende der Bl\u00fcte",
-          "description_de": "95 % der K\u00e4tzchen sind verbl\u00fcht, abgestorben oder abgefallen",
+          "comments": ["105"],
+          "de": "Ende der Blüte",
+          "description_de": "95 % der Kätzchen sind verblüht, abgestorben oder abgefallen",
           "group_id": "HS01",
-          "limits": {
-            "altitude_grp_1_end_day": 130,
-            "altitude_grp_1_start_day": 10,
-            "altitude_grp_2_end_day": 130,
-            "altitude_grp_2_start_day": 10,
-            "altitude_grp_3_end_day": 130,
-            "altitude_grp_3_start_day": 20,
-            "altitude_grp_4_end_day": 130,
-            "altitude_grp_4_start_day": 30,
-            "altitude_grp_5_end_day": 130,
-            "altitude_grp_5_start_day": 30
-          },
           "seq": 3
         },
         "BVA": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Allgemeine Blattverf\u00e4rbung",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "HS70",
-          "limits": {
-            "altitude_grp_1_end_day": 360,
-            "altitude_grp_1_start_day": 210,
-            "altitude_grp_2_end_day": 360,
-            "altitude_grp_2_start_day": 210,
-            "altitude_grp_3_end_day": 350,
-            "altitude_grp_3_start_day": 210,
-            "altitude_grp_4_end_day": 350,
-            "altitude_grp_4_start_day": 210,
-            "altitude_grp_5_end_day": 320,
-            "altitude_grp_5_start_day": 210
-          },
           "seq": 11
         },
         "BVS": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Beginn der Blattverf\u00e4rbung",
-          "description_de": "10% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Beginn der Blattverfärbung",
+          "description_de": "10% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "HS70",
-          "limits": {
-            "altitude_grp_1_end_day": 360,
-            "altitude_grp_1_start_day": 210,
-            "altitude_grp_2_end_day": 360,
-            "altitude_grp_2_start_day": 210,
-            "altitude_grp_3_end_day": 350,
-            "altitude_grp_3_start_day": 210,
-            "altitude_grp_4_end_day": 320,
-            "altitude_grp_4_start_day": 210,
-            "altitude_grp_5_end_day": 300,
-            "altitude_grp_5_start_day": 210
-          },
           "seq": 10
         },
         "FRA": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Allgemeine Fruchtreife",
-          "description_de": "50% der Einzelfr\u00fcchte haben normales Reifestadium erreicht",
+          "description_de": "50% der Einzelfrüchte haben normales Reifestadium erreicht",
           "group_id": "HS60",
-          "limits": {
-            "altitude_grp_1_end_day": 270,
-            "altitude_grp_1_start_day": 170,
-            "altitude_grp_2_end_day": 270,
-            "altitude_grp_2_start_day": 170,
-            "altitude_grp_3_end_day": 270,
-            "altitude_grp_3_start_day": 170,
-            "altitude_grp_4_end_day": 270,
-            "altitude_grp_4_start_day": 190,
-            "altitude_grp_5_end_day": 260,
-            "altitude_grp_5_start_day": 180
-          },
           "seq": 9
         },
         "FRB": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Beginn der Fruchtreife",
-          "description_de": "3 Einzelfr\u00fcchte haben normales Reifestadium erreicht",
+          "description_de": "3 Einzelfrüchte haben normales Reifestadium erreicht",
           "group_id": "HS60",
-          "limits": {
-            "altitude_grp_1_end_day": 250,
-            "altitude_grp_1_start_day": 150,
-            "altitude_grp_2_end_day": 250,
-            "altitude_grp_2_start_day": 150,
-            "altitude_grp_3_end_day": 250,
-            "altitude_grp_3_start_day": 150,
-            "altitude_grp_4_end_day": 250,
-            "altitude_grp_4_start_day": 170,
-            "altitude_grp_5_end_day": 240,
-            "altitude_grp_5_start_day": 170
-          },
           "seq": 8
         },
         "KNS": {
           "comments": [],
           "de": "Beginn der Knospung",
-          "description_de": "Kleine gr\u00fcne Spitzchen sind ersichtlich an drei Orten im Baum",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an drei Orten im Baum",
           "group_id": "HS20",
-          "limits": {
-            "altitude_grp_1_end_day": 120,
-            "altitude_grp_1_start_day": 50,
-            "altitude_grp_2_end_day": 120,
-            "altitude_grp_2_start_day": 50,
-            "altitude_grp_3_end_day": 120,
-            "altitude_grp_3_start_day": 50,
-            "altitude_grp_4_end_day": 120,
-            "altitude_grp_4_start_day": 60,
-            "altitude_grp_5_end_day": 120,
-            "altitude_grp_5_start_day": 60
-          },
           "seq": 5
         },
         "KNV": {
@@ -2251,352 +1603,239 @@
           "de": "Vor der Knospung",
           "description_de": "Knospung steht kurz bevor",
           "group_id": "HS20",
-          "limits": {
-            "altitude_grp_1_end_day": 110,
-            "altitude_grp_1_start_day": 30,
-            "altitude_grp_2_end_day": 100,
-            "altitude_grp_2_start_day": 30,
-            "altitude_grp_3_end_day": 110,
-            "altitude_grp_3_start_day": 30,
-            "altitude_grp_4_end_day": 110,
-            "altitude_grp_4_start_day": 40,
-            "altitude_grp_5_end_day": 110,
-            "altitude_grp_5_start_day": 40
-          },
           "seq": 4
         }
       },
-      "tenant": "all"
+      "sources": ["globe", "meteoswiss", "ranger", "wld"]
     },
     "HU": {
       "de": "Huflattich",
       "groups": {
         "HU01": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+          "color": "#e8d439",
+          "de": "Blüte",
           "seq": 1
         }
       },
       "phenophases": {
         "BLA": {
-          "comments": [
-            "105"
-          ],
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der Bl\u00fcten im Bestand sind offen",
+          "comments": ["105"],
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blüten im Bestand sind offen",
           "group_id": "HU01",
-          "limits": {
-            "altitude_grp_1_end_day": 150,
-            "altitude_grp_1_start_day": 30,
-            "altitude_grp_2_end_day": 140,
-            "altitude_grp_2_start_day": 30,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 30,
-            "altitude_grp_4_end_day": 150,
-            "altitude_grp_4_start_day": 40,
-            "altitude_grp_5_end_day": 150,
-            "altitude_grp_5_start_day": 40
-          },
           "seq": 2
         },
         "BLB": {
-          "comments": [
-            "105"
-          ],
-          "de": "Beginn der Bl\u00fcte",
-          "description_de": "An den ersten 3 B\u00fcscheln im Bestand ist je die erste Bl\u00fcte offen",
+          "comments": ["105"],
+          "de": "Beginn der Blüte",
+          "description_de": "An den ersten 3 Büscheln im Bestand ist je die erste Blüte offen",
           "group_id": "HU01",
-          "limits": {
-            "altitude_grp_1_end_day": 130,
-            "altitude_grp_1_start_day": 20,
-            "altitude_grp_2_end_day": 110,
-            "altitude_grp_2_start_day": 20,
-            "altitude_grp_3_end_day": 120,
-            "altitude_grp_3_start_day": 20,
-            "altitude_grp_4_end_day": 130,
-            "altitude_grp_4_start_day": 30,
-            "altitude_grp_5_end_day": 130,
-            "altitude_grp_5_start_day": 30
-          },
           "seq": 1
         },
         "BLE": {
-          "comments": [
-            "105"
-          ],
-          "de": "Ende der Bl\u00fcte",
-          "description_de": "95 % der Blu\u0308ten sind verwelkt",
+          "comments": ["105"],
+          "de": "Ende der Blüte",
+          "description_de": "95 % der Blüten sind verwelkt",
           "group_id": "HU01",
-          "limits": {
-            "altitude_grp_1_end_day": 160,
-            "altitude_grp_1_start_day": 40,
-            "altitude_grp_2_end_day": 150,
-            "altitude_grp_2_start_day": 40,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 40,
-            "altitude_grp_4_end_day": 160,
-            "altitude_grp_4_start_day": 40,
-            "altitude_grp_5_end_day": 160,
-            "altitude_grp_5_start_day": 50
-          },
           "seq": 3
         }
       },
-      "tenant": "globe"
+      "sources": ["globe", "ranger"]
+    },
+    "IBM": {
+      "de": "Buchengallmücke",
+      "groups": {
+        "SZ": {
+          "color": "#f7f5f2",
+          "de": "Schlüpfzeitpunkt",
+          "seq": 1
+        }
+      },
+      "phenophases": {
+        "SZP": {
+          "de": "Schlüpfzeitpunkt",
+          "description_de": "Mindestens eine adulte Mücke ist aus der Galle geschlüpft",
+          "group_id": "SZ",
+          "seq": 1
+        }
+      },
+      "sources": ["ranger"]
+    },
+    "ISS": {
+      "de": "Schwammspinner",
+      "groups": {
+        "SZ": {
+          "color": "#f7f5f2",
+          "de": "Schlüpfzeitpunkt",
+          "seq": 1
+        }
+      },
+      "phenophases": {
+        "SZP": {
+          "de": "Schlüpfzeitpunkt",
+          "description_de": "Mindestens eine Raupe ist aus dem Ei geschlüpft",
+          "group_id": "SZ",
+          "seq": 1
+        }
+      },
+      "sources": ["ranger"]
+    },
+    "IWA": {
+      "de": "Waldameise",
+      "groups": {
+        "AP": {
+          "color": "#f7f5f2",
+          "de": "Aufwärmphase",
+          "seq": 1
+        },
+        "BF": {
+          "color": "#f7f5f2",
+          "de": "Beutefang",
+          "seq": 2
+        },
+        "JF": {
+          "color": "#f7f5f2",
+          "de": "Jungfernflug",
+          "seq": 3
+        }
+      },
+      "phenophases": {
+        "AAP": {
+          "de": "Ausaperung",
+          "description_de": "Erste Teile des Nests sind frei von Schnee",
+          "group_id": "AP",
+          "seq": 1
+        },
+        "AWP": {
+          "de": "Aufwärmphase",
+          "description_de": ">10 Individuen auf dem Nest bei sonnigen Bedingungen (Mittag) mit einem Suchaufwand von 20 Sekunden",
+          "group_id": "AP",
+          "seq": 2
+        },
+        "BTF": {
+          "de": "Beutefang",
+          "description_de": "Mindestens ein zum Nest getragenes Beutetier (Insekt, Spinne, Tausendfüssler etc.) wird bei einem Suchaufwand von 20 Sekunden in der Nähe des Nestes entdeckt",
+          "group_id": "BF",
+          "seq": 4
+        },
+        "JUF": {
+          "de": "Jungfernflug",
+          "description_de": ">10 geflügelte Individuen auf dem Nest sichtbar (Männchen und/oder Königinnen) mit einem Suchaufwand von 20 Sekunden (Vormittag)",
+          "group_id": "JF",
+          "seq": 5
+        },
+        "STR": {
+          "de": "Sonnungstraube",
+          "description_de": "Unzählige Individuen auf dem Nest formen sich zu Clustern bei sonnigen Bedingungen (Mittagszeit)",
+          "group_id": "AP",
+          "seq": 3
+        }
+      },
+      "sources": ["ranger"]
     },
     "LA": {
-      "de": "L\u00e4rche",
+      "de": "Lärche",
       "groups": {
         "LA10": {
-          "color": "#4b9f6f;",
+          "color": "#4b9f6f",
           "de": "Knospung",
           "seq": 1
         },
         "LA40": {
-          "color": "#7bb53b;",
+          "color": "#7bb53b",
           "de": "Triebentwicklung",
           "seq": 2
         },
         "LA50": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+          "color": "#e8d439",
+          "de": "Blüte",
           "seq": 3
         },
         "LA60": {
-          "color": "#e8b658;",
+          "color": "#e8b658",
           "de": "Fruchtreife",
           "seq": 4
         },
         "LA70": {
-          "color": "#b29976;",
-          "de": "Herbstverf\u00e4rbung",
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
           "seq": 5
         },
         "LA75": {
-          "color": "#868072;",
+          "color": "#868072",
           "de": "Nadelfall",
           "seq": 6
         }
       },
       "phenophases": {
         "BEA": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Allgemeiner Nadelaustrieb",
-          "description_de": "An 50% der Knospen entfalten sich die Nadelb\u00fcschel",
+          "description_de": "An 50% der Knospen entfalten sich die Nadelbüschel",
           "group_id": "LA40",
-          "limits": {
-            "altitude_grp_1_end_day": 130,
-            "altitude_grp_1_start_day": 70,
-            "altitude_grp_2_end_day": 140,
-            "altitude_grp_2_start_day": 70,
-            "altitude_grp_3_end_day": 140,
-            "altitude_grp_3_start_day": 80,
-            "altitude_grp_4_end_day": 150,
-            "altitude_grp_4_start_day": 90,
-            "altitude_grp_5_end_day": 170,
-            "altitude_grp_5_start_day": 100
-          },
           "seq": 4
         },
         "BES": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Beginn des Nadelaustriebs",
-          "description_de": "An ersten Knospen an 3 Orten im Baum entfalten sich die Nadelb\u00fcschel",
+          "description_de": "An ersten Knospen an 3 Orten im Baum entfalten sich die Nadelbüschel",
           "group_id": "LA40",
-          "limits": {
-            "altitude_grp_1_end_day": 150,
-            "altitude_grp_1_start_day": 60,
-            "altitude_grp_2_end_day": 150,
-            "altitude_grp_2_start_day": 60,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 60,
-            "altitude_grp_4_end_day": 150,
-            "altitude_grp_4_start_day": 60,
-            "altitude_grp_5_end_day": 150,
-            "altitude_grp_5_start_day": 70
-          },
           "seq": 3
         },
         "BFA": {
-          "comments": [
-            "112",
-            "113",
-            "114",
-            "116"
-          ],
+          "comments": ["112", "113", "114", "116"],
           "de": "Allgemeiner Nadelfall",
           "description_de": "50% der Nadeln ist abgefallen",
           "group_id": "LA75",
-          "limits": {
-            "altitude_grp_1_end_day": 350,
-            "altitude_grp_1_start_day": 270,
-            "altitude_grp_2_end_day": 350,
-            "altitude_grp_2_start_day": 270,
-            "altitude_grp_3_end_day": 340,
-            "altitude_grp_3_start_day": 260,
-            "altitude_grp_4_end_day": 340,
-            "altitude_grp_4_start_day": 260,
-            "altitude_grp_5_end_day": 330,
-            "altitude_grp_5_start_day": 260
-          },
           "seq": 11
         },
         "BLA": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der Bl\u00fctenst\u00e4nde st\u00e4uben",
+          "comments": ["103", "105"],
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blütenstände stäuben",
           "group_id": "LA50",
-          "limits": {
-            "altitude_grp_1_end_day": 180,
-            "altitude_grp_1_start_day": 110,
-            "altitude_grp_2_end_day": 170,
-            "altitude_grp_2_start_day": 110,
-            "altitude_grp_3_end_day": 180,
-            "altitude_grp_3_start_day": 110,
-            "altitude_grp_4_end_day": 180,
-            "altitude_grp_4_start_day": 110,
-            "altitude_grp_5_end_day": 180,
-            "altitude_grp_5_start_day": 120
-          },
           "seq": 6
         },
         "BLB": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Beginn der Bl\u00fcte",
-          "description_de": "An ersten Bl\u00fctenst\u00e4nden an 3 Orten im Baum sind die Staubbeutel reif und st\u00e4uben",
+          "comments": ["103", "105"],
+          "de": "Beginn der Blüte",
+          "description_de": "An ersten Blütenständen an 3 Orten im Baum sind die Staubbeutel reif und stäuben",
           "group_id": "LA50",
-          "limits": {
-            "altitude_grp_1_end_day": 150,
-            "altitude_grp_1_start_day": 110,
-            "altitude_grp_2_end_day": 150,
-            "altitude_grp_2_start_day": 110,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 110,
-            "altitude_grp_4_end_day": 150,
-            "altitude_grp_4_start_day": 110,
-            "altitude_grp_5_end_day": 150,
-            "altitude_grp_5_start_day": 110
-          },
           "seq": 5
         },
         "BLE": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Ende der Bl\u00fcte",
-          "description_de": "95% der Bl\u00fctenst\u00e4nde sind verbl\u00fcht oder schon abgefallen",
+          "comments": ["103", "105"],
+          "de": "Ende der Blüte",
+          "description_de": "95% der Blütenstände sind verblüht oder schon abgefallen",
           "group_id": "LA50",
-          "limits": {
-            "altitude_grp_1_end_day": 190,
-            "altitude_grp_1_start_day": 130,
-            "altitude_grp_2_end_day": 180,
-            "altitude_grp_2_start_day": 130,
-            "altitude_grp_3_end_day": 190,
-            "altitude_grp_3_start_day": 130,
-            "altitude_grp_4_end_day": 190,
-            "altitude_grp_4_start_day": 130,
-            "altitude_grp_5_end_day": 190,
-            "altitude_grp_5_start_day": 140
-          },
           "seq": 7
         },
         "BVA": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Allgemeine Nadelverf\u00e4rbung",
-          "description_de": "50% der Nadeln ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Allgemeine Nadelverfärbung",
+          "description_de": "50% der Nadeln ist herbstlich verfärbt",
           "group_id": "LA70",
-          "limits": {
-            "altitude_grp_1_end_day": 320,
-            "altitude_grp_1_start_day": 250,
-            "altitude_grp_2_end_day": 320,
-            "altitude_grp_2_start_day": 250,
-            "altitude_grp_3_end_day": 320,
-            "altitude_grp_3_start_day": 250,
-            "altitude_grp_4_end_day": 310,
-            "altitude_grp_4_start_day": 240,
-            "altitude_grp_5_end_day": 300,
-            "altitude_grp_5_start_day": 230
-          },
           "seq": 10
         },
         "BVS": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Beginn der Nadelverf\u00e4rbung",
-          "description_de": "10% der Nadeln sind herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Beginn der Nadelverfärbung",
+          "description_de": "10% der Nadeln sind herbstlich verfärbt",
           "group_id": "LA70",
-          "limits": {
-            "altitude_grp_1_end_day": 300,
-            "altitude_grp_1_start_day": 220,
-            "altitude_grp_2_end_day": 300,
-            "altitude_grp_2_start_day": 220,
-            "altitude_grp_3_end_day": 300,
-            "altitude_grp_3_start_day": 220,
-            "altitude_grp_4_end_day": 290,
-            "altitude_grp_4_start_day": 220,
-            "altitude_grp_5_end_day": 280,
-            "altitude_grp_5_start_day": 220
-          },
           "seq": 9
         },
         "FRB": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Beginn der Fruchtreife",
-          "description_de": "3 Zapfen sind arttypisch reif und erste Fr\u00fcchte sind abgefallen",
+          "description_de": "3 Zapfen sind arttypisch reif und erste Früchte sind abgefallen",
           "group_id": "LA60",
-          "limits": {
-            "altitude_grp_1_end_day": 340,
-            "altitude_grp_1_start_day": 250,
-            "altitude_grp_2_end_day": 340,
-            "altitude_grp_2_start_day": 250,
-            "altitude_grp_3_end_day": 340,
-            "altitude_grp_3_start_day": 250,
-            "altitude_grp_4_end_day": 330,
-            "altitude_grp_4_start_day": 250,
-            "altitude_grp_5_end_day": 320,
-            "altitude_grp_5_start_day": 250
-          },
           "seq": 8
         },
         "KNS": {
           "comments": [],
           "de": "Beginn der Knospung",
-          "description_de": "Kleine gr\u00fcne Spitzchen sind ersichtlich an drei Orten im Baum",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an drei Orten im Baum",
           "group_id": "LA10",
-          "limits": {
-            "altitude_grp_1_end_day": 120,
-            "altitude_grp_1_start_day": 60,
-            "altitude_grp_2_end_day": 120,
-            "altitude_grp_2_start_day": 60,
-            "altitude_grp_3_end_day": 120,
-            "altitude_grp_3_start_day": 60,
-            "altitude_grp_4_end_day": 120,
-            "altitude_grp_4_start_day": 60,
-            "altitude_grp_5_end_day": 120,
-            "altitude_grp_5_start_day": 70
-          },
           "seq": 2
         },
         "KNV": {
@@ -2604,317 +1843,150 @@
           "de": "Vor der Knospung",
           "description_de": "Knospung steht kurz bevor",
           "group_id": "LA10",
-          "limits": {
-            "altitude_grp_1_end_day": 110,
-            "altitude_grp_1_start_day": 50,
-            "altitude_grp_2_end_day": 110,
-            "altitude_grp_2_start_day": 50,
-            "altitude_grp_3_end_day": 110,
-            "altitude_grp_3_start_day": 50,
-            "altitude_grp_4_end_day": 110,
-            "altitude_grp_4_start_day": 50,
-            "altitude_grp_5_end_day": 110,
-            "altitude_grp_5_start_day": 60
-          },
           "seq": 1
         }
       },
-      "tenant": "all"
+      "sources": ["globe", "meteoswiss", "ranger", "wld"]
     },
     "RH": {
       "de": "Roter Holunder",
       "groups": {
         "2": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+          "color": "#e8d439",
+          "de": "Blüte",
           "seq": 2
         },
         "3": {
-          "color": "#e8b658;",
+          "color": "#e8b658",
           "de": "Fruchtreife",
           "seq": 3
         }
       },
       "phenophases": {
         "BLA": {
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der Bl\u00fcten offen oder schon verbl\u00fcht",
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blüten offen oder schon verblüht",
           "group_id": "2",
           "seq": 3
         },
         "BLB": {
-          "de": "Beginn der Bl\u00fcte",
-          "description_de": "Erste Bl\u00fcten offen, an 3 Orten im Baum",
+          "de": "Beginn der Blüte",
+          "description_de": "Erste Blüten offen, an 3 Orten im Baum",
           "group_id": "2",
           "seq": 2
         },
         "FRA": {
           "de": "Allgemeine Fruchtreife",
-          "description_de": "50% der Einzelfr\u00fcchte sind arttypisch reif",
+          "description_de": "50% der Einzelfrüchte sind arttypisch reif",
           "group_id": "3",
           "seq": 4
         }
       },
-      "tenant": "meteoswiss"
+      "sources": ["meteoswiss"]
     },
     "RK": {
       "de": "Rosskastanie",
       "groups": {
         "RK10": {
-          "color": "#4b9f6f;",
+          "color": "#4b9f6f",
           "de": "Knospung",
           "seq": 1
         },
         "RK40": {
-          "color": "#7bb53b;",
+          "color": "#7bb53b",
           "de": "Blattentfaltung",
           "seq": 2
         },
         "RK50": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+          "color": "#e8d439",
+          "de": "Blüte",
           "seq": 3
         },
         "RK60": {
-          "color": "#e8b658;",
+          "color": "#e8b658",
           "de": "Fruchtreife",
           "seq": 4
         },
         "RK70": {
-          "color": "#b29976;",
-          "de": "Herbstverf\u00e4rbung",
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
           "seq": 5
         },
         "RK75": {
-          "color": "#868072;",
+          "color": "#868072",
           "de": "Blattfall",
           "seq": 6
         }
       },
       "phenophases": {
         "BEA": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Allgemeine Blattentfaltung",
-          "description_de": "50% der Bl\u00e4tter des Baumes sind entfaltet",
+          "description_de": "50% der Blätter des Baumes sind entfaltet",
           "group_id": "RK40",
-          "limits": {
-            "altitude_grp_1_end_day": 140,
-            "altitude_grp_1_start_day": 70,
-            "altitude_grp_2_end_day": 140,
-            "altitude_grp_2_start_day": 70,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 80,
-            "altitude_grp_4_end_day": 150,
-            "altitude_grp_4_start_day": 100,
-            "altitude_grp_5_end_day": 150,
-            "altitude_grp_5_start_day": 110
-          },
           "seq": 4
         },
         "BES": {
-          "comments": [
-            "101",
-            "101"
-          ],
+          "comments": ["101", "101"],
           "de": "Beginn der Blattentfaltung",
-          "description_de": "Aus 3 Knospen haben sich die ersten Bl\u00e4tter entfaltet",
+          "description_de": "Aus 3 Knospen haben sich die ersten Blätter entfaltet",
           "group_id": "RK40",
-          "limits": {
-            "altitude_grp_1_end_day": 120,
-            "altitude_grp_1_start_day": 60,
-            "altitude_grp_2_end_day": 120,
-            "altitude_grp_2_start_day": 60,
-            "altitude_grp_3_end_day": 120,
-            "altitude_grp_3_start_day": 60,
-            "altitude_grp_4_end_day": 120,
-            "altitude_grp_4_start_day": 60,
-            "altitude_grp_5_end_day": 120,
-            "altitude_grp_5_start_day": 70
-          },
           "seq": 3
         },
         "BFA": {
-          "comments": [
-            "112",
-            "113",
-            "114",
-            "116"
-          ],
+          "comments": ["112", "113", "114", "116"],
           "de": "Allgemeiner Blattfall",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist abgefallen",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
           "group_id": "RK75",
-          "limits": {
-            "altitude_grp_1_end_day": 240,
-            "altitude_grp_1_start_day": 250,
-            "altitude_grp_2_end_day": 240,
-            "altitude_grp_2_start_day": 250,
-            "altitude_grp_3_end_day": 340,
-            "altitude_grp_3_start_day": 250,
-            "altitude_grp_4_end_day": 340,
-            "altitude_grp_4_start_day": 250,
-            "altitude_grp_5_end_day": 340,
-            "altitude_grp_5_start_day": 250
-          },
           "seq": 12
         },
         "BLA": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der Bl\u00fcten offen oder schon verbl\u00fcht",
+          "comments": ["103", "105"],
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blüten offen oder schon verblüht",
           "group_id": "RK50",
-          "limits": {
-            "altitude_grp_1_end_day": 160,
-            "altitude_grp_1_start_day": 90,
-            "altitude_grp_2_end_day": 170,
-            "altitude_grp_2_start_day": 90,
-            "altitude_grp_3_end_day": 170,
-            "altitude_grp_3_start_day": 100,
-            "altitude_grp_4_end_day": 180,
-            "altitude_grp_4_start_day": 100,
-            "altitude_grp_5_end_day": 180,
-            "altitude_grp_5_start_day": 120
-          },
           "seq": 6
         },
         "BLB": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Beginn der Bl\u00fcte",
-          "description_de": "Erste Bl\u00fcten offen, an 3 Orten im Baum",
+          "comments": ["103", "105"],
+          "de": "Beginn der Blüte",
+          "description_de": "Erste Blüten offen, an 3 Orten im Baum",
           "group_id": "RK50",
-          "limits": {
-            "altitude_grp_1_end_day": 140,
-            "altitude_grp_1_start_day": 80,
-            "altitude_grp_2_end_day": 140,
-            "altitude_grp_2_start_day": 80,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 90,
-            "altitude_grp_4_end_day": 160,
-            "altitude_grp_4_start_day": 100,
-            "altitude_grp_5_end_day": 170,
-            "altitude_grp_5_start_day": 110
-          },
           "seq": 5
         },
         "BLE": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Ende der Bl\u00fcte",
-          "description_de": "95% der Bl\u00fcten verbl\u00fcht oder abgefallen",
+          "comments": ["103", "105"],
+          "de": "Ende der Blüte",
+          "description_de": "95% der Blüten verblüht oder abgefallen",
           "group_id": "RK50",
-          "limits": {
-            "altitude_grp_1_end_day": 180,
-            "altitude_grp_1_start_day": 120,
-            "altitude_grp_2_end_day": 180,
-            "altitude_grp_2_start_day": 120,
-            "altitude_grp_3_end_day": 180,
-            "altitude_grp_3_start_day": 120,
-            "altitude_grp_4_end_day": 180,
-            "altitude_grp_4_start_day": 120,
-            "altitude_grp_5_end_day": 180,
-            "altitude_grp_5_start_day": 120
-          },
           "seq": 7
         },
         "BVA": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Allgemeine Blattverf\u00e4rbung",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "RK70",
-          "limits": {
-            "altitude_grp_1_end_day": 330,
-            "altitude_grp_1_start_day": 190,
-            "altitude_grp_2_end_day": 330,
-            "altitude_grp_2_start_day": 190,
-            "altitude_grp_3_end_day": 320,
-            "altitude_grp_3_start_day": 200,
-            "altitude_grp_4_end_day": 290,
-            "altitude_grp_4_start_day": 200,
-            "altitude_grp_5_end_day": 290,
-            "altitude_grp_5_start_day": 210
-          },
           "seq": 11
         },
         "BVS": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Beginn der Blattverf\u00e4rbung",
-          "description_de": "10% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Beginn der Blattverfärbung",
+          "description_de": "10% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "RK70",
-          "limits": {
-            "altitude_grp_1_end_day": 300,
-            "altitude_grp_1_start_day": 190,
-            "altitude_grp_2_end_day": 300,
-            "altitude_grp_2_start_day": 190,
-            "altitude_grp_3_end_day": 280,
-            "altitude_grp_3_start_day": 190,
-            "altitude_grp_4_end_day": 270,
-            "altitude_grp_4_start_day": 190,
-            "altitude_grp_5_end_day": 260,
-            "altitude_grp_5_start_day": 190
-          },
           "seq": 10
         },
         "FRA": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Allgemeine Fruchtreife",
           "description_de": "50% der braunen Samen sind abgefallen",
           "group_id": "RK60",
-          "limits": {
-            "altitude_grp_1_end_day": 290,
-            "altitude_grp_1_start_day": 210,
-            "altitude_grp_2_end_day": 300,
-            "altitude_grp_2_start_day": 210,
-            "altitude_grp_3_end_day": 300,
-            "altitude_grp_3_start_day": 210,
-            "altitude_grp_4_end_day": 300,
-            "altitude_grp_4_start_day": 200,
-            "altitude_grp_5_end_day": 290,
-            "altitude_grp_5_start_day": 200
-          },
           "seq": 9
         },
         "FRB": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Beginn der Fruchtreife",
-          "description_de": "3 offene Fruchtbecher oder erste Einzelfr\u00fcchte unter dem Baum",
+          "description_de": "3 offene Fruchtbecher oder erste Einzelfrüchte unter dem Baum",
           "group_id": "RK60",
-          "limits": {
-            "altitude_grp_1_end_day": 260,
-            "altitude_grp_1_start_day": 180,
-            "altitude_grp_2_end_day": 270,
-            "altitude_grp_2_start_day": 180,
-            "altitude_grp_3_end_day": 270,
-            "altitude_grp_3_start_day": 180,
-            "altitude_grp_4_end_day": 270,
-            "altitude_grp_4_start_day": 190,
-            "altitude_grp_5_end_day": 250,
-            "altitude_grp_5_start_day": 190
-          },
           "seq": 8
         },
         "KNS": {
@@ -2922,18 +1994,6 @@
           "de": "Beginn der Knospung",
           "description_de": "An 3 Orten im Baum",
           "group_id": "RK10",
-          "limits": {
-            "altitude_grp_1_end_day": 120,
-            "altitude_grp_1_start_day": 30,
-            "altitude_grp_2_end_day": 120,
-            "altitude_grp_2_start_day": 30,
-            "altitude_grp_3_end_day": 120,
-            "altitude_grp_3_start_day": 30,
-            "altitude_grp_4_end_day": 120,
-            "altitude_grp_4_start_day": 40,
-            "altitude_grp_5_end_day": 120,
-            "altitude_grp_5_start_day": 40
-          },
           "seq": 2
         },
         "KNV": {
@@ -2941,38 +2001,26 @@
           "de": "Vor der Knospung",
           "description_de": "Knospung steht kurz bevor",
           "group_id": "RK10",
-          "limits": {
-            "altitude_grp_1_end_day": 90,
-            "altitude_grp_1_start_day": 20,
-            "altitude_grp_2_end_day": 90,
-            "altitude_grp_2_start_day": 20,
-            "altitude_grp_3_end_day": 90,
-            "altitude_grp_3_start_day": 20,
-            "altitude_grp_4_end_day": 90,
-            "altitude_grp_4_start_day": 30,
-            "altitude_grp_5_end_day": 90,
-            "altitude_grp_5_start_day": 30
-          },
           "seq": 1
         }
       },
-      "tenant": "all"
+      "sources": ["globe", "meteoswiss", "ranger"]
     },
     "RO": {
       "de": "Robinie",
       "groups": {
         "1": {
-          "color": "#7bb53b;",
+          "color": "#7bb53b",
           "de": "Blattentfaltung",
           "seq": 1
         },
         "2": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+          "color": "#e8d439",
+          "de": "Blüte",
           "seq": 2
         },
         "5": {
-          "color": "#868072;",
+          "color": "#868072",
           "de": "Blattfall",
           "seq": 5
         }
@@ -2980,308 +2028,141 @@
       "phenophases": {
         "BEA": {
           "de": "Allgemeine Blattentfaltung",
-          "description_de": "50% der Bl\u00e4tter des Baumes sind entfaltet",
+          "description_de": "50% der Blätter des Baumes sind entfaltet",
           "group_id": "1",
           "seq": 1
         },
         "BFA": {
           "de": "Allgemeiner Blattfall",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist abgefallen",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
           "group_id": "5",
           "seq": 6
         },
         "BLA": {
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der Bl\u00fcten offen oder schon verbl\u00fcht",
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blüten offen oder schon verblüht",
           "group_id": "2",
           "seq": 3
         },
         "BLB": {
-          "de": "Beginn der Bl\u00fcte",
-          "description_de": "Erste Bl\u00fcten offen, an 3 Orten im Baum",
+          "de": "Beginn der Blüte",
+          "description_de": "Erste Blüten offen, an 3 Orten im Baum",
           "group_id": "2",
           "seq": 2
         }
       },
-      "tenant": "meteoswiss"
+      "sources": ["meteoswiss"]
     },
     "SD": {
       "de": "Schwarzdorn",
       "groups": {
         "SD01": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+          "color": "#e8d439",
+          "de": "Blüte",
           "seq": 1
         },
         "SD20": {
-          "color": "#4b9f6f;",
+          "color": "#4b9f6f",
           "de": "Knospung",
           "seq": 2
         },
         "SD50": {
-          "color": "#7bb53b;",
+          "color": "#7bb53b",
           "de": "Blattentfaltung",
           "seq": 3
         },
         "SD60": {
-          "color": "#e8b658;",
+          "color": "#e8b658",
           "de": "Fruchtreife",
           "seq": 4
         },
         "SD70": {
-          "color": "#b29976;",
-          "de": "Herbstverf\u00e4rbung",
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
           "seq": 5
         },
         "SD75": {
-          "color": "#868072;",
+          "color": "#868072",
           "de": "Blattfall",
           "seq": 6
         }
       },
       "phenophases": {
         "BEA": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Allgemeine Blattentfaltung",
-          "description_de": "50% der Bl\u00e4tter des Strauches entfaltet",
+          "description_de": "50% der Blätter des Strauches entfaltet",
           "group_id": "SD50",
-          "limits": {
-            "altitude_grp_1_end_day": 150,
-            "altitude_grp_1_start_day": 70,
-            "altitude_grp_2_end_day": 150,
-            "altitude_grp_2_start_day": 70,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 70,
-            "altitude_grp_4_end_day": 160,
-            "altitude_grp_4_start_day": 70,
-            "altitude_grp_5_end_day": 160,
-            "altitude_grp_5_start_day": 80
-          },
           "seq": 7
         },
         "BES": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Beginn der Blattentfaltung",
-          "description_de": "Aus 3 Knospen haben sich die ersten Bl\u00e4tter entfaltet",
+          "description_de": "Aus 3 Knospen haben sich die ersten Blätter entfaltet",
           "group_id": "SD50",
-          "limits": {
-            "altitude_grp_1_end_day": 100,
-            "altitude_grp_1_start_day": 60,
-            "altitude_grp_2_end_day": 100,
-            "altitude_grp_2_start_day": 60,
-            "altitude_grp_3_end_day": 110,
-            "altitude_grp_3_start_day": 60,
-            "altitude_grp_4_end_day": 110,
-            "altitude_grp_4_start_day": 60,
-            "altitude_grp_5_end_day": 110,
-            "altitude_grp_5_start_day": 60
-          },
           "seq": 6
         },
         "BFA": {
-          "comments": [
-            "113",
-            "114"
-          ],
+          "comments": ["113", "114"],
           "de": "Allgemeiner Blattfall",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist abgefallen",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
           "group_id": "SD75",
-          "limits": {
-            "altitude_grp_1_end_day": 340,
-            "altitude_grp_1_start_day": 220,
-            "altitude_grp_2_end_day": 340,
-            "altitude_grp_2_start_day": 220,
-            "altitude_grp_3_end_day": 340,
-            "altitude_grp_3_start_day": 220,
-            "altitude_grp_4_end_day": 330,
-            "altitude_grp_4_start_day": 220,
-            "altitude_grp_5_end_day": 320,
-            "altitude_grp_5_start_day": 210
-          },
           "seq": 12
         },
         "BLA": {
-          "comments": [
-            "103",
-            "104",
-            "105"
-          ],
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der Bl\u00fcten offen oder schon verbl\u00fcht",
+          "comments": ["103", "104", "105"],
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blüten offen oder schon verblüht",
           "group_id": "SD01",
-          "limits": {
-            "altitude_grp_1_end_day": 120,
-            "altitude_grp_1_start_day": 50,
-            "altitude_grp_2_end_day": 120,
-            "altitude_grp_2_start_day": 50,
-            "altitude_grp_3_end_day": 120,
-            "altitude_grp_3_start_day": 50,
-            "altitude_grp_4_end_day": 120,
-            "altitude_grp_4_start_day": 60,
-            "altitude_grp_5_end_day": 120,
-            "altitude_grp_5_start_day": 60
-          },
           "seq": 2
         },
         "BLB": {
-          "comments": [
-            "103",
-            "104",
-            "105"
-          ],
-          "de": "Beginn der Bl\u00fcte",
-          "description_de": "Erste Bl\u00fcten offen, an 3 Orten im Baum",
+          "comments": ["103", "104", "105"],
+          "de": "Beginn der Blüte",
+          "description_de": "Erste Blüten offen, an 3 Orten im Baum",
           "group_id": "SD01",
-          "limits": {
-            "altitude_grp_1_end_day": 90,
-            "altitude_grp_1_start_day": 50,
-            "altitude_grp_2_end_day": 90,
-            "altitude_grp_2_start_day": 50,
-            "altitude_grp_3_end_day": 100,
-            "altitude_grp_3_start_day": 50,
-            "altitude_grp_4_end_day": 100,
-            "altitude_grp_4_start_day": 50,
-            "altitude_grp_5_end_day": 110,
-            "altitude_grp_5_start_day": 50
-          },
           "seq": 1
         },
         "BLE": {
-          "comments": [
-            "103",
-            "104",
-            "105"
-          ],
-          "de": "Ende der Bl\u00fcte",
-          "description_de": "95 % der Bl\u00fcten verbl\u00fcht oder abgefallen",
+          "comments": ["103", "104", "105"],
+          "de": "Ende der Blüte",
+          "description_de": "95 % der Blüten verblüht oder abgefallen",
           "group_id": "SD01",
-          "limits": {
-            "altitude_grp_1_end_day": 130,
-            "altitude_grp_1_start_day": 70,
-            "altitude_grp_2_end_day": 130,
-            "altitude_grp_2_start_day": 70,
-            "altitude_grp_3_end_day": 130,
-            "altitude_grp_3_start_day": 70,
-            "altitude_grp_4_end_day": 130,
-            "altitude_grp_4_start_day": 70,
-            "altitude_grp_5_end_day": 130,
-            "altitude_grp_5_start_day": 80
-          },
           "seq": 3
         },
         "BVA": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Allgemeine Blattverf\u00e4rbung",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "SD70",
-          "limits": {
-            "altitude_grp_1_end_day": 320,
-            "altitude_grp_1_start_day": 220,
-            "altitude_grp_2_end_day": 320,
-            "altitude_grp_2_start_day": 220,
-            "altitude_grp_3_end_day": 320,
-            "altitude_grp_3_start_day": 230,
-            "altitude_grp_4_end_day": 310,
-            "altitude_grp_4_start_day": 230,
-            "altitude_grp_5_end_day": 300,
-            "altitude_grp_5_start_day": 220
-          },
           "seq": 11
         },
         "BVS": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Beginn der Blattverf\u00e4rbung",
-          "description_de": "10% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Beginn der Blattverfärbung",
+          "description_de": "10% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "SD70",
-          "limits": {
-            "altitude_grp_1_end_day": 300,
-            "altitude_grp_1_start_day": 210,
-            "altitude_grp_2_end_day": 300,
-            "altitude_grp_2_start_day": 210,
-            "altitude_grp_3_end_day": 300,
-            "altitude_grp_3_start_day": 210,
-            "altitude_grp_4_end_day": 290,
-            "altitude_grp_4_start_day": 210,
-            "altitude_grp_5_end_day": 270,
-            "altitude_grp_5_start_day": 210
-          },
           "seq": 10
         },
         "FRA": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Allgemeine Fruchtreife",
-          "description_de": "50% der Einzelfr\u00fcchte sind arttypisch reif",
+          "description_de": "50% der Einzelfrüchte sind arttypisch reif",
           "group_id": "SD60",
-          "limits": {
-            "altitude_grp_1_end_day": 300,
-            "altitude_grp_1_start_day": 180,
-            "altitude_grp_2_end_day": 300,
-            "altitude_grp_2_start_day": 180,
-            "altitude_grp_3_end_day": 300,
-            "altitude_grp_3_start_day": 180,
-            "altitude_grp_4_end_day": 290,
-            "altitude_grp_4_start_day": 180,
-            "altitude_grp_5_end_day": 290,
-            "altitude_grp_5_start_day": 190
-          },
           "seq": 9
         },
         "FRB": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Beginn der Fruchtreife",
-          "description_de": "Erste Einzelfr\u00fcchte an 3 Orten sind arttypisch reif",
+          "description_de": "Erste Einzelfrüchte an 3 Orten sind arttypisch reif",
           "group_id": "SD60",
-          "limits": {
-            "altitude_grp_1_end_day": 270,
-            "altitude_grp_1_start_day": 160,
-            "altitude_grp_2_end_day": 270,
-            "altitude_grp_2_start_day": 160,
-            "altitude_grp_3_end_day": 280,
-            "altitude_grp_3_start_day": 160,
-            "altitude_grp_4_end_day": 270,
-            "altitude_grp_4_start_day": 160,
-            "altitude_grp_5_end_day": 270,
-            "altitude_grp_5_start_day": 180
-          },
           "seq": 8
         },
         "KNS": {
           "comments": [],
           "de": "Beginn der Knospung",
-          "description_de": "Kleine gr\u00fcne Spitzchen sind ersichtlich an drei Orten im Baum",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an drei Orten im Baum",
           "group_id": "SD20",
-          "limits": {
-            "altitude_grp_1_end_day": 110,
-            "altitude_grp_1_start_day": 50,
-            "altitude_grp_2_end_day": 110,
-            "altitude_grp_2_start_day": 50,
-            "altitude_grp_3_end_day": 110,
-            "altitude_grp_3_start_day": 50,
-            "altitude_grp_4_end_day": 110,
-            "altitude_grp_4_start_day": 50,
-            "altitude_grp_5_end_day": 110,
-            "altitude_grp_5_start_day": 60
-          },
           "seq": 5
         },
         "KNV": {
@@ -3289,334 +2170,295 @@
           "de": "Vor der Knospung",
           "description_de": "Knospung steht kurz bevor",
           "group_id": "SD20",
-          "limits": {
-            "altitude_grp_1_end_day": 90,
-            "altitude_grp_1_start_day": 30,
-            "altitude_grp_2_end_day": 90,
-            "altitude_grp_2_start_day": 30,
-            "altitude_grp_3_end_day": 90,
-            "altitude_grp_3_start_day": 30,
-            "altitude_grp_4_end_day": 90,
-            "altitude_grp_4_start_day": 30,
-            "altitude_grp_5_end_day": 90,
-            "altitude_grp_5_start_day": 40
-          },
           "seq": 4
         }
       },
-      "tenant": "globe"
+      "sources": ["globe", "ranger"]
     },
-    "SH": {
-      "de": "Schwarzer Holunder",
+    "SE": {
+      "de": "Stiel-Eiche",
       "groups": {
-        "2": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+        "BE": {
+          "color": "#7bb53b",
+          "de": "Blattentfaltung",
           "seq": 2
         },
-        "3": {
-          "color": "#e8b658;",
-          "de": "Fruchtreife",
+        "BF": {
+          "color": "#868072",
+          "de": "Blattfall",
+          "seq": 5
+        },
+        "HV": {
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
+          "seq": 4
+        },
+        "KN": {
+          "color": "#4b9f6f",
+          "de": "Knospung",
+          "seq": 1
+        },
+        "SEMST": {
+          "color": "#eb5b23",
+          "de": "Mast",
           "seq": 3
         }
       },
       "phenophases": {
-        "BLA": {
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der Bl\u00fcten offen oder schon verbl\u00fcht",
-          "group_id": "2",
+        "BEA": {
+          "de": "Allgemeine Blattentfaltung",
+          "description_de": "50% der Blätter des Baumes sind entfaltet",
+          "group_id": "BE",
+          "seq": 4
+        },
+        "BES": {
+          "de": "Beginn der Blattentfaltung",
+          "description_de": "Aus 3 Knospen haben sich die ersten Blätter entfaltet",
+          "group_id": "BE",
           "seq": 3
         },
-        "BLB": {
-          "de": "Beginn der Bl\u00fcte",
-          "description_de": "Erste Bl\u00fcten offen, an 3 Orten im Baum",
-          "group_id": "2",
+        "BFA": {
+          "de": "Allgemeiner Blattfall",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
+          "group_id": "BF",
+          "seq": 6
+        },
+        "BVA": {
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
+          "group_id": "HV",
+          "seq": 5
+        },
+        "KNS": {
+          "de": "Beginn der Knospung",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an drei Orten im Baum",
+          "group_id": "KN",
           "seq": 2
+        },
+        "KNV": {
+          "de": "Vor der Knospung",
+          "description_de": "Knospung steht kurz bevor",
+          "group_id": "KN",
+          "seq": 1
+        },
+        "MST": {
+          "comments": ["cmst1", "cmst2", "cmst3", "cmst4"],
+          "de": "Mastausprägung",
+          "description_de": "Mastausprägung anhand Beobachtungsanleitung als Kommentar eintragen",
+          "group_id": "SEMST",
+          "seq": 1
+        }
+      },
+      "sources": ["ranger", "wld"]
+    },
+    "SH": {
+      "de": "Schwarzer Holunder",
+      "groups": {
+        "BE": {
+          "color": "#7bb53b",
+          "de": "Blattentfaltung",
+          "seq": 2
+        },
+        "BF": {
+          "color": "#868072",
+          "de": "Blattfall",
+          "seq": 6
+        },
+        "BL": {
+          "color": "#e8d439",
+          "de": "Blüte",
+          "seq": 3
+        },
+        "FR": {
+          "color": "#e8b658",
+          "de": "Fruchtreife",
+          "seq": 4
+        },
+        "HV": {
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
+          "seq": 5
+        },
+        "KN": {
+          "color": "#4b9f6f",
+          "de": "Knospung",
+          "seq": 1
+        }
+      },
+      "phenophases": {
+        "BEA": {
+          "de": "Allgemeine Blattentfaltung",
+          "description_de": "50% der Blätter des Strauches entfaltet",
+          "group_id": "BE",
+          "seq": 4
+        },
+        "BES": {
+          "de": "Beginn der Blattentfaltung",
+          "description_de": "Aus 3 Knospen haben sich die ersten Blätter entfaltet",
+          "group_id": "BE",
+          "seq": 3
+        },
+        "BFA": {
+          "de": "Allgemeiner Blattfall",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
+          "group_id": "BF",
+          "seq": 10
+        },
+        "BLA": {
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blüten offen oder schon verblüht",
+          "group_id": "BL",
+          "seq": 6
+        },
+        "BLB": {
+          "de": "Beginn der Blüte",
+          "description_de": "Die Blüten von 3 Blütenständen im Strauch sind offen",
+          "group_id": "BL",
+          "seq": 5
+        },
+        "BVA": {
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
+          "group_id": "HV",
+          "seq": 9
         },
         "FRA": {
           "de": "Allgemeine Fruchtreife",
-          "description_de": "50% der Einzelfr\u00fcchte sind arttypisch reif",
-          "group_id": "3",
-          "seq": 4
+          "description_de": "50% der Früchte haben sich arttypisch schwarz verfärbt",
+          "group_id": "FR",
+          "seq": 8
+        },
+        "FRB": {
+          "de": "Beginn der Fruchtreife",
+          "description_de": "An 3 Blütenständen im Strauch haben sich die Früchte arttypisch schwarz verfärbt",
+          "group_id": "FR",
+          "seq": 7
+        },
+        "KNS": {
+          "de": "Beginn der Knospung",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an 3 Orten im Strauch",
+          "group_id": "KN",
+          "seq": 2
+        },
+        "KNV": {
+          "de": "Vor der Knospung",
+          "description_de": "Knospung steht kurz bevor",
+          "group_id": "KN",
+          "seq": 1
         }
       },
-      "tenant": "meteoswiss"
+      "sources": ["meteoswiss", "ranger"]
     },
     "SL": {
       "de": "Sommerlinde",
       "groups": {
         "SL10": {
-          "color": "#4b9f6f;",
+          "color": "#4b9f6f",
           "de": "Knospung",
           "seq": 1
         },
         "SL40": {
-          "color": "#7bb53b;",
+          "color": "#7bb53b",
           "de": "Blattentfaltung",
           "seq": 2
         },
         "SL50": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+          "color": "#e8d439",
+          "de": "Blüte",
           "seq": 3
         },
         "SL60": {
-          "color": "#e8b658;",
+          "color": "#e8b658",
           "de": "Fruchtreife",
           "seq": 4
         },
         "SL70": {
-          "color": "#b29976;",
-          "de": "Herbstverf\u00e4rbung",
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
           "seq": 5
         },
         "SL75": {
-          "color": "#868072;",
+          "color": "#868072",
           "de": "Blattfall",
           "seq": 6
         }
       },
       "phenophases": {
         "BEA": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Allgemeine Blattentfaltung",
-          "description_de": "50% der Bl\u00e4tter des Baumes sind entfaltet",
+          "description_de": "50% der Blätter des Baumes sind entfaltet",
           "group_id": "SL40",
-          "limits": {
-            "altitude_grp_1_end_day": 130,
-            "altitude_grp_1_start_day": 90,
-            "altitude_grp_2_end_day": 130,
-            "altitude_grp_2_start_day": 90,
-            "altitude_grp_3_end_day": 140,
-            "altitude_grp_3_start_day": 100,
-            "altitude_grp_4_end_day": 150,
-            "altitude_grp_4_start_day": 110,
-            "altitude_grp_5_end_day": 160,
-            "altitude_grp_5_start_day": 110
-          },
           "seq": 4
         },
         "BES": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Beginn der Blattentfaltung",
           "description_de": "An ersten Knospen an 3 Orten im Baum hat sich ein Blatt entfaltet",
           "group_id": "SL40",
-          "limits": {
-            "altitude_grp_1_end_day": 140,
-            "altitude_grp_1_start_day": 80,
-            "altitude_grp_2_end_day": 140,
-            "altitude_grp_2_start_day": 80,
-            "altitude_grp_3_end_day": 140,
-            "altitude_grp_3_start_day": 80,
-            "altitude_grp_4_end_day": 140,
-            "altitude_grp_4_start_day": 80,
-            "altitude_grp_5_end_day": 140,
-            "altitude_grp_5_start_day": 80
-          },
           "seq": 3
         },
         "BFA": {
-          "comments": [
-            "112",
-            "113",
-            "114"
-          ],
+          "comments": ["112", "113", "114"],
           "de": "Allgemeiner Blattfall",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist abgefallen",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
           "group_id": "SL75",
-          "limits": {
-            "altitude_grp_1_end_day": 330,
-            "altitude_grp_1_start_day": 230,
-            "altitude_grp_2_end_day": 330,
-            "altitude_grp_2_start_day": 230,
-            "altitude_grp_3_end_day": 320,
-            "altitude_grp_3_start_day": 230,
-            "altitude_grp_4_end_day": 310,
-            "altitude_grp_4_start_day": 230,
-            "altitude_grp_5_end_day": 300,
-            "altitude_grp_5_start_day": 230
-          },
           "seq": 12
         },
         "BLA": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der Bl\u00fcten offen oder schon verbl\u00fcht",
+          "comments": ["103", "105"],
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blüten offen oder schon verblüht",
           "group_id": "SL50",
-          "limits": {
-            "altitude_grp_1_end_day": 210,
-            "altitude_grp_1_start_day": 120,
-            "altitude_grp_2_end_day": 210,
-            "altitude_grp_2_start_day": 120,
-            "altitude_grp_3_end_day": 220,
-            "altitude_grp_3_start_day": 130,
-            "altitude_grp_4_end_day": 230,
-            "altitude_grp_4_start_day": 150,
-            "altitude_grp_5_end_day": 230,
-            "altitude_grp_5_start_day": 160
-          },
           "seq": 6
         },
         "BLB": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Beginn der Bl\u00fcte",
-          "description_de": "Erste Bl\u00fcten offen, an 3 Orten im Baum",
+          "comments": ["103", "105"],
+          "de": "Beginn der Blüte",
+          "description_de": "Erste Blüten offen, an 3 Orten im Baum",
           "group_id": "SL50",
-          "limits": {
-            "altitude_grp_1_end_day": 180,
-            "altitude_grp_1_start_day": 110,
-            "altitude_grp_2_end_day": 180,
-            "altitude_grp_2_start_day": 110,
-            "altitude_grp_3_end_day": 190,
-            "altitude_grp_3_start_day": 110,
-            "altitude_grp_4_end_day": 200,
-            "altitude_grp_4_start_day": 150,
-            "altitude_grp_5_end_day": 210,
-            "altitude_grp_5_start_day": 150
-          },
           "seq": 5
         },
         "BLE": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Ende der Bl\u00fcte",
-          "description_de": "95% der Bl\u00fcten verbl\u00fcht oder abgefallen",
+          "comments": ["103", "105"],
+          "de": "Ende der Blüte",
+          "description_de": "95% der Blüten verblüht oder abgefallen",
           "group_id": "SL50",
-          "limits": {
-            "altitude_grp_1_end_day": 210,
-            "altitude_grp_1_start_day": 140,
-            "altitude_grp_2_end_day": 210,
-            "altitude_grp_2_start_day": 140,
-            "altitude_grp_3_end_day": 210,
-            "altitude_grp_3_start_day": 150,
-            "altitude_grp_4_end_day": 210,
-            "altitude_grp_4_start_day": 150,
-            "altitude_grp_5_end_day": 210,
-            "altitude_grp_5_start_day": 150
-          },
           "seq": 7
         },
         "BVA": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Allgemeine Blattverf\u00e4rbung",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "SL70",
-          "limits": {
-            "altitude_grp_1_end_day": 310,
-            "altitude_grp_1_start_day": 210,
-            "altitude_grp_2_end_day": 310,
-            "altitude_grp_2_start_day": 210,
-            "altitude_grp_3_end_day": 300,
-            "altitude_grp_3_start_day": 210,
-            "altitude_grp_4_end_day": 290,
-            "altitude_grp_4_start_day": 200,
-            "altitude_grp_5_end_day": 280,
-            "altitude_grp_5_start_day": 200
-          },
           "seq": 11
         },
         "BVS": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Beginn der Blattverf\u00e4rbung",
-          "description_de": "10% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Beginn der Blattverfärbung",
+          "description_de": "10% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "SL70",
-          "limits": {
-            "altitude_grp_1_end_day": 300,
-            "altitude_grp_1_start_day": 190,
-            "altitude_grp_2_end_day": 300,
-            "altitude_grp_2_start_day": 190,
-            "altitude_grp_3_end_day": 280,
-            "altitude_grp_3_start_day": 190,
-            "altitude_grp_4_end_day": 280,
-            "altitude_grp_4_start_day": 190,
-            "altitude_grp_5_end_day": 270,
-            "altitude_grp_5_start_day": 190
-          },
           "seq": 10
         },
         "FRA": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Allgemeine Fruchtreife",
-          "description_de": "50% der Fruchtst\u00e4nde sind verf\u00e4rbt und fallen ab",
+          "description_de": "50% der Fruchtstände sind verfärbt und fallen ab",
           "group_id": "SL60",
-          "limits": {
-            "altitude_grp_1_end_day": 340,
-            "altitude_grp_1_start_day": 230,
-            "altitude_grp_2_end_day": 340,
-            "altitude_grp_2_start_day": 230,
-            "altitude_grp_3_end_day": 340,
-            "altitude_grp_3_start_day": 230,
-            "altitude_grp_4_end_day": 330,
-            "altitude_grp_4_start_day": 230,
-            "altitude_grp_5_end_day": 320,
-            "altitude_grp_5_start_day": 230
-          },
           "seq": 9
         },
         "FRB": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Beginn der Fruchtreife",
-          "description_de": "Erste Fruchtst\u00e4nde an 3 Orten im Baum sind arttypisch verf\u00e4rbt und fallen ab",
+          "description_de": "Erste Fruchtstände an 3 Orten im Baum sind arttypisch verfärbt und fallen ab",
           "group_id": "SL60",
-          "limits": {
-            "altitude_grp_1_end_day": 270,
-            "altitude_grp_1_start_day": 210,
-            "altitude_grp_2_end_day": 270,
-            "altitude_grp_2_start_day": 210,
-            "altitude_grp_3_end_day": 270,
-            "altitude_grp_3_start_day": 210,
-            "altitude_grp_4_end_day": 270,
-            "altitude_grp_4_start_day": 210,
-            "altitude_grp_5_end_day": 270,
-            "altitude_grp_5_start_day": 210
-          },
           "seq": 8
         },
         "KNS": {
           "comments": [],
           "de": "Beginn der Knospung",
-          "description_de": "Kleine gr\u00fcne Spitzchen sind ersichtlich an drei Orten im Baum",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an drei Orten im Baum",
           "group_id": "SL10",
-          "limits": {
-            "altitude_grp_1_end_day": 120,
-            "altitude_grp_1_start_day": 70,
-            "altitude_grp_2_end_day": 110,
-            "altitude_grp_2_start_day": 70,
-            "altitude_grp_3_end_day": 120,
-            "altitude_grp_3_start_day": 70,
-            "altitude_grp_4_end_day": 120,
-            "altitude_grp_4_start_day": 70,
-            "altitude_grp_5_end_day": 120,
-            "altitude_grp_5_start_day": 70
-          },
           "seq": 2
         },
         "KNV": {
@@ -3624,367 +2466,376 @@
           "de": "Vor der Knospung",
           "description_de": "Knospung steht kurz bevor",
           "group_id": "SL10",
-          "limits": {
-            "altitude_grp_1_end_day": 100,
-            "altitude_grp_1_start_day": 60,
-            "altitude_grp_2_end_day": 100,
-            "altitude_grp_2_start_day": 60,
-            "altitude_grp_3_end_day": 100,
-            "altitude_grp_3_start_day": 60,
-            "altitude_grp_4_end_day": 100,
-            "altitude_grp_4_start_day": 60,
-            "altitude_grp_5_end_day": 100,
-            "altitude_grp_5_start_day": 60
-          },
           "seq": 1
         }
       },
-      "tenant": "all"
+      "sources": ["globe", "meteoswiss", "ranger"]
     },
-    "VB": {
-      "de": "Vogelbeere",
+    "TE": {
+      "de": "Trauben-Eiche",
       "groups": {
-        "1": {
-          "color": "#7bb53b;",
+        "BE": {
+          "color": "#7bb53b",
           "de": "Blattentfaltung",
-          "seq": 1
-        },
-        "2": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
           "seq": 2
         },
-        "3": {
-          "color": "#e8b658;",
-          "de": "Fruchtreife",
-          "seq": 3
-        },
-        "4": {
-          "color": "#b29976;",
-          "de": "Herbstverf\u00e4rbung",
-          "seq": 4
-        },
-        "5": {
-          "color": "#868072;",
+        "BF": {
+          "color": "#868072",
           "de": "Blattfall",
           "seq": 5
+        },
+        "HV": {
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
+          "seq": 4
+        },
+        "KN": {
+          "color": "#4b9f6f",
+          "de": "Knospung",
+          "seq": 1
+        },
+        "TEMST": {
+          "color": "#eb5b23",
+          "de": "Mast",
+          "seq": 3
         }
       },
       "phenophases": {
         "BEA": {
           "de": "Allgemeine Blattentfaltung",
-          "description_de": "50% der Bl\u00e4tter des Baumes sind entfaltet",
-          "group_id": "1",
-          "seq": 1
+          "description_de": "50% der Blätter des Baumes sind entfaltet",
+          "group_id": "BE",
+          "seq": 4
+        },
+        "BES": {
+          "de": "Beginn der Blattentfaltung",
+          "description_de": "Aus 3 Knospen haben sich die ersten Blätter entfaltet",
+          "group_id": "BE",
+          "seq": 3
         },
         "BFA": {
           "de": "Allgemeiner Blattfall",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist abgefallen",
-          "group_id": "5",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
+          "group_id": "BF",
           "seq": 6
         },
-        "BLA": {
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der Bl\u00fcten offen oder schon verbl\u00fcht",
-          "group_id": "2",
-          "seq": 3
+        "BVA": {
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
+          "group_id": "HV",
+          "seq": 5
         },
-        "BLB": {
-          "de": "Beginn der Bl\u00fcte",
-          "description_de": "Erste Bl\u00fcten offen, an 3 Orten im Baum",
-          "group_id": "2",
+        "KNS": {
+          "de": "Beginn der Knospung",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an drei Orten im Baum",
+          "group_id": "KN",
           "seq": 2
         },
-        "BVA": {
-          "de": "Allgemeine Blattverf\u00e4rbung",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
-          "group_id": "4",
+        "KNV": {
+          "de": "Vor der Knospung",
+          "description_de": "Knospung steht kurz bevor",
+          "group_id": "KN",
+          "seq": 1
+        },
+        "MST": {
+          "comments": ["cmst1", "cmst2", "cmst3", "cmst4"],
+          "de": "Mastausprägung",
+          "description_de": "Mastausprägung anhand Beobachtungsanleitung als Kommentar eintragen",
+          "group_id": "TEMST",
+          "seq": 1
+        }
+      },
+      "sources": ["ranger", "wld"]
+    },
+    "VB": {
+      "de": "Vogelbeere",
+      "groups": {
+        "BE": {
+          "color": "#7bb53b",
+          "de": "Blattentfaltung",
+          "seq": 2
+        },
+        "BF": {
+          "color": "#868072",
+          "de": "Blattfall",
+          "seq": 6
+        },
+        "BL": {
+          "color": "#e8d439",
+          "de": "Blüte",
+          "seq": 3
+        },
+        "FR": {
+          "color": "#e8b658",
+          "de": "Fruchtreife",
+          "seq": 4
+        },
+        "HV": {
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
           "seq": 5
+        },
+        "KN": {
+          "color": "#4b9f6f",
+          "de": "Knospung",
+          "seq": 1
+        }
+      },
+      "phenophases": {
+        "BEA": {
+          "de": "Allgemeine Blattentfaltung",
+          "description_de": "50% der Blätter des Baumes sind entfaltet",
+          "group_id": "BE",
+          "seq": 4
+        },
+        "BES": {
+          "de": "Beginn der Blattentfaltung",
+          "description_de": "Aus 3 Knospen haben sich die ersten Blätter entfaltet",
+          "group_id": "BE",
+          "seq": 3
+        },
+        "BFA": {
+          "de": "Allgemeiner Blattfall",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
+          "group_id": "BF",
+          "seq": 10
+        },
+        "BLA": {
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blüten offen oder schon verblüht",
+          "group_id": "BL",
+          "seq": 6
+        },
+        "BLB": {
+          "de": "Beginn der Blüte",
+          "description_de": "Die Blüten von 3 Blütenständen im Baum sind offen",
+          "group_id": "BL",
+          "seq": 5
+        },
+        "BVA": {
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
+          "group_id": "HV",
+          "seq": 9
         },
         "FRA": {
           "de": "Allgemeine Fruchtreife",
-          "description_de": "50% der Einzelfr\u00fcchte sind arttypisch reif",
-          "group_id": "3",
-          "seq": 4
+          "description_de": "50% der Früchte haben sich arttypisch rot verfärbt",
+          "group_id": "FR",
+          "seq": 8
+        },
+        "FRB": {
+          "de": "Beginn der Fruchtreife",
+          "description_de": "An 3 Blütenständen im Baum haben sich die Früchte arttypisch rot verfärbt",
+          "group_id": "FR",
+          "seq": 7
+        },
+        "KNS": {
+          "de": "Beginn der Knospung",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an drei Orten im Baum",
+          "group_id": "KN",
+          "seq": 2
+        },
+        "KNV": {
+          "de": "Vor der Knospung",
+          "description_de": "Knospung steht kurz bevor",
+          "group_id": "KN",
+          "seq": 1
         }
       },
-      "tenant": "meteoswiss"
+      "sources": ["meteoswiss", "ranger", "wld"]
+    },
+    "VK": {
+      "de": "Vogelkirsche",
+      "groups": {
+        "BE": {
+          "color": "#7bb53b",
+          "de": "Blattentfaltung",
+          "seq": 3
+        },
+        "BF": {
+          "color": "#868072",
+          "de": "Blattfall",
+          "seq": 5
+        },
+        "BL": {
+          "color": "#e8d439",
+          "de": "Blüte",
+          "seq": 1
+        },
+        "HV": {
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
+          "seq": 4
+        },
+        "KN": {
+          "color": "#4b9f6f",
+          "de": "Knospung",
+          "seq": 2
+        }
+      },
+      "phenophases": {
+        "BEA": {
+          "de": "Allgemeine Blattentfaltung",
+          "description_de": "50% der Blätter des Baumes sind entfaltet",
+          "group_id": "BE",
+          "seq": 6
+        },
+        "BES": {
+          "de": "Beginn der Blattentfaltung",
+          "description_de": "Aus 3 Knospen haben sich die ersten Blätter entfaltet",
+          "group_id": "BE",
+          "seq": 5
+        },
+        "BFA": {
+          "de": "Allgemeiner Blattfall",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
+          "group_id": "BF",
+          "seq": 8
+        },
+        "BLA": {
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blüten offen oder schon verblüht",
+          "group_id": "BL",
+          "seq": 2
+        },
+        "BLB": {
+          "de": "Beginn der Blüte",
+          "description_de": "Erste Blüten offen, an 3 Orten im Baum",
+          "group_id": "BL",
+          "seq": 1
+        },
+        "BVA": {
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
+          "group_id": "HV",
+          "seq": 7
+        },
+        "KNS": {
+          "de": "Beginn der Knospung",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an drei Orten im Baum",
+          "group_id": "KN",
+          "seq": 4
+        },
+        "KNV": {
+          "de": "Vor der Knospung",
+          "description_de": "Knospung steht kurz bevor",
+          "group_id": "KN",
+          "seq": 3
+        }
+      },
+      "sources": ["ranger"]
     },
     "WL": {
       "de": "Winterlinde",
       "groups": {
         "WL10": {
-          "color": "#4b9f6f;",
+          "color": "#4b9f6f",
           "de": "Knospung",
           "seq": 1
         },
         "WL40": {
-          "color": "#7bb53b;",
+          "color": "#7bb53b",
           "de": "Blattentfaltung",
           "seq": 2
         },
         "WL50": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+          "color": "#e8d439",
+          "de": "Blüte",
           "seq": 3
         },
         "WL60": {
-          "color": "#e8b658;",
+          "color": "#e8b658",
           "de": "Fruchtreife",
           "seq": 4
         },
         "WL70": {
-          "color": "#b29976;",
-          "de": "Herbstverf\u00e4rbung",
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
           "seq": 5
         },
         "WL75": {
-          "color": "#868072;",
+          "color": "#868072",
           "de": "Blattfall",
           "seq": 6
         }
       },
       "phenophases": {
         "BEA": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Allgemeine Blattentfaltung",
-          "description_de": "50% der Bl\u00e4tter des Baumes sind entfaltet",
+          "description_de": "50% der Blätter des Baumes sind entfaltet",
           "group_id": "WL40",
-          "limits": {
-            "altitude_grp_1_end_day": 140,
-            "altitude_grp_1_start_day": 100,
-            "altitude_grp_2_end_day": 140,
-            "altitude_grp_2_start_day": 110,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 120,
-            "altitude_grp_4_end_day": 150,
-            "altitude_grp_4_start_day": 120,
-            "altitude_grp_5_end_day": 160,
-            "altitude_grp_5_start_day": 120
-          },
           "seq": 4
         },
         "BES": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Beginn der Blattentfaltung",
           "description_de": "An ersten Knospen an 3 Orten im Baum hat sich ein Blatt entfaltet",
           "group_id": "WL40",
-          "limits": {
-            "altitude_grp_1_end_day": 140,
-            "altitude_grp_1_start_day": 90,
-            "altitude_grp_2_end_day": 130,
-            "altitude_grp_2_start_day": 90,
-            "altitude_grp_3_end_day": 140,
-            "altitude_grp_3_start_day": 90,
-            "altitude_grp_4_end_day": 140,
-            "altitude_grp_4_start_day": 90,
-            "altitude_grp_5_end_day": 140,
-            "altitude_grp_5_start_day": 90
-          },
           "seq": 3
         },
         "BFA": {
-          "comments": [
-            "112",
-            "113",
-            "114"
-          ],
+          "comments": ["112", "113", "114"],
           "de": "Allgemeiner Blattfall",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist abgefallen",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
           "group_id": "WL75",
-          "limits": {
-            "altitude_grp_1_end_day": 310,
-            "altitude_grp_1_start_day": 220,
-            "altitude_grp_2_end_day": 310,
-            "altitude_grp_2_start_day": 220,
-            "altitude_grp_3_end_day": 310,
-            "altitude_grp_3_start_day": 220,
-            "altitude_grp_4_end_day": 300,
-            "altitude_grp_4_start_day": 220,
-            "altitude_grp_5_end_day": 290,
-            "altitude_grp_5_start_day": 220
-          },
           "seq": 12
         },
         "BLA": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der Bl\u00fcten offen oder schon verbl\u00fcht",
+          "comments": ["103", "105"],
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blüten offen oder schon verblüht",
           "group_id": "WL50",
-          "limits": {
-            "altitude_grp_1_end_day": 210,
-            "altitude_grp_1_start_day": 130,
-            "altitude_grp_2_end_day": 220,
-            "altitude_grp_2_start_day": 130,
-            "altitude_grp_3_end_day": 220,
-            "altitude_grp_3_start_day": 140,
-            "altitude_grp_4_end_day": 220,
-            "altitude_grp_4_start_day": 150,
-            "altitude_grp_5_end_day": 220,
-            "altitude_grp_5_start_day": 160
-          },
           "seq": 6
         },
         "BLB": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Beginn der Bl\u00fcte",
-          "description_de": "Erste Bl\u00fcten offen, an 3 Orten im Baum",
+          "comments": ["103", "105"],
+          "de": "Beginn der Blüte",
+          "description_de": "Erste Blüten offen, an 3 Orten im Baum",
           "group_id": "WL50",
-          "limits": {
-            "altitude_grp_1_end_day": 190,
-            "altitude_grp_1_start_day": 120,
-            "altitude_grp_2_end_day": 190,
-            "altitude_grp_2_start_day": 120,
-            "altitude_grp_3_end_day": 200,
-            "altitude_grp_3_start_day": 130,
-            "altitude_grp_4_end_day": 210,
-            "altitude_grp_4_start_day": 140,
-            "altitude_grp_5_end_day": 210,
-            "altitude_grp_5_start_day": 150
-          },
           "seq": 5
         },
         "BLE": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Ende der Bl\u00fcte",
-          "description_de": "95% der Bl\u00fcten verbl\u00fcht oder abgefallen",
+          "comments": ["103", "105"],
+          "de": "Ende der Blüte",
+          "description_de": "95% der Blüten verblüht oder abgefallen",
           "group_id": "WL50",
-          "limits": {
-            "altitude_grp_1_end_day": 220,
-            "altitude_grp_1_start_day": 140,
-            "altitude_grp_2_end_day": 220,
-            "altitude_grp_2_start_day": 140,
-            "altitude_grp_3_end_day": 220,
-            "altitude_grp_3_start_day": 150,
-            "altitude_grp_4_end_day": 220,
-            "altitude_grp_4_start_day": 150,
-            "altitude_grp_5_end_day": 220,
-            "altitude_grp_5_start_day": 150
-          },
           "seq": 7
         },
         "BVA": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Allgemeine Blattverf\u00e4rbung",
-          "description_de": "50% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "WL70",
-          "limits": {
-            "altitude_grp_1_end_day": 310,
-            "altitude_grp_1_start_day": 200,
-            "altitude_grp_2_end_day": 300,
-            "altitude_grp_2_start_day": 200,
-            "altitude_grp_3_end_day": 290,
-            "altitude_grp_3_start_day": 200,
-            "altitude_grp_4_end_day": 280,
-            "altitude_grp_4_start_day": 200,
-            "altitude_grp_5_end_day": 270,
-            "altitude_grp_5_start_day": 210
-          },
           "seq": 11
         },
         "BVS": {
-          "comments": [
-            "110",
-            "111",
-            "112"
-          ],
-          "de": "Beginn der Blattverf\u00e4rbung",
-          "description_de": "10% der sommerlichen Blattfl\u00e4che ist herbstlich verf\u00e4rbt",
+          "comments": ["110", "111", "112"],
+          "de": "Beginn der Blattverfärbung",
+          "description_de": "10% der sommerlichen Blattfläche ist herbstlich verfärbt",
           "group_id": "WL70",
-          "limits": {
-            "altitude_grp_1_end_day": 300,
-            "altitude_grp_1_start_day": 200,
-            "altitude_grp_2_end_day": 300,
-            "altitude_grp_2_start_day": 200,
-            "altitude_grp_3_end_day": 300,
-            "altitude_grp_3_start_day": 200,
-            "altitude_grp_4_end_day": 280,
-            "altitude_grp_4_start_day": 200,
-            "altitude_grp_5_end_day": 260,
-            "altitude_grp_5_start_day": 200
-          },
           "seq": 10
         },
         "FRA": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Allgemeine Fruchtreife",
-          "description_de": "50% der Fruchtst\u00e4nde sind verf\u00e4rbt und fallen ab",
+          "description_de": "50% der Fruchtstände sind verfärbt und fallen ab",
           "group_id": "WL60",
-          "limits": {
-            "altitude_grp_1_end_day": 310,
-            "altitude_grp_1_start_day": 230,
-            "altitude_grp_2_end_day": 310,
-            "altitude_grp_2_start_day": 230,
-            "altitude_grp_3_end_day": 310,
-            "altitude_grp_3_start_day": 230,
-            "altitude_grp_4_end_day": 300,
-            "altitude_grp_4_start_day": 230,
-            "altitude_grp_5_end_day": 290,
-            "altitude_grp_5_start_day": 230
-          },
           "seq": 9
         },
         "FRB": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Beginn der Fruchtreife",
-          "description_de": "Erste Fruchtst\u00e4nde an 3 Orten im Baum sind arttypisch verf\u00e4rbt und fallen ab",
+          "description_de": "Erste Fruchtstände an 3 Orten im Baum sind arttypisch verfärbt und fallen ab",
           "group_id": "WL60",
-          "limits": {
-            "altitude_grp_1_end_day": 280,
-            "altitude_grp_1_start_day": 220,
-            "altitude_grp_2_end_day": 280,
-            "altitude_grp_2_start_day": 220,
-            "altitude_grp_3_end_day": 280,
-            "altitude_grp_3_start_day": 220,
-            "altitude_grp_4_end_day": 280,
-            "altitude_grp_4_start_day": 220,
-            "altitude_grp_5_end_day": 280,
-            "altitude_grp_5_start_day": 220
-          },
           "seq": 8
         },
         "KNS": {
           "comments": [],
           "de": "Beginn der Knospung",
-          "description_de": "Kleine gr\u00fcne Spitzchen sind ersichtlich an drei Orten im Baum",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an drei Orten im Baum",
           "group_id": "WL10",
-          "limits": {
-            "altitude_grp_1_end_day": 120,
-            "altitude_grp_1_start_day": 80,
-            "altitude_grp_2_end_day": 120,
-            "altitude_grp_2_start_day": 80,
-            "altitude_grp_3_end_day": 120,
-            "altitude_grp_3_start_day": 80,
-            "altitude_grp_4_end_day": 120,
-            "altitude_grp_4_start_day": 80,
-            "altitude_grp_5_end_day": 120,
-            "altitude_grp_5_start_day": 80
-          },
           "seq": 2
         },
         "KNV": {
@@ -3992,215 +2843,171 @@
           "de": "Vor der Knospung",
           "description_de": "Knospung steht kurz bevor",
           "group_id": "WL10",
-          "limits": {
-            "altitude_grp_1_end_day": 110,
-            "altitude_grp_1_start_day": 60,
-            "altitude_grp_2_end_day": 110,
-            "altitude_grp_2_start_day": 60,
-            "altitude_grp_3_end_day": 110,
-            "altitude_grp_3_start_day": 60,
-            "altitude_grp_4_end_day": 110,
-            "altitude_grp_4_start_day": 70,
-            "altitude_grp_5_end_day": 110,
-            "altitude_grp_5_start_day": 70
-          },
           "seq": 1
         }
       },
-      "tenant": "all"
+      "sources": ["globe", "meteoswiss", "ranger"]
+    },
+    "WR": {
+      "de": "Waldrebe",
+      "groups": {
+        "BE": {
+          "color": "#7bb53b",
+          "de": "Blattentfaltung",
+          "seq": 2
+        },
+        "BF": {
+          "color": "#868072",
+          "de": "Blattfall",
+          "seq": 4
+        },
+        "HV": {
+          "color": "#b29976",
+          "de": "Herbstverfärbung",
+          "seq": 3
+        },
+        "KN": {
+          "color": "#4b9f6f",
+          "de": "Knospung",
+          "seq": 1
+        }
+      },
+      "phenophases": {
+        "BEA": {
+          "de": "Allgemeine Blattentfaltung",
+          "description_de": "50% der Blätter der Liane entfaltet",
+          "group_id": "BE",
+          "seq": 4
+        },
+        "BES": {
+          "de": "Beginn der Blattentfaltung",
+          "description_de": "Aus 3 Knospen haben sich die ersten Blätter entfaltet",
+          "group_id": "BE",
+          "seq": 3
+        },
+        "BFA": {
+          "de": "Allgemeiner Blattfall",
+          "description_de": "50% der sommerlichen Blattfläche ist abgefallen",
+          "group_id": "BF",
+          "seq": 6
+        },
+        "BVA": {
+          "de": "Allgemeine Blattverfärbung",
+          "description_de": "50% der sommerlichen Blattfläche ist herbstlich verfärbt",
+          "group_id": "HV",
+          "seq": 5
+        },
+        "KNS": {
+          "de": "Beginn der Knospung",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an drei Orten an der Liane",
+          "group_id": "KN",
+          "seq": 2
+        },
+        "KNV": {
+          "de": "Vor der Knospung",
+          "description_de": "Knospung steht kurz bevor",
+          "group_id": "KN",
+          "seq": 1
+        }
+      },
+      "sources": ["ranger"]
     },
     "WS": {
       "de": "Wiesenschaumkraut",
       "groups": {
         "2": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+          "color": "#e8d439",
+          "de": "Blüte",
           "seq": 2
         }
       },
       "phenophases": {
         "BLA": {
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der Bl\u00fcten offen oder schon verbl\u00fcht",
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blüten offen oder schon verblüht",
           "group_id": "2",
           "seq": 3
         }
       },
-      "tenant": "meteoswiss"
+      "sources": ["meteoswiss"]
     },
     "WT": {
       "de": "Weisstanne",
       "groups": {
         "WT10": {
-          "color": "#4b9f6f;",
+          "color": "#4b9f6f",
           "de": "Knospung",
           "seq": 1
         },
         "WT40": {
-          "color": "#7bb53b;",
+          "color": "#7bb53b",
           "de": "Triebentwicklung",
           "seq": 2
         },
         "WT50": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+          "color": "#e8d439",
+          "de": "Blüte",
           "seq": 3
         },
         "WT60": {
-          "color": "#e8b658;",
+          "color": "#e8b658",
           "de": "Fruchtreife",
+          "seq": 5
+        },
+        "WTMST": {
+          "color": "#eb5b23",
+          "de": "Mast",
           "seq": 4
         }
       },
       "phenophases": {
         "BEA": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Allgemeiner Nadelaustrieb",
-          "description_de": "An 50% der Knospen entfalten sich die Nadelb\u00fcschel",
+          "description_de": "An 50% der Knospen entfalten sich die Nadelbüschel",
           "group_id": "WT40",
-          "limits": {
-            "altitude_grp_1_end_day": 180,
-            "altitude_grp_1_start_day": 90,
-            "altitude_grp_2_end_day": 180,
-            "altitude_grp_2_start_day": 90,
-            "altitude_grp_3_end_day": 180,
-            "altitude_grp_3_start_day": 90,
-            "altitude_grp_4_end_day": 180,
-            "altitude_grp_4_start_day": 90,
-            "altitude_grp_5_end_day": 180,
-            "altitude_grp_5_start_day": 90
-          },
           "seq": 4
         },
         "BES": {
-          "comments": [
-            "101"
-          ],
+          "comments": ["101"],
           "de": "Beginn des Nadelaustriebs",
-          "description_de": "An ersten Knospen an 3 Orten im Baum entfalten sich die Nadelb\u00fcschel",
+          "description_de": "An ersten Knospen an 3 Orten im Baum entfalten sich die Nadelbüschel",
           "group_id": "WT40",
-          "limits": {
-            "altitude_grp_1_end_day": 150,
-            "altitude_grp_1_start_day": 80,
-            "altitude_grp_2_end_day": 150,
-            "altitude_grp_2_start_day": 80,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 80,
-            "altitude_grp_4_end_day": 150,
-            "altitude_grp_4_start_day": 80,
-            "altitude_grp_5_end_day": 150,
-            "altitude_grp_5_start_day": 80
-          },
           "seq": 3
         },
         "BLA": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der Bl\u00fctenst\u00e4nde st\u00e4uben",
+          "comments": ["103", "105"],
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blütenstände stäuben",
           "group_id": "WT50",
-          "limits": {
-            "altitude_grp_1_end_day": 170,
-            "altitude_grp_1_start_day": 110,
-            "altitude_grp_2_end_day": 170,
-            "altitude_grp_2_start_day": 110,
-            "altitude_grp_3_end_day": 170,
-            "altitude_grp_3_start_day": 110,
-            "altitude_grp_4_end_day": 170,
-            "altitude_grp_4_start_day": 110,
-            "altitude_grp_5_end_day": 170,
-            "altitude_grp_5_start_day": 110
-          },
           "seq": 6
         },
         "BLB": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Beginn der Bl\u00fcte",
-          "description_de": "An ersten Bl\u00fctenst\u00e4nden an 3 Orten im Baum sind die Staubbeutel reif und st\u00e4uben",
+          "comments": ["103", "105"],
+          "de": "Beginn der Blüte",
+          "description_de": "An ersten Blütenständen an 3 Orten im Baum sind die Staubbeutel reif und stäuben",
           "group_id": "WT50",
-          "limits": {
-            "altitude_grp_1_end_day": 150,
-            "altitude_grp_1_start_day": 100,
-            "altitude_grp_2_end_day": 150,
-            "altitude_grp_2_start_day": 100,
-            "altitude_grp_3_end_day": 150,
-            "altitude_grp_3_start_day": 100,
-            "altitude_grp_4_end_day": 150,
-            "altitude_grp_4_start_day": 100,
-            "altitude_grp_5_end_day": 150,
-            "altitude_grp_5_start_day": 100
-          },
           "seq": 5
         },
         "BLE": {
-          "comments": [
-            "103",
-            "105"
-          ],
-          "de": "Ende der Bl\u00fcte",
-          "description_de": "95% der Bl\u00fctenst\u00e4nde sind verbl\u00fcht oder schon abgefallen",
+          "comments": ["103", "105"],
+          "de": "Ende der Blüte",
+          "description_de": "95% der Blütenstände sind verblüht oder schon abgefallen",
           "group_id": "WT50",
-          "limits": {
-            "altitude_grp_1_end_day": 180,
-            "altitude_grp_1_start_day": 120,
-            "altitude_grp_2_end_day": 180,
-            "altitude_grp_2_start_day": 120,
-            "altitude_grp_3_end_day": 180,
-            "altitude_grp_3_start_day": 120,
-            "altitude_grp_4_end_day": 180,
-            "altitude_grp_4_start_day": 120,
-            "altitude_grp_5_end_day": 180,
-            "altitude_grp_5_start_day": 120
-          },
           "seq": 7
         },
         "FRB": {
-          "comments": [
-            "106",
-            "108",
-            "109"
-          ],
+          "comments": ["106", "108", "109"],
           "de": "Beginn der Fruchtreife",
-          "description_de": "3 Zapfen sind arttypisch reif und erste Fr\u00fcchte sind abgefallen",
+          "description_de": "3 Zapfen sind arttypisch reif und erste Früchte sind abgefallen",
           "group_id": "WT60",
-          "limits": {
-            "altitude_grp_1_end_day": 290,
-            "altitude_grp_1_start_day": 240,
-            "altitude_grp_2_end_day": 290,
-            "altitude_grp_2_start_day": 240,
-            "altitude_grp_3_end_day": 290,
-            "altitude_grp_3_start_day": 240,
-            "altitude_grp_4_end_day": 280,
-            "altitude_grp_4_start_day": 240,
-            "altitude_grp_5_end_day": 270,
-            "altitude_grp_5_start_day": 240
-          },
           "seq": 8
         },
         "KNS": {
           "comments": [],
           "de": "Beginn der Knospung",
-          "description_de": "Kleine gr\u00fcne Spitzchen sind ersichtlich an drei Orten im Baum",
+          "description_de": "Kleine grüne Spitzchen sind ersichtlich an drei Orten im Baum",
           "group_id": "WT10",
-          "limits": {
-            "altitude_grp_1_end_day": 130,
-            "altitude_grp_1_start_day": 70,
-            "altitude_grp_2_end_day": 120,
-            "altitude_grp_2_start_day": 70,
-            "altitude_grp_3_end_day": 130,
-            "altitude_grp_3_start_day": 70,
-            "altitude_grp_4_end_day": 130,
-            "altitude_grp_4_start_day": 70,
-            "altitude_grp_5_end_day": 130,
-            "altitude_grp_5_start_day": 80
-          },
           "seq": 2
         },
         "KNV": {
@@ -4208,51 +3015,46 @@
           "de": "Vor der Knospung",
           "description_de": "Knospung steht kurz bevor",
           "group_id": "WT10",
-          "limits": {
-            "altitude_grp_1_end_day": 120,
-            "altitude_grp_1_start_day": 60,
-            "altitude_grp_2_end_day": 110,
-            "altitude_grp_2_start_day": 60,
-            "altitude_grp_3_end_day": 120,
-            "altitude_grp_3_start_day": 60,
-            "altitude_grp_4_end_day": 120,
-            "altitude_grp_4_start_day": 60,
-            "altitude_grp_5_end_day": 120,
-            "altitude_grp_5_start_day": 70
-          },
+          "seq": 1
+        },
+        "MST": {
+          "comments": ["cmst1", "cmst2", "cmst3", "cmst4"],
+          "de": "Mastausprägung",
+          "description_de": "Mastausprägung anhand Beobachtungsanleitung als Kommentar eintragen",
+          "group_id": "WTMST",
           "seq": 1
         }
       },
-      "tenant": "globe"
+      "sources": ["globe", "ranger", "wld"]
     },
     "WZ": {
-      "de": "Wiesenl\u00f6wenzahn",
+      "de": "Wiesenlöwenzahn",
       "groups": {
         "2": {
-          "color": "#e8d439;",
-          "de": "Bl\u00fcte",
+          "color": "#e8d439",
+          "de": "Blüte",
           "seq": 2
         }
       },
       "phenophases": {
         "BLA": {
-          "de": "Allgemeine Bl\u00fcte",
-          "description_de": "50% der Bl\u00fcten offen oder schon verbl\u00fcht",
+          "de": "Allgemeine Blüte",
+          "description_de": "50% der Blüten offen oder schon verblüht",
           "group_id": "2",
           "seq": 3
         }
       },
-      "tenant": "meteoswiss"
+      "sources": ["meteoswiss"]
     }
   },
   "watering": {
     "0": {
-      "de": "nicht bew\u00e4ssert",
-      "seq": "0"
+      "de": "nicht bewässert",
+      "seq": 0
     },
     "1": {
-      "de": "bew\u00e4ssert",
-      "seq": "1"
+      "de": "bewässert",
+      "seq": 1
     }
   }
 }

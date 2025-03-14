@@ -23,12 +23,18 @@ from phenoback.utils.firestore import (  # pylint: disable=unused-import
 
 @lru_cache
 def _get_static_config() -> dict:
-    return get_document("definitions", "config_static")
+    config = get_document("definitions", "config_static")
+    if not config:
+        raise ValueError("config_static not found")
+    return config
 
 
 @lru_cache
 def _get_dynamic_config() -> dict:
-    return get_document("definitions", "config_dynamic")
+    config = get_document("definitions", "config_dynamic")
+    if not config:
+        raise ValueError("config_static not found")
+    return config
 
 
 def get_phenophase(species: str, phenophase: str) -> dict:
@@ -39,7 +45,7 @@ def get_species(species: str) -> dict:
     return _get_static_config()["species"][species]
 
 
-def is_actual_observation(comment: str) -> bool:
+def is_actual_observation(comment: str | None) -> bool:
     """Check if the comment indicates an actual observation that should be counted in statistics."""
     return _get_static_config()["comments"].get(comment, {"stats": True})["stats"]
 
