@@ -15,7 +15,7 @@ import phenoback.utils.gcloud as g
 from phenoback.utils import glogging
 
 
-def sentry_environment() -> tuple[str, float]:
+def sentry_environment() -> tuple[str, float, float]:
     project = g.get_project()
     if project == "phaenonet":
         return ("production", 1.0, 0.0)
@@ -38,11 +38,11 @@ firebase_admin.initialize_app(
     options={"storageBucket": os.environ.get("storageBucket")}
 )
 
-log: logging.Logger = None  # pylint: disable=invalid-name
+log: logging.Logger = None  # type: ignore # pylint: disable=invalid-name
 
 
 @contextmanager  # workaround as stackdriver fails to capture stackstraces
-def setup(data: dict | Request | None, context=None, level=logging.DEBUG):
+def setup(data: str | dict | Request | None, context=None, level=logging.DEBUG):
     """
     Setup logging and and capture exceptions.
     :param data: May be a dict, a http request or None.
@@ -56,8 +56,10 @@ def setup(data: dict | Request | None, context=None, level=logging.DEBUG):
             log.debug(context)
         if data:
             if isinstance(data, Request):
-                data = data.json if data.is_json else data.data
-            log.debug(data)
+                data_logged = data.json if data.is_json else data.data
+            else:
+                data_logged = data
+            log.debug(data_logged)
         yield
     except Exception:
         log.exception("Fatal error in cloud function")
