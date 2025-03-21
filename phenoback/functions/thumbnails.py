@@ -53,7 +53,7 @@ def process_new_image(pathfile: str, bucket=None) -> bool:
 
 def get_thumbnail(url: str, width: int, height: int) -> BytesIO:
     log.debug("tinifying url %s", url)
-    source = tinify.from_url(url)  # pylint: disable=no-member
+    source = tinify.from_url(url)  # pylint: disable=assignment-from-no-return
     resized = source.resize(method="cover", width=width, height=height)
     return BytesIO(resized.to_buffer())
 
