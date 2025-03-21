@@ -14,11 +14,11 @@ class Decoder:
         return value
 
     @property
-    def data(self):
+    def data(self) -> dict:
         return self._data
 
     @property
-    def uplink(self) -> dict:
+    def uplink(self) -> dict | None:
         return self.data.get("DevEUI_uplink")
 
     @property
@@ -30,7 +30,7 @@ class Decoder:
         return self.data.get("DevEUI_uplink", {}).get("payload_hex")
 
     @property
-    def decoded_payload(self) -> str:
+    def decoded_payload(self) -> dict:
         return self.data.get("DevEUI_uplink", {}).get("decoded_payload")
 
     def _set_decoded_payload(self, data: dict) -> None:

@@ -2,7 +2,7 @@ import datetime
 import logging
 from zoneinfo import ZoneInfo
 
-import google
+import google.api_core.exceptions
 
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
@@ -27,7 +27,7 @@ def main_individual_updated(data, context):
         if g.get_field(data, "deveui", expected=False):
             individual = g.get_field(data, "individual")
             deveui = g.get_field(data, "deveui")
-            sensor_set(individual_id, individual, deveui)
+            sensor_set(individual_id, individual, deveui)  # type: ignore
         else:
             remove_sensor(individual_id)
 

@@ -55,7 +55,7 @@ def transaction_commit():
 
 
 def delete_document(
-    collection: str, document_id: str, transaction: Transaction = None
+    collection: str, document_id: str, transaction: Transaction | None = None
 ) -> None:
     log.debug("Delete document %s from %s", document_id, collection)
     ref = firestore_client().collection(collection).document(document_id)
@@ -80,8 +80,8 @@ def _delete_batch(coll_ref, batch_size: int = 1000):
         return None
 
 
-def delete_collection(collection: str, batch_size: int = 1000) -> None:
-    _delete_batch(get_collection(collection), batch_size)
+def delete_collection(collection_name: str, batch_size: int = 1000) -> None:
+    _delete_batch(collection(collection_name), batch_size)
 
 
 def delete_batch(
@@ -125,8 +125,8 @@ def write_batch(
     data: list[dict],
     *,
     merge: bool = False,
-    commit_size: int = None,
-    transaction: Transaction = None,
+    commit_size: int | None = None,
+    transaction: Transaction | None = None,
     commit_sleep: float = 0,
 ) -> int:
     if transaction is not None:
@@ -168,7 +168,7 @@ def write_document(
     document_id: str | None,
     data: dict,
     merge: bool = False,
-    transaction: Transaction = None,
+    transaction: Transaction | None = None,
 ) -> None:
     log.debug(
         "Write document %s to %s (%s)",
@@ -187,7 +187,7 @@ def update_document(
     collection: str,
     document_id: str,
     data: dict,
-    transaction: Transaction = None,
+    transaction: Transaction | None = None,
 ) -> None:
     log.debug(
         "Update document %s in %s (%s)",
@@ -203,7 +203,7 @@ def update_document(
 
 
 def get_document(
-    collection: str, document_id: str, transaction: Transaction = None
+    collection: str, document_id: str, transaction: Transaction | None = None
 ) -> dict | None:
     log.debug(
         "Get document %s in %s (%s)",
@@ -220,7 +220,7 @@ def get_document(
     )
 
 
-def collection(collection: str) -> Query:
+def collection(collection: str) -> CollectionReference:
     log.debug("Query %s", collection)
     return firestore_client().collection(collection)
 
@@ -236,13 +236,8 @@ def query_collection(
     )
 
 
-def get_collection(collection: str) -> CollectionReference:
-    log.debug("Query collection %s", collection)
-    return firestore_client().collection(collection)
-
-
-def get_collection_documents(collection: str) -> list[dict]:
-    return [location.to_dict() for location in get_collection(collection).stream()]
+def get_collection_documents(collection_name: str) -> list[dict]:
+    return [location.to_dict() for location in collection(collection_name).stream()]
 
 
 def docs2str(docs):  # pragma: no cover

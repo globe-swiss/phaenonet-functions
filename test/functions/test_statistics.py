@@ -68,7 +68,7 @@ def test_write_statistics():
     weekly.write_statistics(data)
 
     num_docs = 0
-    for doc in f.get_collection("statistics").stream():
+    for doc in f.collection("statistics").stream():
         assert doc.to_dict() == data[doc.id]
         num_docs += 1
     assert num_docs == 2

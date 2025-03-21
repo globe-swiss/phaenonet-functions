@@ -3,7 +3,6 @@ import binascii
 import json
 import logging
 import os
-from collections import namedtuple
 from datetime import datetime
 
 import dateparser
@@ -15,7 +14,7 @@ log.setLevel(logging.INFO)
 
 def get_field(
     data: dict, fieldname: str, old_value: bool = False, expected=True
-) -> str | int | datetime | None:
+) -> str | int | float | datetime | bool | dict | list | None:
     value_type = "oldValue" if old_value else "value"
     value_dict = data[value_type].get("fields", {}).get(fieldname)
     if value_dict is not None:
@@ -28,7 +27,9 @@ def get_field(
         return None
 
 
-def _get_field(value_dict: dict):
+def _get_field(
+    value_dict: dict,
+) -> str | int | float | datetime | bool | dict | list | None:
     value = next(iter(value_dict.values()))
     value_type = next(iter(value_dict.keys()))
     if value_type == "stringValue":
@@ -63,7 +64,7 @@ def context2dict(context: Context) -> dict:
     return context.__dict__
 
 
-def dict2context(context_dict) -> namedtuple:
+def dict2context(context_dict) -> Context:
     return Context(
         eventId=context_dict.get("event_id"),
         timestamp=context_dict.get("timestamp"),

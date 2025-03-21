@@ -24,18 +24,23 @@ def check():
 
 def start(xprocess, name):
     class EmulatorClass(ProcessStarter):
-        args = [
-            _get_gcloud_cmd(),
-            "beta",
-            "emulators",
-            "firestore",
-            "start",
-            "--project",
-            "test",
-            "--host-port",
-            "localhost:8001",
-        ]
-        pattern = re.compile(".*is now running.*")
+        @property
+        def args(self):  # type: ignore
+            return [
+                _get_gcloud_cmd(),
+                "beta",
+                "emulators",
+                "firestore",
+                "start",
+                "--project",
+                "test",
+                "--host-port",
+                "localhost:8001",
+            ]
+
+        @property
+        def pattern(self):  # type: ignore
+            return re.compile(".*is now running.*")
 
     logfile = xprocess.ensure(name, EmulatorClass)
     # assert environment

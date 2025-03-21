@@ -28,7 +28,7 @@ def test_init(http_client: tasks.HTTPClient, gcp_project, gcp_location):
     assert http_client.project == gcp_project
     assert http_client.location == gcp_location
     assert http_client.parent == PARENT
-    client_mock.queue_path.assert_called_with(gcp_project, gcp_location, QUEUE)
+    client_mock.queue_path.assert_called_with(gcp_project, gcp_location, QUEUE)  # type: ignore
     assert http_client.url == URL
 
 
@@ -62,14 +62,14 @@ def test_send__json(http_client: tasks.HTTPClient):
 def test_send__named(http_client: tasks.HTTPClient):
     task_path = "task_path"
     task_name = "bar"
-    http_client.client.task_path.return_value = task_path
+    http_client.client.task_path.return_value = task_path  # type: ignore
 
     http_client.send("foo", task_name=task_name)
     check_default_headers(http_client)
     task_req_arg = get_request_args(http_client)["task"]
 
     assert task_req_arg["name"] == task_path
-    http_client.client.task_path.assert_called_with(
+    http_client.client.task_path.assert_called_with(  # type: ignore
         http_client.project, http_client.location, http_client.queue, task_name
     )
 

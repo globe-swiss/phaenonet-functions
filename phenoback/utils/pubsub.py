@@ -17,9 +17,7 @@ class Publisher:
         self.topic_path = self.client.topic_path(self.project, self.topic)
         log.debug("Publisher created for topic %s", self.topic)
 
-    def send(
-        self, payload: dict | str, metadata: dict[str, bytes | str] = None
-    ) -> None:
+    def send(self, payload: dict | str, metadata: dict[str, str] | None = None) -> None:
         if metadata is None:
             metadata = {}
         if isinstance(payload, dict):

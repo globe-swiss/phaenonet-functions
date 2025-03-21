@@ -56,7 +56,7 @@ def get_phenoyear(reset_cache=False) -> int:
     return _get_dynamic_config()["phenoyear"]
 
 
-def update_phenoyear(year: int, transaction: Transaction = None) -> None:
+def update_phenoyear(year: int, transaction: Transaction | None = None) -> None:
     write_document(
         "definitions",
         "config_dynamic",
@@ -67,11 +67,15 @@ def update_phenoyear(year: int, transaction: Transaction = None) -> None:
     _get_dynamic_config.cache_clear()
 
 
-def get_individual(individual_id: str, transaction: Transaction = None) -> dict:
+def get_individual(
+    individual_id: str, transaction: Transaction | None = None
+) -> dict | None:
     return get_document("individuals", individual_id, transaction=transaction)
 
 
-def delete_individual(individual_id: str, transaction: Transaction = None) -> None:
+def delete_individual(
+    individual_id: str, transaction: Transaction | None = None
+) -> None:
     delete_document("individuals", individual_id, transaction=transaction)
 
 
@@ -84,7 +88,7 @@ def query_individuals(field_path: str, op_string: str, value: Any) -> Query:
 
 
 def write_individuals(
-    individuals: list[dict], key: str, transaction: Transaction = None
+    individuals: list[dict], key: str, transaction: Transaction | None = None
 ) -> None:
     if transaction is not None:
         write_batch("individuals", key, individuals, transaction=transaction)
@@ -93,7 +97,10 @@ def write_individuals(
 
 
 def write_individual(
-    individual_id: str, data: dict, merge: bool = False, transaction: Transaction = None
+    individual_id: str,
+    data: dict,
+    merge: bool = False,
+    transaction: Transaction | None = None,
 ) -> None:
     write_document(
         "individuals", individual_id, data, merge=merge, transaction=transaction
@@ -101,27 +108,31 @@ def write_individual(
 
 
 def update_individual(
-    individual_id: str, data: dict, transaction: Transaction = None
+    individual_id: str, data: dict, transaction: Transaction | None = None
 ) -> None:
     update_document("individuals", individual_id, data, transaction=transaction)
 
 
-def get_observation(observation_id: str, transaction: Transaction = None) -> dict:
+def get_observation(
+    observation_id: str, transaction: Transaction | None = None
+) -> dict | None:
     return get_document("observations", observation_id, transaction=transaction)
 
 
 def update_observation(
-    observation_id: str, data: dict, transaction: Transaction = None
+    observation_id: str, data: dict, transaction: Transaction | None = None
 ) -> None:
     update_document("observations", observation_id, data, transaction=transaction)
 
 
-def delete_observation(observation_id: str, transaction: Transaction = None) -> None:
+def delete_observation(
+    observation_id: str, transaction: Transaction | None = None
+) -> None:
     delete_document("observations", observation_id, transaction=transaction)
 
 
 def write_observation(
-    observation_id: str, data: dict, transaction: Transaction = None
+    observation_id: str | None, data: dict, transaction: Transaction | None = None
 ) -> None:
     write_document("observations", observation_id, data, transaction=transaction)
 
@@ -145,7 +156,7 @@ def create_user(
     )
 
 
-def get_user(user_id: str, transaction: Transaction = None) -> dict:
+def get_user(user_id: str, transaction: Transaction | None = None) -> dict | None:
     return get_document("users", user_id, transaction=transaction)
 
 
@@ -166,7 +177,7 @@ def get_user_id_by_email(email: str) -> str:  # pragma: no cover
 
 
 def follow_user(
-    follower_id: str, followee_id: str, transaction: Transaction = None
+    follower_id: str, followee_id: str, transaction: Transaction | None = None
 ) -> bool:
     user = get_user(follower_id, transaction=transaction)
     if not user:
@@ -192,17 +203,17 @@ def has_sensor(individual: dict) -> bool:
     return individual.get("sensor") is not None
 
 
-def localtime(timestamp: datetime = None):
+def localtime(timestamp: datetime | None = None):
     if not timestamp:
         timestamp = datetime.now(tz=tzlocal.get_localzone())
     return timestamp.astimezone(ZoneInfo("Europe/Zurich"))
 
 
-def localdate(timestamp: datetime = None):
+def localdate(timestamp: datetime | None = None):
     return localtime(timestamp).date()
 
 
-def to_id_array(data: dict[dict], key="id") -> list[dict]:
+def to_id_array(data: dict[str, dict], key="id") -> list[dict]:
     """
     Convert a dictionary to an array of dictionaries with an additional key.
     Useful for writing data in batch mode.
