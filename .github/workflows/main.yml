@@ -35,14 +35,14 @@ jobs:
         run: uv run pylint --reports=y phenoback test main.py
         if: always()
       - name: Check black
-        uses: reviewdog/action-black@v3.22.2
+        uses: reviewdog/action-black@v3.22.4
         with:
           reporter: github-check
           verbose: True
           fail_on_error: True
         if: always()
       - name: Check markdownlint
-        uses: reviewdog/action-markdownlint@v0.26.0
+        uses: reviewdog/action-markdownlint@v0.26.2
         with:
           reporter: github-check
           fail_on_error: True
