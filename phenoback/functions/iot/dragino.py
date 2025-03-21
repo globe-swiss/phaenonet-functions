@@ -18,10 +18,10 @@ DOWNLINK_URL = "https://proxy1.lpn.swisscom.ch/thingpark/lrc/rest/downlink"
 
 
 def main(request: Request):
-    if request.is_json:
+    if request.is_json and request.json:
         process_dragino(request.json)
     else:  # pragma: no cover
-        log.error("No json headers found")
+        log.error("No json headers set or payload is None")
         return Response("No json payload", HTTPStatus.BAD_REQUEST)
     return Response("ok", HTTPStatus.OK)
 
@@ -52,7 +52,7 @@ def process_dragino(data: dict) -> None:
         log.debug("No uplink data, skip")
 
 
-def set_uplink_frequency(deveui: str, interval: int, at: datetime = None):
+def set_uplink_frequency(deveui: str, interval: int, at: datetime | None = None):
     log.info("set uplink frequency to %is for %s at %s", interval, deveui, at)
     task_client().send(
         "",
@@ -61,7 +61,7 @@ def set_uplink_frequency(deveui: str, interval: int, at: datetime = None):
             "Payload": f"{16777216 + interval:{0}8x}",
             "FPort": 1,
         },
-        at=at,
+        at=at,  # type: ignore
     )
 
 

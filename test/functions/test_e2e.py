@@ -38,7 +38,7 @@ def test_delete_individuals():
     d.write_individual("u3_i2", {"user": "u3"})
 
     e2e.delete_user_data(["u1", "u3"])
-    for individual in f.get_collection("individuals").stream():
+    for individual in f.collection("individuals").stream():
         assert individual.to_dict()["user"] == "u2"
 
 
@@ -56,7 +56,7 @@ def test_remove_following():
     d.write_document("users", "u3", {"foo": "bar"})
 
     e2e.delete_user_data(["u1", "u3"])
-    results = list(f.get_collection("users").stream())
+    results = list(f.collection("users").stream())
     assert len(results) == 3
     for user in results:
         assert user.to_dict().get("foo"), user.to_dict()
