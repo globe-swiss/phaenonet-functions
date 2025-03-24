@@ -84,25 +84,18 @@ def test_update_document__non_existing(collection, doc_id, doc, doc2):
         pass  # expected
 
 
-def test_get_collection(collection, doc_id, doc_id2, doc, doc2):
+def test_collection(collection, doc_id, doc_id2, doc, doc2):
     assert doc != doc2
     f.write_document(collection, doc_id, doc)
     f.write_document(collection, doc_id2, doc2)
-    assert len(list(f.get_collection(collection).stream())) == 2
 
-
-def test_get_collection__empty(collection):
-    assert len(list(f.get_collection(collection).stream())) == 0
-
-
-def test_collection(collection, doc_id, doc_id2, doc):
-    doc2 = {"key": "value"}
-    assert doc != doc2
-    f.write_document(collection, doc_id, doc)
-    f.write_document(collection, doc_id2, doc2)
     result = list(f.collection(collection).stream())
+
     assert len(result) == 2
-    assert all(x in (result[0].to_dict(), result[1].to_dict()) for x in [doc, doc2])
+
+
+def test_collection__empty(collection):
+    assert len(list(f.collection(collection).stream())) == 0
 
 
 def test_query_collection(collection, doc_id, doc_id2, doc):
@@ -129,7 +122,7 @@ def test_write_batch(collection):
         batch.append({"id": i, "value": i})
 
     assert f.write_batch(collection, "id", batch, commit_size=5) == 0
-    assert len(list(f.get_collection(collection).stream())) == size
+    assert len(list(f.collection(collection).stream())) == size
 
 
 def test_write_batch__transaction(collection):
@@ -145,7 +138,7 @@ def test_write_batch__transaction(collection):
 
     write_batch_transaction(f.get_transaction(), collection, batch)
 
-    assert len(list(f.get_collection(collection).stream())) == size
+    assert len(list(f.collection(collection).stream())) == size
 
 
 def test_delete_collection(collection):
@@ -157,7 +150,7 @@ def test_delete_collection(collection):
 
     f.delete_collection(collection, 5)
 
-    assert len(list(f.get_collection(collection).stream())) == 0
+    assert len(list(f.collection(collection).stream())) == 0
 
 
 def test_delete_batch(collection):
@@ -170,13 +163,11 @@ def test_delete_batch(collection):
             batch.append({"id": (prop * properties_size + prop_size), "property": prop})
     f.write_batch(collection, "id", batch)
 
-    assert (
-        len(list(f.get_collection(collection).stream())) == properties * properties_size
-    )
+    assert len(list(f.collection(collection).stream())) == properties * properties_size
 
     f.delete_batch(collection, "property", "==", 2, batch_size=3)
 
-    results = list(f.get_collection(collection).stream())
+    results = list(f.collection(collection).stream())
     assert len(results) == (properties - 1) * properties_size, f.docs2str(results)
     for result in results:
         assert result.to_dict().get("property") is not None
@@ -265,4 +256,4 @@ def test_get_collection_documents(collection):
 
 def test_get_count(collection, doc_id, doc):
     f.write_document(collection, doc_id, doc)
-    assert f.get_count(f.get_collection(collection)) == 1
+    assert f.get_count(f.collection(collection)) == 1

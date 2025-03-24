@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 import urllib.parse
+from typing import Any
 
 import google.cloud.tasks_v2.types.task
 from google.cloud import tasks_v2
@@ -33,12 +34,12 @@ class HTTPClient:
         self,
         payload: dict | str,
         *,
-        params: dict = None,
-        task_name: str = None,
-        at: datetime.datetime = None,
-        deadline: int = None,
+        params: dict | None = None,
+        task_name: str | None = None,
+        at: datetime.datetime | None = None,
+        deadline: int | None = None,
     ) -> google.cloud.tasks_v2.types.task.Task:
-        task = {
+        task: dict[str, Any] = {
             "http_request": {
                 "http_method": tasks_v2.HttpMethod.POST,
                 "url": f"{self.url}{self.encode_params(params)}",
@@ -79,7 +80,7 @@ class HTTPClient:
         log.debug("Created task on %s (%s)", self.queue, response.name)
         return response
 
-    def encode_params(self, params: dict) -> str:
+    def encode_params(self, params: dict | None) -> str:
         return "?" + urllib.parse.urlencode(params) if params else ""
 
 
@@ -88,8 +89,8 @@ class GCFClient:
         self,
         queue: str,
         target_function: str,
-        target_project: str = None,
-        target_location: str = None,
+        target_project: str | None = None,
+        target_location: str | None = None,
     ) -> None:
         log.debug(
             "Create client sending to %s dispatching to function %s",
@@ -110,9 +111,9 @@ class GCFClient:
     def send(
         self,
         payload: dict | str,
-        task_name: str = None,
-        at: datetime.datetime = None,
-        deadline: int = None,
+        task_name: str | None = None,
+        at: datetime.datetime | None = None,
+        deadline: int | None = None,
     ) -> google.cloud.tasks_v2.types.task.Task:
         return self.http_client.send(
             payload=payload, task_name=task_name, at=at, deadline=deadline
