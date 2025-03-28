@@ -18,12 +18,12 @@ firebase-admin==6.7.0
 flask==3.1.0
 functions-framework==3.8.2
 google-api-core==2.24.2
-google-api-python-client==2.165.0
+google-api-python-client==2.166.0
 google-auth==2.38.0
 google-auth-httplib2==0.2.0
 google-cloud-appengine-logging==1.6.1
 google-cloud-audit-log==0.3.2
-google-cloud-bigquery==3.30.0
+google-cloud-bigquery==3.31.0
 google-cloud-core==2.4.3
 google-cloud-firestore==2.20.1 ; platform_python_implementation != 'PyPy'
 google-cloud-logging==3.11.4
@@ -31,7 +31,7 @@ google-cloud-pubsub==2.29.0
 google-cloud-secret-manager==2.23.2
 google-cloud-storage==3.1.0
 google-cloud-tasks==2.19.2
-google-crc32c==1.7.0
+google-crc32c==1.7.1
 google-resumable-media==2.7.2
 googleapis-common-protos==1.69.2
 grpc-google-iam-v1==0.14.2
@@ -53,20 +53,20 @@ packaging==24.2
 proto-plus==1.26.1
 protobuf==5.29.4
 pyasn1==0.6.1
-pyasn1-modules==0.4.1
+pyasn1-modules==0.4.2
 pycparser==2.22 ; platform_python_implementation != 'PyPy'
 pyjwt==2.10.1
-pyparsing==3.2.1
+pyparsing==3.2.3
 python-dateutil==2.9.0.post0
-pytz==2025.1
+pytz==2025.2
 regex==2024.11.6
 requests==2.32.3
 rsa==4.9
-sentry-sdk==2.23.1
+sentry-sdk==2.24.1
 six==1.17.0
 tinify==1.7.0
-typing-extensions==4.12.2
-tzdata==2025.1 ; sys_platform == 'win32'
+typing-extensions==4.13.0
+tzdata==2025.2 ; sys_platform == 'win32'
 tzlocal==5.3.1
 uritemplate==4.1.1
 urllib3==2.3.0
