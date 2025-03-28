@@ -58,14 +58,13 @@ def register_user_invite(invite_id: str, user_id: str) -> None:
     """
     Register an user on a specific invite.
     """
-    try:
-        user = d.get_user(user_id)
-        register_date = user["created"]
-        nickname = user["nickname"]
-    except (TypeError, KeyError):
-        register_date = f.SERVER_TIMESTAMP
-        nickname = "Unknown"
-        log.error("User document or creation property not found for %s", user_id)
+    user = d.get_user(user_id)
+    if not user:
+        log.error("User not found %s", user_id)
+    register_date = (
+        user.get("created", f.SERVER_TIMESTAMP) if user else f.SERVER_TIMESTAMP
+    )
+    nickname = user.get("nickname", "Unknown") if user else "Unknown"
     log.info("Register user %s (%s) on invite %s", user_id, nickname, invite_id)
     f.update_document(
         INVITE_COLLECTION,
