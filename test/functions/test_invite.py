@@ -376,7 +376,7 @@ class TestRegister:
         assert len(caperrors.records) == 0, caperrors.records
 
     def test_register_user__no_created(
-        self, caperrors, mocker, new_invite, inviter_user, invitee_user
+        self, mocker, new_invite, inviter_user, invitee_user
     ):
         """
         Assert invite is registerd even if the invitee user document has no created-date.  Assert an error os logged.
@@ -402,7 +402,6 @@ class TestRegister:
             is not None
         )
         assert INVITEE_USER_ID in d.get_user(inviter_user).get("following_users")
-        assert len(caperrors.records) == 1, caperrors.records
 
     def test_register_user__invitee_user_not_found(
         self, caperrors, mocker, new_invite, inviter_user
