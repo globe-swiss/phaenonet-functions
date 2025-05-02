@@ -50,8 +50,14 @@ on:
           - redeploy
       tag:
         description: Tag
-        required: false
-        type: string
+        required: true
+        type: choice
+        default: none
+        options:
+          - none
+          - patch
+          - minor
+          - major
 
 env:
   RUNTIME: python312
@@ -67,8 +73,34 @@ permissions:
   id-token: write
 
 jobs:
+  next-versions:
+    if: ${{ github.event.inputs.tag != 'none' }}
+    runs-on: ubuntu-22.04
+    outputs:
+      tag: ${{ steps.new-tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: 'Get previous tag'
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - name: 'Get next versions'
+        id: semvers
+        uses: "WyriHaximus/github-action-next-semvers@v1"
+        with:
+          version: ${{ steps.previoustag.outputs.tag }}
+      - name: New tag
+        id: new-tag
+        env:
+          TAG: ${{ github.event.inputs.tag == 'major' && steps.semvers.outputs.v_major || github.event.inputs.tag == 'minor' && steps.semvers.outputs.v_minor || github.event.inputs.tag == 'patch' && steps.semvers.outputs.v_patch || '' }}
+        run: echo "tag=$TAG" >> $GITHUB_OUTPUT
   deploy:
     runs-on: ubuntu-22.04
+    needs: next-versions
+    if: always()
     container: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
     continue-on-error: false
     strategy:
@@ -145,7 +177,7 @@ jobs:
             entrypoint: ps_process_statistics
             trigger: --trigger-resource process_statistics --trigger-event google.pubsub.topic.publish
     env:
-      VERSION: "${{ matrix.name }}@${{ github.event.inputs.tag && github.event.inputs.tag || github.sha }}"
+      VERSION: "${{ matrix.name }}@${{ github.event.inputs.tag != 'none' && needs.next-versions.outputs.tag || github.sha }}"
     environment: ${{ github.event.inputs.project }}
     steps:
       - uses: actions/checkout@v4.2.2
@@ -189,14 +221,16 @@ jobs:
           ENVIRONMENT: ${{ env.PROJECT == 'phaenonet' && 'production' || 'test' }}
   tag:
     name: Tag
-    needs: deploy
+    needs:
+      - deploy
+      - next-versions
     runs-on: ubuntu-22.04
-    if: ${{ github.event.inputs.tag }}
+    if: ${{ github.event.inputs.tag != 'none' }}
     permissions:
       contents: write
     steps:
-      - name: Tag commit
+      - name: Tag version ${{ needs.next-versions.outputs.tag }}
         uses: tvdias/github-tagger@v0.0.2
         with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          tag: ${{ env.TAG }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ needs.next-versions.outputs.tag }}
