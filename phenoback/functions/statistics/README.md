@@ -9,9 +9,9 @@ sequenceDiagram
     participant Client as Cloud Scheduler
     participant Main as Main Function
     participant Process1y as process_1y_aggregate_statistics
-    participant GetObs as get_observations
+    participant GetObs as get_observations<br/>(cached)
     participant Calc1y as calculate_1y_agg_statistics
-    participant GetAlt as get_altitude_grp
+    participant GetAlt as get_altitude_grp<br/>(cached)
     participant WriteStats as write_statistics
     Client->>Main: Weekly execution
     activate Main
@@ -24,7 +24,7 @@ sequenceDiagram
     Process1y->>Calc1y: Calculate 1y aggregated statistics<br/>for observations
     activate Calc1y
     loop For each observation
-        Calc1y->>GetAlt: Get altitude group for individual<br/>(cached)
+        Calc1y->>GetAlt: Get altitude group for individual
         activate GetAlt
         GetAlt-->>Calc1y: Altitude group
         deactivate GetAlt
