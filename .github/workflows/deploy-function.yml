@@ -77,122 +77,122 @@ jobs:
     runs-on: ubuntu-22.04
     container: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
     continue-on-error: false
-    strategy:
-      fail-fast: false
-      max-parallel: 10
-      matrix:
-        include:
-          - name: fs_observations_write
-            entrypoint: fs_observations_write
-            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{observation_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: http_observations_write__analytics
-            entrypoint: http_observations_write__analytics
-            trigger: --trigger-http
-          - name: fs_users_write
-            entrypoint: fs_users_write
-            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/users/{user_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: fs_invites_write
-            entrypoint: fs_invites_write
-            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/invites/{invite_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: ps_import_meteoswiss_data
-            entrypoint: ps_import_meteoswiss_data
-            trigger: --trigger-resource import_meteoswiss_data --trigger-event google.pubsub.topic.publish
-          - name: ps_export_meteoswiss_data
-            entrypoint: ps_export_meteoswiss_data
-            trigger: --trigger-resource export_meteoswiss_data --trigger-event google.pubsub.topic.publish
-          - name: st_appspot_finalize
-            entrypoint: st_appspot_finalize
-            trigger: --trigger-resource "$PROJECT.appspot.com" --trigger-event google.storage.object.finalize
-          - name: ps_rollover_phenoyear
-            entrypoint: ps_rollover_phenoyear
-            trigger: --trigger-resource rollover_phenoyear --trigger-event google.pubsub.topic.publish
-          - name: fs_users_write__ts
-            entrypoint: fs_document_write
-            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/users/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: fs_observations_write__ts
-            entrypoint: fs_document_write
-            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: fs_individuals_write__ts
-            entrypoint: fs_document_write
-            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/individuals/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: fs_definitions_write__ts
-            entrypoint: fs_document_write
-            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/definitions/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: fs_invites_write__ts
-            entrypoint: fs_document_write
-            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/invites/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: fs_individuals_write
-            entrypoint: fs_individuals_write
-            trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/individuals/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
-          - name: http_individuals_write__map
-            entrypoint: http_individuals_write__map
-            trigger: --trigger-http
-          - name: http_iot_dragino
-            entrypoint: http_iot_dragino
-            trigger: --trigger-http --allow-unauthenticated
-          - name: ps_iot_dragino
-            entrypoint: ps_iot_dragino
-            trigger: --trigger-resource iot_dragino --trigger-event google.pubsub.topic.publish
-          - name: http_promote_ranger
-            entrypoint: http_promote_ranger
-            trigger: --trigger-http
-          - name: test
-            entrypoint: test
-            trigger: --trigger-resource test --trigger-event google.pubsub.topic.publish
-          - name: e2e_clear_individuals
-            entrypoint: http_reset_e2e_data
-            trigger: --trigger-http --allow-unauthenticated
-            project: phaenonet-test
-          - name: e2e_restore_users
-            entrypoint: http_restore_e2e_users
-            trigger: --trigger-http --allow-unauthenticated
-            project: phaenonet-test
-          - name: ps_process_statistics
-            entrypoint: ps_process_statistics
-            trigger: --trigger-resource process_statistics --trigger-event google.pubsub.topic.publish
-    env:
-      VERSION: "${{ matrix.name }}@${{ github.event.inputs.tag && github.event.inputs.tag || github.sha }}"
-    environment: ${{ github.event.inputs.project }}
+    # strategy:
+    #   fail-fast: false
+    #   max-parallel: 10
+    #   matrix:
+    #     include:
+    #       - name: fs_observations_write
+    #         entrypoint: fs_observations_write
+    #         trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{observation_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+    #       - name: http_observations_write__analytics
+    #         entrypoint: http_observations_write__analytics
+    #         trigger: --trigger-http
+    #       - name: fs_users_write
+    #         entrypoint: fs_users_write
+    #         trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/users/{user_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+    #       - name: fs_invites_write
+    #         entrypoint: fs_invites_write
+    #         trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/invites/{invite_id}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+    #       - name: ps_import_meteoswiss_data
+    #         entrypoint: ps_import_meteoswiss_data
+    #         trigger: --trigger-resource import_meteoswiss_data --trigger-event google.pubsub.topic.publish
+    #       - name: ps_export_meteoswiss_data
+    #         entrypoint: ps_export_meteoswiss_data
+    #         trigger: --trigger-resource export_meteoswiss_data --trigger-event google.pubsub.topic.publish
+    #       - name: st_appspot_finalize
+    #         entrypoint: st_appspot_finalize
+    #         trigger: --trigger-resource "$PROJECT.appspot.com" --trigger-event google.storage.object.finalize
+    #       - name: ps_rollover_phenoyear
+    #         entrypoint: ps_rollover_phenoyear
+    #         trigger: --trigger-resource rollover_phenoyear --trigger-event google.pubsub.topic.publish
+    #       - name: fs_users_write__ts
+    #         entrypoint: fs_document_write
+    #         trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/users/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+    #       - name: fs_observations_write__ts
+    #         entrypoint: fs_document_write
+    #         trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/observations/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+    #       - name: fs_individuals_write__ts
+    #         entrypoint: fs_document_write
+    #         trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/individuals/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+    #       - name: fs_definitions_write__ts
+    #         entrypoint: fs_document_write
+    #         trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/definitions/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+    #       - name: fs_invites_write__ts
+    #         entrypoint: fs_document_write
+    #         trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/invites/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+    #       - name: fs_individuals_write
+    #         entrypoint: fs_individuals_write
+    #         trigger: --trigger-resource "projects/$PROJECT/databases/(default)/documents/individuals/{document}" --trigger-event providers/cloud.firestore/eventTypes/document.write
+    #       - name: http_individuals_write__map
+    #         entrypoint: http_individuals_write__map
+    #         trigger: --trigger-http
+    #       - name: http_iot_dragino
+    #         entrypoint: http_iot_dragino
+    #         trigger: --trigger-http --allow-unauthenticated
+    #       - name: ps_iot_dragino
+    #         entrypoint: ps_iot_dragino
+    #         trigger: --trigger-resource iot_dragino --trigger-event google.pubsub.topic.publish
+    #       - name: http_promote_ranger
+    #         entrypoint: http_promote_ranger
+    #         trigger: --trigger-http
+    #       - name: test
+    #         entrypoint: test
+    #         trigger: --trigger-resource test --trigger-event google.pubsub.topic.publish
+    #       - name: e2e_clear_individuals
+    #         entrypoint: http_reset_e2e_data
+    #         trigger: --trigger-http --allow-unauthenticated
+    #         project: phaenonet-test
+    #       - name: e2e_restore_users
+    #         entrypoint: http_restore_e2e_users
+    #         trigger: --trigger-http --allow-unauthenticated
+    #         project: phaenonet-test
+    #       - name: ps_process_statistics
+    #         entrypoint: ps_process_statistics
+    #         trigger: --trigger-resource process_statistics --trigger-event google.pubsub.topic.publish
+    # env:
+    #   VERSION: "${{ matrix.name }}@${{ github.event.inputs.tag && github.event.inputs.tag || github.sha }}"
+    # environment: ${{ github.event.inputs.project }}
     steps:
       - uses: actions/checkout@v4.2.2
-      - name: Work around https://github.com/actions/checkout/issues/766
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-      - id: auth
-        name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2.1.10
-        with:
-          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2.1.4
-        with:
-          project_id: ${{ env.PROJECT }}
-      - name: set release version
-        run: |
-          echo "set release version: ${{ env.VERSION }}"
-          sed -ri 's|"#VERSION#"|"${{ env.VERSION }}"|' env.*.yaml
-      - name: undeploy
-        run: gcloud functions delete ${{ matrix.name }} --region ${{ env.REGION }} --quiet
-        if: ${{ (env.ACTION == 'undeploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == 'all') && (matrix.project == env.PROJECT || matrix.project == null) }}
-      - name: deploy
-        run: gcloud functions deploy ${{ matrix.name }} --no-gen2 --entry-point ${{ matrix.entrypoint }} --runtime ${{ env.RUNTIME }} ${{ matrix.trigger }} --timeout ${{ env.TIMEOUT }} --region ${{ env.REGION }} --quiet --env-vars-file env.${{ env.PROJECT }}.yaml
-        if: ${{ (env.ACTION == 'deploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == 'all') && (matrix.project == env.PROJECT || matrix.project == null) }}
-      - name: Sentry release
-        run: |
-          curl -sL https://sentry.io/get-cli/ | bash
-          echo "Create new release ${{ env.VERSION }}"
-          sentry-cli releases new ${{ env.VERSION }}
-          sentry-cli releases set-commits ${{ env.VERSION }} --auto
-          sentry-cli releases finalize ${{ env.VERSION }}
-          echo "Finalized release ${{ env.VERSION }}"
-          echo "Adding deployment for ${{ env.ENVIRONMENT }} environment"
-          sentry-cli releases deploys ${{ env.VERSION }} new --env ${{ env.ENVIRONMENT }}
-        if: ${{ (env.ACTION == 'deploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == 'all') && (matrix.project == env.PROJECT || matrix.project == null) }}
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: phaenonet
-          SENTRY_PROJECT: phaenonet-functions
-          ENVIRONMENT: ${{ env.PROJECT == 'phaenonet' && 'production' || 'test' }}
+      # - name: Work around https://github.com/actions/checkout/issues/766
+      #   run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      # - id: auth
+      #   name: Authenticate to Google Cloud
+      #   uses: google-github-actions/auth@v2.1.10
+      #   with:
+      #     workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+      #     service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      # - name: Set up Cloud SDK
+      #   uses: google-github-actions/setup-gcloud@v2.1.4
+      #   with:
+      #     project_id: ${{ env.PROJECT }}
+      # - name: set release version
+      #   run: |
+      #     echo "set release version: ${{ env.VERSION }}"
+      #     sed -ri 's|"#VERSION#"|"${{ env.VERSION }}"|' env.*.yaml
+      # - name: undeploy
+      #   run: gcloud functions delete ${{ matrix.name }} --region ${{ env.REGION }} --quiet
+      #   if: ${{ (env.ACTION == 'undeploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == 'all') && (matrix.project == env.PROJECT || matrix.project == null) }}
+      # - name: deploy
+      #   run: gcloud functions deploy ${{ matrix.name }} --no-gen2 --entry-point ${{ matrix.entrypoint }} --runtime ${{ env.RUNTIME }} ${{ matrix.trigger }} --timeout ${{ env.TIMEOUT }} --region ${{ env.REGION }} --quiet --env-vars-file env.${{ env.PROJECT }}.yaml
+      #   if: ${{ (env.ACTION == 'deploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == 'all') && (matrix.project == env.PROJECT || matrix.project == null) }}
+      # - name: Sentry release
+      #   run: |
+      #     curl -sL https://sentry.io/get-cli/ | bash
+      #     echo "Create new release ${{ env.VERSION }}"
+      #     sentry-cli releases new ${{ env.VERSION }}
+      #     sentry-cli releases set-commits ${{ env.VERSION }} --auto
+      #     sentry-cli releases finalize ${{ env.VERSION }}
+      #     echo "Finalized release ${{ env.VERSION }}"
+      #     echo "Adding deployment for ${{ env.ENVIRONMENT }} environment"
+      #     sentry-cli releases deploys ${{ env.VERSION }} new --env ${{ env.ENVIRONMENT }}
+      #   if: ${{ (env.ACTION == 'deploy' || env.ACTION == 'redeploy') && (matrix.name == env.FUNCTION || env.FUNCTION == 'all') && (matrix.project == env.PROJECT || matrix.project == null) }}
+      #   env:
+      #     SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      #     SENTRY_ORG: phaenonet
+      #     SENTRY_PROJECT: phaenonet-functions
+      #     ENVIRONMENT: ${{ env.PROJECT == 'phaenonet' && 'production' || 'test' }}
   next_version:
     name: Determine New Version
     runs-on: ubuntu-22.04
@@ -204,12 +204,21 @@ jobs:
         with:
           ref: master # Ensure we're getting the version from master
 
-      - name: Extract current version
-        id: extract_version
+      - name: Extract current version from last tag
         run: |
-          current_version=$(grep -Eo "v[0-9]+\.[0-9]+\.[0-9]+" version.txt)
-          echo "Current version is $current_version"
-          echo "current_version=$current_version" >> $GITHUB_ENV
+          # Fetch all tags from the master branch to ensure we have the latest
+          git fetch --tags
+          # Get the latest tag that matches the semantic versioning pattern
+          latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
+          echo "Latest tag is $latest_tag"
+          # Validate the tag matches the semantic versioning pattern
+          if [[ "$latest_tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            version=$latest_tag
+          else
+            echo "Error: Latest tag does not match the version pattern 'v<major>.<minor>.<micro>'"
+            exit 1
+          fi
+          echo "version=$version" >> $GITHUB_ENV
 
       - name: Determine new version
         id: next_version
