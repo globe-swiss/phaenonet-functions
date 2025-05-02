@@ -2,11 +2,11 @@
 #    uv export --format requirements-txt --no-hashes --no-dev
 blinker==1.9.0
     # via flask
-cachecontrol==0.14.2
+cachecontrol==0.14.3
     # via firebase-admin
 cachetools==5.5.2
     # via google-auth
-certifi==2025.1.31
+certifi==2025.4.26
     # via
     #   requests
     #   sentry-sdk
@@ -55,7 +55,7 @@ google-api-core==2.24.2
     #   google-cloud-secret-manager
     #   google-cloud-storage
     #   google-cloud-tasks
-google-api-python-client==2.168.0
+google-api-python-client==2.169.0
     # via firebase-admin
 google-auth==2.39.0
     # via
