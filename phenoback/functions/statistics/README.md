@@ -80,3 +80,58 @@ sequenceDiagram
     ProcessAgg-->>Client: Statistics updated
     deactivate ProcessAgg
 ```
+
+## Yearly Statistics
+
+### Processing yearly statistics
+
+```mermaid
+sequenceDiagram
+    participant Client as Cloud Scheduler
+    participant Main as Main Function
+    participant ProcessYearly as process_yearly_statistics
+    participant GetObs as get_observations<br/>(cached)
+    participant GetSpecies as get_species_statistics
+    participant GetAltitude as get_altitude_statistics
+    participant GetAlt as get_altitude_grp<br/>(cached)
+    participant WriteBatch as write_batch
+
+    Client->>Main: weekly updates
+    activate Main
+    Main->>ProcessYearly: Process yearly statistics<br/>for current year
+    activate ProcessYearly
+
+    ProcessYearly->>GetObs: Get observations<br/>for the current year
+    activate GetObs
+    GetObs-->>ProcessYearly: List of observations
+    deactivate GetObs
+
+    ProcessYearly->>GetSpecies: Calculate species statistics
+    activate GetSpecies
+    GetSpecies-->>ProcessYearly: Species statistics
+    deactivate GetSpecies
+
+    ProcessYearly->>GetAltitude: Calculate altitude statistics
+    activate GetAltitude
+    loop For each observation
+        GetAltitude->>GetAlt: Get altitude group for individual
+        activate GetAlt
+        GetAlt-->>GetAltitude: Altitude group
+        deactivate GetAlt
+    end
+    GetAltitude-->>ProcessYearly: Altitude statistics
+    deactivate GetAltitude
+
+    ProcessYearly->>WriteBatch: Write species statistics
+    activate WriteBatch
+    deactivate WriteBatch
+
+    ProcessYearly->>WriteBatch: Write altitude statistics
+    activate WriteBatch
+    deactivate WriteBatch
+
+    ProcessYearly-->>Main: Processing complete
+    deactivate ProcessYearly
+    Main-->>Client: Statistics updated
+    deactivate Main
+```
