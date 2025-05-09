@@ -72,11 +72,6 @@ def get_species_statistics(observations: list[Any]) -> dict:
         for phenophase, observation_dates in phases.items():
             results[key]["data"][phenophase] = get_statistic_values(observation_dates)
 
-    if not results:
-        raise ValueError(
-            f"No statistics could be calculate using {len(observations)} observations"
-        )
-
     return results
 
 
@@ -113,11 +108,6 @@ def get_altitude_statistics(observations: list[Any]) -> dict:
                 results[key]["data"][phenophase][alt_grp] = get_statistic_values(
                     observation_dates
                 )
-
-    if not results:
-        raise ValueError(
-            f"No statistics could be calculate from {len(observations)} observations"
-        )
 
     return results
 

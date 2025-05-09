@@ -1,3 +1,5 @@
+# pylint: disable=use-implicit-booleaness-not-comparison
+
 from datetime import datetime
 
 import pytest
@@ -107,8 +109,7 @@ def test_get_species_statistics():
 
 
 def test_get_species_statistics__no_observations():
-    with pytest.raises(ValueError):
-        yearly.get_species_statistics([])
+    assert yearly.get_species_statistics([]) == {}
 
 
 def test_get_altitude_statistics(mocker):
@@ -164,8 +165,7 @@ def test_get_altitude_statistics(mocker):
 
 
 def test_get_altitude_statistics__no_observations():
-    with pytest.raises(ValueError):
-        yearly.get_altitude_statistics([])
+    assert yearly.get_altitude_statistics([]) == {}
 
 
 def test_get_statistic_values():
@@ -202,4 +202,6 @@ def test_get_statistic_values__single_date():
 
 def test_get_statistic_values__no_values():
     with pytest.raises(ValueError):
-        yearly.get_statistic_values([])
+        yearly.get_statistic_values(
+            []
+        )  # pylint: disable=use-implicit-booleaness-not-comparison
