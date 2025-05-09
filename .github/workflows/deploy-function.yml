@@ -78,7 +78,7 @@ jobs:
     outputs:
       tag: ${{ steps.new-tag.outputs.tag }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
       - name: 'Get previous tag'
