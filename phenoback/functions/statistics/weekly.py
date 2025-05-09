@@ -69,7 +69,7 @@ def calculate_1y_agg_statistics(observations: list) -> dict:
             statistic_doc["obs_woy"][str(woy)] += 1
             statistic_doc["year_obs_sum"][str(year)] += 1
             statistic_doc["agg_obs_sum"] += 1
-        except (KeyError, TypeError, ValueError) as e:
+        except (KeyError, TypeError, ValueError) as e:  # pragma: no cover
             # Log the error and continue with the next observation
             log.error(
                 "Unexpected error processing observation (skipping) %s: %s", obs, e

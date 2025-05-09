@@ -35,7 +35,7 @@ def get_altitude_grp(individual_id: str) -> str:
 
 
 @cache
-def load_observations(phenoyear: int) -> list[dict[str, Any]]:
+def _load_observations(phenoyear: int) -> list[dict[str, Any]]:
     """
     Returns all observations for the given year that are relevant for statistics.
     Excludes observations with comments that should not be counted.
@@ -63,11 +63,11 @@ def get_observations(phenoyear: int, phenophases: set[str]) -> list[dict[str, An
         )
     return [
         obs
-        for obs in load_observations(phenoyear)
+        for obs in _load_observations(phenoyear)
         if obs.get("phenophase") in phenophases
     ]
 
 
 def cache_clear():
     get_altitude_grp.cache_clear()
-    load_observations.cache_clear()
+    _load_observations.cache_clear()
