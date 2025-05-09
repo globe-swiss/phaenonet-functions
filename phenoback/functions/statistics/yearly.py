@@ -29,17 +29,17 @@ def process_yearly_statistics(year: int) -> None:
     altitude_statistics = get_altitude_statistics(observations)
 
     log.info(
-        "Write %i species statistics for phenoyear %i processing %i observations",
-        len(species_statistics),
+        "process yearly statistics for %i: Observations=%i, species_statistics=%i",
         year,
         len(observations),
+        len(species_statistics),
     )
     f.write_batch("statistics_yearly_species", "id", d.to_id_array(species_statistics))
     log.info(
-        "Write %i altitude statistics for phenoyear %i processing %i observations",
-        len(species_statistics),
+        "process yearly statistics for %i: Observations=%i, altitude_statistics=%i",
         year,
         len(observations),
+        len(altitude_statistics),
     )
     f.write_batch(
         "statistics_yearly_altitude", "id", d.to_id_array(altitude_statistics)
