@@ -72,6 +72,11 @@ def get_species_statistics(observations: list[Any]) -> dict:
         for phenophase, observation_dates in phases.items():
             results[key]["data"][phenophase] = get_statistic_values(observation_dates)
 
+    if not results:
+        raise ValueError(
+            f"No statistics could be calculate using {len(observations)} observations"
+        )
+
     return results
 
 
@@ -109,10 +114,16 @@ def get_altitude_statistics(observations: list[Any]) -> dict:
                     observation_dates
                 )
 
+    if not results:
+        raise ValueError(
+            f"No statistics could be calculate from {len(observations)} observations"
+        )
+
     return results
 
 
 def get_statistic_values(observation_dates: list) -> dict[str, Any]:
+    # should never be balled with empty list
     return {
         "min": np.min(observation_dates),
         "max": np.max(observation_dates),
