@@ -2,9 +2,8 @@ from datetime import datetime
 
 import pytest
 
-import phenoback.utils.data as d
 import phenoback.utils.firestore as f
-from phenoback.functions.statistics import datacache, weekly
+from phenoback.functions.statistics import weekly
 
 
 def test_main(mocker, data, context):
@@ -12,36 +11,23 @@ def test_main(mocker, data, context):
     process_1y_aggregate_statistics_mock = mocker.patch(
         "phenoback.functions.statistics.weekly.process_1y_aggregate_statistics"
     )
+    mocker.patch("phenoback.utils.data.get_phenoyear", return_value=2001)
 
     weekly.main(data, context)
 
     process_1y_aggregate_statistics_mock.assert_called_once_with(data["year"])
 
 
-@pytest.mark.parametrize(
-    "altitude_value, expected",
-    [
-        (499, "alt1"),
-        (500, "alt2"),
-        (799, "alt2"),
-        (800, "alt3"),
-        (999, "alt3"),
-        (1000, "alt4"),
-        (1199, "alt4"),
-        (1200, "alt5"),
-    ],
-)
-def test_get_altitude_grp(mocker, altitude_value, expected):
-    mocker.patch(
-        "phenoback.functions.statistics.weekly.d.get_individual",
-        return_value={"altitude": altitude_value},
+def test_main__year(mocker, data, context):
+    year = 2000
+    process_1y_aggregate_statistics_mock = mocker.patch(
+        "phenoback.functions.statistics.weekly.process_1y_aggregate_statistics"
     )
-    datacache.cache_clear()
+    mocker.patch("phenoback.utils.data.get_phenoyear", return_value=year)
 
-    result = datacache.get_altitude_grp("1")
+    weekly.main(data, context)
 
-    assert result == expected
-    assert datacache.get_altitude_grp.cache_info().hits == 0
+    process_1y_aggregate_statistics_mock.assert_called_once_with(year)
 
 
 @pytest.mark.parametrize(
@@ -72,38 +58,6 @@ def test_write_statistics():
         assert doc.to_dict() == data[doc.id]
         num_docs += 1
     assert num_docs == 2
-
-
-def test_get_observations(mocker):
-    mocker.patch(
-        "phenoback.functions.statistics.weekly.d.is_actual_observation",
-        return_value=True,
-    )
-    datacache.cache_clear()
-    add_observation(1999, "BEA")
-    add_observation(1999, "FRB")
-    add_observation(2000, "BEA")
-    add_observation(2000, "FRB")
-
-    result = datacache.get_observations(2000, weekly.STATISTIC_PHENOPHASES)
-
-    assert len(result) == 1
-    assert result[0]["year"] == 2000
-    assert result[0]["phenophase"] == "BEA"
-
-
-def test_get_observations__comment_false(mocker):
-    mocker.patch(
-        "phenoback.functions.statistics.weekly.d.is_actual_observation",
-        return_value=False,
-    )
-    datacache.cache_clear()
-    add_observation(2000, "BEA")
-    add_observation(2000, "FRB")
-
-    result = datacache.get_observations(2000, weekly.STATISTIC_PHENOPHASES)
-
-    assert len(result) == 0
 
 
 def test_calculate_1y_agg_statistics(mocker):
@@ -366,10 +320,3 @@ def test_30y_aggregate_statistics(mocker):
     assert write_statistics_mock.call_count == 2
     write_statistics_mock.assert_any_call(aggregates_5y_return)
     write_statistics_mock.assert_any_call(aggregates_30y_return)
-
-
-def add_observation(year, phenophase, comment=None):
-    observation = {"year": year, "phenophase": phenophase}
-    if comment is not None:
-        observation["comment"] = comment
-    d.write_observation(None, observation)
