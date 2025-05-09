@@ -271,11 +271,11 @@ def ps_process_statistics(event, context):
         with invoke():
             from phenoback.functions.statistics import weekly
 
-            return weekly.main(data, context)
+            weekly.main(data, context)
         with invoke():
             from phenoback.functions.statistics import yearly
 
-            return yearly.main(data, context)
+            yearly.main(data, context)
 
 
 def test(data, context):  # pragma: no cover
