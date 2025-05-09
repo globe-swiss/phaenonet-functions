@@ -5,39 +5,17 @@ from functools import cache
 
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
+from phenoback.functions.statistics import datacache
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
-STATISTIC_PHENOPHASES = ("BEA", "BES", "BFA", "BLA", "BLB", "BVA", "BVS", "FRA")
+STATISTIC_PHENOPHASES = {"BEA", "BES", "BFA", "BLA", "BLB", "BVA", "BVS", "FRA"}
 
 
 def main(data, context):  # pylint: disable=unused-argument
-    year = data.get("year")
+    year = data["year"] if "year" in data else d.get_phenoyear()
     process_1y_aggregate_statistics(year)
-
-
-@cache
-def get_altitude_grp(individual_id: str) -> str:
-    individual = d.get_individual(individual_id)
-    if not individual:
-        log.error("Individual %s not found to lookup altitude group", individual_id)
-        raise KeyError(individual_id)
-
-    altitude = individual.get("altitude")
-    if altitude is None:
-        log.error("No altitude found for individual %s", individual_id)
-        raise ValueError(individual_id)
-
-    if altitude < 500:
-        return "alt1"
-    elif altitude < 800:
-        return "alt2"
-    elif altitude < 1000:
-        return "alt3"
-    elif altitude < 1200:
-        return "alt4"
-    return "alt5"
 
 
 def date_to_woy(phenoyear: int, date: datetime) -> int:
@@ -54,21 +32,6 @@ def write_statistics(data: dict) -> None:
     d.write_batch("statistics", "id", d.to_id_array(data))
 
 
-def get_observations(phenoyear: int) -> list:
-    """
-    Returns all observations for the given year that are relevant for statistics.
-    Excludes observations with comments that should not be counted.
-    """
-    result = [
-        doc.to_dict()
-        for doc in d.query_observation("year", "==", phenoyear)
-        .where(filter=f.FieldFilter("phenophase", "in", STATISTIC_PHENOPHASES))
-        .stream()
-        if d.is_actual_observation(doc.to_dict().get("comment"))
-    ]
-    return result
-
-
 def calculate_1y_agg_statistics(observations: list) -> dict:
     """
     Calculate 1-year aggregate statistics from the given observations.
@@ -82,7 +45,7 @@ def calculate_1y_agg_statistics(observations: list) -> dict:
             individual_id = obs["individual_id"]
             species = obs["species"]
             phenophase = obs["phenophase"]
-            altitude_grp = get_altitude_grp(individual_id)
+            altitude_grp = datacache.get_altitude_grp(individual_id)
             agg_key = f"{year}_{year}_{species}_{altitude_grp}_{phenophase}"
 
             statistic_doc = statistics_result.setdefault(
@@ -106,7 +69,7 @@ def calculate_1y_agg_statistics(observations: list) -> dict:
             statistic_doc["obs_woy"][str(woy)] += 1
             statistic_doc["year_obs_sum"][str(year)] += 1
             statistic_doc["agg_obs_sum"] += 1
-        except (KeyError, TypeError, ValueError) as e:
+        except (KeyError, TypeError, ValueError) as e:  # pragma: no cover
             # Log the error and continue with the next observation
             log.error(
                 "Unexpected error processing observation (skipping) %s: %s", obs, e
@@ -192,13 +155,11 @@ def calculate_statistics_aggregates(
     return agg_statistics_result
 
 
-def process_1y_aggregate_statistics(year: int | None = None) -> None:
+def process_1y_aggregate_statistics(year: int) -> None:
     """
     Process and write the 1-year aggregate statistics for the given year to statistics collection.
     """
-    if not year:
-        year = d.get_phenoyear()
-    observations = get_observations(year)
+    observations = datacache.get_observations(year, STATISTIC_PHENOPHASES)
     statistics = calculate_1y_agg_statistics(observations)
 
     log.info(

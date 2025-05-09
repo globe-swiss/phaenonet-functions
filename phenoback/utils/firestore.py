@@ -130,7 +130,7 @@ def write_batch(
     commit_sleep: float = 0,
 ) -> int:
     if transaction is not None:
-        log.info(
+        log.debug(
             "Batch-write %i documents to %s within transaction",
             len(data),
             collection,
@@ -145,7 +145,7 @@ def write_batch(
     else:
         if commit_size is None:
             commit_size = 500
-        log.info(
+        log.debug(
             "Batch-write %i documents to %s in %i batches",
             len(data),
             collection,

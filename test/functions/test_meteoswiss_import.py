@@ -6,7 +6,6 @@ from io import StringIO
 
 import pytest
 
-import phenoback
 from phenoback.functions import meteoswiss_import as meteoswiss
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
@@ -69,7 +68,7 @@ class TestCommon:
     def test_set_hash(self, mocker):
         hash_key = "a_key"
         data = "some_data"
-        write_mock = mocker.spy(phenoback.functions.meteoswiss_import, "write_document")
+        write_mock = mocker.spy(meteoswiss, "write_document")
         meteoswiss._set_hash(hash_key, data)
         write_mock.assert_called_once()
         assert f.get_document(HASH_COLLECTION, HASH_DOCUMENT).get(
