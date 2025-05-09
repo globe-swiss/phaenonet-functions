@@ -108,7 +108,7 @@ def test_get_observations__comment_false(mocker):
 
 def test_calculate_1y_agg_statistics(mocker):
     mocker.patch(
-        "phenoback.functions.statistics.weekly.get_altitude_grp", return_value="alt1"
+        "phenoback.functions.statistics.datacache.get_altitude_grp", return_value="alt1"
     )
     observations = [
         {
@@ -304,7 +304,7 @@ def test_process_1y_aggregate_statistics(mocker, phenoyear):
     observations_return = ["observation1", "observation2"]
     statistics_return = {"statistic1": "statistic1", "statistic2": "statistic2"}
     get_observations_mock = mocker.patch(
-        "phenoback.functions.statistics.weekly.get_observations",
+        "phenoback.functions.statistics.datacache.get_observations",
         return_value=observations_return,
     )
     calculate_1y_agg_statistics_mock = mocker.patch(
@@ -317,21 +317,23 @@ def test_process_1y_aggregate_statistics(mocker, phenoyear):
 
     weekly.process_1y_aggregate_statistics(phenoyear)
 
-    get_observations_mock.assert_called_once_with(phenoyear)
+    get_observations_mock.assert_called_once_with(
+        phenoyear, weekly.STATISTIC_PHENOPHASES
+    )
     calculate_1y_agg_statistics_mock.assert_called_once_with(observations_return)
     write_statistics_mock.assert_called_once_with(statistics_return)
 
 
 def test_process_1y_aggregate_statistics__year_default(mocker):
     get_observations_mock = mocker.patch(
-        "phenoback.functions.statistics.weekly.get_observations"
+        "phenoback.functions.statistics.datacache.get_observations"
     )
     mocker.patch("phenoback.functions.statistics.weekly.calculate_1y_agg_statistics")
     mocker.patch("phenoback.functions.statistics.weekly.write_statistics")
 
     weekly.process_1y_aggregate_statistics(1234)
 
-    get_observations_mock.assert_called_once_with(1234)
+    get_observations_mock.assert_called_once_with(1234, weekly.STATISTIC_PHENOPHASES)
 
 
 def test_30y_aggregate_statistics(mocker):

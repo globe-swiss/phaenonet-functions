@@ -16,7 +16,7 @@ ANALYTIC_PHENOPHASES = {"BEA", "BLA", "BFA", "BVA", "FRA"}
 
 
 def main(data, context):  # pylint: disable=unused-argument
-    year = data.get("year", d.get_phenoyear())
+    year = data["year"] if "year" in data else d.get_phenoyear()
     process_yearly_statistics(year)
 
 
