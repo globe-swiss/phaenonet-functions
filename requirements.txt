@@ -14,7 +14,7 @@ cffi==1.17.1 ; platform_python_implementation != 'PyPy'
     # via cryptography
 charset-normalizer==3.4.2
     # via requests
-click==8.1.8
+click==8.2.0
     # via
     #   flask
     #   functions-framework
@@ -36,7 +36,7 @@ envelopes==0.4
     # via phaenonet-functions
 firebase-admin==6.8.0
     # via phaenonet-functions
-flask==3.1.0
+flask==3.1.1
     # via
     #   functions-framework
     #   phaenonet-functions
@@ -77,7 +77,7 @@ google-cloud-appengine-logging==1.6.1
     # via google-cloud-logging
 google-cloud-audit-log==0.3.2
     # via google-cloud-logging
-google-cloud-bigquery==3.31.0
+google-cloud-bigquery==3.32.0
     # via phaenonet-functions
 google-cloud-core==2.4.3
     # via
@@ -146,21 +146,22 @@ jinja2==3.1.6
     #   phaenonet-functions
 markupsafe==3.0.2
     # via
+    #   flask
     #   jinja2
     #   werkzeug
 msgpack==1.1.0
     # via cachecontrol
 numpy==2.2.5
     # via phaenonet-functions
-opentelemetry-api==1.32.1
+opentelemetry-api==1.33.0
     # via
     #   google-cloud-logging
     #   google-cloud-pubsub
     #   opentelemetry-sdk
     #   opentelemetry-semantic-conventions
-opentelemetry-sdk==1.32.1
+opentelemetry-sdk==1.33.0
     # via google-cloud-pubsub
-opentelemetry-semantic-conventions==0.53b1
+opentelemetry-semantic-conventions==0.54b0
     # via opentelemetry-sdk
 packaging==25.0
     # via
@@ -219,7 +220,7 @@ requests==2.32.3
     #   tinify
 rsa==4.9.1
     # via google-auth
-sentry-sdk==2.27.0
+sentry-sdk==2.28.0
     # via phaenonet-functions
 six==1.17.0
     # via python-dateutil
