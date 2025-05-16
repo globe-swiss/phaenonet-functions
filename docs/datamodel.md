@@ -62,26 +62,6 @@ erDiagram
         comment none "Definitions of (single) individuals and phenological stations."
     }
 
-    analytics_results {
-        string DOCID "Firestore Document ID (year_species_source[_altitudegroup])"
-        string altitude_grp "Optional altitude group category, lov: 'alt1' to 'alt5'"
-        string source "lov: globe, meteoswiss, ranger, wld"
-        string species "Observed species, Ref: definitions/config_static/{species}"
-        string type "lov: species, altitude"
-        map[string-map] values "phenophase → {min, max, median, quantile_25, quantile_75}"
-        number year
-        comment none "Statistical values displayed in the statistics section in the Phaenonet application."
-    }
-
-    analytics_state {
-        string DOCID "Firestore Document ID (year_species_source[_altitudegroup])"
-        string source "lov: globe, meteoswiss, ranger, wld"
-        string species "Observed species, Ref: definitions/config_static/{species}"
-        map[string-map] state "phenophase → {observation_id → observation date}"
-        number year
-        comment none "Internal data-structure for calculating statistical values."
-    }
-
     observations {
         string DOCID "Firestore Document ID (individual_year_species_phenophase)"
         date date
@@ -175,7 +155,17 @@ erDiagram
         string phenophase "Observed phenophase, Ref: definitions/config_static/{phenophases}"
         map[string-number] obs_woy "week of year → number of observations"
         map[string-number] year_obs_sum "year → total number of observations recorded in that year"
-        comment none "Statistical values displayed in the statistics section in the Phaenonet application."
+        comment none "Statistical values displayed in the weekly statistics section in the Phaenonet application."
+    }
+
+    statistics_yearly_altitude {
+        string DOCID "Firestore Document ID (year_species_source)"
+        comment none "Statistical values displayed in the yearly statistics section in the Phaenonet application."
+    }
+
+    statistics_yearly_species {
+        string DOCID "Firestore Document ID (year_species_source)"
+        comment none "Statistical values displayed in the yearly statistics section in the Phaenonet application."
     }
 
     %% Relationships
