@@ -45,7 +45,7 @@ jobs:
         uses: reviewdog/action-markdownlint@v0.26.2
         with:
           reporter: github-check
-          fail_on_error: True
+          fail_level: warning
         if: always()
       - name: Run pytest
         run: uv run python -m pytest --cov-report xml --cov=main --cov=phenoback --cov-branch
