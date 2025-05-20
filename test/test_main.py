@@ -110,7 +110,6 @@ def test_executes__ps_iot_dragino__environments(mocker, project, pubsub_event, c
             main.fs_observations_write,
             [
                 "phenoback.functions.activity.main",
-                "phenoback.functions.analytics.main_enqueue",
                 "phenoback.functions.individual.main",
             ],
         ),
@@ -134,12 +133,6 @@ def test_executes__firestore(mocker, entrypoint, functions, data, context):
             main.http_individuals_write__map,
             [
                 "phenoback.functions.map.main_process",
-            ],
-        ),
-        (
-            main.http_observations_write__analytics,
-            [
-                "phenoback.functions.analytics.main_process",
             ],
         ),
         (
