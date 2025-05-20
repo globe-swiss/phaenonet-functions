@@ -82,22 +82,9 @@ def fs_observations_write(data, context):
 
             activity.main(data, context)
         with invoke():
-            from phenoback.functions import analytics
-
-            analytics.main_enqueue(data, context)
-        with invoke():
             from phenoback.functions import individual
 
             individual.main(data, context)
-
-
-@retry.Retry()
-def http_observations_write__analytics(request: Request):
-    with setup(request):
-        with invoke():
-            from phenoback.functions import analytics
-
-            return analytics.main_process(request)
 
 
 @retry.Retry()
