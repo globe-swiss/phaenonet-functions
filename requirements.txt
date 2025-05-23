@@ -14,7 +14,7 @@ cffi==1.17.1 ; platform_python_implementation != 'PyPy'
     # via cryptography
 charset-normalizer==3.4.2
     # via requests
-click==8.2.0
+click==8.2.1
     # via
     #   flask
     #   functions-framework
@@ -22,7 +22,7 @@ cloudevents==1.11.0
     # via functions-framework
 colorama==0.4.6 ; sys_platform == 'win32'
     # via click
-cryptography==44.0.3
+cryptography==45.0.2
     # via pyjwt
 dateparser==1.2.1
     # via phaenonet-functions
@@ -40,7 +40,7 @@ flask==3.1.1
     # via
     #   functions-framework
     #   phaenonet-functions
-functions-framework==3.8.2
+functions-framework==3.8.3
     # via phaenonet-functions
 google-api-core==2.24.2
     # via
@@ -55,9 +55,9 @@ google-api-core==2.24.2
     #   google-cloud-secret-manager
     #   google-cloud-storage
     #   google-cloud-tasks
-google-api-python-client==2.169.0
+google-api-python-client==2.170.0
     # via firebase-admin
-google-auth==2.40.1
+google-auth==2.40.2
     # via
     #   google-api-core
     #   google-api-python-client
@@ -77,7 +77,7 @@ google-cloud-appengine-logging==1.6.1
     # via google-cloud-logging
 google-cloud-audit-log==0.3.2
     # via google-cloud-logging
-google-cloud-bigquery==3.32.0
+google-cloud-bigquery==3.33.0
     # via phaenonet-functions
 google-cloud-core==2.4.3
     # via
@@ -151,17 +151,17 @@ markupsafe==3.0.2
     #   werkzeug
 msgpack==1.1.0
     # via cachecontrol
-numpy==2.2.5
+numpy==2.2.6
     # via phaenonet-functions
-opentelemetry-api==1.33.0
+opentelemetry-api==1.33.1
     # via
     #   google-cloud-logging
     #   google-cloud-pubsub
     #   opentelemetry-sdk
     #   opentelemetry-semantic-conventions
-opentelemetry-sdk==1.33.0
+opentelemetry-sdk==1.33.1
     # via google-cloud-pubsub
-opentelemetry-semantic-conventions==0.54b0
+opentelemetry-semantic-conventions==0.54b1
     # via opentelemetry-sdk
 packaging==25.0
     # via
@@ -220,7 +220,7 @@ requests==2.32.3
     #   tinify
 rsa==4.9.1
     # via google-auth
-sentry-sdk==2.28.0
+sentry-sdk==2.29.1
     # via phaenonet-functions
 six==1.17.0
     # via python-dateutil
