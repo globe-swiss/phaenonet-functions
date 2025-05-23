@@ -1,3 +1,4 @@
+# type: ignore
 from datetime import datetime, timezone
 from unittest.mock import ANY
 
