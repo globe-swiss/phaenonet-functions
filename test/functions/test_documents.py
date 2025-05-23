@@ -19,8 +19,8 @@ def doc_ts():
         "collection",
         "doc_id",
         {
-            "created": datetime.utcnow(),
-            "modified": datetime.utcnow(),
+            "created": datetime.now(timezone.utc),
+            "modified": datetime.now(timezone.utc),
             "data": "some data",
         },
     )
@@ -35,10 +35,14 @@ def doc_ts():
             {
                 "updateMask": {"fieldPaths": ["modified"]},
                 "oldValue": {
-                    "fields": {"modified": {"timestampValue": str(datetime.now())}}
+                    "fields": {
+                        "modified": {"timestampValue": str(datetime.now(timezone.utc))}
+                    }
                 },
                 "value": {
-                    "fields": {"modified": {"timestampValue": str(datetime.now())}}
+                    "fields": {
+                        "modified": {"timestampValue": str(datetime.now(timezone.utc))}
+                    }
                 },
             },
         ),
@@ -48,7 +52,9 @@ def doc_ts():
                 "updateMask": {},
                 "oldValue": {},
                 "value": {
-                    "fields": {"modified": {"timestampValue": str(datetime.now())}}
+                    "fields": {
+                        "modified": {"timestampValue": str(datetime.now(timezone.utc))}
+                    }
                 },
             },
         ),
@@ -57,7 +63,9 @@ def doc_ts():
             {
                 "updateMask": {"fieldPaths": ["modified"]},
                 "oldValue": {
-                    "fields": {"modified": {"timestampValue": str(datetime.now())}}
+                    "fields": {
+                        "modified": {"timestampValue": str(datetime.now(timezone.utc))}
+                    }
                 },
                 "value": {},
             },
@@ -78,7 +86,7 @@ def test_main(mocker, called, data):
 
 
 def test_main__overwrite_created(mocker):
-    create_ts = datetime.utcnow().replace(tzinfo=timezone.utc)
+    create_ts = datetime.now(timezone.utc)
     data = {
         "updateMask": {"fieldPaths": ["created", "somevalue"]},
         "oldValue": {"fields": {"created": {"timestampValue": str(create_ts)}}},
@@ -130,7 +138,7 @@ def test_update_modified_document(doc_ts, updated_fields):
 )
 def test_update_modified_document__create_ts(doc_ts, updated_fields):
     initial_ts = f.get_document(*doc_ts)[documents.MODIFIED_KEY]
-    created_ts = datetime.utcnow().replace(tzinfo=timezone.utc)
+    created_ts = datetime.now(timezone.utc)
     documents.update_modified_document(*doc_ts, updated_fields, created_ts)
     updated_doc = f.get_document(*doc_ts)
     assert updated_doc[documents.CREATED_KEY] == created_ts
