@@ -94,7 +94,7 @@ To align with the latest supported Python versions:
 
 1. Check for updates: [Google Cloud Python Runtime Support](https://cloud.google.com/functions/docs/runtime-support#python)
 2. Upgrade environments:
-   - Run: `./maintenance/upgrade-environment.sh`
+   - Run: `./maintenance/update-environment.sh`
 3. Rebuild the development container.
 4. Rebuild the Python environment.
 

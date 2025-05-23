@@ -59,7 +59,7 @@ on:
           - major
 
 env:
-  RUNTIME: python312
+  RUNTIME: python313
   REGION: europe-west1
   TIMEOUT: 540s
   PROJECT: ${{ github.event.inputs.project }}
