@@ -30,7 +30,7 @@ jobs:
       - name: Work around https://github.com/actions/checkout/issues/766
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Install uv
-        uses: astral-sh/setup-uv@v6.0.1
+        uses: astral-sh/setup-uv@v6.1.0
       - name: Update environment
         run: uv lock --upgrade
       - name: Update requirements.txt
