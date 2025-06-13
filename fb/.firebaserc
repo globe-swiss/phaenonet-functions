@@ -2,5 +2,15 @@
   "projects": {
     "default": "phaenonet-test"
   },
-  "targets": {}
+  "targets": {},
+  "etags": {
+    "phaenonet-test": {
+      "extensionInstances": {
+        "firestore-bigquery-definitions": "c7da2df2020b1f06e98a92e37578808f7032aad7febad476a92eb1831d12f8b3",
+        "firestore-bigquery-individuals": "093ab41f3ecb1e65a4f5a287e5b430df3df5a27936cd7ae00a54d6b345733148",
+        "firestore-bigquery-observations": "0deb11c2675a514095a3c2053b0173dbffa375f8dbc6ddb288f2120839fbf57b",
+        "firestore-bigquery-users": "3d7ea17315fb0d46aa20789e4695ee0d91c4d22d5dbbcc67bdd833b063993121"
+      }
+    }
+  }
 }
