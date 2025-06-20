@@ -8,7 +8,7 @@ cachecontrol==0.14.3
     # via firebase-admin
 cachetools==5.5.2
     # via google-auth
-certifi==2025.4.26
+certifi==2025.6.15
     # via
     #   httpcore
     #   httpx
@@ -55,7 +55,7 @@ google-api-core==2.25.1
     #   google-cloud-secret-manager
     #   google-cloud-storage
     #   google-cloud-tasks
-google-api-python-client==2.172.0
+google-api-python-client==2.173.0
     # via firebase-admin
 google-auth==2.40.3
     # via
@@ -93,7 +93,7 @@ google-cloud-pubsub==2.30.0
     # via phaenonet-functions
 google-cloud-secret-manager==2.24.0
     # via phaenonet-functions
-google-cloud-storage==3.1.0
+google-cloud-storage==3.1.1
     # via firebase-admin
 google-cloud-tasks==2.19.3
     # via phaenonet-functions
@@ -164,7 +164,7 @@ markupsafe==3.0.2
     #   flask
     #   jinja2
     #   werkzeug
-msgpack==1.1.0
+msgpack==1.1.1
     # via cachecontrol
 numpy==2.3.0
     # via phaenonet-functions
@@ -257,7 +257,7 @@ tzlocal==5.3.1
     #   phaenonet-functions
 uritemplate==4.2.0
     # via google-api-python-client
-urllib3==2.4.0
+urllib3==2.5.0
     # via
     #   requests
     #   sentry-sdk
