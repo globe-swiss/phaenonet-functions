@@ -77,7 +77,7 @@ jobs:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
           create_credentials_file: true
-      - name: Remove Firebase Extensions
+      - name: Remove Firebase Extension Configurations
         working-directory: firebase
         run: |
           # Extract extension names from firebase.json and uninstall each one
@@ -86,9 +86,9 @@ jobs:
             echo "Removing extension from manifest: $ext"
             firebase ext:uninstall "$ext" --force --project phaenonet-test
           done
-          # Deploy to actually remove the extensions from the project
-          echo "Deploying to remove extensions..."
-          firebase deploy --force --only extensions --project phaenonet-test
+      - name: Remove Firebase Extension Deployment
+        working-directory: firebase
+        run: firebase deploy --force --only extensions --project phaenonet-test
   remove-fs-data:
     runs-on: ubuntu-22.04
     needs: [delete-fs-functions, remove-extensions]
