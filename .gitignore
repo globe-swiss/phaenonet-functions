@@ -3,6 +3,7 @@ credentials
 foto_uploads
 .xprocess
 *.pickle
+.claude
 
 # firebase cli
 logs
