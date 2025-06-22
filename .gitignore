@@ -4,6 +4,15 @@ foto_uploads
 .xprocess
 *.pickle
 
+# firebase cli
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+firebase-debug.log*
+firebase-debug.*.log*
+
 # general python ignores
 # Byte-compiled / optimized / DLL files
 __pycache__/

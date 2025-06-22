@@ -31,7 +31,7 @@ jobs:
         with:
           project_id: phaenonet-test
       - id: fs-functions
-        name: List Functions
+        name: List Firestore Functions
         run: |
           echo 'functions<<EOF' >> $GITHUB_OUTPUT
           gcloud functions list --filter fs_ --format='json(name)' --project phaenonet-test >> $GITHUB_OUTPUT
@@ -56,11 +56,42 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2.1.4
         with:
           project_id: phaenonet-test
-      - name: Delete Function ${{ matrix.function.name }}
-        run: gcloud functions delete $(echo ${{ matrix.function.name }} | cut -d/ -f6) --region $(echo ${{ matrix.function.name }} | cut -d/ -f4) --quiet --project phaenonet-test
+      # - name: Delete Function ${{ matrix.function.name }}
+      #   run: gcloud functions delete $(echo ${{ matrix.function.name }} | cut -d/ -f6) --region $(echo ${{ matrix.function.name }} | cut -d/ -f4) --quiet --project phaenonet-test
+  remove-extensions:
+    runs-on: ubuntu-22.04
+    environment: phaenonet-test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - name: Setup Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: install firebase-tools
+        run: npm i -g firebase-tools
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2.1.10
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          create_credentials_file: true
+      - name: Remove Firebase Extensions
+        working-directory: firebase
+        run: |
+          # Extract extension names from firebase.json and uninstall each one
+          extensions=$(jq -r '.extensions | keys[]' firebase.json)
+          for ext in $extensions; do
+            echo "Removing extension from manifest: $ext"
+            firebase ext:uninstall "$ext" --force --project phaenonet-test
+          done
+          # Deploy to actually remove the extensions from the project
+          echo "Deploying to remove extensions..."
+          firebase deploy --only extensions --project phaenonet-test
   remove-fs-data:
     runs-on: ubuntu-22.04
-    needs: delete-fs-functions
+    needs: [delete-fs-functions, remove-extensions]
     environment: phaenonet-test
     steps:
       - name: Checkout
@@ -78,8 +109,8 @@ jobs:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_BACKUP_ACCOUNT }}
           create_credentials_file: true
-      - name: Delete Firestore Data
-        run: firebase firestore:delete --all-collections --force --project phaenonet-test
+      # - name: Delete Firestore Data
+      #   run: firebase firestore:delete --all-collections --force --project phaenonet-test
   import-fs-data:
     runs-on: ubuntu-22.04
     needs: remove-fs-data
@@ -99,8 +130,8 @@ jobs:
           project_id: phaenonet-test
       - name: Find last backup
         run: echo "backup-folder=$(gsutil ls gs://phaenonet-backup-daily | tail -1)" >> $GITHUB_ENV
-      - name: Import Data
-        run: gcloud --project=phaenonet-test firestore import ${{ env.backup-folder }}
+      # - name: Import Data
+      #   run: gcloud --project=phaenonet-test firestore import ${{ env.backup-folder }}
   install-functions:
     runs-on: ubuntu-22.04
     needs: import-fs-data
@@ -109,10 +140,33 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
-      - name: trigger function installation
-        run: gh workflow run -f function=all "deploy cloud functions"
-        env:
-          GH_TOKEN: ${{ github.token }}
+      # - name: trigger function installation
+      #   run: gh workflow run -f function=all "deploy cloud functions"
+      #   env:
+      #     GH_TOKEN: ${{ github.token }}
+  deploy-extensions:
+    runs-on: ubuntu-22.04
+    needs: import-fs-data
+    environment: phaenonet-test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - name: Setup Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: install firebase-tools
+        run: npm i -g firebase-tools
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2.1.10
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          create_credentials_file: true
+      - name: Deploy Firebase Extensions
+        working-directory: firebase
+        run: firebase deploy --only extensions --project phaenonet-test
   restore-users:
     runs-on: ubuntu-22.04
     needs: install-functions
