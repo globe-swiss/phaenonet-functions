@@ -88,7 +88,7 @@ jobs:
           done
           # Deploy to actually remove the extensions from the project
           echo "Deploying to remove extensions..."
-          firebase deploy --only extensions --project phaenonet-test
+          firebase deploy --force --only extensions --project phaenonet-test
   remove-fs-data:
     runs-on: ubuntu-22.04
     needs: [delete-fs-functions, remove-extensions]
@@ -166,7 +166,7 @@ jobs:
           create_credentials_file: true
       - name: Deploy Firebase Extensions
         working-directory: firebase
-        run: firebase deploy --only extensions --project phaenonet-test
+        run: firebase deploy --force --only extensions --project phaenonet-test
   restore-users:
     runs-on: ubuntu-22.04
     needs: install-functions
