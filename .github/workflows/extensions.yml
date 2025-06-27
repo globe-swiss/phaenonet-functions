@@ -11,6 +11,14 @@ on:
         options:
           - phaenonet
           - phaenonet-test
+      action:
+        description: Action
+        required: true
+        type: choice
+        options:
+          - deploy
+          - remove
+          - redeploy
 
 env:
   NODE_VERSION: "18"
@@ -22,6 +30,7 @@ permissions:
 
 jobs:
   remove-extensions:
+    if: ${{ github.event.inputs.action == 'remove' || github.event.inputs.action == 'redeploy' }}
     runs-on: ubuntu-22.04
     environment: ${{ github.event.inputs.project }}
     steps:
@@ -35,8 +44,9 @@ jobs:
           service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
           node-version: ${{ env.NODE_VERSION }}
   deploy-extensions:
+    if: ${{ always() && (github.event.inputs.action == 'deploy' || (github.event.inputs.action == 'redeploy' && needs.remove-extensions.result == 'success')) }}
+    needs: [remove-extensions]
     runs-on: ubuntu-22.04
-    needs: remove-extensions
     environment: ${{ github.event.inputs.project }}
     steps:
       - name: Checkout
