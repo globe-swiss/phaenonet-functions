@@ -1,0 +1,60 @@
+name: 'Remove Firebase Extensions'
+description: 'Remove all Firebase extensions from a project'
+inputs:
+  project:
+    description: 'Firebase project ID'
+    required: true
+  workload-identity-provider:
+    description: 'GCP Workload Identity Provider'
+    required: true
+  service-account:
+    description: 'GCP Service Account'
+    required: true
+  node-version:
+    description: 'Node.js version'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node ${{ inputs.node-version }}
+      uses: actions/setup-node@v4.4.0
+      with:
+        node-version: ${{ inputs.node-version }}
+    - name: install firebase-tools
+      run: npm i -g firebase-tools
+    - id: auth
+      name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2.1.10
+      with:
+        workload_identity_provider: ${{ inputs.workload-identity-provider }}
+        service_account: ${{ inputs.service-account }}
+        create_credentials_file: true
+    - name: Remove Firebase Extensions One by One
+      working-directory: firebase
+      run: |
+        # Needs one by one extension, as firebase ext:uninstall fails if deleting multiple at once - known bug
+        # Extract extension names from firebase.json and uninstall each one
+        extensions=$(jq -r '.extensions | keys[]' firebase.json)
+        for ext in $extensions; do
+          echo "Removing extension: $ext"
+          # Uninstall from manifest (continue on error)
+          firebase ext:uninstall "$ext" --force --project ${{ inputs.project }} || echo "Extension $ext may not exist, continuing..."
+          # Deploy the removal immediately
+          echo "Deploying removal of $ext"
+          firebase deploy --force --only extensions --project ${{ inputs.project }} || echo "Deploy for $ext removal failed, continuing..."
+          # Small delay to allow IAM propagation
+          sleep 5
+        done
+    - name: Verify All Extensions Removed
+      working-directory: firebase
+      run: |
+        echo "Checking for remaining extensions..."
+        remaining=$(firebase ext:list --project ${{ inputs.project }} --json | jq -r '.result[].instanceId' 2>/dev/null || echo "")
+
+        if [ -n "$remaining" ]; then
+          echo "ERROR: The following extensions are still installed:"
+          echo "$remaining"
+          exit 1
+        else
+          echo "✓ All extensions successfully removed"
+        fi

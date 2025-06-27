@@ -64,47 +64,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
-      - name: Setup Node ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4.4.0
+      - name: Remove Firebase Extensions
+        uses: ./.github/actions/remove-extensions
         with:
+          project: phaenonet-test
+          workload-identity-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
           node-version: ${{ env.NODE_VERSION }}
-      - name: install firebase-tools
-        run: npm i -g firebase-tools
-      - id: auth
-        name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2.1.10
-        with:
-          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-          create_credentials_file: true
-      - name: Remove Firebase Extensions One by One
-        working-directory: firebase
-        run: |
-          # Extract extension names from firebase.json and uninstall each one
-          extensions=$(jq -r '.extensions | keys[]' firebase.json)
-          for ext in $extensions; do
-            echo "Removing extension: $ext"
-            # Uninstall from manifest (continue on error)
-            firebase ext:uninstall "$ext" --force --project phaenonet-test || echo "Extension $ext may not exist, continuing..."
-            # Deploy the removal immediately
-            echo "Deploying removal of $ext"
-            firebase deploy --force --only extensions --project phaenonet-test || echo "Deploy for $ext removal failed, continuing..."
-            # Small delay to allow IAM propagation
-            sleep 5
-          done
-      - name: Verify All Extensions Removed
-        working-directory: firebase
-        run: |
-          echo "Checking for remaining extensions..."
-          remaining=$(firebase ext:list --project phaenonet-test --json | jq -r '.result[].instanceId' 2>/dev/null || echo "")
-
-          if [ -n "$remaining" ]; then
-            echo "ERROR: The following extensions are still installed:"
-            echo "$remaining"
-            exit 1
-          else
-            echo "✓ All extensions successfully removed"
-          fi
   remove-fs-data:
     runs-on: ubuntu-22.04
     needs: [delete-fs-functions, remove-extensions]
@@ -167,22 +133,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
-      - name: Setup Node ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4.4.0
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: install firebase-tools
-        run: npm i -g firebase-tools
-      - id: auth
-        name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2.1.10
-        with:
-          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-          create_credentials_file: true
       - name: Deploy Firebase Extensions
-        working-directory: firebase
-        run: firebase deploy --force --only extensions --project phaenonet-test
+        uses: ./.github/actions/deploy-extensions
+        with:
+          project: phaenonet-test
+          workload-identity-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          node-version: ${{ env.NODE_VERSION }}
   restore-users:
     runs-on: ubuntu-22.04
     needs:

@@ -1,0 +1,34 @@
+name: 'Deploy Firebase Extensions'
+description: 'Deploy Firebase extensions to a project'
+inputs:
+  project:
+    description: 'Firebase project ID'
+    required: true
+  workload-identity-provider:
+    description: 'GCP Workload Identity Provider'
+    required: true
+  service-account:
+    description: 'GCP Service Account'
+    required: true
+  node-version:
+    description: 'Node.js version'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node ${{ inputs.node-version }}
+      uses: actions/setup-node@v4.4.0
+      with:
+        node-version: ${{ inputs.node-version }}
+    - name: install firebase-tools
+      run: npm i -g firebase-tools
+    - id: auth
+      name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2.1.10
+      with:
+        workload_identity_provider: ${{ inputs.workload-identity-provider }}
+        service_account: ${{ inputs.service-account }}
+        create_credentials_file: true
+    - name: Deploy Firebase Extensions
+      working-directory: firebase
+      run: firebase deploy --force --only extensions --project ${{ inputs.project }}

@@ -4,6 +4,7 @@ foto_uploads
 .xprocess
 *.pickle
 .claude
+.firebaserc
 
 # firebase cli
 logs
