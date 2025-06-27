@@ -36,25 +36,29 @@ runs:
       run: |
         # Installation fails silently if multiple extensions are deployed at once
         # This is a workaround to ensure each extension is deployed successfully
-        # Deploy extensions one by one by temporarily modifying firebase.json
+        # Deploy extensions one by one by progressively adding to firebase.json
         echo "Starting one-by-one extension deployment..."
 
         # Backup original firebase.json
         cp firebase.json firebase.json.backup
 
-        # Extract all extensions from the original file
-        all_extensions=$(jq -r '.extensions' firebase.json)
-        extension_names=$(echo "$all_extensions" | jq -r 'keys[]')
+        # Start with empty extensions object
+        jq '.extensions = {}' firebase.json.backup > firebase.json
 
-        # Deploy each extension individually
+        # Extract all extensions from the original file
+        extension_names=$(jq -r '.extensions | keys[]' firebase.json.backup)
+
+        # Deploy each extension individually by adding it progressively
         for ext_name in $extension_names; do
           echo "===================="
           echo "Deploying extension: $ext_name"
 
-          # Create temporary firebase.json with only this extension
-          jq --arg ext "$ext_name" '.extensions = {($ext): .extensions[$ext]}' firebase.json.backup > firebase.json
+          # Add this extension to the current firebase.json
+          ext_config=$(jq --arg ext "$ext_name" '.extensions[$ext]' firebase.json.backup)
+          jq --arg ext "$ext_name" --argjson config "$ext_config" '.extensions[$ext] = $config' firebase.json > firebase.json.tmp
+          mv firebase.json.tmp firebase.json
 
-          # Deploy the single extension
+          # Deploy with the updated extensions list
           firebase deploy --force --only extensions --project ${{ inputs.project }}
 
           if [ $? -eq 0 ]; then
