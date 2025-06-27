@@ -1,0 +1,60 @@
+name: manage firebase extensions
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: Project
+        required: true
+        default: phaenonet-test
+        type: choice
+        options:
+          - phaenonet
+          - phaenonet-test
+      action:
+        description: Action
+        required: true
+        type: choice
+        options:
+          - deploy
+          - remove
+          - redeploy
+
+env:
+  NODE_VERSION: "18"
+  PROJECT: ${{ github.event.inputs.project }}
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  remove-extensions:
+    if: ${{ github.event.inputs.action == 'remove' || github.event.inputs.action == 'redeploy' }}
+    runs-on: ubuntu-22.04
+    environment: ${{ github.event.inputs.project }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - name: Remove Firebase Extensions
+        uses: ./.github/actions/remove-extensions
+        with:
+          project: ${{ env.PROJECT }}
+          workload-identity-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          node-version: ${{ env.NODE_VERSION }}
+  deploy-extensions:
+    if: ${{ always() && (github.event.inputs.action == 'deploy' || (github.event.inputs.action == 'redeploy' && needs.remove-extensions.result == 'success')) }}
+    needs: [remove-extensions]
+    runs-on: ubuntu-22.04
+    environment: ${{ github.event.inputs.project }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - name: Deploy Firebase Extensions
+        uses: ./.github/actions/deploy-extensions
+        with:
+          project: ${{ env.PROJECT }}
+          workload-identity-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          node-version: ${{ env.NODE_VERSION }}

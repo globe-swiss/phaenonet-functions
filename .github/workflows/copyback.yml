@@ -31,7 +31,7 @@ jobs:
         with:
           project_id: phaenonet-test
       - id: fs-functions
-        name: List Functions
+        name: List Firestore Functions
         run: |
           echo 'functions<<EOF' >> $GITHUB_OUTPUT
           gcloud functions list --filter fs_ --format='json(name)' --project phaenonet-test >> $GITHUB_OUTPUT
@@ -58,9 +58,22 @@ jobs:
           project_id: phaenonet-test
       - name: Delete Function ${{ matrix.function.name }}
         run: gcloud functions delete $(echo ${{ matrix.function.name }} | cut -d/ -f6) --region $(echo ${{ matrix.function.name }} | cut -d/ -f4) --quiet --project phaenonet-test
+  remove-extensions:
+    runs-on: ubuntu-22.04
+    environment: phaenonet-test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - name: Remove Firebase Extensions
+        uses: ./.github/actions/remove-extensions
+        with:
+          project: phaenonet-test
+          workload-identity-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          node-version: ${{ env.NODE_VERSION }}
   remove-fs-data:
     runs-on: ubuntu-22.04
-    needs: delete-fs-functions
+    needs: [delete-fs-functions, remove-extensions]
     environment: phaenonet-test
     steps:
       - name: Checkout
@@ -98,8 +111,8 @@ jobs:
         with:
           project_id: phaenonet-test
       - name: Find last backup
-        run: echo "backup-folder=$(gsutil ls gs://phaenonet-backup-daily | tail -1)" >> $GITHUB_ENV
-      - name: Import Data
+        run: echo "backup-folder=$(gsutil ls gs://phaenonet-backup-archive | tail -1)" >> $GITHUB_ENV
+      - name: Import Data from ${{ env.backup-folder }}
         run: gcloud --project=phaenonet-test firestore import ${{ env.backup-folder }}
   install-functions:
     runs-on: ubuntu-22.04
@@ -113,11 +126,28 @@ jobs:
         run: gh workflow run -f function=all "deploy cloud functions"
         env:
           GH_TOKEN: ${{ github.token }}
+  deploy-extensions:
+    runs-on: ubuntu-22.04
+    needs: import-fs-data
+    environment: phaenonet-test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - name: Deploy Firebase Extensions
+        uses: ./.github/actions/deploy-extensions
+        with:
+          project: phaenonet-test
+          workload-identity-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          node-version: ${{ env.NODE_VERSION }}
   restore-users:
     runs-on: ubuntu-22.04
-    needs: install-functions
+    needs:
+      - install-functions
+      - deploy-extensions
     steps:
       - name: call restore function
         uses: fjogeleit/http-request-action@v1.16.4
         with:
           url: "https://europe-west1-phaenonet-test.cloudfunctions.net/e2e_restore_users"
+          timeout: 30000

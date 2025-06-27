@@ -1,0 +1,8 @@
+{
+  "extensions": {
+    "firestore-bigquery-definitions": "firebase/firestore-bigquery-export@0.2.5",
+    "firestore-bigquery-users": "firebase/firestore-bigquery-export@0.2.5",
+    "firestore-bigquery-individuals": "firebase/firestore-bigquery-export@0.2.5",
+    "firestore-bigquery-observations": "firebase/firestore-bigquery-export@0.2.5"
+  }
+}
