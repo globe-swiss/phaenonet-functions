@@ -34,10 +34,39 @@ runs:
       shell: bash
       working-directory: firebase
       run: |
-        # Needs one by one extension, as firebase ext:uninstall fails if deleting multiple at once - known bug
+        # Needs one by one extension, as firebase deploy fails if deleting multiple at once - known bug
         # Extract extension names from firebase.json and uninstall each one
-        extensions=$(jq -r '.extensions | keys[]' firebase.json)
-        for ext in $extensions; do
+
+        # Get list of installed extensions from Firebase server
+        echo "Fetching list of installed extensions from ${{ inputs.project }}..."
+        ext_list_json=$(firebase ext:list --project ${{ inputs.project }} --json)
+        installed_extensions=$(echo "$ext_list_json" | jq -r '.result[].instanceId' 2>/dev/null || echo "")
+
+        if [ -z "$installed_extensions" ]; then
+          echo "No extensions currently installed in ${{ inputs.project }}"
+          exit 0
+        fi
+
+        echo "Found the following extensions installed on server:"
+        echo "$installed_extensions"
+        echo "===================="
+
+        # Create minimal firebase.json with only installed extensions
+        echo "Creating minimal firebase.json with installed extensions..."
+        echo '{"extensions":{}}' > firebase.json
+
+        # Add each installed extension to firebase.json
+        echo "$ext_list_json" | jq -r '.result[] | "\(.instanceId) \(.ref)"' | while read -r ext_id ext_ref; do
+          jq --arg id "$ext_id" --arg ref "$ext_ref" '.extensions[$id] = $ref' firebase.json > firebase.json.tmp
+          mv firebase.json.tmp firebase.json
+        done
+
+        echo "Created firebase.json with extensions:"
+        cat firebase.json
+        echo "===================="
+
+        # Remove extensions one by one
+        for ext in $installed_extensions; do
           echo "Removing extension: $ext"
           # Uninstall from manifest (continue on error)
           firebase ext:uninstall "$ext" --force --project ${{ inputs.project }} || echo "Extension $ext may not exist, continuing..."

@@ -63,12 +63,23 @@ To replicate the production environment in the test instance:
 
 - Use the [copyback.yml](https://github.com/globe-swiss/phaenonet-functions/actions/workflows/copyback.yml) GitHub Action.
 
+### Backfill BigQuery Tables
+
+```sh
+gcloud auth application-default login
+export project=phaenonet-test
+npx @firebaseextensions/fs-bq-import-collection --non-interactive -q false -P ${project} -B ${project} -l europe-west1 -d firestore_export -t definitions -s definitions
+npx @firebaseextensions/fs-bq-import-collection --non-interactive -q false -P ${project} -B ${project} -l europe-west1 -d firestore_export -t users -s users
+npx @firebaseextensions/fs-bq-import-collection --non-interactive -q false -P ${project} -B ${project} -l europe-west1 -d firestore_export -t individuals -s individuals
+npx @firebaseextensions/fs-bq-import-collection --non-interactive -q false -P ${project} -B ${project} -l europe-west1 -d firestore_export -t observations -s observations
+```
+
 ### Partial Data Copy
 
 For selective data updates:
 
 1. Determine if cloud functions need deployment based on the data being imported.
-2. Alternatively, use the Firestore UI for data management.
+2. Disable extensions if needed.
 
 Commands for exporting and importing specific collections:
 

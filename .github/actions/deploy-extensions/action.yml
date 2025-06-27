@@ -30,7 +30,48 @@ runs:
         workload_identity_provider: ${{ inputs.workload-identity-provider }}
         service_account: ${{ inputs.service-account }}
         create_credentials_file: true
-    - name: Deploy Firebase Extensions
+    - name: Deploy Firebase Extensions One by One
       shell: bash
       working-directory: firebase
-      run: firebase deploy --force --only extensions --project ${{ inputs.project }}
+      run: |
+        # Installation fails silently if multiple extensions are deployed at once
+        # This is a workaround to ensure each extension is deployed successfully
+        # Deploy extensions one by one by progressively adding to firebase.json
+        echo "Starting one-by-one extension deployment..."
+
+        # Backup original firebase.json
+        cp firebase.json firebase.json.backup
+
+        # Start with empty extensions object
+        jq '.extensions = {}' firebase.json.backup > firebase.json
+
+        # Extract all extensions from the original file
+        extension_names=$(jq -r '.extensions | keys[]' firebase.json.backup)
+
+        # Deploy each extension individually by adding it progressively
+        for ext_name in $extension_names; do
+          echo "===================="
+          echo "Deploying extension: $ext_name"
+
+          # Add this extension to the current firebase.json
+          ext_config=$(jq --arg ext "$ext_name" '.extensions[$ext]' firebase.json.backup)
+          jq --arg ext "$ext_name" --argjson config "$ext_config" '.extensions[$ext] = $config' firebase.json > firebase.json.tmp
+          mv firebase.json.tmp firebase.json
+
+          # Deploy with the updated extensions list
+          firebase deploy --force --only extensions --project ${{ inputs.project }}
+
+          if [ $? -eq 0 ]; then
+            echo "✓ Successfully deployed $ext_name"
+          else
+            echo "✗ Failed to deploy $ext_name"
+            exit 1
+          fi
+
+          # Wait to ensure proper deployment
+          echo "Waiting for extension to be fully initialized..."
+          sleep 15
+        done
+
+        echo "===================="
+        echo "✓ All extensions successfully deployed one by one"
