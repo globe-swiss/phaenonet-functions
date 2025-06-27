@@ -21,6 +21,7 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
     - name: install firebase-tools
+      shell: bash
       run: npm i -g firebase-tools
     - id: auth
       name: Authenticate to Google Cloud
@@ -30,6 +31,7 @@ runs:
         service_account: ${{ inputs.service-account }}
         create_credentials_file: true
     - name: Remove Firebase Extensions One by One
+      shell: bash
       working-directory: firebase
       run: |
         # Needs one by one extension, as firebase ext:uninstall fails if deleting multiple at once - known bug
@@ -46,6 +48,7 @@ runs:
           sleep 5
         done
     - name: Verify All Extensions Removed
+      shell: bash
       working-directory: firebase
       run: |
         echo "Checking for remaining extensions..."

@@ -21,6 +21,7 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
     - name: install firebase-tools
+      shell: bash
       run: npm i -g firebase-tools
     - id: auth
       name: Authenticate to Google Cloud
@@ -30,5 +31,6 @@ runs:
         service_account: ${{ inputs.service-account }}
         create_credentials_file: true
     - name: Deploy Firebase Extensions
+      shell: bash
       working-directory: firebase
       run: firebase deploy --force --only extensions --project ${{ inputs.project }}
