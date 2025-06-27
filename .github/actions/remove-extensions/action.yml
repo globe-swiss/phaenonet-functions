@@ -1,20 +1,20 @@
-name: 'Remove Firebase Extensions'
-description: 'Remove all Firebase extensions from a project'
+name: "Remove Firebase Extensions"
+description: "Remove all Firebase extensions from a project"
 inputs:
   project:
-    description: 'Firebase project ID'
+    description: "Firebase project ID"
     required: true
   workload-identity-provider:
-    description: 'GCP Workload Identity Provider'
+    description: "GCP Workload Identity Provider"
     required: true
   service-account:
-    description: 'GCP Service Account'
+    description: "GCP Service Account"
     required: true
   node-version:
-    description: 'Node.js version'
+    description: "Node.js version"
     required: true
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Setup Node ${{ inputs.node-version }}
       uses: actions/setup-node@v4.4.0
@@ -51,18 +51,26 @@ runs:
         echo "$installed_extensions"
         echo "===================="
 
-        # Create minimal firebase.json with only installed extensions
-        echo "Creating minimal firebase.json with installed extensions..."
-        echo '{"extensions":{}}' > firebase.json
+        # Backup original firebase.json
+        cp firebase.json firebase.json.backup
 
-        # Add each installed extension to firebase.json
-        echo "$ext_list_json" | jq -r '.result[] | "\(.instanceId) \(.ref)"' | while read -r ext_id ext_ref; do
-          jq --arg id "$ext_id" --arg ref "$ext_ref" '.extensions[$id] = $ref' firebase.json > firebase.json.tmp
-          mv firebase.json.tmp firebase.json
+        # Filter firebase.json to only keep installed extensions
+        echo "Filtering firebase.json to only keep installed extensions..."
+
+        # Get all extension keys from firebase.json
+        all_extensions=$(jq -r '.extensions | keys[]' firebase.json)
+
+        # Remove extensions not installed on server
+        for ext in $all_extensions; do
+          if ! echo "$installed_extensions" | grep -q "^$ext$"; then
+            echo "Removing $ext from firebase.json (not installed on server)"
+            jq --arg ext "$ext" 'del(.extensions[$ext])' firebase.json > firebase.json.tmp
+            mv firebase.json.tmp firebase.json
+          fi
         done
 
-        echo "Created firebase.json with extensions:"
-        cat firebase.json
+        echo "Filtered firebase.json now contains:"
+        jq '.extensions' firebase.json
         echo "===================="
 
         # Remove extensions one by one
@@ -76,6 +84,9 @@ runs:
           # Small delay to allow IAM propagation
           sleep 5
         done
+
+        # Restore original firebase.json
+        mv firebase.json.backup firebase.json
     - name: Verify All Extensions Removed
       shell: bash
       working-directory: firebase
