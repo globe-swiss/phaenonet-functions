@@ -1,20 +1,20 @@
-name: "Remove Firebase Extensions"
-description: "Remove all Firebase extensions from a project"
+name: 'Remove Firebase Extensions'
+description: 'Remove all Firebase extensions from a project'
 inputs:
   project:
-    description: "Firebase project ID"
+    description: 'Firebase project ID'
     required: true
   workload-identity-provider:
-    description: "GCP Workload Identity Provider"
+    description: 'GCP Workload Identity Provider'
     required: true
   service-account:
-    description: "GCP Service Account"
+    description: 'GCP Service Account'
     required: true
   node-version:
-    description: "Node.js version"
+    description: 'Node.js version'
     required: true
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Setup Node ${{ inputs.node-version }}
       uses: actions/setup-node@v4.4.0
@@ -34,20 +34,38 @@ runs:
       shell: bash
       working-directory: firebase
       run: |
+        # Needs one by one extension, as firebase deploy fails if deleting multiple at once - known bug
+        # Extract extension names from firebase.json and uninstall each one
+
         # Get list of installed extensions from Firebase server
         echo "Fetching list of installed extensions from ${{ inputs.project }}..."
-        installed_extensions=$(firebase ext:list --project ${{ inputs.project }} --json | jq -r '.result[].instanceId' 2>/dev/null || echo "")
+        ext_list_json=$(firebase ext:list --project ${{ inputs.project }} --json)
+        installed_extensions=$(echo "$ext_list_json" | jq -r '.result[].instanceId' 2>/dev/null || echo "")
 
         if [ -z "$installed_extensions" ]; then
           echo "No extensions currently installed in ${{ inputs.project }}"
           exit 0
         fi
 
-        echo "Found the following extensions to remove:"
+        echo "Found the following extensions installed on server:"
         echo "$installed_extensions"
         echo "===================="
 
-        # Needs one by one extension, as firebase ext:uninstall fails if deleting multiple at once - known bug
+        # Create minimal firebase.json with only installed extensions
+        echo "Creating minimal firebase.json with installed extensions..."
+        echo '{"extensions":{}}' > firebase.json
+
+        # Add each installed extension to firebase.json
+        echo "$ext_list_json" | jq -r '.result[] | "\(.instanceId) \(.ref)"' | while read -r ext_id ext_ref; do
+          jq --arg id "$ext_id" --arg ref "$ext_ref" '.extensions[$id] = $ref' firebase.json > firebase.json.tmp
+          mv firebase.json.tmp firebase.json
+        done
+
+        echo "Created firebase.json with extensions:"
+        cat firebase.json
+        echo "===================="
+
+        # Remove extensions one by one
         for ext in $installed_extensions; do
           echo "Removing extension: $ext"
           # Uninstall from manifest (continue on error)
