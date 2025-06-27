@@ -6,6 +6,10 @@ env:
   LANG: en_US.UTF-8
   UV_FROZEN: true
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   test:
     runs-on: ubuntu-22.04
