@@ -67,6 +67,7 @@ disable=redefined-outer-name,
         line-too-long,
         no-else-return,
         too-few-public-methods,
+        too-many-positional-arguments,
         too-many-return-statements,
         too-many-arguments,
         fixme # disable for not to be triggered in CI

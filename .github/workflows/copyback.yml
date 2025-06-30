@@ -149,5 +149,5 @@ jobs:
       - name: call restore function
         uses: fjogeleit/http-request-action@v1.16.4
         with:
-          url: "https://europe-west1-phaenonet-test.cloudfunctions.net/e2e_restore_users"
+          url: "https://europe-west1-phaenonet-test.cloudfunctions.net/e2e_restore_data"
           timeout: 30000

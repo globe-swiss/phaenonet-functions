@@ -37,7 +37,7 @@ on:
           - st_appspot_finalize
           - test
           - e2e_clear_individuals
-          - e2e_restore_users
+          - e2e_restore_data
       action:
         description: Action
         required: true
@@ -164,8 +164,8 @@ jobs:
             entrypoint: http_reset_e2e_data
             trigger: --trigger-http --allow-unauthenticated
             project: phaenonet-test
-          - name: e2e_restore_users
-            entrypoint: http_restore_e2e_users
+          - name: e2e_restore_data
+            entrypoint: http_restore_e2e_data
             trigger: --trigger-http --allow-unauthenticated
             project: phaenonet-test
           - name: ps_process_statistics

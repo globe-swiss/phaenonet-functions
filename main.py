@@ -206,7 +206,7 @@ def http_reset_e2e_data(request: Request):
 
 
 @retry.Retry()
-def http_restore_e2e_users(request: Request):
+def http_restore_e2e_data(request: Request):
     with setup(request):
         with invoke():
             from phenoback.functions import e2e
