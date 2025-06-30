@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from functools import lru_cache
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -142,8 +142,12 @@ def query_observation(field_path: str, op_string: str, value: Any) -> Query:
 
 
 def create_user(
-    user_id, nickname, firstname="Firstname", lastname="Lastname", locale="de-CH"
-):
+    user_id: str,
+    nickname: str,
+    firstname: str = "Firstname",
+    lastname: str = "Lastname",
+    locale: str = "de-CH",
+) -> None:
     write_document(
         "users",
         user_id,
@@ -203,17 +207,17 @@ def has_sensor(individual: dict) -> bool:
     return individual.get("sensor") is not None
 
 
-def localtime(timestamp: datetime | None = None):
+def localtime(timestamp: datetime | None = None) -> datetime:
     if not timestamp:
         timestamp = datetime.now(tz=tzlocal.get_localzone())
     return timestamp.astimezone(ZoneInfo("Europe/Zurich"))
 
 
-def localdate(timestamp: datetime | None = None):
+def localdate(timestamp: datetime | None = None) -> date:
     return localtime(timestamp).date()
 
 
-def to_id_array(data: dict[str, dict], key="id") -> list[dict]:
+def to_id_array(data: dict[str, dict], key: str = "id") -> list[dict]:
     """
     Convert a dictionary to an array of dictionaries with an additional key.
     Useful for writing data in batch mode.
