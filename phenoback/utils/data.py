@@ -1,7 +1,6 @@
 from datetime import date, datetime
 from functools import lru_cache
 from typing import Any
-from zoneinfo import ZoneInfo
 
 import tzlocal
 from firebase_admin import auth
@@ -208,9 +207,11 @@ def has_sensor(individual: dict) -> bool:
 
 
 def localtime(timestamp: datetime | None = None) -> datetime:
+    timezone = tzlocal.get_localzone()
     if not timestamp:
-        timestamp = datetime.now(tz=tzlocal.get_localzone())
-    return timestamp.astimezone(ZoneInfo("Europe/Zurich"))
+        return datetime.now(tz=timezone)
+    else:
+        return timestamp.replace(tzinfo=timezone)
 
 
 def localdate(timestamp: datetime | None = None) -> date:

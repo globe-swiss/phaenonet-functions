@@ -1,6 +1,5 @@
 import datetime
 import logging
-from zoneinfo import ZoneInfo
 
 import google.api_core.exceptions
 
@@ -184,14 +183,9 @@ def clear_sensors(year: int) -> int:
 
 def increase_uplink_frequency(deveui: str):
     dragino.set_uplink_frequency(deveui, 3600)
-    tomorrow = d.localdate() + datetime.timedelta(days=1)
+    tomorrow = d.localtime() + datetime.timedelta(days=1)
     dragino.set_uplink_frequency(
         deveui,
         3600,
-        datetime.datetime(
-            tomorrow.year,
-            tomorrow.month,
-            tomorrow.day,
-            tzinfo=ZoneInfo("Europe/Zurich"),
-        ),
+        tomorrow,
     )
