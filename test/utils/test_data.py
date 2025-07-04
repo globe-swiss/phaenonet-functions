@@ -17,7 +17,7 @@ see maintenance repo @ maintenance/config/generate_config_static.py.
 
 
 @pytest.fixture(autouse=True)
-def static_config():
+def config_static():
     d._get_static_config.cache_clear()
     with open(CONFIG_STATIC_RESOURCE, encoding="utf-8") as file:
         data = json.loads(file.read())
@@ -26,26 +26,26 @@ def static_config():
 
 
 @pytest.fixture(autouse=True)
-def dynamic_config():
+def config_dynamic():
     with open(CONFIG_DYNAMIC_RESOURCE, encoding="utf-8") as file:
         data = json.loads(file.read())
         f.write_document("definitions", "config_dynamic", data)
         return data
 
 
-def test_update_phenoyear(dynamic_config):
-    current_year = dynamic_config["phenoyear"]
+def test_update_phenoyear(config_dynamic):
+    current_year = config_dynamic["phenoyear"]
     assert d.get_phenoyear(True) == current_year
     d.update_phenoyear(current_year + 1)
     assert d.get_phenoyear(False) == current_year + 1
 
 
-def test_update_phenoyear__preserve_data(dynamic_config):
-    assert dynamic_config["first_year"] is not None
+def test_update_phenoyear__preserve_data(config_dynamic):
+    assert config_dynamic["first_year"] is not None
     d.update_phenoyear(2013)
     assert (
         f.get_document("definitions", "config_dynamic")["first_year"]
-        == dynamic_config["first_year"]
+        == config_dynamic["first_year"]
     )
 
 

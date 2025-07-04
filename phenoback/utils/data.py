@@ -3,7 +3,6 @@ from functools import lru_cache
 from typing import Any
 
 import pytz
-import tzlocal
 from firebase_admin import auth
 
 from phenoback.utils.firestore import (  # pylint: disable=unused-import
@@ -208,7 +207,7 @@ def has_sensor(individual: dict) -> bool:
 
 
 def localtime(timestamp: datetime | None = None) -> datetime:
-    timezone = pytz.timezone('Europe/Zurich')
+    timezone = pytz.timezone("Europe/Zurich")
     if not timestamp:
         return datetime.now(tz=timezone)
     else:
