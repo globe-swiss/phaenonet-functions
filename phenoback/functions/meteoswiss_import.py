@@ -120,7 +120,6 @@ def process_observations_response(response_text: str, response_elapsed: float) -
 
 def _get_observations_dicts(observations: csv.DictReader) -> list[dict]:
     mapping = get_document("definitions", "meteoswiss_mapping")
-    print(mapping)
     return [
         {
             "id": f"{observation['nat_abbr']}_{observation['reference_year']}_{mapping[observation['param_id']]['species']}_{mapping[observation['param_id']]['phenophase']}",
