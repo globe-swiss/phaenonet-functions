@@ -2,7 +2,6 @@ import datetime
 
 import pytest
 from flask import Response
-import tzlocal
 
 from phenoback.functions import e2e
 from phenoback.utils import data as d
@@ -187,7 +186,7 @@ def test_firebasedate(year, month, day):
     result = e2e.firebasedate(year, month, day)
 
     assert isinstance(result, datetime.datetime)
-    assert result.tzinfo == tzlocal.get_localzone()
+    assert result == d.localtime(result)
     assert result.year == year
     assert result.month == month
     assert result.day == day
