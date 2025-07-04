@@ -1,5 +1,6 @@
 # pylint: disable=protected-access
 import json
+import test
 from datetime import datetime
 
 import pytest
@@ -7,19 +8,15 @@ import pytest
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
 
-CONFIG_STATIC_RESOURCE = "test/resources/config_static.json"
-CONFIG_DYNAMIC_RESOURCE = "test/resources/config_dynamic.json"
-
-"""
-To update resource files needed for tests from phaenonet test instance
-see maintenance repo @ maintenance/config/generate_config_static.py.
-"""
-
 
 @pytest.fixture(autouse=True)
 def config_static():
+    """
+    To update resource files needed for tests from phaenonet test instance
+    see maintenance repo @ maintenance/config/generate_config_static.py.
+    """
     d._get_static_config.cache_clear()
-    with open(CONFIG_STATIC_RESOURCE, encoding="utf-8") as file:
+    with open(test.get_resource_path("config_static.json"), encoding="utf-8") as file:
         data = json.loads(file.read())
         f.write_document("definitions", "config_static", data)
         return data
@@ -27,7 +24,7 @@ def config_static():
 
 @pytest.fixture(autouse=True)
 def config_dynamic():
-    with open(CONFIG_DYNAMIC_RESOURCE, encoding="utf-8") as file:
+    with open(test.get_resource_path("config_dynamic.json"), encoding="utf-8") as file:
         data = json.loads(file.read())
         f.write_document("definitions", "config_dynamic", data)
         return data

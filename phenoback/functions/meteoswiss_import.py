@@ -6,7 +6,7 @@ from hashlib import md5
 
 from requests import get
 
-from phenoback.utils.data import get_phenoyear, update_individual
+import phenoback.utils.data as d
 from phenoback.utils.firestore import (
     ArrayUnion,
     get_document,
@@ -23,7 +23,7 @@ class ResourceNotFoundException(Exception):
 
 
 def main(data, context):  # pylint: disable=unused-argument
-    phenoyear = get_phenoyear()
+    phenoyear = d.get_phenoyear()
     log.info("Import meteoswiss stations")
     process_stations(phenoyear)
     log.info("Import meteoswiss observations")
@@ -120,11 +120,12 @@ def process_observations_response(response_text: str, response_elapsed: float) -
 
 def _get_observations_dicts(observations: csv.DictReader) -> list[dict]:
     mapping = get_document("definitions", "meteoswiss_mapping")
+    print(mapping)
     return [
         {
             "id": f"{observation['nat_abbr']}_{observation['reference_year']}_{mapping[observation['param_id']]['species']}_{mapping[observation['param_id']]['phenophase']}",
             "user": "meteoswiss",
-            "date": datetime.strptime(observation["value"], "%Y%m%d"),
+            "date": d.localtime(datetime.strptime(observation["value"], "%Y%m%d")),
             "individual_id": f"{observation['reference_year']}_{observation['nat_abbr']}",
             "individual": observation["nat_abbr"],
             "source": "meteoswiss",
@@ -149,7 +150,7 @@ def _get_station_species(observations: list[dict]) -> dict[str, list[str] | None
 def _update_station_species(station_species: dict) -> None:
     for key in station_species.keys():
         data = {"station_species": ArrayUnion(station_species[key])}
-        update_individual(key, data)
+        d.update_individual(key, data)
 
 
 def _set_hash(key: str, data: str):

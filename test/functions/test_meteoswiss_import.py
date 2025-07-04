@@ -1,10 +1,12 @@
 # pylint: disable=protected-access
 import csv
+import json
 import test
 from collections import namedtuple
 from io import StringIO
 
 import pytest
+import pytz
 
 from phenoback.functions import meteoswiss_import as meteoswiss
 from phenoback.utils import data as d
@@ -33,6 +35,20 @@ def station_data() -> str:
         test.get_resource_path("meteoswiss_stations.csv"), encoding="utf-8"
     ) as csv_file:
         return csv_file.read()
+
+
+@pytest.fixture
+def meteoswiss_mapping() -> str:
+    """
+    Fixture to provide the mapping for meteoswiss.
+    Update see `maintenance/maintenance/test-env/extract_meteoswiss_mapping.py`
+    """
+    with open(
+        test.get_resource_path("meteoswiss_mapping.json"), encoding="utf-8"
+    ) as file:
+        data = json.loads(file.read())
+        f.write_document("definitions", "meteoswiss_mapping", data)
+        return data
 
 
 @pytest.fixture
@@ -84,11 +100,13 @@ class TestCommon:
 
 
 class TestObservations:
-    def test_get_observation_dicts(self, mocker, observation_data):
-        mocker.patch("phenoback.functions.meteoswiss_import.get_document")
+    def test_get_observation_dicts(self, observation_data, meteoswiss_mapping):
         dict_reader = csv.DictReader(StringIO(observation_data), delimiter=";")
+
         results = meteoswiss._get_observations_dicts(dict_reader)
-        # assert all keys are generated
+
+        assert meteoswiss_mapping
+        assert len(results) == 3
         for result in results:
             assert {
                 OBSERVATION_ID_KEY,
@@ -101,6 +119,7 @@ class TestObservations:
                 "species",
                 "phenophase",
             } == result.keys()
+            assert result["date"].tzinfo == pytz.timezone("Europe/Zurich")
 
     def test_process_observations__ok(self, mocker):
         response_text = "some_data"
