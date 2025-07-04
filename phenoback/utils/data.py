@@ -212,7 +212,8 @@ def localtime(timestamp: datetime | None = None) -> datetime:
         return datetime.now().astimezone(timezone)
     else:
         if timestamp.tzname() is None:
-            return timestamp.astimezone(timezone)
+            # For naive datetimes, assume they are already in Europe/Zurich time
+            return timezone.localize(timestamp)
         else:
             raise ValueError(f"Not a naive datetime, tz = {timestamp}")
 

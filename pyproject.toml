@@ -34,7 +34,6 @@ dependencies = [
     "google-cloud-pubsub",
     "google-cloud-bigquery",
     "functions-framework",
-    "tzlocal"
 ]
 
 [dependency-groups]
@@ -51,7 +50,6 @@ dev = [
     "pytest-xprocess",
     "mock",
     "isort",
-    "freezegun",
     "py",
-    "strictyaml"
+    "strictyaml",
 ]

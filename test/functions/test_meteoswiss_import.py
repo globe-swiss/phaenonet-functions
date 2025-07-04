@@ -116,6 +116,7 @@ class TestObservations:
         # Verify observations exist and have correct timezone (midnight Europe/Zurich)
         for obs in f.get_collection_documents(OBSERVATION_COLLECTION):
             assert obs is not None
+            assert obs["date"].tzinfo
             obs_date: datetime = obs["date"].astimezone(pytz.timezone("Europe/Zurich"))
             assert obs_date.hour == 0
             assert obs_date.minute == 0
@@ -133,7 +134,6 @@ class TestObservations:
         dict_reader = csv.DictReader(StringIO(observation_data), delimiter=";")
 
         results = meteoswiss._get_observations_dicts(dict_reader)
-
         assert meteoswiss_mapping
         assert len(results) == 3
         for result in results:
