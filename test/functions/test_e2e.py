@@ -195,3 +195,24 @@ def test_firebasedate(year, month, day):
     assert result.minute == 0
     assert result.second == 0
     assert result.microsecond == 0
+
+
+def test_restore_sensor_test_data(mocker):
+    update_observation_mock = mocker.patch("phenoback.utils.data.update_observation")
+    update_individual_mock = mocker.patch("phenoback.utils.data.update_individual")
+
+    # Call the function
+    e2e.restore_sensor_test_data()
+
+    # check sensor
+    sensor = f.get_document("sensors", "2018_721")
+    assert sensor is not None
+    assert sensor["year"] == 2018
+    assert "data" in sensor
+    assert len(sensor["data"]) == 396
+
+    # Check individual was updated
+    assert update_individual_mock.call_count == 1
+
+    # Check update_observation was called 12 times
+    assert update_observation_mock.call_count == 12
