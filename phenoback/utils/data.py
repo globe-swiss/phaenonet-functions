@@ -209,9 +209,12 @@ def has_sensor(individual: dict) -> bool:
 def localtime(timestamp: datetime | None = None) -> datetime:
     timezone = pytz.timezone("Europe/Zurich")
     if not timestamp:
-        return datetime.now(tz=timezone)
+        return datetime.now().astimezone(timezone)
     else:
-        return timestamp.replace(tzinfo=timezone)
+        if timestamp.tzname() is None:
+            return timestamp.astimezone(timezone)
+        else:
+            raise ValueError(f"Not a naive datetime, tz = {timestamp}")
 
 
 def localdate(timestamp: datetime | None = None) -> date:

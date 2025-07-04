@@ -3,6 +3,7 @@ import csv
 import json
 import test
 from collections import namedtuple
+from datetime import datetime
 from io import StringIO
 
 import pytest
@@ -100,6 +101,34 @@ class TestCommon:
 
 
 class TestObservations:
+
+    def test_process_observations_response(
+        self, mocker, observation_data, meteoswiss_mapping
+    ):
+        update_station_species_mock = mocker.patch(
+            "phenoback.functions.meteoswiss_import._update_station_species"
+        )
+
+        result = meteoswiss.process_observations_response(observation_data, 0.1)
+
+        assert meteoswiss_mapping
+        assert result is True
+        # Verify observations exist and have correct timezone (midnight Europe/Zurich)
+        for obs in f.get_collection_documents(OBSERVATION_COLLECTION):
+            assert obs is not None
+            obs_date: datetime = obs["date"].astimezone(pytz.timezone("Europe/Zurich"))
+            assert obs_date.hour == 0
+            assert obs_date.minute == 0
+            assert obs_date.second == 0
+
+        # Verify the station species update was called
+        update_station_species_mock.assert_called_once()
+
+        # Verify the hash was stored
+        hash_doc = f.get_document(HASH_COLLECTION, HASH_DOCUMENT)
+        assert hash_doc is not None
+        assert f"{HASH_KEY_PREFIX}observations" in hash_doc
+
     def test_get_observation_dicts(self, observation_data, meteoswiss_mapping):
         dict_reader = csv.DictReader(StringIO(observation_data), delimiter=";")
 
@@ -119,7 +148,6 @@ class TestObservations:
                 "species",
                 "phenophase",
             } == result.keys()
-            assert result["date"].tzinfo == pytz.timezone("Europe/Zurich")
 
     def test_process_observations__ok(self, mocker):
         response_text = "some_data"

@@ -1,9 +1,10 @@
 # pylint: disable=protected-access
 import json
 import test
-from datetime import datetime
+from datetime import datetime, date
 
 import pytest
+import pytz
 
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
@@ -145,3 +146,49 @@ def test_to_id_array(input_data, expected_output):
 )
 def test_is_actual_observation(comment, expected):
     assert d.is_actual_observation(comment) == expected
+
+
+def test_localtime_no_input():
+    # Test localtime() without input returns current time in Europe/Zurich
+    result = d.localtime()
+    assert isinstance(result, datetime)
+    # Assert not naive
+    assert result.tzinfo
+
+
+def test_localtime_with_naive_datetime():
+    # Test with naive datetime (no timezone) - should convert to Europe/Zurich
+    naive_dt = datetime(2024, 1, 15, 10, 30, 0)
+    result = d.localtime(naive_dt)
+    assert result.tzinfo
+    assert result.hour == 10
+    assert result.minute == 30
+
+
+def test_localtime_with_utc_datetime():
+    # Test with UTC datetime - should raise ValueError
+    utc_dt = datetime(2024, 1, 15, 10, 30, 0, tzinfo=pytz.UTC)
+    with pytest.raises(ValueError, match="Not a naive datetime"):
+        d.localtime(utc_dt)
+
+
+def test_localdate_no_input():
+    # Test localdate() without input returns current date
+    result = d.localdate()
+    assert isinstance(result, date)
+
+
+def test_localdate_with_naive_datetime():
+    # Test with naive datetime
+    naive_dt = datetime(2024, 1, 15, 23, 30, 0)
+    result = d.localdate(naive_dt)
+    assert isinstance(result, date)
+    # Naive 23:30 is interpreted as local time, so still Jan 15
+    assert result == date(2024, 1, 15)
+
+
+def test_localdate_with_timezone_datetime():
+    # Test with timezone-aware datetime - should raise ValueError
+    dt = datetime(2024, 1, 15, 23, 30, 0, tzinfo=pytz.UTC)
+    with pytest.raises(ValueError, match="Not a naive datetime"):
+        d.localdate(dt)

@@ -102,6 +102,7 @@ def process_observations_response(response_text: str, response_elapsed: float) -
     if _load_hash("observations") != _get_hash(response_text):
         reader = csv.DictReader(io.StringIO(response_text), delimiter=";")
         observations = _get_observations_dicts(reader)
+        print(observations)
         log.info(
             "Update %i observations fetched in %s",
             len(observations),

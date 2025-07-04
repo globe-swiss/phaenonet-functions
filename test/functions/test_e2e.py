@@ -186,7 +186,7 @@ def test_firebasedate(year, month, day):
     result = e2e.firebasedate(year, month, day)
 
     assert isinstance(result, datetime.datetime)
-    assert result == d.localtime(result)
+    assert result.tzinfo is not None  # should be timezone-aware
     assert result.year == year
     assert result.month == month
     assert result.day == day
