@@ -1,0 +1,338 @@
+{
+  "601": {
+    "id": "601",
+    "name": "maesh13d",
+    "phenophase": "BEA",
+    "species": "RK"
+  },
+  "602": {
+    "id": "602",
+    "name": "maesh60d",
+    "phenophase": "BLB",
+    "species": "RK"
+  },
+  "603": {
+    "id": "603",
+    "name": "maesh65d",
+    "phenophase": "BLA",
+    "species": "RK"
+  },
+  "604": {
+    "id": "604",
+    "name": "maesh94d",
+    "phenophase": "BVA",
+    "species": "RK"
+  },
+  "605": {
+    "id": "605",
+    "name": "maesh95d",
+    "phenophase": "BFA",
+    "species": "RK"
+  },
+  "606": {
+    "id": "606",
+    "name": "mfags13d",
+    "phenophase": "BEA",
+    "species": "BU"
+  },
+  "607": {
+    "id": "607",
+    "name": "mfags94d",
+    "phenophase": "BVA",
+    "species": "BU"
+  },
+  "608": {
+    "id": "608",
+    "name": "mfags95d",
+    "phenophase": "BFA",
+    "species": "BU"
+  },
+  "609": {
+    "id": "609",
+    "name": "macep13d",
+    "phenophase": "BEA",
+    "species": "BA"
+  },
+  "610": {
+    "id": "610",
+    "name": "macep94d",
+    "phenophase": "BVA",
+    "species": "BA"
+  },
+  "611": {
+    "id": "611",
+    "name": "msora13d",
+    "phenophase": "BEA",
+    "species": "VB"
+  },
+  "612": {
+    "id": "612",
+    "name": "msora60d",
+    "phenophase": "BLB",
+    "species": "VB"
+  },
+  "613": {
+    "id": "613",
+    "name": "msora65d",
+    "phenophase": "BLA",
+    "species": "VB"
+  },
+  "614": {
+    "id": "614",
+    "name": "msora87d",
+    "phenophase": "FRA",
+    "species": "VB"
+  },
+  "615": {
+    "id": "615",
+    "name": "msora94d",
+    "phenophase": "BVA",
+    "species": "VB"
+  },
+  "616": {
+    "id": "616",
+    "name": "msora95d",
+    "phenophase": "BFA",
+    "species": "VB"
+  },
+  "617": {
+    "id": "617",
+    "name": "mcora13d",
+    "phenophase": "BEA",
+    "species": "HS"
+  },
+  "618": {
+    "id": "618",
+    "name": "mcora60d",
+    "phenophase": "BLB",
+    "species": "HS"
+  },
+  "619": {
+    "id": "619",
+    "name": "mcora65d",
+    "phenophase": "BLA",
+    "species": "HS"
+  },
+  "620": {
+    "id": "620",
+    "name": "mtilp13d",
+    "phenophase": "BEA",
+    "species": "SL"
+  },
+  "621": {
+    "id": "621",
+    "name": "mtilp60d",
+    "phenophase": "BLB",
+    "species": "SL"
+  },
+  "622": {
+    "id": "622",
+    "name": "mtilp65d",
+    "phenophase": "BLA",
+    "species": "SL"
+  },
+  "623": {
+    "id": "623",
+    "name": "mtilp94d",
+    "phenophase": "BVA",
+    "species": "SL"
+  },
+  "624": {
+    "id": "624",
+    "name": "msamr60d",
+    "phenophase": "BLB",
+    "species": "RH"
+  },
+  "625": {
+    "id": "625",
+    "name": "msamr65d",
+    "phenophase": "BLA",
+    "species": "RH"
+  },
+  "626": {
+    "id": "626",
+    "name": "msamr87d",
+    "phenophase": "FRA",
+    "species": "RH"
+  },
+  "627": {
+    "id": "627",
+    "name": "msamn60d",
+    "phenophase": "BLB",
+    "species": "SH"
+  },
+  "628": {
+    "id": "628",
+    "name": "msamn65d",
+    "phenophase": "BLA",
+    "species": "SH"
+  },
+  "629": {
+    "id": "629",
+    "name": "msamn87d",
+    "phenophase": "FRA",
+    "species": "SH"
+  },
+  "630": {
+    "id": "630",
+    "name": "mtilc13d",
+    "phenophase": "BEA",
+    "species": "WL"
+  },
+  "631": {
+    "id": "631",
+    "name": "mtilc60d",
+    "phenophase": "BLB",
+    "species": "WL"
+  },
+  "632": {
+    "id": "632",
+    "name": "mtilc65d",
+    "phenophase": "BLA",
+    "species": "WL"
+  },
+  "633": {
+    "id": "633",
+    "name": "mtilc94d",
+    "phenophase": "BVA",
+    "species": "WL"
+  },
+  "634": {
+    "id": "634",
+    "name": "mlard13d",
+    "phenophase": "BEA",
+    "species": "LA"
+  },
+  "635": {
+    "id": "635",
+    "name": "mlard94d",
+    "phenophase": "BVA",
+    "species": "LA"
+  },
+  "636": {
+    "id": "636",
+    "name": "mlard95d",
+    "phenophase": "BFA",
+    "species": "LA"
+  },
+  "637": {
+    "id": "637",
+    "name": "mpica13d",
+    "phenophase": "BEA",
+    "species": "FI"
+  },
+  "638": {
+    "id": "638",
+    "name": "mrobp13d",
+    "phenophase": "BEA",
+    "species": "RO"
+  },
+  "639": {
+    "id": "639",
+    "name": "mrobp60d",
+    "phenophase": "BLB",
+    "species": "RO"
+  },
+  "640": {
+    "id": "640",
+    "name": "mrobp65d",
+    "phenophase": "BLA",
+    "species": "RO"
+  },
+  "641": {
+    "id": "641",
+    "name": "mrobp95d",
+    "phenophase": "BFA",
+    "species": "RO"
+  },
+  "642": {
+    "id": "642",
+    "name": "mbetp13d",
+    "phenophase": "BEA",
+    "species": "HB"
+  },
+  "643": {
+    "id": "643",
+    "name": "mbetp60d",
+    "phenophase": "BLB",
+    "species": "HB"
+  },
+  "644": {
+    "id": "644",
+    "name": "mbetp65d",
+    "phenophase": "BLA",
+    "species": "HB"
+  },
+  "645": {
+    "id": "645",
+    "name": "mbetp94d",
+    "phenophase": "BVA",
+    "species": "HB"
+  },
+  "646": {
+    "id": "646",
+    "name": "mbetp95d",
+    "phenophase": "BFA",
+    "species": "HB"
+  },
+  "647": {
+    "id": "647",
+    "name": "mcass13d",
+    "phenophase": "BEA",
+    "species": "EK"
+  },
+  "648": {
+    "id": "648",
+    "name": "mcass60d",
+    "phenophase": "BLB",
+    "species": "EK"
+  },
+  "649": {
+    "id": "649",
+    "name": "mcass65d",
+    "phenophase": "BLA",
+    "species": "EK"
+  },
+  "650": {
+    "id": "650",
+    "name": "mcass87d",
+    "phenophase": "FRA",
+    "species": "EK"
+  },
+  "651": {
+    "id": "651",
+    "name": "mcass94d",
+    "phenophase": "BVA",
+    "species": "EK"
+  },
+  "652": {
+    "id": "652",
+    "name": "mcass95d",
+    "phenophase": "BFA",
+    "species": "EK"
+  },
+  "653": {
+    "id": "653",
+    "name": "mtusf65d",
+    "phenophase": "BLA",
+    "species": "HU"
+  },
+  "654": {
+    "id": "654",
+    "name": "manen65d",
+    "phenophase": "BLA",
+    "species": "BR"
+  },
+  "656": {
+    "id": 658,
+    "name": "mtaro65d",
+    "phenophase": "BLA",
+    "species": "WZ"
+  },
+  "658": {
+    "id": 658,
+    "name": "mcarp65d",
+    "phenophase": "BLA",
+    "species": "WS"
+  }
+}

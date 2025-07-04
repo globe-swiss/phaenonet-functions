@@ -231,7 +231,7 @@ def observations(year: int):
             "user": f"{SOURCE}_{o['user_id']}",
             "year": year,
             "tree_id": o["tree_id"].split("_", 1)[1],
-            "date": datetime.strptime(o["date"], "%Y-%m-%d"),
+            "date": d.localtime(datetime.strptime(o["date"], "%Y-%m-%d")),
             "phenophase": map_phenophase(o["observation_id"]),
             "source": SOURCE,
         }

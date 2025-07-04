@@ -1,6 +1,4 @@
-import datetime
 import logging
-from zoneinfo import ZoneInfo
 
 import google.api_core.exceptions
 
@@ -155,7 +153,7 @@ def sensor_set(individual_id: str, individual: str, deveui: str) -> None:
         i = doc.to_dict()
         if doc.id != individual_id and i.get("deveui"):
             remove_sensor(doc.id)
-    increase_uplink_frequency(deveui)
+    dragino.set_uplink_frequency(deveui, 3600)
 
 
 def remove_sensor(individual_id) -> None:
@@ -180,18 +178,3 @@ def clear_sensors(year: int) -> int:
     for individual_id in individual_ids:
         remove_sensor(individual_id)
     return len(individual_ids)
-
-
-def increase_uplink_frequency(deveui: str):
-    dragino.set_uplink_frequency(deveui, 3600)
-    tomorrow = d.localdate() + datetime.timedelta(days=1)
-    dragino.set_uplink_frequency(
-        deveui,
-        3600,
-        datetime.datetime(
-            tomorrow.year,
-            tomorrow.month,
-            tomorrow.day,
-            tzinfo=ZoneInfo("Europe/Zurich"),
-        ),
-    )

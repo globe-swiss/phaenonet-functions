@@ -142,7 +142,7 @@ def test_executes__firestore(mocker, entrypoint, functions, data, context):
             ],
         ),
         (
-            main.http_restore_e2e_users,
+            main.http_restore_e2e_data,
             [
                 "phenoback.functions.e2e.main_restore",
             ],

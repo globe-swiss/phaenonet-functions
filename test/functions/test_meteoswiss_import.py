@@ -1,10 +1,13 @@
 # pylint: disable=protected-access
 import csv
+import json
 import test
 from collections import namedtuple
+from datetime import datetime
 from io import StringIO
 
 import pytest
+import pytz
 
 from phenoback.functions import meteoswiss_import as meteoswiss
 from phenoback.utils import data as d
@@ -33,6 +36,20 @@ def station_data() -> str:
         test.get_resource_path("meteoswiss_stations.csv"), encoding="utf-8"
     ) as csv_file:
         return csv_file.read()
+
+
+@pytest.fixture
+def meteoswiss_mapping() -> str:
+    """
+    Fixture to provide the mapping for meteoswiss.
+    Update see `maintenance/maintenance/test-env/extract_meteoswiss_mapping.py`
+    """
+    with open(
+        test.get_resource_path("meteoswiss_mapping.json"), encoding="utf-8"
+    ) as file:
+        data = json.loads(file.read())
+        f.write_document("definitions", "meteoswiss_mapping", data)
+        return data
 
 
 @pytest.fixture
@@ -84,11 +101,41 @@ class TestCommon:
 
 
 class TestObservations:
-    def test_get_observation_dicts(self, mocker, observation_data):
-        mocker.patch("phenoback.functions.meteoswiss_import.get_document")
+
+    def test_process_observations_response(
+        self, mocker, observation_data, meteoswiss_mapping
+    ):
+        update_station_species_mock = mocker.patch(
+            "phenoback.functions.meteoswiss_import._update_station_species"
+        )
+
+        result = meteoswiss.process_observations_response(observation_data, 0.1)
+
+        assert meteoswiss_mapping
+        assert result is True
+        # Verify observations exist and have correct timezone (midnight Europe/Zurich)
+        for obs in f.get_collection_documents(OBSERVATION_COLLECTION):
+            assert obs is not None
+            assert obs["date"].tzinfo
+            obs_date: datetime = obs["date"].astimezone(pytz.timezone("Europe/Zurich"))
+            assert obs_date.hour == 0
+            assert obs_date.minute == 0
+            assert obs_date.second == 0
+
+        # Verify the station species update was called
+        update_station_species_mock.assert_called_once()
+
+        # Verify the hash was stored
+        hash_doc = f.get_document(HASH_COLLECTION, HASH_DOCUMENT)
+        assert hash_doc is not None
+        assert f"{HASH_KEY_PREFIX}observations" in hash_doc
+
+    def test_get_observation_dicts(self, observation_data, meteoswiss_mapping):
         dict_reader = csv.DictReader(StringIO(observation_data), delimiter=";")
+
         results = meteoswiss._get_observations_dicts(dict_reader)
-        # assert all keys are generated
+        assert meteoswiss_mapping
+        assert len(results) == 3
         for result in results:
             assert {
                 OBSERVATION_ID_KEY,
