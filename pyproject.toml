@@ -52,4 +52,5 @@ dev = [
     "isort",
     "py",
     "strictyaml",
+    "tqdm>=4.67.1",
 ]
