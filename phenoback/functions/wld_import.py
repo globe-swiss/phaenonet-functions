@@ -12,7 +12,7 @@ from phenoback.utils import firestore as f
 from phenoback.utils import storage as s
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.INFO)
+log.setLevel(logging.DEBUG)
 
 
 SOURCE = "wld"
@@ -59,6 +59,12 @@ def main(data, context):  # pylint: disable=unused-argument
 
 
 def check_zip_archive(input_zip: ZipFile) -> None:
+    """
+    Validates that the ZIP archive contains all required files.
+
+    :param input_zip: ZipFile object to validate
+    :raises FileNotFoundError: If required files are missing from the archive
+    """
     filenames = input_zip.namelist()
     log.debug("Files found: %s", str(filenames))
     if not set(FILES).issubset(filenames):
@@ -66,6 +72,12 @@ def check_zip_archive(input_zip: ZipFile) -> None:
 
 
 def check_file_size(blob: Blob) -> None:
+    """
+    Checks if the uploaded file size is within acceptable limits.
+
+    :param blob: Google Cloud Storage blob to check
+    :raises OverflowError: If file size exceeds MAX_ARCHIVE_BYTES
+    """
     size = blob.size
     log.debug("Import file size %ib", size)
     if size > MAX_ARCHIVE_BYTES:
@@ -73,6 +85,12 @@ def check_file_size(blob: Blob) -> None:
 
 
 def load_data(input_zip: ZipFile) -> dict[str, list[dict]]:
+    """
+    Loads CSV data from the ZIP archive into a dictionary.
+
+    :param input_zip: ZipFile containing CSV files
+    :returns: Dictionary mapping filenames to lists of dictionaries representing CSV rows
+    """
     return {
         name: list(
             csv.DictReader(
@@ -84,6 +102,19 @@ def load_data(input_zip: ZipFile) -> dict[str, list[dict]]:
 
 
 def check_data_integrity():
+    """
+    Validates data integrity across all imported CSV files.
+
+    Checks:
+    - All user_ids in observations exist in users file
+    - All site_ids in observations exist in sites file
+    - All tree_ids in observations exist in trees file
+    - All observation_ids map to valid phenophases
+    - No multiple users have observations for same site in same year
+    - Tree ID format is correct
+
+    :raises ValueError: If any data integrity check fails
+    """
     error = False
     users = {u["user_id"]: True for u in DATA["user_id.csv"]}
     sites = {s["site_id"]: True for s in DATA["site.csv"]}
@@ -132,10 +163,18 @@ def check_data_integrity():
         raise ValueError("Data integrity check failed")
 
 
-def import_data(pathfile: str, bucket=None):
+def import_data(pathfile: str, bucket=None, year: int | None = None):
+    """
+    Main import function that processes WLD data from a ZIP file.
+
+    :param pathfile: Path to the ZIP file in cloud storage
+    :param bucket: Optional GCS bucket (defaults to configured bucket)
+    :param year: Year to import data for (defaults to previous phenological year)
+    """
     global DATA  # pylint: disable=global-statement
-    # assumption is that the data is always provided in the following year
-    year = d.get_phenoyear() - 1
+    # default to previous year if not specified
+    if year is None:
+        year = d.get_phenoyear() - 1
 
     log.info("importing year %i", year)
     blob = s.get_blob(bucket, pathfile)
@@ -154,6 +193,11 @@ def import_data(pathfile: str, bucket=None):
 
 @lru_cache
 def station_species() -> dict[str, set[str]]:
+    """
+    Creates a mapping of site IDs to sets of species present at each site.
+
+    :returns: Dictionary mapping site_id to set of species codes
+    """
     result = {}
     for tree in DATA["tree.csv"]:
         result.setdefault(tree["site_id"], set()).add(map_species(tree["species_id"]))
@@ -162,6 +206,11 @@ def station_species() -> dict[str, set[str]]:
 
 @lru_cache
 def tree_species() -> dict[str, dict[str, str]]:
+    """
+    Creates a nested mapping of site IDs to tree IDs to species.
+
+    :returns: Dictionary mapping site_id -> tree_id -> species code
+    """
     result = {}
     for tree in DATA["tree.csv"]:
         result.setdefault(tree["site_id"], {})[tree["tree_id"]] = map_species(
@@ -172,6 +221,11 @@ def tree_species() -> dict[str, dict[str, str]]:
 
 @lru_cache
 def site_users() -> dict[str, dict[str, str]]:
+    """
+    Creates a mapping of site IDs to years to user IDs.
+
+    :returns: Dictionary mapping site_id -> year -> user_id
+    """
     result = {}
     for obs in DATA["observation_phaeno.csv"]:
         result.setdefault(obs["site_id"], {})[obs["year"]] = obs["user_id"]
@@ -179,30 +233,74 @@ def site_users() -> dict[str, dict[str, str]]:
 
 
 def get_site_species(site_id: str) -> list[str]:
+    """
+    Gets list of species present at a specific site.
+
+    :param site_id: ID of the site
+    :returns: List of species codes (filtered to remove None values)
+    """
     return list(filter(lambda species: species, station_species()[site_id]))
 
 
 def get_tree_species(site_id: str, tree_id: str) -> str:
+    """
+    Gets the species of a specific tree at a site.
+
+    :param site_id: ID of the site
+    :param tree_id: ID of the tree
+    :returns: Species code for the tree
+    """
     return tree_species()[site_id][tree_id]
 
 
 def get_user(site_id: str, year: str) -> str:
+    """
+    Gets the user ID who made observations at a site in a specific year.
+
+    :param site_id: ID of the site
+    :param year: Year as string
+    :returns: User ID or None if no user found
+    """
     return site_users().get(site_id, {}).get(str(year))
 
 
 def wsl_user(user_id) -> str:
+    """
+    Formats a WSL user ID with the source prefix.
+
+    :param user_id: Original user ID
+    :returns: Formatted user ID with 'wld_' prefix
+    """
     return f"{SOURCE}_{user_id}"
 
 
 def map_species(wsl_species) -> str:
+    """
+    Maps WSL species ID to internal species code.
+
+    :param wsl_species: WSL species ID
+    :returns: Internal species code or None if not mapped
+    """
     return SPECIES_MAP.get(wsl_species, None)
 
 
 def map_phenophase(wsl_observation_id):
+    """
+    Maps WSL observation ID to internal phenophase code.
+
+    :param wsl_observation_id: WSL observation ID
+    :returns: Internal phenophase code
+    """
     return PHASES_MAP[wsl_observation_id]
 
 
 def individuals(year: int):
+    """
+    Creates individual records for all sites with observations in the given year.
+
+    :param year: Year to process
+    :returns: List of individual dictionaries ready for Firestore insertion
+    """
     return [
         {
             "id": f"{year}_{SOURCE}_{site['site_id']}",
@@ -222,6 +320,12 @@ def individuals(year: int):
 
 
 def observations(year: int):
+    """
+    Creates observation records for the given year.
+
+    :param year: Year to filter observations
+    :returns: List of observation dictionaries ready for Firestore insertion
+    """
     return [
         {
             "id": f"{SOURCE}_{o['site_id']}_{o['tree_id']}_{o['year']}_{get_tree_species(o['site_id'], o['tree_id'])}_{map_phenophase(o['observation_id'])}",
@@ -241,6 +345,11 @@ def observations(year: int):
 
 
 def users():
+    """
+    Creates user records from imported user data.
+
+    :returns: List of user dictionaries with formatted IDs and names
+    """
     return [
         {
             "id": wsl_user(u["user_id"]),
@@ -253,6 +362,11 @@ def users():
 
 
 def public_users():
+    """
+    Creates public user records with limited information.
+
+    :returns: List of public user dictionaries with ID, nickname, and roles
+    """
     return [
         {"id": wsl_user(u["user_id"]), "nickname": NICKNAME, "roles": [SOURCE]}
         for u in DATA["user_id.csv"]
@@ -260,6 +374,12 @@ def public_users():
 
 
 def insert_data(collection: str, documents: list[dict]) -> None:
+    """
+    Batch inserts documents into a Firestore collection.
+
+    :param collection: Name of the Firestore collection
+    :param documents: List of documents to insert
+    """
     if len(documents) == 0:
         log.error(
             "no data present on collection %s",
