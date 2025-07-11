@@ -8,7 +8,7 @@ cachecontrol==0.14.3
     # via firebase-admin
 cachetools==5.5.2
     # via google-auth
-certifi==2025.6.15
+certifi==2025.7.9
     # via
     #   httpcore
     #   httpx
@@ -55,7 +55,7 @@ google-api-core==2.25.1
     #   google-cloud-secret-manager
     #   google-cloud-storage
     #   google-cloud-tasks
-google-api-python-client==2.175.0
+google-api-python-client==2.176.0
     # via firebase-admin
 google-auth==2.40.3
     # via
@@ -89,11 +89,11 @@ google-cloud-firestore==2.21.0 ; platform_python_implementation != 'PyPy'
     # via firebase-admin
 google-cloud-logging==3.12.1
     # via phaenonet-functions
-google-cloud-pubsub==2.30.0
+google-cloud-pubsub==2.31.0
     # via phaenonet-functions
 google-cloud-secret-manager==2.24.0
     # via phaenonet-functions
-google-cloud-storage==3.1.1
+google-cloud-storage==3.2.0
     # via firebase-admin
 google-cloud-tasks==2.19.3
     # via phaenonet-functions
@@ -243,7 +243,7 @@ sniffio==1.3.1
     # via anyio
 tinify==1.7.0
     # via phaenonet-functions
-typing-extensions==4.14.0
+typing-extensions==4.14.1
     # via
     #   anyio
     #   opentelemetry-api
@@ -252,9 +252,7 @@ typing-extensions==4.14.0
 tzdata==2025.2 ; sys_platform == 'win32'
     # via tzlocal
 tzlocal==5.3.1
-    # via
-    #   dateparser
-    #   phaenonet-functions
+    # via dateparser
 uritemplate==4.2.0
     # via google-api-python-client
 urllib3==2.5.0
