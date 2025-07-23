@@ -222,7 +222,7 @@ requests==2.32.4
     #   tinify
 rsa==4.9.1
     # via google-auth
-sentry-sdk==2.33.0
+sentry-sdk==2.33.2
     # via phaenonet-functions
 six==1.17.0
     # via python-dateutil
