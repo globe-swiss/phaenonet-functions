@@ -180,12 +180,12 @@ jobs:
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - id: auth
         name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2.1.10
+        uses: google-github-actions/auth@v2.1.11
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2.1.4
+        uses: google-github-actions/setup-gcloud@v2.1.5
         with:
           project_id: ${{ env.PROJECT }}
       - name: set release version
