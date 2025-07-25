@@ -5,6 +5,7 @@ foto_uploads
 *.pickle
 .claude
 .firebaserc
+CLAUDE*
 
 # firebase cli
 logs
