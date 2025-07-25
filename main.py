@@ -64,6 +64,8 @@ def setup(data: str | dict | Request | None, context=None, level=logging.DEBUG):
     except Exception:
         log.exception("Fatal error in cloud function")
         raise
+    finally:
+        sentry_sdk.flush()
 
 
 @contextmanager
