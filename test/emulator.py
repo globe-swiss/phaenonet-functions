@@ -25,7 +25,7 @@ def check():
 def start(xprocess, name):
     class EmulatorClass(ProcessStarter):
         @property
-        def args(self):  # type: ignore
+        def args(self):  # type: ignore  # xprocess base abstract implementation returns void and does not define no return type
             return [
                 _get_gcloud_cmd(),
                 "beta",
@@ -39,7 +39,7 @@ def start(xprocess, name):
             ]
 
         @property
-        def pattern(self):  # type: ignore
+        def pattern(self):  # type: ignore  # xprocess base returns None and no type is defined
             return re.compile(".*is now running.*")
 
     logfile = xprocess.ensure(name, EmulatorClass)
