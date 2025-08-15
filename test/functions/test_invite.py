@@ -320,9 +320,103 @@ class TestInvite:
 
 
 class TestRegister:
-    @pytest.mark.skip(reason="todo: refactor context and data handling -> helpers")
-    def test_main(self):
-        pass
+    def test_main__create_event(self, mocker, context):
+        """Test that main() calls register_user on create event"""
+        register_user_mock = mocker.patch(
+            "phenoback.functions.invite.register.register_user"
+        )
+        data = {
+            "updateMask": {},
+            "oldValue": {},
+            "value": {
+                "fields": {
+                    "nickname": {"stringValue": "test_user"},
+                    "email": {"stringValue": "test@example.com"},
+                }
+            },
+        }
+
+        register.main(data, context)
+
+        register_user_mock.assert_called_once_with("document_id")
+
+    def test_main__update_event_nickname_changed(self, mocker, context):
+        """Test that main() calls change_nickname when nickname field is updated"""
+        change_nickname_mock = mocker.patch(
+            "phenoback.functions.invite.register.change_nickname"
+        )
+        data = {
+            "updateMask": {"fieldPaths": ["nickname", "other_field"]},
+            "oldValue": {
+                "fields": {
+                    "nickname": {"stringValue": "old_nickname"},
+                    "email": {"stringValue": "test@example.com"},
+                }
+            },
+            "value": {
+                "fields": {
+                    "nickname": {"stringValue": "new_nickname"},
+                    "email": {"stringValue": "test@example.com"},
+                }
+            },
+        }
+
+        register.main(data, context)
+
+        change_nickname_mock.assert_called_once_with("document_id", "new_nickname")
+
+    def test_main__update_event_nickname_not_changed(self, mocker, context):
+        """Test that main() does nothing when other fields are updated but not nickname"""
+        register_user_mock = mocker.patch(
+            "phenoback.functions.invite.register.register_user"
+        )
+        change_nickname_mock = mocker.patch(
+            "phenoback.functions.invite.register.change_nickname"
+        )
+        delete_user_mock = mocker.patch(
+            "phenoback.functions.invite.register.delete_user"
+        )
+        data = {
+            "updateMask": {"fieldPaths": ["email"]},
+            "oldValue": {
+                "fields": {
+                    "nickname": {"stringValue": "same_nickname"},
+                    "email": {"stringValue": "old@example.com"},
+                }
+            },
+            "value": {
+                "fields": {
+                    "nickname": {"stringValue": "same_nickname"},
+                    "email": {"stringValue": "new@example.com"},
+                }
+            },
+        }
+
+        register.main(data, context)
+
+        register_user_mock.assert_not_called()
+        change_nickname_mock.assert_not_called()
+        delete_user_mock.assert_not_called()
+
+    def test_main__delete_event(self, mocker, context):
+        """Test that main() calls delete_user on delete event"""
+        delete_user_mock = mocker.patch(
+            "phenoback.functions.invite.register.delete_user"
+        )
+        data = {
+            "updateMask": {},
+            "oldValue": {
+                "fields": {
+                    "nickname": {"stringValue": "deleted_user"},
+                    "email": {"stringValue": "deleted@example.com"},
+                }
+            },
+            "value": {},
+        }
+
+        register.main(data, context)
+
+        delete_user_mock.assert_called_once_with("document_id")
 
     @pytest.fixture()
     def lookup(self):

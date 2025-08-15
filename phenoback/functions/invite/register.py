@@ -31,7 +31,7 @@ def main(data, context):
     elif g.is_create_event(data):
         log.debug("update invites for user %s", user_id)
         register_user(user_id)
-    else:
+    else:  # pragma: no cover
         log.debug("Nothing to do for %s", user_id)
 
 
