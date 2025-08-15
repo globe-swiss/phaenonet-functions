@@ -77,7 +77,7 @@ jobs:
     outputs:
       tag: ${{ steps.new-tag.outputs.tag }}
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v5.0.0
         with:
           fetch-depth: 0
       - name: 'Get previous tag'
@@ -175,7 +175,7 @@ jobs:
       VERSION: "${{ matrix.name }}@${{ github.event.inputs.tag != 'none' && needs.next-versions.outputs.tag || github.sha }}"
     environment: ${{ github.event.inputs.project }}
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v5.0.0
       - name: Work around https://github.com/actions/checkout/issues/766
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - id: auth
@@ -185,7 +185,7 @@ jobs:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2.1.5
+        uses: google-github-actions/setup-gcloud@v2.2.0
         with:
           project_id: ${{ env.PROJECT }}
       - name: set release version
