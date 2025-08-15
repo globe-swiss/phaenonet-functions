@@ -25,7 +25,7 @@ def main_individual_updated(data, context):
         if g.get_field(data, "deveui", expected=False):
             individual = g.get_field(data, "individual")
             deveui = g.get_field(data, "deveui")
-            sensor_set(individual_id, individual, deveui)  # type: ignore
+            sensor_set(individual_id, str(individual), str(deveui))
         else:
             remove_sensor(individual_id)
 
