@@ -61,7 +61,7 @@ def set_uplink_frequency(deveui: str, interval: int, at: datetime | None = None)
             "Payload": f"{16777216 + interval:{0}8x}",
             "FPort": 1,
         },
-        at=at,  # type: ignore
+        at=at,
     )
 
 
