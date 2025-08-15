@@ -1,5 +1,7 @@
 import logging
 
+import google.api_core.exceptions
+
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
 from phenoback.utils import gcloud as g
@@ -22,7 +24,7 @@ def main(data, context):
 
     if g.is_update_event(data) and g.is_field_updated(data, "nickname"):
         log.debug("update nickname on invites for user %s", user_id)
-        change_nickname(user_id, nickname)
+        change_nickname(user_id, str(nickname))
     elif g.is_delete_event(data):
         log.debug("delete invites for user %s", user_id)
         delete_user(user_id)
@@ -66,17 +68,24 @@ def register_user_invite(invite_id: str, user_id: str) -> None:
     )
     nickname = user.get("nickname", "Unknown") if user else "Unknown"
     log.info("Register user %s (%s) on invite %s", user_id, nickname, invite_id)
-    f.update_document(
-        INVITE_COLLECTION,
-        invite_id,
-        {
-            "register_user": user_id,
-            "register_nick": nickname,
-            "register_date": register_date,
-        },
-    )
-    inviter_id = f.get_document(INVITE_COLLECTION, invite_id)["user"]
-    d.follow_user(inviter_id, user_id)
+    try:
+        f.update_document(
+            INVITE_COLLECTION,
+            invite_id,
+            {
+                "register_user": user_id,
+                "register_nick": nickname,
+                "register_date": register_date,
+            },
+        )
+        invite = f.get_document(INVITE_COLLECTION, invite_id)
+        assert invite
+        inviter_id = invite["user"]
+        d.follow_user(inviter_id, user_id)
+    except google.api_core.exceptions.NotFound:
+        log.warning(
+            "Invite document %s does not exist, skipping registration", invite_id
+        )
 
 
 def change_nickname(user_id: str, nickname: str) -> None:

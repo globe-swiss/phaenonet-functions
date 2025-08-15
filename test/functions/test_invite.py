@@ -1,3 +1,4 @@
+# type: ignore
 # pylint: disable=protected-access, too-many-positional-arguments
 import os
 from datetime import datetime, timezone
@@ -281,7 +282,7 @@ class TestInvite:
         get_user_id_by_email_mock.assert_called_once_with(INVITEE_EMAIL)
         register_user_invite_mock.assert_called_once_with(new_invite, INVITEE_USER_ID)
 
-    def test_process__send_delta_fail(self, mocker, resend_invite):
+    def test_process__send_delta_fails(self, mocker, resend_invite):
         send_invite_mock = mocker.patch("phenoback.functions.invite.invite.send_invite")
         clear_resend_mock = mocker.patch(
             "phenoback.functions.invite.invite.clear_resend"
@@ -299,7 +300,7 @@ class TestInvite:
         send_invite_mock.assert_not_called()
         clear_resend_mock.assert_called()
 
-    def test_process__send_delta_ok(self, mocker, resend_invite):
+    def test_process__send_delta_passes(self, mocker, resend_invite):
         send_invite_mock = mocker.patch("phenoback.functions.invite.invite.send_invite")
         assert invite.process(
             resend_invite,
@@ -338,7 +339,7 @@ class TestRegister:
     def test_invite_id(self):
         assert register.invite_id("user", "mail") == "user_mail"
 
-    def test_get_invite_ids__multiple(self, mocker, lookups):
+    def test_get_invite_ids(self, mocker, lookups):
         mocker.patch("phenoback.utils.data.get_email", return_value=INVITEE_EMAIL)
         assert set(register.get_invite_ids(INVITEE_USER_ID)) == lookups
 
@@ -375,7 +376,7 @@ class TestRegister:
         assert INVITEE_USER_ID in d.get_user(inviter_user).get("following_users")
         assert len(caperrors.records) == 0, caperrors.records
 
-    def test_register_user__no_created(
+    def test_register_user__no_created_field(
         self, mocker, new_invite, inviter_user, invitee_user
     ):
         """
@@ -431,6 +432,21 @@ class TestRegister:
         assert INVITEE_USER_ID in d.get_user(inviter_user).get("following_users")
         assert len(caperrors.records) == 1, caperrors.records
 
+    def test_register_user_invite__document_not_found(self, capwarnings, invitee_user):
+        """
+        Test that a warning is logged when trying to update a non-existent invite document.
+        """
+        assert invitee_user  # Fixture needed for side effect (creates user in DB)
+        non_existent_invite_id = "non_existent_invite"
+
+        register.register_user_invite(non_existent_invite_id, INVITEE_USER_ID)
+
+        assert (
+            f"Invite document {non_existent_invite_id} does not exist, skipping registration"
+            in capwarnings.text
+        )
+        assert len(capwarnings.records) == 1
+
     def test_change_nickname(self, mocker, new_invite):
         new_nickname = "a_new_nickname"
         get_invites_mock = mocker.patch(
@@ -460,14 +476,14 @@ class TestMail:
     def invite_mail(self):
         return MagicMock().create_autospec(content.InviteMail)
 
-    def test__sendmail(self, mocker, invite_mail):
+    def test_sendmail(self, mocker, invite_mail):
         send_mock = mocker.patch(
             "envelopes.Envelope.send", return_value=["ignored", "return_value"]
         )
         assert envelopesmail._sendmail(invite_mail) == "return_value"
         send_mock.assert_called()
 
-    def test_sendmail__good_credentials(self, mocker, invite_mail):
+    def test_sendmail__with_good_credentials(self, mocker, invite_mail):
         send_mock = mocker.patch(
             "phenoback.functions.invite.envelopesmail._sendmail",
             return_value={},
@@ -478,7 +494,7 @@ class TestMail:
         assert send_mock.call_count == 1
         reset_mock.assert_not_called()
 
-    def test_sendmail__refresh_credentials(self, mocker, invite_mail):
+    def test_sendmail__with_refresh_credentials(self, mocker, invite_mail):
         send_mock = mocker.patch(
             "phenoback.functions.invite.envelopesmail._sendmail",
             side_effect=[Exception("invalid credentials"), {}],
@@ -489,7 +505,7 @@ class TestMail:
         assert send_mock.call_count == 2
         reset_mock.assert_called_once()
 
-    def test_sendmail__refresh_credentials_failed(self, mocker, invite_mail):
+    def test_sendmail__refresh_credentials_fails(self, mocker, invite_mail):
         send_mock = mocker.patch(
             "phenoback.functions.invite.envelopesmail._sendmail",
             side_effect=[
