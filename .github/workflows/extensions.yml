@@ -35,7 +35,7 @@ jobs:
     environment: ${{ github.event.inputs.project }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5.0.0
       - name: Remove Firebase Extensions
         uses: ./.github/actions/remove-extensions
         with:
@@ -50,7 +50,7 @@ jobs:
     environment: ${{ github.event.inputs.project }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5.0.0
       - name: Deploy Firebase Extensions
         uses: ./.github/actions/deploy-extensions
         with:
