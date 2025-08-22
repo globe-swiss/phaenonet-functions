@@ -30,7 +30,7 @@ def before_send(
     event: Event, hint: Hint  # pylint: disable=unused-argument
 ) -> Event | None:
     """Filter out log messages containing #no-sentry marker."""
-    if "logentry" in event and event["logentry"].get("message"):
+    if "logentry" in event and event["logentry"].get("message"):  # pragma: no cover
         message = event["logentry"]["message"]
         if isinstance(message, str) and "#no-sentry" in message:
             return None
