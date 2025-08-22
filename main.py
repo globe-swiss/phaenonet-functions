@@ -10,6 +10,7 @@ from flask import Request
 from google.api_core import exceptions, retry
 from google.api_core.retry import if_exception_type
 from sentry_sdk.integrations.gcp import GcpIntegration
+from sentry_sdk.types import Event, Hint
 
 import phenoback.utils.gcloud as g
 from phenoback.utils import glogging
@@ -25,6 +26,17 @@ def sentry_environment() -> tuple[str, float, float]:
         return ("local", 0.0, 0.0)
 
 
+def before_send(
+    event: Event, hint: Hint  # pylint: disable=unused-argument
+) -> Event | None:
+    """Filter out log messages containing #no-sentry marker."""
+    if "logentry" in event and event["logentry"].get("message"):
+        message = event["logentry"]["message"]
+        if isinstance(message, str) and "#no-sentry" in message:
+            return None
+    return event
+
+
 sentry_sdk.init(
     release=g.get_version(),
     environment=sentry_environment()[0],
@@ -32,6 +44,7 @@ sentry_sdk.init(
     integrations=[GcpIntegration()],
     sample_rate=sentry_environment()[1],
     traces_sample_rate=sentry_environment()[2],
+    before_send=before_send,
 )
 
 firebase_admin.initialize_app(

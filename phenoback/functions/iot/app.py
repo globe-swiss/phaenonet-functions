@@ -116,7 +116,7 @@ def update_history(
             f.update_document(COLLECTION, individual_id, data_today)
     else:
         log.error(
-            "Invalid sensor data for %s (air_temperature=%i, soil_temperature=%i, air_humidity=%i, soil_humidity=%i)",
+            "Invalid sensor data for %s (air_temperature=%i, soil_temperature=%i, air_humidity=%i, soil_humidity=%i) #no-sentry",
             individual_id,
             air_temperature,
             soil_temperature,
