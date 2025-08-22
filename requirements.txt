@@ -39,7 +39,7 @@ envelopes==0.4
     # via phaenonet-functions
 firebase-admin==7.1.0
     # via phaenonet-functions
-flask==3.1.1
+flask==3.1.2
     # via
     #   functions-framework
     #   phaenonet-functions
@@ -73,7 +73,7 @@ google-cloud-appengine-logging==1.6.2
     # via google-cloud-logging
 google-cloud-audit-log==0.3.2
     # via google-cloud-logging
-google-cloud-bigquery==3.35.1
+google-cloud-bigquery==3.36.0
     # via phaenonet-functions
 google-cloud-core==2.4.3
     # via
@@ -220,7 +220,7 @@ pytz==2025.2
     # via dateparser
 regex==2025.7.34
     # via dateparser
-requests==2.32.4
+requests==2.32.5
     # via
     #   cachecontrol
     #   google-api-core
