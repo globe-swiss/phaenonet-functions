@@ -17,7 +17,7 @@ runs:
   using: "composite"
   steps:
     - name: Setup Node ${{ inputs.node-version }}
-      uses: actions/setup-node@v4.4.0
+      uses: actions/setup-node@v5.0.0
       with:
         node-version: ${{ inputs.node-version }}
     - name: install firebase-tools
@@ -25,7 +25,7 @@ runs:
       run: npm i -g firebase-tools
     - id: auth
       name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v2.1.12
+      uses: google-github-actions/auth@v3.0.0
       with:
         workload_identity_provider: ${{ inputs.workload-identity-provider }}
         service_account: ${{ inputs.service-account }}
