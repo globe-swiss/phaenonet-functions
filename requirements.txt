@@ -16,7 +16,7 @@ certifi==2025.8.3
     #   httpx
     #   requests
     #   sentry-sdk
-cffi==1.17.1 ; platform_python_implementation != 'PyPy'
+cffi==2.0.0 ; platform_python_implementation != 'PyPy'
     # via cryptography
 charset-normalizer==3.4.3
     # via requests
@@ -73,7 +73,7 @@ google-cloud-appengine-logging==1.6.2
     # via google-cloud-logging
 google-cloud-audit-log==0.3.2
     # via google-cloud-logging
-google-cloud-bigquery==3.36.0
+google-cloud-bigquery==3.37.0
     # via phaenonet-functions
 google-cloud-core==2.4.3
     # via
@@ -162,17 +162,17 @@ markupsafe==3.0.2
     #   werkzeug
 msgpack==1.1.1
     # via cachecontrol
-numpy==2.3.2
+numpy==2.3.3
     # via phaenonet-functions
-opentelemetry-api==1.36.0
+opentelemetry-api==1.37.0
     # via
     #   google-cloud-logging
     #   google-cloud-pubsub
     #   opentelemetry-sdk
     #   opentelemetry-semantic-conventions
-opentelemetry-sdk==1.36.0
+opentelemetry-sdk==1.37.0
     # via google-cloud-pubsub
-opentelemetry-semantic-conventions==0.57b0
+opentelemetry-semantic-conventions==0.58b0
     # via opentelemetry-sdk
 packaging==25.0
     # via
@@ -188,7 +188,7 @@ proto-plus==1.26.1
     #   google-cloud-pubsub
     #   google-cloud-secret-manager
     #   google-cloud-tasks
-protobuf==6.32.0
+protobuf==6.32.1
     # via
     #   google-api-core
     #   google-cloud-appengine-logging
@@ -208,7 +208,7 @@ pyasn1==0.6.1
     #   rsa
 pyasn1-modules==0.4.2
     # via google-auth
-pycparser==2.22 ; platform_python_implementation != 'PyPy'
+pycparser==2.23 ; implementation_name != 'PyPy' and platform_python_implementation != 'PyPy'
     # via cffi
 pyjwt==2.10.1
     # via firebase-admin
@@ -229,7 +229,7 @@ requests==2.32.5
     #   tinify
 rsa==4.9.1
     # via google-auth
-sentry-sdk==2.36.0
+sentry-sdk==2.37.1
     # via phaenonet-functions
 six==1.17.0
     # via python-dateutil
