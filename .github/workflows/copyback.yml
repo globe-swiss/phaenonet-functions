@@ -147,7 +147,7 @@ jobs:
       - deploy-extensions
     steps:
       - name: call restore function
-        uses: fjogeleit/http-request-action@v1.16.4
+        uses: fjogeleit/http-request-action@v1.16.5
         with:
           url: "https://europe-west1-phaenonet-test.cloudfunctions.net/e2e_restore_data"
           timeout: 30000
