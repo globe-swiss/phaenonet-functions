@@ -20,7 +20,7 @@ NICKNAME = "PhaenoWaldWSL"
 FILES = {"tree.csv", "observation_phaeno.csv", "user_id.csv", "site.csv"}
 MAX_ARCHIVE_BYTES = 100000
 
-DATA = None
+loaded_data = None
 
 SPECIES_MAP = {
     "58": "BA",
@@ -116,12 +116,12 @@ def check_data_integrity():
     :raises ValueError: If any data integrity check fails
     """
     error = False
-    users = {u["user_id"]: True for u in DATA["user_id.csv"]}
-    sites = {s["site_id"]: True for s in DATA["site.csv"]}
-    trees = {f"${s['site_id']},${s['tree_id']}": True for s in DATA["tree.csv"]}
+    users = {u["user_id"]: True for u in loaded_data["user_id.csv"]}
+    sites = {s["site_id"]: True for s in loaded_data["site.csv"]}
+    trees = {f"${s['site_id']},${s['tree_id']}": True for s in loaded_data["tree.csv"]}
     site_year_user = {}
 
-    for row in DATA["observation_phaeno.csv"]:
+    for row in loaded_data["observation_phaeno.csv"]:
         user_id = row.get("user_id")
         site_id = row.get("site_id")
         tree_id = row.get("tree_id")
@@ -155,7 +155,7 @@ def check_data_integrity():
             log.error("wrong tree_id format: %s", tree_id)
             error = True
 
-    if len(DATA["tree.csv"]) != len(trees.keys()):
+    if len(loaded_data["tree.csv"]) != len(trees.keys()):
         log.error("Duplicate entries in trees file")
         error = True
 
@@ -171,7 +171,7 @@ def import_data(pathfile: str, bucket=None, year: int | None = None):
     :param bucket: Optional GCS bucket (defaults to configured bucket)
     :param year: Year to import data for (defaults to previous phenological year)
     """
-    global DATA  # pylint: disable=global-statement
+    global loaded_data  # pylint: disable=global-statement
     # default to previous year if not specified
     if year is None:
         year = d.get_phenoyear() - 1
@@ -182,7 +182,7 @@ def import_data(pathfile: str, bucket=None, year: int | None = None):
 
     with ZipFile(io.BytesIO(blob.download_as_bytes()), mode="r") as input_zip:
         check_zip_archive(input_zip)
-        DATA = load_data(input_zip)
+        loaded_data = load_data(input_zip)
     check_data_integrity()
 
     insert_data("public_users", public_users())
@@ -199,7 +199,7 @@ def station_species() -> dict[str, set[str]]:
     :returns: Dictionary mapping site_id to set of species codes
     """
     result = {}
-    for tree in DATA["tree.csv"]:
+    for tree in loaded_data["tree.csv"]:
         result.setdefault(tree["site_id"], set()).add(map_species(tree["species_id"]))
     return result
 
@@ -212,7 +212,7 @@ def tree_species() -> dict[str, dict[str, str]]:
     :returns: Dictionary mapping site_id -> tree_id -> species code
     """
     result = {}
-    for tree in DATA["tree.csv"]:
+    for tree in loaded_data["tree.csv"]:
         result.setdefault(tree["site_id"], {})[tree["tree_id"]] = map_species(
             tree["species_id"]
         )
@@ -227,7 +227,7 @@ def site_users() -> dict[str, dict[str, str]]:
     :returns: Dictionary mapping site_id -> year -> user_id
     """
     result = {}
-    for obs in DATA["observation_phaeno.csv"]:
+    for obs in loaded_data["observation_phaeno.csv"]:
         result.setdefault(obs["site_id"], {})[obs["year"]] = obs["user_id"]
     return result
 
@@ -314,7 +314,7 @@ def individuals(year: int):
             "year": year,
             "station_species": get_site_species(site["site_id"]),
         }
-        for site in DATA["site.csv"]
+        for site in loaded_data["site.csv"]
         if get_user(site["site_id"], year) and get_site_species(site["site_id"])
     ]
 
@@ -339,7 +339,7 @@ def observations(year: int):
             "phenophase": map_phenophase(o["observation_id"]),
             "source": SOURCE,
         }
-        for o in DATA["observation_phaeno.csv"]
+        for o in loaded_data["observation_phaeno.csv"]
         if int(o["year"]) == year and get_tree_species(o["site_id"], o["tree_id"])
     ]
 
@@ -357,7 +357,7 @@ def users():
             "lastname": u["name_last"],
             "nickname": NICKNAME,
         }
-        for u in DATA["user_id.csv"]
+        for u in loaded_data["user_id.csv"]
     ]
 
 
@@ -369,7 +369,7 @@ def public_users():
     """
     return [
         {"id": wsl_user(u["user_id"]), "nickname": NICKNAME, "roles": [SOURCE]}
-        for u in DATA["user_id.csv"]
+        for u in loaded_data["user_id.csv"]
     ]
 
 
