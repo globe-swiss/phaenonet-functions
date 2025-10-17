@@ -8,7 +8,7 @@ env:
 
 concurrency: copyback
 
-permissions: # no permissions
+permissions: {}
 
 jobs:
   fs-function-matrix:
@@ -169,7 +169,7 @@ jobs:
           service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
           node-version: ${{ env.NODE_VERSION }}
   restore-users:
-    permissions: # no permissions
+    permissions: {}
     runs-on: ubuntu-22.04
     needs:
       - install-functions

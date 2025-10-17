@@ -10,7 +10,7 @@ defaults:
   run:
     shell: bash
 
-permissions: # no permissions
+permissions: {}
 
 jobs:
   checks:

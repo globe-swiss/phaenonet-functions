@@ -66,7 +66,7 @@ env:
   FUNCTION: ${{ github.event.inputs.function }}
   ACTION: ${{ github.event.inputs.action }}
 
-permissions: # no permissions
+permissions: {}
 
 jobs:
   next-versions:

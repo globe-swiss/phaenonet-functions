@@ -5,11 +5,11 @@ on:
   schedule:
     - cron: "30 5 * * 5"
 
-permissions: # no permissions
+permissions: {}
 
 jobs:
   actions-update:
-    permissions: # no permissions
+    permissions: {}
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v5.0.0

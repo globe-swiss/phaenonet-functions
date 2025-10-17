@@ -103,12 +103,16 @@ def readfile(filename: str):
 
 @pytest.fixture
 def deploy_yaml():
-    return yaml.load(readfile(".github/workflows/deploy-function.yml"))
+    return yaml.dirty_load(
+        readfile(".github/workflows/deploy-function.yml"), allow_flow_style=True
+    )
 
 
 @pytest.fixture
 def main_yaml():
-    return yaml.load(readfile(".github/workflows/main.yml"))
+    return yaml.dirty_load(
+        readfile(".github/workflows/main.yml"), allow_flow_style=True
+    )
 
 
 @pytest.fixture

@@ -24,7 +24,7 @@ env:
   NODE_VERSION: "18"
   PROJECT: ${{ github.event.inputs.project }}
 
-permissions: # no permissions
+permissions: {}
 
 jobs:
   remove-extensions:
