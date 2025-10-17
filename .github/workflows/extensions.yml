@@ -24,18 +24,21 @@ env:
   NODE_VERSION: "18"
   PROJECT: ${{ github.event.inputs.project }}
 
-permissions:
-  contents: read
-  id-token: write
+permissions: # no permissions
 
 jobs:
   remove-extensions:
+    permissions:
+      contents: read
+      id-token: write
     if: ${{ github.event.inputs.action == 'remove' || github.event.inputs.action == 'redeploy' }}
     runs-on: ubuntu-22.04
     environment: ${{ github.event.inputs.project }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Remove Firebase Extensions
         uses: ./.github/actions/remove-extensions
         with:
@@ -44,6 +47,9 @@ jobs:
           service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
           node-version: ${{ env.NODE_VERSION }}
   deploy-extensions:
+    permissions:
+      contents: read
+      id-token: write
     if: ${{ always() && (github.event.inputs.action == 'deploy' || (github.event.inputs.action == 'redeploy' && needs.remove-extensions.result == 'success')) }}
     needs: [remove-extensions]
     runs-on: ubuntu-22.04
@@ -51,6 +57,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Deploy Firebase Extensions
         uses: ./.github/actions/deploy-extensions
         with:
