@@ -33,4 +33,6 @@ runs:
     - name: Deploy Firebase Extensions
       shell: bash
       working-directory: firebase
-      run: firebase deploy --force --only extensions --project ${{ inputs.project }}
+      run: firebase deploy --force --only extensions --project ${INPUTS_PROJECT}
+      env:
+        INPUTS_PROJECT: ${{ inputs.project }}

@@ -33,7 +33,7 @@ dependencies = [
     "google-cloud-tasks",
     "google-cloud-pubsub",
     "google-cloud-bigquery",
-    "functions-framework",
+    "functions-framework"
 ]
 
 [dependency-groups]
@@ -53,4 +53,6 @@ dev = [
     "py",
     "strictyaml",
     "tqdm>=4.67.1",
+    "zizmor>=1.15.2",
+    "actionlint-py>=1.7.8.24",
 ]
