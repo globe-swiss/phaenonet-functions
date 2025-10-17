@@ -79,7 +79,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5.0.0
       - name: Setup Node ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v5.0.0
+        uses: actions/setup-node@v6.0.0
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: install firebase-tools
@@ -147,7 +147,7 @@ jobs:
       - deploy-extensions
     steps:
       - name: call restore function
-        uses: fjogeleit/http-request-action@v1.16.4
+        uses: fjogeleit/http-request-action@v1.16.5
         with:
           url: "https://europe-west1-phaenonet-test.cloudfunctions.net/e2e_restore_data"
           timeout: 30000
