@@ -271,5 +271,3 @@ werkzeug==3.1.3
     #   functions-framework
 zipp==3.23.0
     # via importlib-metadata
-zizmor==1.15.2
-    # via phaenonet-functions
