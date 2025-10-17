@@ -40,7 +40,7 @@ def input_io(input_blob):
 @pytest.fixture()
 def data_loaded(input_io):
     with ZipFile(input_io, mode="r") as input_zip:
-        wld_import.DATA = wld_import.load_data(input_zip)
+        wld_import.loaded_data = wld_import.load_data(input_zip)
 
 
 @pytest.mark.parametrize(
@@ -100,7 +100,7 @@ def test_check_load_data(input_io):
 
 
 def test_check_data_integrity(data_loaded):
-    assert wld_import.DATA
+    assert wld_import.loaded_data
     wld_import.check_data_integrity()
 
 
@@ -109,8 +109,8 @@ def test_check_data_integrity(data_loaded):
     [("user_id.csv", "user_id"), ("site.csv", "site_id")],
 )
 def test_check_data_integrity__empty(data_loaded, caperrors, filename, fieldname):
-    assert wld_import.DATA
-    wld_import.DATA[filename] = []
+    assert wld_import.loaded_data
+    wld_import.loaded_data[filename] = []
     with pytest.raises(ValueError):
         wld_import.check_data_integrity()
     assert f"{fieldname} not found" in caperrors.text, caperrors.text
@@ -129,16 +129,16 @@ def test_check_data_integrity__empty(data_loaded, caperrors, filename, fieldname
 def test_check_data_integrity__reference_error(
     data_loaded, caperrors, filename, fieldname, value
 ):
-    assert wld_import.DATA
-    wld_import.DATA[filename][0][fieldname] = value
+    assert wld_import.loaded_data
+    wld_import.loaded_data[filename][0][fieldname] = value
     with pytest.raises(ValueError):
         wld_import.check_data_integrity()
     assert len(caperrors.records) >= 1
 
 
 def test_check_data_integrity__duplicate_tree_error(data_loaded, caperrors):
-    assert wld_import.DATA
-    wld_import.DATA["tree.csv"].append(wld_import.DATA["tree.csv"][0])
+    assert wld_import.loaded_data
+    wld_import.loaded_data["tree.csv"].append(wld_import.loaded_data["tree.csv"][0])
     with pytest.raises(ValueError):
         wld_import.check_data_integrity()
     assert len(caperrors.records) >= 1
