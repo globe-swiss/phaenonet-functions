@@ -5,14 +5,18 @@ on:
   schedule:
     - cron: "30 5 * * 5"
 
+permissions: {}
+
 jobs:
   actions-update:
+    permissions: {}
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v5.0.0
         with:
           # [Required] Access token with `workflow` scope.
           token: ${{ secrets.WORKFLOW_ACCESS_TOKEN }}
+          persist-credentials: false
       - name: Run GitHub Actions Version Updater
         uses: saadmk11/github-actions-version-updater@v0.9.0
         with:
@@ -28,6 +32,8 @@ jobs:
     container: globeswiss/cloud-sdk:py3.12.10-524.0.0
     steps:
       - uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Work around https://github.com/actions/checkout/issues/766
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Install uv
