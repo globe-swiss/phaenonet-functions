@@ -148,7 +148,7 @@ def test_is_actual_observation(comment, expected):
     assert d.is_actual_observation(comment) == expected
 
 
-def test_localtime_no_input():
+def test_localtime__no_input():
     # Test localtime() without input returns current time in Europe/Zurich
     result = d.localtime()
     assert isinstance(result, datetime)
@@ -156,7 +156,7 @@ def test_localtime_no_input():
     assert result.tzinfo
 
 
-def test_localtime_with_naive_datetime():
+def test_localtime__with_naive_datetime():
     # Test with naive datetime (no timezone) - should convert to Europe/Zurich
     naive_dt = datetime(2024, 1, 15, 10, 30, 0)
     result = d.localtime(naive_dt)
@@ -165,20 +165,33 @@ def test_localtime_with_naive_datetime():
     assert result.minute == 30
 
 
-def test_localtime_with_utc_datetime():
-    # Test with UTC datetime - should raise ValueError
+def test_localtime__with_utc_datetime():
+    # Test with UTC datetime - should convert to Europe/Zurich
     utc_dt = datetime(2024, 1, 15, 10, 30, 0, tzinfo=pytz.UTC)
-    with pytest.raises(ValueError, match="Not a naive datetime"):
-        d.localtime(utc_dt)
+    result = d.localtime(utc_dt)
+    assert result.hour == 11  # UTC+1 in winter (CET)
+    assert result.minute == 30
+    assert result.tzinfo is not None
+    assert result.tzname() == "CET"
 
 
-def test_localdate_no_input():
+def test_localtime__with_utc_datetime__summer():
+    # Test with UTC datetime in summer - should convert to CEST
+    utc_dt = datetime(2024, 7, 15, 10, 30, 0, tzinfo=pytz.UTC)
+    result = d.localtime(utc_dt)
+    assert result.hour == 12  # UTC+2 in summer (CEST)
+    assert result.minute == 30
+    assert result.tzinfo is not None
+    assert result.tzname() == "CEST"
+
+
+def test_localdate__no_input():
     # Test localdate() without input returns current date
     result = d.localdate()
     assert isinstance(result, date)
 
 
-def test_localdate_with_naive_datetime():
+def test_localdate__with_naive_datetime():
     # Test with naive datetime
     naive_dt = datetime(2024, 1, 15, 23, 30, 0)
     result = d.localdate(naive_dt)
@@ -187,8 +200,9 @@ def test_localdate_with_naive_datetime():
     assert result == date(2024, 1, 15)
 
 
-def test_localdate_with_timezone_datetime():
-    # Test with timezone-aware datetime - should raise ValueError
+def test_localdate__with_utc_datetime():
+    # Test with UTC datetime - should convert to Europe/Zurich date
     dt = datetime(2024, 1, 15, 23, 30, 0, tzinfo=pytz.UTC)
-    with pytest.raises(ValueError, match="Not a naive datetime"):
-        d.localdate(dt)
+    result = d.localdate(dt)
+    # UTC 23:30 on Jan 15 becomes 00:30 on Jan 16 in CET (UTC+1)
+    assert result == date(2024, 1, 16)
