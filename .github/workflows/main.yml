@@ -18,7 +18,7 @@ jobs:
       contents: read # checkout
       pull-requests: write # reviewdog
     runs-on: ubuntu-22.04
-    container: globeswiss/cloud-sdk:py3.12.10-524.0.0
+    container: globeswiss/cloud-sdk:py3.12.12-554.0.0
     steps:
       - uses: actions/checkout@v5.0.0
         with:
@@ -53,7 +53,7 @@ jobs:
       id-token: write # codecov oidc
       contents: read # checkout
     runs-on: ubuntu-22.04
-    container: globeswiss/cloud-sdk:py3.12.10-524.0.0
+    container: globeswiss/cloud-sdk:py3.12.12-554.0.0
     steps:
       - uses: actions/checkout@v5.0.0
         with:
