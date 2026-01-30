@@ -20,7 +20,7 @@ NICKNAME = "PhaenoWaldWSL"
 FILES = {"tree.csv", "observation_phaeno.csv", "user_id.csv", "site.csv"}
 MAX_ARCHIVE_BYTES = 100000
 
-loaded_data = None
+loaded_data = None  # pylint: disable=invalid-name
 
 SPECIES_MAP = {
     "58": "BA",
