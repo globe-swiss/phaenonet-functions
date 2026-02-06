@@ -14,7 +14,7 @@ jobs:
       pull-requests: write # Required to create PRs with the updates
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v5.0.0
+      - uses: actions/checkout@v6.0.2
         with:
           # [Required] Access token with `workflow` scope.
           token: ${{ secrets.WORKFLOW_ACCESS_TOKEN }}
@@ -33,13 +33,13 @@ jobs:
     runs-on: ubuntu-22.04
     container: globeswiss/cloud-sdk:py3.12.12-554.0.0
     steps:
-      - uses: actions/checkout@v5.0.0
+      - uses: actions/checkout@v6.0.2
         with:
           persist-credentials: false
       - name: Work around https://github.com/actions/checkout/issues/766
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Install uv
-        uses: astral-sh/setup-uv@v7.1.2
+        uses: astral-sh/setup-uv@v7.2.1
       - name: Update environment
         run: uv lock --upgrade
       - name: Update requirements.txt
@@ -50,7 +50,7 @@ jobs:
           git diff --exit-code || echo "changes=true" >> $GITHUB_OUTPUT
       - name: Create Pull Request
         if: ${{ steps.git-check.outputs.changes == 'true' }}
-        uses: peter-evans/create-pull-request@v7.0.8
+        uses: peter-evans/create-pull-request@v8.1.0
         with:
           # required to trigger test workflow
           token: ${{ secrets.WORKFLOW_ACCESS_TOKEN }}
