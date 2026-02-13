@@ -21,7 +21,7 @@ on:
           - redeploy
 
 env:
-  NODE_VERSION: "18"
+  NODE_VERSION: 22
   PROJECT: ${{ github.event.inputs.project }}
 
 permissions: {}
