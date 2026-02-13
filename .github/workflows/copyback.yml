@@ -21,7 +21,7 @@ jobs:
       fs-functions: ${{ steps.fs-functions.outputs.functions }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
         with:
           persist-credentials: false
       - id: auth
@@ -52,7 +52,7 @@ jobs:
         function: ${{ fromJson(needs.fs-function-matrix.outputs.fs-functions) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
         with:
           persist-credentials: false
       - id: auth
@@ -75,7 +75,7 @@ jobs:
     environment: phaenonet-test
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
         with:
           persist-credentials: false
       - name: Remove Firebase Extensions
@@ -94,11 +94,11 @@ jobs:
     environment: phaenonet-test
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
         with:
           persist-credentials: false
       - name: Setup Node ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v6.0.0
+        uses: actions/setup-node@v6.2.0
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: install firebase-tools
@@ -121,7 +121,7 @@ jobs:
     environment: phaenonet-test
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
         with:
           persist-credentials: false
       - id: auth
@@ -145,7 +145,7 @@ jobs:
       actions: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
         with:
           persist-credentials: false
       - name: trigger function installation
@@ -158,7 +158,7 @@ jobs:
     environment: phaenonet-test
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
         with:
           persist-credentials: false
       - name: Deploy Firebase Extensions
@@ -176,7 +176,7 @@ jobs:
       - deploy-extensions
     steps:
       - name: call restore function
-        uses: fjogeleit/http-request-action@v1.16.5
+        uses: fjogeleit/http-request-action@v2.0.0
         with:
           url: "https://europe-west1-phaenonet-test.cloudfunctions.net/e2e_restore_data"
           timeout: 30000
