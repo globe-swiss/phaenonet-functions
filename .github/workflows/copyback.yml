@@ -3,7 +3,7 @@ name: data copyback
 on: workflow_dispatch
 
 env:
-  NODE_VERSION: "18"
+  NODE_VERSION: 22
   REGION: europe-west1
 
 concurrency: copyback
