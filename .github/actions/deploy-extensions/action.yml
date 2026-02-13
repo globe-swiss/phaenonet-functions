@@ -17,7 +17,7 @@ runs:
   using: 'composite'
   steps:
     - name: Setup Node ${{ inputs.node-version }}
-      uses: actions/setup-node@v6.0.0
+      uses: actions/setup-node@v6.2.0
       with:
         node-version: ${{ inputs.node-version }}
     - name: install firebase-tools
