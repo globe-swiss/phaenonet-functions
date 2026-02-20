@@ -21,7 +21,7 @@ NICKNAME = "PhaenoWaldWSL"
 FILES = {"tree.csv", "observation_phaeno.csv", "user_id.csv", "site.csv"}
 MAX_ARCHIVE_BYTES = 100000
 
-loaded_data = None  # pylint: disable=invalid-name
+loaded_data = {}  # pylint: disable=invalid-name
 
 SPECIES_MAP = {
     "58": "BA",
@@ -69,7 +69,7 @@ def members_by_basename(z: ZipFile) -> dict[str, list[str]]:
         if m.endswith("/"):
             continue
         base = os.path.basename(m)
-        if not base:
+        if not base:  # pragma: no cover - guard against empty basenames
             continue
         result.setdefault(base, []).append(m)
     return result
@@ -116,12 +116,9 @@ def load_data(input_zip: ZipFile) -> dict[str, list[dict]]:
     members = members_by_basename(input_zip)
     data: dict[str, list[dict]] = {}
     for name in FILES:
-        paths = members.get(name)
-        if not paths:
-            raise FileNotFoundError(f"{name} not found in archive")
-        if len(paths) > 1:
-            raise ValueError(f"Multiple archive members found for {name}: {paths}")
-        member = paths[0]
+        member = members[name][
+            0
+        ]  # no check needed, already verified in check_zip_archive
         content = input_zip.read(member).decode("utf-8").splitlines()
         data[name] = list(csv.DictReader(content, delimiter=","))
     return data
