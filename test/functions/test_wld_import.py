@@ -79,6 +79,21 @@ def test_check_zip_archive__fail_files(mocker):
         wld_import.check_zip_archive(zip_file_mock)
 
 
+def test_check_zip_archive__duplicates(mocker):
+    zip_file_mock = mocker.Mock()
+    zip_file_mock.namelist = mocker.Mock(
+        return_value=[
+            "a/user_id.csv",
+            "b/user_id.csv",
+            "site.csv",
+            "tree.csv",
+            "observation_phaeno.csv",
+        ]
+    )
+    with pytest.raises(ValueError):
+        wld_import.check_zip_archive(zip_file_mock)
+
+
 def test_check_file_size(mocker):
     blob_mock = mocker.Mock()
     blob_mock.size = wld_import.MAX_ARCHIVE_BYTES
@@ -98,6 +113,34 @@ def test_check_load_data(input_io):
     assert wld_import.FILES == data.keys()
     for filedata in data.values():
         assert len(filedata) > 0
+
+
+def test_members_by_basename(zippath):
+    with ZipFile(zippath, mode="r") as z:
+        members = wld_import.members_by_basename(z)
+
+    for filename in wld_import.FILES:
+        assert filename in members
+        assert all(
+            p.endswith(filename) for p in members[filename]
+        ), f"filename: {filename}, not found in zip: {members[filename]}"
+
+
+def test_members_by_basename__duplicates(mocker):
+    zip_file_mock = mocker.Mock()
+    zip_file_mock.namelist = mocker.Mock(
+        return_value=[
+            "a/user_id.csv",
+            "b/user_id.csv",
+            "site.csv",
+            "tree.csv",
+            "observation_phaeno.csv",
+        ]
+    )
+    members = wld_import.members_by_basename(zip_file_mock)
+    assert "user_id.csv" in members
+    assert len(members["user_id.csv"]) == 2
+    assert all(p.endswith("user_id.csv") for p in members["user_id.csv"])
 
 
 def test_check_data_integrity(data_loaded):
