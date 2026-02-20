@@ -41,6 +41,7 @@ def input_io(input_blob):
 def data_loaded(input_io):
     with ZipFile(input_io, mode="r") as input_zip:
         wld_import.loaded_data = wld_import.load_data(input_zip)
+    return True
 
 
 @pytest.mark.parametrize(
@@ -100,6 +101,7 @@ def test_check_load_data(input_io):
 
 
 def test_check_data_integrity(data_loaded):
+    assert data_loaded
     assert wld_import.loaded_data
     wld_import.check_data_integrity()
 
@@ -109,6 +111,7 @@ def test_check_data_integrity(data_loaded):
     [("user_id.csv", "user_id"), ("site.csv", "site_id")],
 )
 def test_check_data_integrity__empty(data_loaded, caperrors, filename, fieldname):
+    assert data_loaded
     assert wld_import.loaded_data
     wld_import.loaded_data[filename] = []
     with pytest.raises(ValueError):
@@ -129,6 +132,7 @@ def test_check_data_integrity__empty(data_loaded, caperrors, filename, fieldname
 def test_check_data_integrity__reference_error(
     data_loaded, caperrors, filename, fieldname, value
 ):
+    assert data_loaded
     assert wld_import.loaded_data
     wld_import.loaded_data[filename][0][fieldname] = value
     with pytest.raises(ValueError):
@@ -137,6 +141,7 @@ def test_check_data_integrity__reference_error(
 
 
 def test_check_data_integrity__duplicate_tree_error(data_loaded, caperrors):
+    assert data_loaded
     assert wld_import.loaded_data
     wld_import.loaded_data["tree.csv"].append(wld_import.loaded_data["tree.csv"][0])
     with pytest.raises(ValueError):
