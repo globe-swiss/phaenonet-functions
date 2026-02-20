@@ -41,6 +41,7 @@ def input_io(input_blob):
 def data_loaded(input_io):
     with ZipFile(input_io, mode="r") as input_zip:
         wld_import.loaded_data = wld_import.load_data(input_zip)
+    return True
 
 
 @pytest.mark.parametrize(
@@ -78,6 +79,21 @@ def test_check_zip_archive__fail_files(mocker):
         wld_import.check_zip_archive(zip_file_mock)
 
 
+def test_check_zip_archive__duplicates(mocker):
+    zip_file_mock = mocker.Mock()
+    zip_file_mock.namelist = mocker.Mock(
+        return_value=[
+            "a/user_id.csv",
+            "b/user_id.csv",
+            "site.csv",
+            "tree.csv",
+            "observation_phaeno.csv",
+        ]
+    )
+    with pytest.raises(ValueError):
+        wld_import.check_zip_archive(zip_file_mock)
+
+
 def test_check_file_size(mocker):
     blob_mock = mocker.Mock()
     blob_mock.size = wld_import.MAX_ARCHIVE_BYTES
@@ -99,7 +115,36 @@ def test_check_load_data(input_io):
         assert len(filedata) > 0
 
 
+def test_members_by_basename(zippath):
+    with ZipFile(zippath, mode="r") as z:
+        members = wld_import.members_by_basename(z)
+
+    for filename in wld_import.FILES:
+        assert filename in members
+        assert all(
+            p.endswith(filename) for p in members[filename]
+        ), f"filename: {filename}, not found in zip: {members[filename]}"
+
+
+def test_members_by_basename__duplicates(mocker):
+    zip_file_mock = mocker.Mock()
+    zip_file_mock.namelist = mocker.Mock(
+        return_value=[
+            "a/user_id.csv",
+            "b/user_id.csv",
+            "site.csv",
+            "tree.csv",
+            "observation_phaeno.csv",
+        ]
+    )
+    members = wld_import.members_by_basename(zip_file_mock)
+    assert "user_id.csv" in members
+    assert len(members["user_id.csv"]) == 2
+    assert all(p.endswith("user_id.csv") for p in members["user_id.csv"])
+
+
 def test_check_data_integrity(data_loaded):
+    assert data_loaded
     assert wld_import.loaded_data
     wld_import.check_data_integrity()
 
@@ -109,6 +154,7 @@ def test_check_data_integrity(data_loaded):
     [("user_id.csv", "user_id"), ("site.csv", "site_id")],
 )
 def test_check_data_integrity__empty(data_loaded, caperrors, filename, fieldname):
+    assert data_loaded
     assert wld_import.loaded_data
     wld_import.loaded_data[filename] = []
     with pytest.raises(ValueError):
@@ -129,6 +175,7 @@ def test_check_data_integrity__empty(data_loaded, caperrors, filename, fieldname
 def test_check_data_integrity__reference_error(
     data_loaded, caperrors, filename, fieldname, value
 ):
+    assert data_loaded
     assert wld_import.loaded_data
     wld_import.loaded_data[filename][0][fieldname] = value
     with pytest.raises(ValueError):
@@ -137,6 +184,7 @@ def test_check_data_integrity__reference_error(
 
 
 def test_check_data_integrity__duplicate_tree_error(data_loaded, caperrors):
+    assert data_loaded
     assert wld_import.loaded_data
     wld_import.loaded_data["tree.csv"].append(wld_import.loaded_data["tree.csv"][0])
     with pytest.raises(ValueError):

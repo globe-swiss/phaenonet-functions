@@ -1,6 +1,7 @@
 import csv
 import io
 import logging
+import os
 from datetime import datetime
 from functools import lru_cache
 from zipfile import ZipFile
@@ -20,7 +21,7 @@ NICKNAME = "PhaenoWaldWSL"
 FILES = {"tree.csv", "observation_phaeno.csv", "user_id.csv", "site.csv"}
 MAX_ARCHIVE_BYTES = 100000
 
-loaded_data = None  # pylint: disable=invalid-name
+loaded_data = {}  # pylint: disable=invalid-name
 
 SPECIES_MAP = {
     "58": "BA",
@@ -58,17 +59,38 @@ def main(data, context):  # pylint: disable=unused-argument
         import_data(pathfile)
 
 
+def members_by_basename(z: ZipFile) -> dict[str, list[str]]:
+    """Return a mapping basename -> list of member paths from a ZipFile.
+
+    Public helper so tests can import and verify behaviour.
+    """
+    result: dict[str, list[str]] = {}
+    for m in z.namelist():
+        if m.endswith("/"):
+            continue
+        base = os.path.basename(m)
+        if not base:  # pragma: no cover - guard against empty basenames
+            continue
+        result.setdefault(base, []).append(m)
+    return result
+
+
 def check_zip_archive(input_zip: ZipFile) -> None:
     """
     Validates that the ZIP archive contains all required files.
 
     :param input_zip: ZipFile object to validate
     :raises FileNotFoundError: If required files are missing from the archive
+    :raises ValueError: If duplicate files are found in the archive
     """
-    filenames = input_zip.namelist()
-    log.debug("Files found: %s", str(filenames))
-    if not set(FILES).issubset(filenames):
-        raise FileNotFoundError(f"Files found {set(filenames)} files expected {FILES}")
+    members = members_by_basename(input_zip)
+    log.debug("Files found in zip: %s", str(members))
+    missing = [f for f in FILES if f not in members]
+    if missing:
+        raise FileNotFoundError(f"Missing files {missing} expected {FILES}")
+    duplicates = [f for f, v in members.items() if len(v) > 1 and f in FILES]
+    if duplicates:
+        raise ValueError(f"Duplicate files found in archive: {duplicates}")
 
 
 def check_file_size(blob: Blob) -> None:
@@ -91,14 +113,15 @@ def load_data(input_zip: ZipFile) -> dict[str, list[dict]]:
     :param input_zip: ZipFile containing CSV files
     :returns: Dictionary mapping filenames to lists of dictionaries representing CSV rows
     """
-    return {
-        name: list(
-            csv.DictReader(
-                input_zip.read(name).decode("utf-8").splitlines(), delimiter=","
-            )
-        )
-        for name in FILES
-    }
+    members = members_by_basename(input_zip)
+    data: dict[str, list[dict]] = {}
+    for name in FILES:
+        member = members[name][
+            0
+        ]  # no check needed, already verified in check_zip_archive
+        content = input_zip.read(member).decode("utf-8").splitlines()
+        data[name] = list(csv.DictReader(content, delimiter=","))
+    return data
 
 
 def check_data_integrity():
