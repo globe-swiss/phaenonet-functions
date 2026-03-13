@@ -24,7 +24,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Install uv
-        uses: astral-sh/setup-uv@v7.3.0
+        uses: astral-sh/setup-uv@v7.5.0
       - name: Sync dev dependencies
         run: uv sync
       - name: Check requirements file
@@ -59,7 +59,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Install uv
-        uses: astral-sh/setup-uv@v7.3.0
+        uses: astral-sh/setup-uv@v7.5.0
       - name: Sync dev dependencies
         run: uv sync
       - name: Run pytest
@@ -83,4 +83,4 @@ jobs:
         with:
           persist-credentials: false
       - name: Run zizmor 🌈
-        uses: zizmorcore/zizmor-action@v0.5.0
+        uses: zizmorcore/zizmor-action@v0.5.2
