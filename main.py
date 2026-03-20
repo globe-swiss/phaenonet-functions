@@ -7,8 +7,6 @@ from contextlib import contextmanager
 import firebase_admin
 import sentry_sdk
 from flask import Request
-from google.api_core import exceptions, retry
-from google.api_core.retry import if_exception_type
 from sentry_sdk.integrations.gcp import GcpIntegration
 from sentry_sdk.types import Event, Hint
 
@@ -77,8 +75,6 @@ def setup(data: str | dict | Request | None, context=None, level=logging.DEBUG):
     except Exception:
         log.exception("Fatal error in cloud function")
         raise
-    finally:
-        sentry_sdk.flush()
 
 
 @contextmanager
@@ -89,7 +85,6 @@ def invoke():
         log.error("Error in execution", exc_info=ex)
 
 
-@retry.Retry()
 def fs_observations_write(data, context):
     with setup(data, context):
         with invoke():
@@ -102,7 +97,6 @@ def fs_observations_write(data, context):
             individual.main(data, context)
 
 
-@retry.Retry()
 def fs_users_write(data, context):
     """
     Execute all functions to user related document changes (created, modified or deleted).
@@ -118,7 +112,6 @@ def fs_users_write(data, context):
             register.main(data, context)
 
 
-@retry.Retry()
 def ps_import_meteoswiss_data(event, context):
     """
     Imports meteoswiss stations and observations.
@@ -131,7 +124,6 @@ def ps_import_meteoswiss_data(event, context):
             meteoswiss_import.main(data, context)
 
 
-@retry.Retry()
 def fs_document_write(data, context):
     with setup(data, context):
         with invoke():
@@ -140,7 +132,6 @@ def fs_document_write(data, context):
             documents.main(data, context)
 
 
-@retry.Retry(predicate=if_exception_type(exceptions.NotFound))
 def st_appspot_finalize(data, context):
     with setup(data, context):
         with invoke():
@@ -168,7 +159,6 @@ def ps_rollover_phenoyear(event, context):
             rollover.main(data, context)
 
 
-@retry.Retry()
 def ps_export_meteoswiss_data(event, context):
     """
     Manually trigger a meteoswiss export for a given year.
@@ -181,7 +171,6 @@ def ps_export_meteoswiss_data(event, context):
             meteoswiss_export.main(data, context)
 
 
-@retry.Retry()
 def fs_invites_write(data, context):
     with setup(data, context):
         with invoke():
@@ -190,7 +179,6 @@ def fs_invites_write(data, context):
             invite.main(data, context)
 
 
-@retry.Retry()
 def fs_individuals_write(data, context):
     with setup(data, context):
         with invoke():
@@ -211,7 +199,6 @@ def http_individuals_write__map(request: Request):
             return phenoback.functions.map.main_process(request)
 
 
-@retry.Retry()
 def http_reset_e2e_data(request: Request):
     with setup(request):
         with invoke():
@@ -220,7 +207,6 @@ def http_reset_e2e_data(request: Request):
             return e2e.main_reset(request)
 
 
-@retry.Retry()
 def http_restore_e2e_data(request: Request):
     with setup(request):
         with invoke():

@@ -17,13 +17,13 @@ jobs:
       - uses: actions/checkout@v6.0.2
         with:
           # [Required] Access token with `workflow` scope.
-          token: ${{ secrets.WORKFLOW_ACCESS_TOKEN }}
+          token: ${{ secrets.WORKFLOW_ACCESS_TOKEN }} # zizmor: ignore[secrets-outside-env]
           persist-credentials: true # persist-credentials must be true (default) for git push to work
       - name: Run GitHub Actions Version Updater
         uses: saadmk11/github-actions-version-updater@v0.9.0
         with:
           # [Required] Access token with `workflow` scope.
-          token: ${{ secrets.WORKFLOW_ACCESS_TOKEN }}
+          token: ${{ secrets.WORKFLOW_ACCESS_TOKEN }} # zizmor: ignore[secrets-outside-env]
           pull_request_title: "[Automated] Update GitHub Action Versions"
           extra_workflow_locations: .github/actions
   python-update:
@@ -53,7 +53,7 @@ jobs:
         uses: peter-evans/create-pull-request@v8.1.0
         with:
           # required to trigger test workflow
-          token: ${{ secrets.WORKFLOW_ACCESS_TOKEN }}
+          token: ${{ secrets.WORKFLOW_ACCESS_TOKEN }} # zizmor: ignore[secrets-outside-env]
           commit-message: "Update packages"
           title: "[Automated] Update Python Packages"
           body: "Automated changes by GitHub Actions"
