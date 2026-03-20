@@ -61,7 +61,7 @@ on:
 env:
   RUNTIME: python312
   REGION: europe-west1
-  TIMEOUT: 540s
+  TIMEOUT: 120s
   PROJECT: ${{ github.event.inputs.project }}
   FUNCTION: ${{ github.event.inputs.function }}
   ACTION: ${{ github.event.inputs.action }}
