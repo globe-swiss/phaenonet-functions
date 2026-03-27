@@ -21,17 +21,17 @@ jobs:
       fs-functions: ${{ steps.fs-functions.outputs.functions }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
       - id: auth
         name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v3.0.0
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v3.0.1
+        uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
         with:
           project_id: phaenonet-test
       - id: fs-functions
@@ -52,17 +52,17 @@ jobs:
         function: ${{ fromJson(needs.fs-function-matrix.outputs.fs-functions) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
       - id: auth
         name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v3.0.0
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v3.0.1
+        uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
         with:
           project_id: phaenonet-test
       - name: Delete Function ${{ matrix.function.name }}
@@ -75,7 +75,7 @@ jobs:
     environment: phaenonet-test
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
       - name: Remove Firebase Extensions
@@ -94,18 +94,18 @@ jobs:
     environment: phaenonet-test
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
       - name: Setup Node ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v6.3.0
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: install firebase-tools
         run: npm i -g firebase-tools
       - id: auth
         name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v3.0.0
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_BACKUP_ACCOUNT }}
@@ -121,17 +121,17 @@ jobs:
     environment: phaenonet-test
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
       - id: auth
         name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v3.0.0
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_BACKUP_ACCOUNT }}
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v3.0.1
+        uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
         with:
           project_id: phaenonet-test
       - name: Find last backup
@@ -145,7 +145,7 @@ jobs:
       actions: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
       - name: trigger function installation
@@ -158,7 +158,7 @@ jobs:
     environment: phaenonet-test
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
       - name: Deploy Firebase Extensions
@@ -176,7 +176,7 @@ jobs:
       - deploy-extensions
     steps:
       - name: call restore function
-        uses: fjogeleit/http-request-action@v2.0.0
+        uses: fjogeleit/http-request-action@551353b829c3646756b2ec2b3694f819d7957495 # v2.0.0
         with:
           url: "https://europe-west1-phaenonet-test.cloudfunctions.net/e2e_restore_data"
           timeout: 30000
