@@ -65,7 +65,7 @@ jobs:
       - name: Run pytest
         run: uv run python -m pytest --cov-report xml --cov=main --cov=phenoback --cov-branch
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5.5.3
+        uses: codecov/codecov-action@v6.0.0
         with:
           use_oidc: true
           files: ./coverage.xml
