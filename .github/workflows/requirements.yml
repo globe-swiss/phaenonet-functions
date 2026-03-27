@@ -1,0 +1,35 @@
+name: Update requirements.txt
+
+on:
+  push:
+    branches-ignore:
+      - 'renovate/*'
+    paths:
+      - 'uv.lock'
+
+permissions: {}
+
+jobs:
+  update-requirements:
+    permissions:
+      contents: write # commit changes to PR branch
+    runs-on: ubuntu-24.04
+    container: globeswiss/cloud-sdk:py3.12.12-554.0.0@sha256:3db9a24c68fdafd462600db739da909cbb17eca502828f4d3696a9c2d0484790
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: true
+          ref: ${{ github.head_ref }}
+      - name: Work around https://github.com/actions/checkout/issues/766
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: Install uv
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
+      - name: Export production requirements
+        run: uv export --format requirements-txt --no-hashes --no-dev > requirements.txt
+      - name: Commit and push if changed
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git add requirements.txt
+          git diff --cached --quiet requirements.txt || git commit -m "ci: update requirements.txt after dependency upgrade"
+          git push
