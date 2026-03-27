@@ -103,7 +103,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: next-versions
     if: always()
-    container: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
+    container: globeswiss/cloud-sdk:py3.12.12-554.0.0
     continue-on-error: false
     strategy:
       fail-fast: false
