@@ -15,7 +15,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     environment: phaenonet-test
     outputs:
       fs-functions: ${{ steps.fs-functions.outputs.functions }}
@@ -44,7 +44,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: fs-function-matrix
     environment: phaenonet-test
     strategy:
@@ -71,7 +71,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     environment: phaenonet-test
     steps:
       - name: Checkout
@@ -89,7 +89,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: [delete-fs-functions, remove-extensions]
     environment: phaenonet-test
     steps:
@@ -116,7 +116,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: remove-fs-data
     environment: phaenonet-test
     steps:
@@ -139,7 +139,7 @@ jobs:
       - name: Import Data from ${BACKUP_FOLDER}
         run: gcloud --project=phaenonet-test firestore import ${BACKUP_FOLDER}
   install-functions:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: import-fs-data
     permissions:
       actions: write
@@ -153,7 +153,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
   deploy-extensions:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: import-fs-data
     environment: phaenonet-test
     steps:
@@ -170,7 +170,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
   restore-users:
     permissions: {}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs:
       - install-functions
       - deploy-extensions

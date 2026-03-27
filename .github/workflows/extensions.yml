@@ -32,7 +32,7 @@ jobs:
       contents: read
       id-token: write
     if: ${{ github.event.inputs.action == 'remove' || github.event.inputs.action == 'redeploy' }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     environment: ${{ github.event.inputs.project }}
     steps:
       - name: Checkout
@@ -52,7 +52,7 @@ jobs:
       id-token: write
     if: ${{ always() && (github.event.inputs.action == 'deploy' || (github.event.inputs.action == 'redeploy' && needs.remove-extensions.result == 'success')) }}
     needs: [remove-extensions]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     environment: ${{ github.event.inputs.project }}
     steps:
       - name: Checkout

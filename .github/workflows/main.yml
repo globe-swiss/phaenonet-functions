@@ -17,7 +17,7 @@ jobs:
     permissions:
       contents: read # checkout
       pull-requests: write # reviewdog
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     container: globeswiss/cloud-sdk:py3.12.12-554.0.0
     steps:
       - uses: actions/checkout@v6.0.2
@@ -52,7 +52,7 @@ jobs:
     permissions:
       id-token: write # codecov oidc
       contents: read # checkout
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     container: globeswiss/cloud-sdk:py3.12.12-554.0.0
     steps:
       - uses: actions/checkout@v6.0.2
@@ -72,7 +72,7 @@ jobs:
           flags: unittests
         if: always()
   zizmor:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     permissions:
       security-events: write
       contents: read # only needed for private repos
