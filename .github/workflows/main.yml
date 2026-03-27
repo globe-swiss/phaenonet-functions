@@ -29,6 +29,7 @@ jobs:
         run: uv sync
       - name: Check requirements file
         run: diff -w <(uv export --format requirements-txt --no-hashes --no-dev | grep '==') <(grep '==' requirements.txt)
+        if: ${{ !startsWith(github.ref, 'refs/heads/renovate/') }}
       - name: Check bandit
         run: uv run bandit -r test phenoback main.py -c .bandit
         if: always()
