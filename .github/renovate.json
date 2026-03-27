@@ -1,0 +1,66 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "enabledManagers": [
+        "github-actions",
+        "pep621"
+    ],
+    "extends": [
+        "config:best-practices"
+    ],
+    "packageRules": [
+    /**
+     * Disable Python runtime updates
+     */
+        {
+            "enabled": false,
+            "matchDepTypes": [
+                "requires-python"
+            ],
+            "matchManagers": [
+                "pep621"
+            ]
+        },
+        {
+            "automerge": true,
+            "automergeType": "branch",
+            "matchManagers": [
+                "github-actions",
+                "pep621"
+            ],
+            "matchUpdateTypes": [
+                "patch"
+            ]
+        },
+        {
+            "automerge": true,
+            "automergeType": "pr",
+            "matchManagers": [
+                "github-actions",
+                "pep621"
+            ],
+            "matchUpdateTypes": [
+                "minor"
+            ]
+        },
+        {
+            "automerge": false,
+            "matchManagers": [
+                "github-actions",
+                "pep621"
+            ],
+            "matchUpdateTypes": [
+                "major"
+            ]
+        },
+        {
+            "automerge": true,
+            "automergeType": "branch",
+            "matchManagers": [
+                "pep621"
+            ],
+            "matchUpdateTypes": [
+                "lockFileMaintenance"
+            ]
+        }
+    ]
+}
