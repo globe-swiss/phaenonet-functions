@@ -87,8 +87,10 @@ def rollover():
         "Cleared %i sensors from individuals for %i", cleared_sensors, source_phenoyear
     )
 
-    log.info("Process year aggregate statistics for %i", target_phenoyear)
-    weekly.process_1y_aggregate_statistics(target_phenoyear)
+    log.info("Process year aggregate statistics for %i", source_phenoyear)
+    weekly.process_1y_aggregate_statistics(source_phenoyear)
+    log.info("Process 5/30y aggregate statistics for %i", target_phenoyear)
+    weekly.process_5y_30y_aggregate_statistics(target_phenoyear)
 
     log.info(
         "Setting current phenoyear from %i to %i", source_phenoyear, target_phenoyear
