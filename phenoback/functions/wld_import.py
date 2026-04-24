@@ -8,6 +8,7 @@ from zipfile import ZipFile
 
 from google.cloud.storage import Blob
 
+from phenoback.functions.statistics import weekly
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
 from phenoback.utils import storage as s
@@ -55,8 +56,17 @@ def main(data, context):  # pylint: disable=unused-argument
     """
     pathfile = data["name"]
     if pathfile.startswith("private/wld_import/"):
+        # default to previous year if not specified
+        year = d.get_phenoyear() - 1
         log.info("Import wld data for %s", pathfile)
-        import_data(pathfile)
+        import_data(pathfile, year)
+
+
+def update_statistics(year: int) -> None:
+    log.info("Process year aggregate statistics for %i", year)
+    weekly.process_1y_aggregate_statistics(year)
+    log.info("Process 5/30y aggregate statistics for %i", year)
+    weekly.process_5y_30y_aggregate_statistics(year)
 
 
 def members_by_basename(z: ZipFile) -> dict[str, list[str]]:
@@ -186,7 +196,7 @@ def check_data_integrity():
         raise ValueError("Data integrity check failed")
 
 
-def import_data(pathfile: str, bucket=None, year: int | None = None):
+def import_data(pathfile: str, year: int, bucket=None):
     """
     Main import function that processes WLD data from a ZIP file.
 
@@ -195,9 +205,6 @@ def import_data(pathfile: str, bucket=None, year: int | None = None):
     :param year: Year to import data for (defaults to previous phenological year)
     """
     global loaded_data  # pylint: disable=global-statement
-    # default to previous year if not specified
-    if year is None:
-        year = d.get_phenoyear() - 1
 
     log.info("importing year %i", year)
     blob = s.get_blob(bucket, pathfile)

@@ -63,8 +63,13 @@ def test_main(mocker, context, pathfile, called):
     the function invocation to specific folders.
     """
     mock = mocker.patch("phenoback.functions.wld_import.import_data")
+    current_phenoyear = 2002
+    d.update_phenoyear(current_phenoyear)
     wld_import.main({"name": pathfile}, context)
-    assert mock.called == called
+    if called:
+        mock.assert_called_once_with(pathfile, current_phenoyear - 1)
+    else:
+        assert not mock.called
 
 
 def test_check_zip_archive(zippath):
@@ -194,8 +199,7 @@ def test_check_data_integrity__duplicate_tree_error(data_loaded, caperrors):
 
 def test_import_data(mocker, input_blob):
     mocker.patch("phenoback.utils.storage.get_blob", return_value=input_blob)
-    d.update_phenoyear(2002)  # assume test data from 2001
-    wld_import.import_data("mocked")
+    wld_import.import_data("mocked", 2001)  # assume test data from 2001
     assert len(f.get_collection_documents("users")) == 4
     assert len(f.get_collection_documents("public_users")) == 4
     assert len(f.get_collection_documents("individuals")) == 2
@@ -204,8 +208,7 @@ def test_import_data(mocker, input_blob):
 
 def test_import_data__no_data(mocker, caperrors, input_blob):
     mocker.patch("phenoback.utils.storage.get_blob", return_value=input_blob)
-    d.update_phenoyear(2021)  # assume test data from 2020
-    wld_import.import_data("mocked")
+    wld_import.import_data("mocked", 2020)  # assume test data from 2020
     assert len(f.get_collection_documents("users")) == 4
     assert len(f.get_collection_documents("public_users")) == 4
     assert len(f.get_collection_documents("individuals")) == 0
