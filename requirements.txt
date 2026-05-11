@@ -27,7 +27,7 @@ cloudevents==1.12.0
     # via functions-framework
 colorama==0.4.6 ; sys_platform == 'win32'
     # via click
-cryptography==47.0.0
+cryptography==48.0.0
     # via
     #   google-auth
     #   pyjwt
@@ -57,7 +57,7 @@ google-api-core==2.30.3
     #   google-cloud-secret-manager
     #   google-cloud-storage
     #   google-cloud-tasks
-google-auth==2.50.0
+google-auth==2.52.0
     # via
     #   google-api-core
     #   google-cloud-appengine-logging
@@ -75,7 +75,7 @@ google-cloud-audit-log==0.5.0
     # via google-cloud-logging
 google-cloud-bigquery==3.41.0
     # via phaenonet-functions
-google-cloud-core==2.5.1
+google-cloud-core==2.6.0
     # via
     #   google-cloud-bigquery
     #   google-cloud-firestore
@@ -85,9 +85,9 @@ google-cloud-firestore==2.27.0 ; platform_python_implementation != 'PyPy'
     # via firebase-admin
 google-cloud-logging==3.15.0
     # via phaenonet-functions
-google-cloud-pubsub==2.37.0
+google-cloud-pubsub==2.38.0
     # via phaenonet-functions
-google-cloud-secret-manager==2.27.0
+google-cloud-secret-manager==2.28.0
     # via phaenonet-functions
 google-cloud-storage==3.10.1
     # via firebase-admin
@@ -97,11 +97,11 @@ google-crc32c==1.8.0
     # via
     #   google-cloud-storage
     #   google-resumable-media
-google-resumable-media==2.8.2
+google-resumable-media==2.9.0
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-googleapis-common-protos==1.74.0
+googleapis-common-protos==1.75.0
     # via
     #   google-api-core
     #   google-cloud-audit-log
@@ -129,7 +129,7 @@ grpcio-status==1.80.0
     # via
     #   google-api-core
     #   google-cloud-pubsub
-gunicorn==25.3.0
+gunicorn==26.0.0
     # via
     #   functions-framework
     #   uvicorn-worker
@@ -147,7 +147,7 @@ httpx==0.28.1
     # via firebase-admin
 hyperframe==6.1.0
     # via h2
-idna==3.13
+idna==3.14
     # via
     #   anyio
     #   httpx
@@ -184,7 +184,7 @@ packaging==26.2
     #   deprecation
     #   google-cloud-bigquery
     #   gunicorn
-proto-plus==1.27.2
+proto-plus==1.28.0
     # via
     #   google-api-core
     #   google-cloud-appengine-logging
@@ -221,7 +221,7 @@ python-dateutil==2.9.0.post0
     #   google-cloud-bigquery
 pytz==2026.2
     # via dateparser
-regex==2026.4.4
+regex==2026.5.9
     # via dateparser
 requests==2.33.1
     # via
@@ -230,7 +230,7 @@ requests==2.33.1
     #   google-cloud-bigquery
     #   google-cloud-storage
     #   tinify
-sentry-sdk==2.58.0
+sentry-sdk==2.59.0
     # via phaenonet-functions
 six==1.17.0
     # via python-dateutil
@@ -250,7 +250,7 @@ tzdata==2026.2 ; sys_platform == 'win32'
     # via tzlocal
 tzlocal==5.3.1
     # via dateparser
-urllib3==2.6.3
+urllib3==2.7.0
     # via
     #   requests
     #   sentry-sdk
