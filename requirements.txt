@@ -18,7 +18,7 @@ cffi==2.0.0 ; platform_python_implementation != 'PyPy'
     # via cryptography
 charset-normalizer==3.4.7
     # via requests
-click==8.3.3
+click==8.4.0
     # via
     #   flask
     #   functions-framework
@@ -57,7 +57,7 @@ google-api-core==2.30.3
     #   google-cloud-secret-manager
     #   google-cloud-storage
     #   google-cloud-tasks
-google-auth==2.52.0
+google-auth==2.53.0
     # via
     #   google-api-core
     #   google-cloud-appengine-logging
@@ -147,7 +147,7 @@ httpx==0.28.1
     # via firebase-admin
 hyperframe==6.1.0
     # via h2
-idna==3.14
+idna==3.15
     # via
     #   anyio
     #   httpx
@@ -167,7 +167,7 @@ markupsafe==3.0.3
     #   werkzeug
 msgpack==1.1.2
     # via cachecontrol
-numpy==2.4.4
+numpy==2.4.5
     # via phaenonet-functions
 opentelemetry-api==1.41.1
     # via
@@ -223,14 +223,14 @@ pytz==2026.2
     # via dateparser
 regex==2026.5.9
     # via dateparser
-requests==2.33.1
+requests==2.34.2
     # via
     #   cachecontrol
     #   google-api-core
     #   google-cloud-bigquery
     #   google-cloud-storage
     #   tinify
-sentry-sdk==2.59.0
+sentry-sdk==2.60.0
     # via phaenonet-functions
 six==1.17.0
     # via python-dateutil
@@ -254,7 +254,7 @@ urllib3==2.7.0
     # via
     #   requests
     #   sentry-sdk
-uvicorn==0.46.0
+uvicorn==0.47.0
     # via
     #   functions-framework
     #   uvicorn-worker
