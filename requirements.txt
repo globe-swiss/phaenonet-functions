@@ -27,7 +27,7 @@ cloudevents==1.12.0
     # via functions-framework
 colorama==0.4.6 ; sys_platform == 'win32'
     # via click
-cryptography==48.0.0
+cryptography==49.0.0
     # via
     #   google-auth
     #   pyjwt
@@ -57,7 +57,7 @@ google-api-core==2.31.0
     #   google-cloud-secret-manager
     #   google-cloud-storage
     #   google-cloud-tasks
-google-auth==2.53.0
+google-auth==2.54.0
     # via
     #   google-api-core
     #   google-cloud-appengine-logging
@@ -89,7 +89,7 @@ google-cloud-pubsub==2.39.0
     # via phaenonet-functions
 google-cloud-secret-manager==2.29.0
     # via phaenonet-functions
-google-cloud-storage==3.11.0
+google-cloud-storage==3.12.0
     # via firebase-admin
 google-cloud-tasks==2.22.0
     # via phaenonet-functions
@@ -113,7 +113,7 @@ grpc-google-iam-v1==0.14.4
     #   google-cloud-pubsub
     #   google-cloud-secret-manager
     #   google-cloud-tasks
-grpcio==1.81.0
+grpcio==1.81.1
     # via
     #   google-api-core
     #   google-cloud-appengine-logging
@@ -125,7 +125,7 @@ grpcio==1.81.0
     #   googleapis-common-protos
     #   grpc-google-iam-v1
     #   grpcio-status
-grpcio-status==1.81.0
+grpcio-status==1.81.1
     # via
     #   google-api-core
     #   google-cloud-pubsub
@@ -163,7 +163,7 @@ markupsafe==3.0.3
     #   flask
     #   jinja2
     #   werkzeug
-msgpack==1.1.2
+msgpack==1.2.0
     # via cachecontrol
 numpy==2.4.6
     # via phaenonet-functions
@@ -191,7 +191,7 @@ proto-plus==1.28.0
     #   google-cloud-pubsub
     #   google-cloud-secret-manager
     #   google-cloud-tasks
-protobuf==7.35.0
+protobuf==7.35.1
     # via
     #   google-api-core
     #   google-cloud-appengine-logging
@@ -228,7 +228,7 @@ requests==2.34.2
     #   google-cloud-bigquery
     #   google-cloud-storage
     #   tinify
-sentry-sdk==2.61.1
+sentry-sdk==2.62.0
     # via phaenonet-functions
 six==1.17.0
     # via python-dateutil
