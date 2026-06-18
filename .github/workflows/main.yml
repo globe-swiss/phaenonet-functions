@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-24.04
     container: globeswiss/cloud-sdk:py3.12.12-554.0.0@sha256:3db9a24c68fdafd462600db739da909cbb17eca502828f4d3696a9c2d0484790
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
       - name: Install uv
@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-24.04
     container: globeswiss/cloud-sdk:py3.12.12-554.0.0@sha256:3db9a24c68fdafd462600db739da909cbb17eca502828f4d3696a9c2d0484790
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
       - name: Install uv
@@ -80,7 +80,7 @@ jobs:
       actions: read # only needed for private repos
     steps:
       - name: Checkout repository
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
       - name: Run zizmor 🌈
