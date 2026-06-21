@@ -37,7 +37,7 @@ jobs:
         run: uv run pylint --reports=y phenoback test main.py
         if: always()
       - name: Check black
-        uses: reviewdog/action-black@644053a260402bc4278a865906107bd8aef7fae8 # v3.22.4
+        uses: reviewdog/action-black@9b4feb439b707a9b7673086795cc53e417a03abe # v3.23.0
         with:
           reporter: github-check
           verbose: True
