@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def main(data, context):
+def main(data, context) -> None:
     """Creates an activity when an observation is created, modified or deleted in
     Firestore **and** the user or individual of that observation is being followed.
     """
@@ -26,7 +26,7 @@ def main(data, context):
         log.debug("No activity to add")
 
 
-def _main(data, context, action):
+def _main(data, context, action) -> None:
     is_delete = action == "delete"
     process_observation(
         event_id=context.event_id,

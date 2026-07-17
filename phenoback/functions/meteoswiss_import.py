@@ -22,7 +22,7 @@ class ResourceNotFoundException(Exception):
     pass
 
 
-def main(data, context):  # pylint: disable=unused-argument
+def main(data, context) -> None:  # pylint: disable=unused-argument
     phenoyear = d.get_phenoyear()
     log.info("Import meteoswiss stations")
     process_stations(phenoyear)
@@ -148,7 +148,7 @@ def _update_station_species(station_species: dict) -> None:
         d.update_individual(key, data)
 
 
-def _set_hash(key: str, data: str):
+def _set_hash(key: str, data: str) -> None:
     hashed_data = _get_hash(data)
     write_document(
         "definitions", "meteoswiss_import", {f"hash_{key}": hashed_data}, merge=True

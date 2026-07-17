@@ -7,7 +7,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def main(data, context):
+def main(data, context) -> None:
     user_id = g.get_document_id(context)
 
     if g.is_update_event(data) and g.is_field_updated(data, "nickname"):
@@ -32,7 +32,7 @@ def process_new_user(user_id: str, nickname: str) -> None:
 
 
 @f.transactional
-def _process_new_user_transaction(transaction, user_id, nickname):
+def _process_new_user_transaction(transaction, user_id, nickname) -> None:
     f.write_document("nicknames", nickname, {"user": user_id}, transaction=transaction)
     f.write_document(
         "public_users", user_id, {"nickname": nickname}, transaction=transaction
@@ -48,7 +48,7 @@ def process_update_nickname(user_id: str, nickname_old: str, nickname_new: str) 
 @f.transactional
 def _process_update_nickname_transaction(
     transaction, user_id, nickname_old, nickname_new
-):
+) -> None:
     f.write_document(
         "nicknames", nickname_new, {"user": user_id}, transaction=transaction
     )
@@ -63,6 +63,6 @@ def process_delete_user(user_id: str, nickname: str) -> None:
 
 
 @f.transactional
-def _process_delete_user_transaction(transaction, user_id, nickname):
+def _process_delete_user_transaction(transaction, user_id, nickname) -> None:
     f.delete_document("nicknames", nickname, transaction=transaction)
     f.delete_document("public_users", user_id, transaction=transaction)

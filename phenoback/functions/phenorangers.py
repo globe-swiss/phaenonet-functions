@@ -84,7 +84,7 @@ def update_individuals(user: str, year: int, transaction: f.Transaction) -> int:
     return updated
 
 
-def set_ranger(user_id: str, transaction: f.Transaction = None):
+def set_ranger(user_id: str, transaction: f.Transaction = None) -> None:
     f.update_document(
         "public_users",
         user_id,

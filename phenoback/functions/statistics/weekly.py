@@ -13,7 +13,7 @@ log.setLevel(logging.DEBUG)
 STATISTIC_PHENOPHASES = {"BEA", "BES", "BFA", "BLA", "BLB", "BVA", "BVS", "FRA"}
 
 
-def main(data, context):  # pylint: disable=unused-argument
+def main(data, context) -> None:  # pylint: disable=unused-argument
     year = data["year"] if "year" in data else d.get_phenoyear()
     process_1y_aggregate_statistics(year)
 
@@ -70,7 +70,7 @@ def calculate_1y_agg_statistics(observations: list) -> dict:
             statistic_doc["agg_obs_sum"] += 1
         except (KeyError, TypeError, ValueError) as e:  # pragma: no cover
             # Log the error and continue with the next observation
-            log.error(
+            log.exception(
                 "Unexpected error processing observation (skipping) %s: %s", obs, e
             )
     return statistics_result
@@ -78,7 +78,7 @@ def calculate_1y_agg_statistics(observations: list) -> dict:
 
 @cache  # needed only for initial processing of all years
 def get_1y_agg_statistics(start_year: int, end_year: int) -> list:
-    """Retrieve preprocessed 1-year aggregate statistics for the given year range. (end_year is excluded)"""
+    """Retrieve preprocessed 1-year aggregate statistics for the given year range. (end_year is excluded)."""
     statistics = []
     for year in range(start_year, end_year):
         query_result = [
@@ -102,7 +102,7 @@ def get_1y_agg_statistics(start_year: int, end_year: int) -> list:
 def calculate_statistics_aggregates(
     year_agg_statistics: list, year_range_start, year_range_end
 ) -> dict:
-    """Take the 1-year aggregate statistics and aggregate them over a range of years. (year_range_end is excluded)"""
+    """Take the 1-year aggregate statistics and aggregate them over a range of years. (year_range_end is excluded)."""
     # Create a defaultdict to store the aggregated results
     agg_statistics_result = {}
 

@@ -16,8 +16,7 @@ def get_secret(key: str):
     response = client.access_secret_version(
         name=f"projects/{gcloud.get_project()}/secrets/{key}/versions/latest"
     )
-    payload = response.payload.data.decode("UTF-8")
-    return payload
+    return response.payload.data.decode("UTF-8")
 
 
 def get_mailer_pw():  # pragma: no cover
@@ -32,6 +31,6 @@ def get_tinify_apikey():  # pragma: no cover
     return get_secret("tinify_apikey")
 
 
-def reset():
+def reset() -> None:
     log.debug("Reset all secret caches")
     get_secret.cache_clear()

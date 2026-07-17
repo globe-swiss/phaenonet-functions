@@ -11,7 +11,7 @@ MODIFIED_KEY = "modified"
 CREATED_KEY = "created"
 
 
-def main(data, context):
+def main(data, context) -> None:
     """Updates create and modified timestamps on documents."""
     collection_path = g.get_collection_path(context)
     document_id = g.get_document_id(context)
@@ -36,7 +36,7 @@ def main(data, context):
         log.error("Unexpected case for %s (%s)", context.resource, source)
 
 
-def update_created_document(collection: str, document_id: str):
+def update_created_document(collection: str, document_id: str) -> None:
     log.info("create event: update created, modified on %s.%s", collection, document_id)
     f.update_document(
         collection,
@@ -49,8 +49,8 @@ def update_modified_document(
     collection: str,
     document_id: str,
     updated_fields: list[str],
-    created: datetime = None,
-):
+    created: datetime | None = None,
+) -> None:
     log.debug(
         "update event: %s.%s, fields: %s, created: %s",
         collection,
@@ -80,7 +80,7 @@ def update_modified_document(
         log.debug("update event: nothing to do: fields=%s", updated_fields)
 
 
-def _should_update_modified(updated_fields: list[str]):
+def _should_update_modified(updated_fields: list[str]) -> bool:
     return not (
         all(field in [CREATED_KEY, MODIFIED_KEY] for field in updated_fields)
         or any(field.startswith("sensor.") for field in updated_fields)

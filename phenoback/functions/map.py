@@ -17,7 +17,7 @@ FUNCTION_NAME = "http_individuals_write__map"
 DELETE_TOKEN = "__DELETE__"  # nosec
 
 
-def main_enqueue(data, context):
+def main_enqueue(data, context) -> None:
     if not g.is_delete_event(data):
         enqueue_change(
             individual_id=g.get_document_id(context),
@@ -111,7 +111,7 @@ def _should_update(
 ) -> bool:
     """Update if
     * a new individual/station is created which would be shown on the map
-    * data is updated that is relevant on the map
+    * data is updated that is relevant on the map.
     """
     return (
         is_create_event and (station_species is not None or last_phenophase is not None)

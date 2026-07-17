@@ -9,7 +9,7 @@ log.setLevel(logging.DEBUG)
 REQUEST_TIMEOUT = 5
 
 
-def main(data, context):  # pylint: disable=unused-argument
+def main(data, context) -> None:  # pylint: disable=unused-argument
     send_permarobotics(data)
 
 

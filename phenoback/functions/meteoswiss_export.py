@@ -1,6 +1,7 @@
-"""Meteoswiss phenology data export
+"""Meteoswiss phenology data export.
 
-New PhaenoNet data mapped as good as possible to the previously existing export structure for meteoswiss.
+New PhaenoNet data mapped as good as possible to the
+previously existing export structure for meteoswiss.
 """
 
 import csv
@@ -16,11 +17,11 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 
-def main(event, context):  # pylint: disable=unused-argument
+def main(event, context) -> None:  # pylint: disable=unused-argument
     process()
 
 
-def process(year: int = None):
+def process(year: int | None = None) -> None:
     if not year:
         year = d.get_phenoyear()
 

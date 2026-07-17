@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def main(data, context):  # pylint: disable=unused-argument
+def main(data, context) -> None:  # pylint: disable=unused-argument
     if g.is_delete_event(data):
         individual_id = g.get_field(data, "individual_id", old_value=True)
     else:
@@ -16,7 +16,7 @@ def main(data, context):  # pylint: disable=unused-argument
     updated_observation(individual_id)
 
 
-def updated_observation(individual_id: str):
+def updated_observation(individual_id: str) -> None:
     individual = d.get_individual(individual_id)
     if individual:
         last_observation = _get_last_observation(individual_id)

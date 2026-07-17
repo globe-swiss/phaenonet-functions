@@ -14,11 +14,11 @@ log.setLevel(logging.DEBUG)
 COLLECTION = "sensors"
 
 
-def main(data, context):  # pylint: disable=unused-argument
+def main(data, context) -> None:  # pylint: disable=unused-argument
     process_dragino(data)
 
 
-def main_individual_updated(data, context):
+def main_individual_updated(data, context) -> None:
     if g.is_field_updated(data, "deveui"):
         log.debug("DevEUI updated")
         individual_id = g.get_document_id(context)
@@ -54,7 +54,7 @@ def get_individual_id(year: int, deveui: str) -> str | None:
     return individual_id
 
 
-def update(data: dict, year: int, individual_id: str):
+def update(data: dict, year: int, individual_id: str) -> None:
     soil_humidity = data["soilHumidity"]["value"]
     soil_temperature = data["soilTemperature"]["value"]
     air_humidity = data["airHumidity"]["value"]
@@ -93,7 +93,7 @@ def update_history(
     soil_temperature: float,
     air_humidity: float,
     air_temperature: float,
-):
+) -> None:
     if (
         valid_humidity(air_humidity)
         and valid_humidity(soil_humidity)
@@ -131,7 +131,7 @@ def update_individual(
     soil_temperature: float,
     air_humidity: float,
     air_temperature: float,
-):
+) -> None:
     d.update_individual(
         individual_id,
         {
@@ -168,7 +168,7 @@ def remove_sensor(individual_id) -> None:
 
 
 def clear_sensors(year: int) -> int:
-    """Clears all sensor data on individuals"""
+    """Clears all sensor data on individuals."""
     log.info("clear all sensors for %i", year)
     individual_ids = [
         doc.id

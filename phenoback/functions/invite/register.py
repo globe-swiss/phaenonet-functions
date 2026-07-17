@@ -13,7 +13,7 @@ INVITE_COLLECTION = "invites"
 LOOKUP_COLLECTION = "invites_lookup"
 
 
-def main(data, context):
+def main(data, context) -> None:
     """Processes invite related documents if a user is created, modified or deleted."""
     user_id = g.get_document_id(context)
     nickname = g.get_field(

@@ -50,8 +50,8 @@ PHASES_MAP = {
 }
 
 
-def main(data, context):  # pylint: disable=unused-argument
-    """Import wld data on file upload to private/wld_import"""
+def main(data, context) -> None:  # pylint: disable=unused-argument
+    """Import wld data on file upload to private/wld_import."""
     pathfile = data["name"]
     if pathfile.startswith("private/wld_import/"):
         # default to previous year if not specified
@@ -94,10 +94,12 @@ def check_zip_archive(input_zip: ZipFile) -> None:
     log.debug("Files found in zip: %s", str(members))
     missing = [f for f in FILES if f not in members]
     if missing:
-        raise FileNotFoundError(f"Missing files {missing} expected {FILES}")
+        msg = f"Missing files {missing} expected {FILES}"
+        raise FileNotFoundError(msg)
     duplicates = [f for f, v in members.items() if len(v) > 1 and f in FILES]
     if duplicates:
-        raise ValueError(f"Duplicate files found in archive: {duplicates}")
+        msg = f"Duplicate files found in archive: {duplicates}"
+        raise ValueError(msg)
 
 
 def check_file_size(blob: Blob) -> None:
@@ -109,7 +111,8 @@ def check_file_size(blob: Blob) -> None:
     size = blob.size
     log.debug("Import file size %ib", size)
     if size > MAX_ARCHIVE_BYTES:
-        raise OverflowError(f"File bigger than {MAX_ARCHIVE_BYTES / 1000}kb")
+        msg = f"File bigger than {MAX_ARCHIVE_BYTES / 1000}kb"
+        raise OverflowError(msg)
 
 
 def load_data(input_zip: ZipFile) -> dict[str, list[dict]]:
@@ -129,7 +132,7 @@ def load_data(input_zip: ZipFile) -> dict[str, list[dict]]:
     return data
 
 
-def check_data_integrity():
+def check_data_integrity() -> None:
     """Validates data integrity across all imported CSV files.
 
     Checks:
@@ -187,10 +190,11 @@ def check_data_integrity():
         error = True
 
     if error:
-        raise ValueError("Data integrity check failed")
+        msg = "Data integrity check failed"
+        raise ValueError(msg)
 
 
-def import_data(pathfile: str, year: int, bucket=None):
+def import_data(pathfile: str, year: int, bucket=None) -> None:
     """Main import function that processes WLD data from a ZIP file.
 
     :param pathfile: Path to the ZIP file in cloud storage

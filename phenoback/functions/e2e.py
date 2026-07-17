@@ -20,7 +20,7 @@ def main_reset(request: Request):  # pylint: disable=unused-argument
 
 
 def main_restore(request: Request):  # pylint: disable=unused-argument
-    """Restore test users after database copyback"""
+    """Restore test users after database copyback."""
     restore_test_users()
     restore_sensor_test_data()
     return Response("ok", HTTPStatus.OK)

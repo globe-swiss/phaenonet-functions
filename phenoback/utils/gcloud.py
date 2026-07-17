@@ -46,6 +46,7 @@ def _get_field(
             zip(
                 value["fields"].keys(),
                 [_get_field(v) for v in value["fields"].values()],
+                strict=False,
             )
         )
     if value_type == "arrayValue":

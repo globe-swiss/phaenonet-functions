@@ -15,8 +15,8 @@ INVITE_COLLECTION = "invites"
 LOOKUP_COLLECTION = "invites_lookup"
 
 
-def main(data, context):
-    """Send email invites if invite is created or resend is set"""
+def main(data, context) -> None:
+    """Send email invites if invite is created or resend is set."""
     # process if new invite or resend was changed but not deleted
     if g.is_create_event(data) or (
         g.is_field_updated(data, "resend")
@@ -32,7 +32,11 @@ def main(data, context):
 
 
 def process(
-    doc_id: str, to_mail: str, locale: str, user_id: str, sent_date: datetime = None
+    doc_id: str,
+    to_mail: str,
+    locale: str,
+    user_id: str,
+    sent_date: datetime | None = None,
 ) -> bool:
     send = False
     if d.user_exists(to_mail):

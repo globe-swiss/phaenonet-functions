@@ -52,7 +52,9 @@ def process_dragino(data: dict) -> None:
         log.debug("No uplink data, skip")
 
 
-def set_uplink_frequency(deveui: str, interval: int, at: datetime | None = None):
+def set_uplink_frequency(
+    deveui: str, interval: int, at: datetime | None = None
+) -> None:
     log.info("set uplink frequency to %is for %s at %s", interval, deveui, at)
     task_client().send(
         "",
@@ -68,7 +70,7 @@ def set_uplink_frequency(deveui: str, interval: int, at: datetime | None = None)
 class DraginoDecoder(Decoder):
     result = defaultdict(dict)
 
-    def set(self, field: str, value: float, precision: int, unit: str):
+    def set(self, field: str, value: float, precision: int, unit: str) -> None:
         self.result[field]["value"] = round(value, precision)
         self.result[field]["unit"] = unit
 

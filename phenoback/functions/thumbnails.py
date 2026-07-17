@@ -14,7 +14,7 @@ THUMBNAIL_WIDTH = 302
 THUMBNAIL_HEIGHT = 302
 
 
-def main(data, context):  # pylint: disable=unused-argument
+def main(data, context) -> None:  # pylint: disable=unused-argument
     """Creates thumbnails for images uploaded to google cloud storage."""
     pathfile = data["name"]
     if pathfile.startswith("images/"):
@@ -55,7 +55,7 @@ def get_thumbnail(url: str, width: int, height: int) -> BytesIO:
     return BytesIO(resized.to_buffer())
 
 
-def setkey():
+def setkey() -> None:
     try:
         tinify.key = gsecrets.get_tinify_apikey()
         tinify.validate()  # pylint: disable=no-member

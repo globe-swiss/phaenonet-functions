@@ -56,9 +56,8 @@ def get_observations(phenoyear: int, phenophases: set[str]) -> list[dict[str, An
     """
     invalid_phases = phenophases - set(AVAILABLE_PHENOPHASES)
     if invalid_phases:
-        raise ValueError(
-            f"Invalid phenophases requested: {invalid_phases}. Observations only loaded for: {AVAILABLE_PHENOPHASES}"
-        )
+        msg = f"Invalid phenophases requested: {invalid_phases}. Observations only loaded for: {AVAILABLE_PHENOPHASES}"
+        raise ValueError(msg)
     return [
         obs
         for obs in _load_observations(phenoyear)
@@ -66,6 +65,6 @@ def get_observations(phenoyear: int, phenophases: set[str]) -> list[dict[str, An
     ]
 
 
-def cache_clear():
+def cache_clear() -> None:
     get_altitude_grp.cache_clear()
     _load_observations.cache_clear()
