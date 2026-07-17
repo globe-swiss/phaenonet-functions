@@ -37,6 +37,4 @@ def _sendmail(maildef: InviteMail) -> dict:
         login=gsecrets.get_mailer_user(),
         password=gsecrets.get_mailer_pw(),
         tls=True,
-    )[
-        1
-    ]
+    )[1]

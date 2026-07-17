@@ -49,7 +49,7 @@ def get_rollover_individuals(
     for individual_doc in query.stream():
         individual = individual_doc.to_dict()
         if does_rollover(individual):
-            individual["id"] = f'{target_phenoyear}_{individual["individual"]}'
+            individual["id"] = f"{target_phenoyear}_{individual['individual']}"
             individual["year"] = target_phenoyear
             for key in [
                 "last_phenophase",

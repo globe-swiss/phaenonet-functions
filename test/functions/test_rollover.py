@@ -171,7 +171,7 @@ def test_get_rollover_individuals__single_individual(current_phenoyear):
     )
     assert len(roll_individuals) == 1
     for individual in roll_individuals:
-        assert individual["id"] == f'{current_phenoyear + 1}_{individual["individual"]}'
+        assert individual["id"] == f"{current_phenoyear + 1}_{individual['individual']}"
         assert individual["individual"] == "2_globe"
 
 

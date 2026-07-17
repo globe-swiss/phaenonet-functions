@@ -101,7 +101,6 @@ class TestCommon:
 
 
 class TestObservations:
-
     def test_process_observations_response(
         self, mocker, observation_data, meteoswiss_mapping
     ):

@@ -126,9 +126,9 @@ def test_members_by_basename(zippath):
 
     for filename in wld_import.FILES:
         assert filename in members
-        assert all(
-            p.endswith(filename) for p in members[filename]
-        ), f"filename: {filename}, not found in zip: {members[filename]}"
+        assert all(p.endswith(filename) for p in members[filename]), (
+            f"filename: {filename}, not found in zip: {members[filename]}"
+        )
 
 
 def test_members_by_basename__duplicates(mocker):

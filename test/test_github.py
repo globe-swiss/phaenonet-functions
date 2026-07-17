@@ -21,9 +21,9 @@ def github_deploy_options(deploy_yaml):
 
 
 def test_entrypoints(main_functions, github_entrypoints):
-    assert set(github_entrypoints).issubset(
-        main_functions
-    ), f"Entrypoints not found in main: {set(github_entrypoints) - set(main_functions)}"
+    assert set(github_entrypoints).issubset(main_functions), (
+        f"Entrypoints not found in main: {set(github_entrypoints) - set(main_functions)}"
+    )
 
 
 def test_function_names(gcf_names, github_deploy_options):

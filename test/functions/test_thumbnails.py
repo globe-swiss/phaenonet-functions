@@ -56,6 +56,6 @@ def test_process_new_image_infinite_loop(mocker, image_path):
     upload_file_mock.assert_called()
     written_file = upload_file_mock.call_args[0][1]
     # assert the output of the function is not processed again
-    assert not thumbnails.process_new_image(
-        written_file, url(written_file)
-    ), written_file
+    assert not thumbnails.process_new_image(written_file, url(written_file)), (
+        written_file
+    )
