@@ -1,33 +1,32 @@
-from test.util import get_random_string
-
 import google.api_core.exceptions
 import pytest
 from google.cloud.firestore_v1._helpers import ReadAfterWriteError
 
 from phenoback.utils import firestore as f
+from test.util import get_random_string
 
 
-@pytest.fixture()
+@pytest.fixture
 def doc_id() -> str:
     return get_random_string(12)
 
 
-@pytest.fixture()
+@pytest.fixture
 def doc_id2() -> str:
     return get_random_string(13)
 
 
-@pytest.fixture()
+@pytest.fixture
 def doc() -> dict[str, str]:
     return {get_random_string(5): get_random_string(5)}
 
 
-@pytest.fixture()
+@pytest.fixture
 def doc2() -> dict[str, str]:
     return {get_random_string(6): get_random_string(6)}
 
 
-@pytest.fixture()
+@pytest.fixture
 def collection() -> str:
     return get_random_string(5)
 

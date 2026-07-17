@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import PropertyMock
 
 import pytest
@@ -54,7 +54,7 @@ def test_get_collection_path(expected, resource):
     assert g.get_collection_path(context) == expected
 
 
-@pytest.fixture()
+@pytest.fixture
 def request_data():
     return {
         "value": {
@@ -104,8 +104,8 @@ def request_data():
 @pytest.mark.parametrize(
     "expected, fieldname",
     [
-        (datetime(2020, 3, 8, 14, 33, 30, 162000, tzinfo=timezone.utc), "date1"),
-        (datetime(2020, 3, 18, 23, 0, tzinfo=timezone.utc), "date2"),
+        (datetime(2020, 3, 8, 14, 33, 30, 162000, tzinfo=UTC), "date1"),
+        (datetime(2020, 3, 18, 23, 0, tzinfo=UTC), "date2"),
         ("EDt26K5YIGoPe36z64vy", "individual"),
         (2020, "year"),
         (None, "not_present"),

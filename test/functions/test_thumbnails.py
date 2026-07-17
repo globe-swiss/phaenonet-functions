@@ -25,8 +25,7 @@ def url(path: str):
     ],
 )
 def test_main(mocker, context, pathfile, called):
-    """
-    Test all thumbnails storage triggers to correctly limit
+    """Test all thumbnails storage triggers to correctly limit
     the function invocation to specific folders.
     """
     mock = mocker.patch("phenoback.functions.thumbnails.process_new_image")

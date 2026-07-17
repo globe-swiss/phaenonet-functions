@@ -15,9 +15,7 @@ THUMBNAIL_HEIGHT = 302
 
 
 def main(data, context):  # pylint: disable=unused-argument
-    """
-    Creates thumbnails for images uploaded to google cloud storage.
-    """
+    """Creates thumbnails for images uploaded to google cloud storage."""
     pathfile = data["name"]
     if pathfile.startswith("images/"):
         log.info("Process thumbnail for %s", pathfile)
@@ -46,9 +44,8 @@ def process_new_image(pathfile: str, bucket=None) -> bool:
             cache_control="public, max-age=31536000",
         )
         return True
-    else:
-        log.debug("skipping thumbnail creation for %s", pathfile)
-        return False
+    log.debug("skipping thumbnail creation for %s", pathfile)
+    return False
 
 
 def get_thumbnail(url: str, width: int, height: int) -> BytesIO:

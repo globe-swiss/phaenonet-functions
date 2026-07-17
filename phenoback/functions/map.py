@@ -70,13 +70,9 @@ def enqueue_change(
                 "so": source,
             }
         }
-        values[individual_id]["p"] = (
-            last_phenophase if last_phenophase else DELETE_TOKEN
-        )
-        values[individual_id]["sp"] = species if species else DELETE_TOKEN
-        values[individual_id]["ss"] = (
-            station_species if station_species else DELETE_TOKEN
-        )
+        values[individual_id]["p"] = last_phenophase or DELETE_TOKEN
+        values[individual_id]["sp"] = species or DELETE_TOKEN
+        values[individual_id]["ss"] = station_species or DELETE_TOKEN
         values[individual_id]["hs"] = True if deveui else DELETE_TOKEN
 
         payload = {"year": year, "values": values}
@@ -113,8 +109,7 @@ def replace_delete_tokens(payload: dict) -> None:
 def _should_update(
     updated_fields: list[str], is_create_event: bool, station_species, last_phenophase
 ) -> bool:
-    """
-    Update if
+    """Update if
     * a new individual/station is created which would be shown on the map
     * data is updated that is relevant on the map
     """

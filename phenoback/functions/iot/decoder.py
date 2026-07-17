@@ -51,4 +51,4 @@ class Decoder:
             raise ValueError("No uplink data")
 
     def decode_impl(self) -> dict:
-        raise NotImplementedError()  # pragma: no cover
+        raise NotImplementedError  # pragma: no cover

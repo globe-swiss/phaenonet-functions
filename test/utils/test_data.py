@@ -1,19 +1,18 @@
 # pylint: disable=protected-access
 import json
-import test
-from datetime import datetime, date
+from datetime import date, datetime
 
 import pytest
 import pytz
 
+import test
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
 
 
 @pytest.fixture(autouse=True)
 def config_static():
-    """
-    To update resource files needed for tests from phaenonet test instance
+    """To update resource files needed for tests from phaenonet test instance
     see maintenance repo @ maintenance/config/generate_config_static.py.
     """
     d._get_static_config.cache_clear()

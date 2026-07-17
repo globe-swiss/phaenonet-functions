@@ -14,17 +14,13 @@ log.setLevel(logging.INFO)
 
 
 def main_reset(request: Request):  # pylint: disable=unused-argument
-    """
-    Clear all individuals for the e2e test user. This is used for assuring the firestore state before running e2e tests.
-    """
+    """Clear all individuals for the e2e test user. This is used for assuring the firestore state before running e2e tests."""
     delete_user_data(["q7lgBm5nm7PUkof20UdZ9D4d0CV2", "JIcn8kFpI4fYYcbdi9QzPlrHomn1"])
     return Response("ok", HTTPStatus.OK)
 
 
 def main_restore(request: Request):  # pylint: disable=unused-argument
-    """
-    Restore test users after database copyback
-    """
+    """Restore test users after database copyback"""
     restore_test_users()
     restore_sensor_test_data()
     return Response("ok", HTTPStatus.OK)
@@ -101,8 +97,7 @@ def restore_sensor_test_data() -> None:
 
 
 def monthdates(basedt: datetime.date, months: int) -> list[datetime.date]:
-    """
-    Generate a list of dates for a given number of months starting from a base date.
+    """Generate a list of dates for a given number of months starting from a base date.
 
     Args:
         basedt: The starting date
@@ -110,6 +105,7 @@ def monthdates(basedt: datetime.date, months: int) -> list[datetime.date]:
 
     Returns:
         List of datetime.date objects for each day in the specified month range
+
     """
     curr = basedt
     result = []

@@ -14,9 +14,7 @@ LOOKUP_COLLECTION = "invites_lookup"
 
 
 def main(data, context):
-    """
-    Processes invite related documents if a user is created, modified or deleted.
-    """
+    """Processes invite related documents if a user is created, modified or deleted."""
     user_id = g.get_document_id(context)
     nickname = g.get_field(
         data, "nickname", expected=False
@@ -40,26 +38,20 @@ def invite_id(user_id: str, email: str) -> str:
 
 
 def get_invite_ids(user_id: str) -> list[str]:
-    """
-    Get all invite ids that invited the given user.
-    """
+    """Get all invite ids that invited the given user."""
     email = d.get_email(user_id)
     lookup = f.get_document(LOOKUP_COLLECTION, email)
     return lookup["invites"] if lookup else []
 
 
 def register_user(user_id: str) -> None:
-    """
-    Register the given user on all invites pointing to him.
-    """
+    """Register the given user on all invites pointing to him."""
     for invite_id in get_invite_ids(user_id):
         register_user_invite(invite_id, user_id)
 
 
 def register_user_invite(invite_id: str, user_id: str) -> None:
-    """
-    Register an user on a specific invite.
-    """
+    """Register an user on a specific invite."""
     user = d.get_user(user_id)
     if not user:
         log.error("User not found %s", user_id)

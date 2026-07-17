@@ -1,7 +1,7 @@
 # type: ignore
 # pylint: disable=protected-access, too-many-positional-arguments
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import MagicMock
 
 import pytest
@@ -227,7 +227,7 @@ class TestInvite:
     def test_get_language(self, locale, expected):
         assert invite.get_language(locale) == expected
 
-    def test_clear_resend(self, resend_invite):  # noqa: F811
+    def test_clear_resend(self, resend_invite):
         assert get_invite(resend_invite)["resend"]
         invite.clear_resend(resend_invite)
         assert get_invite(resend_invite).get("resend") is None
@@ -293,7 +293,7 @@ class TestInvite:
                 INVITEE_EMAIL,
                 "locale",
                 INVITER_USER_ID,
-                datetime.now().replace(tzinfo=timezone.utc),
+                datetime.now().replace(tzinfo=UTC),
             )
             is False
         )
@@ -307,7 +307,7 @@ class TestInvite:
             INVITEE_EMAIL,
             "locale",
             INVITER_USER_ID,
-            datetime(2021, 1, 1).replace(tzinfo=timezone.utc),
+            datetime(2021, 1, 1).replace(tzinfo=UTC),
         )
         send_invite_mock.assert_called_once()
 
@@ -418,13 +418,13 @@ class TestRegister:
 
         delete_user_mock.assert_called_once_with("document_id")
 
-    @pytest.fixture()
+    @pytest.fixture
     def lookup(self):
         invite_id = "invite_1"
         f.write_document(LOOKUP_COLLECTION, INVITEE_EMAIL, {"invites": [invite_id]})
         return invite_id
 
-    @pytest.fixture()
+    @pytest.fixture
     def lookups(self):
         invite_ids = {"invite_1", "invite_2"}
         f.write_document(LOOKUP_COLLECTION, INVITEE_EMAIL, {"invites": invite_ids})
@@ -473,9 +473,7 @@ class TestRegister:
     def test_register_user__no_created_field(
         self, mocker, new_invite, inviter_user, invitee_user
     ):
-        """
-        Assert invite is registerd even if the invitee user document has no created-date.  Assert an error os logged.
-        """
+        """Assert invite is registerd even if the invitee user document has no created-date.  Assert an error os logged."""
         f.update_document("users", invitee_user, {"created": f.DELETE_FIELD})
         get_invites_mock = mocker.patch(
             "phenoback.functions.invite.register.get_invite_ids",
@@ -501,9 +499,7 @@ class TestRegister:
     def test_register_user__invitee_user_not_found(
         self, caperrors, mocker, new_invite, inviter_user
     ):
-        """
-        Assert invite is registerd even if the invitee user document is not present. Assert an error os logged.
-        """
+        """Assert invite is registerd even if the invitee user document is not present. Assert an error os logged."""
         get_invites_mock = mocker.patch(
             "phenoback.functions.invite.register.get_invite_ids",
             return_value=[new_invite],
@@ -527,9 +523,7 @@ class TestRegister:
         assert len(caperrors.records) == 1, caperrors.records
 
     def test_register_user_invite__document_not_found(self, capwarnings, invitee_user):
-        """
-        Test that a warning is logged when trying to update a non-existent invite document.
-        """
+        """Test that a warning is logged when trying to update a non-existent invite document."""
         assert invitee_user  # Fixture needed for side effect (creates user in DB)
         non_existent_invite_id = "non_existent_invite"
 
@@ -566,7 +560,7 @@ class TestMail:
         os.environ["mailer_host"] = "host"
         os.environ["mailer_port"] = "1111"
 
-    @pytest.fixture()
+    @pytest.fixture
     def invite_mail(self):
         return MagicMock().create_autospec(content.InviteMail)
 

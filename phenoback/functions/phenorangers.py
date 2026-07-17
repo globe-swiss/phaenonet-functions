@@ -31,8 +31,7 @@ def promote(email: str) -> Response:
 
 @f.transactional
 def promote_transactional(transaction: f.Transaction, email: str) -> Response:
-    """
-    Promotes user to Ranger.
+    """Promotes user to Ranger.
     Fails if user has observations in the current phenoyear.
     Updates any individuals already created in the current phenoyear.
     """
@@ -54,12 +53,10 @@ def promote_transactional(transaction: f.Transaction, email: str) -> Response:
             msg = f"Updated {num_updates} individuals."
             log.info(msg)
             return Response(msg, HTTPStatus.OK)
-        else:
-            return Response("ok", HTTPStatus.OK)
-    else:
-        msg = f"No user with email {email} found."
-        log.warning(msg)
-        return Response(msg, HTTPStatus.NOT_FOUND)
+        return Response("ok", HTTPStatus.OK)
+    msg = f"No user with email {email} found."
+    log.warning(msg)
+    return Response(msg, HTTPStatus.NOT_FOUND)
 
 
 def get_observation(user: str, year) -> str | None:

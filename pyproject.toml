@@ -4,10 +4,15 @@ line-length = 88
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
+    "D101", "D102", "D103", "D107", # missing docstring
     "D203",    # conflicts with D211 (blank line before class)
+    "D205",    # noise
     "D213",    # conflicts with D212 (docstring summary position)
     "COM812",  # formatter handles trailing commas
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"test/**/*.py" = ["S101"]
 
 [tool.setuptools]
 py-modules = []

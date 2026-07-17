@@ -1,5 +1,5 @@
 # type: ignore
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import ANY
 
 import pytest
@@ -20,8 +20,8 @@ def doc_ts():
         "collection",
         "doc_id",
         {
-            "created": datetime.now(timezone.utc),
-            "modified": datetime.now(timezone.utc),
+            "created": datetime.now(UTC),
+            "modified": datetime.now(UTC),
             "data": "some data",
         },
     )
@@ -36,14 +36,10 @@ def doc_ts():
             {
                 "updateMask": {"fieldPaths": ["modified"]},
                 "oldValue": {
-                    "fields": {
-                        "modified": {"timestampValue": str(datetime.now(timezone.utc))}
-                    }
+                    "fields": {"modified": {"timestampValue": str(datetime.now(UTC))}}
                 },
                 "value": {
-                    "fields": {
-                        "modified": {"timestampValue": str(datetime.now(timezone.utc))}
-                    }
+                    "fields": {"modified": {"timestampValue": str(datetime.now(UTC))}}
                 },
             },
         ),
@@ -53,9 +49,7 @@ def doc_ts():
                 "updateMask": {},
                 "oldValue": {},
                 "value": {
-                    "fields": {
-                        "modified": {"timestampValue": str(datetime.now(timezone.utc))}
-                    }
+                    "fields": {"modified": {"timestampValue": str(datetime.now(UTC))}}
                 },
             },
         ),
@@ -64,9 +58,7 @@ def doc_ts():
             {
                 "updateMask": {"fieldPaths": ["modified"]},
                 "oldValue": {
-                    "fields": {
-                        "modified": {"timestampValue": str(datetime.now(timezone.utc))}
-                    }
+                    "fields": {"modified": {"timestampValue": str(datetime.now(UTC))}}
                 },
                 "value": {},
             },
@@ -87,7 +79,7 @@ def test_main(mocker, called, data):
 
 
 def test_main__overwrite_created(mocker):
-    create_ts = datetime.now(timezone.utc)
+    create_ts = datetime.now(UTC)
     data = {
         "updateMask": {"fieldPaths": ["created", "somevalue"]},
         "oldValue": {"fields": {"created": {"timestampValue": str(create_ts)}}},
@@ -139,7 +131,7 @@ def test_update_modified_document(doc_ts, updated_fields):
 )
 def test_update_modified_document__create_ts(doc_ts, updated_fields):
     initial_ts = f.get_document(*doc_ts)[documents.MODIFIED_KEY]
-    created_ts = datetime.now(timezone.utc)
+    created_ts = datetime.now(UTC)
     documents.update_modified_document(*doc_ts, updated_fields, created_ts)
     updated_doc = f.get_document(*doc_ts)
     assert updated_doc[documents.CREATED_KEY] == created_ts

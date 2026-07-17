@@ -51,9 +51,7 @@ PHASES_MAP = {
 
 
 def main(data, context):  # pylint: disable=unused-argument
-    """
-    Import wld data on file upload to private/wld_import
-    """
+    """Import wld data on file upload to private/wld_import"""
     pathfile = data["name"]
     if pathfile.startswith("private/wld_import/"):
         # default to previous year if not specified
@@ -86,8 +84,7 @@ def members_by_basename(z: ZipFile) -> dict[str, list[str]]:
 
 
 def check_zip_archive(input_zip: ZipFile) -> None:
-    """
-    Validates that the ZIP archive contains all required files.
+    """Validates that the ZIP archive contains all required files.
 
     :param input_zip: ZipFile object to validate
     :raises FileNotFoundError: If required files are missing from the archive
@@ -104,8 +101,7 @@ def check_zip_archive(input_zip: ZipFile) -> None:
 
 
 def check_file_size(blob: Blob) -> None:
-    """
-    Checks if the uploaded file size is within acceptable limits.
+    """Checks if the uploaded file size is within acceptable limits.
 
     :param blob: Google Cloud Storage blob to check
     :raises OverflowError: If file size exceeds MAX_ARCHIVE_BYTES
@@ -117,8 +113,7 @@ def check_file_size(blob: Blob) -> None:
 
 
 def load_data(input_zip: ZipFile) -> dict[str, list[dict]]:
-    """
-    Loads CSV data from the ZIP archive into a dictionary.
+    """Loads CSV data from the ZIP archive into a dictionary.
 
     :param input_zip: ZipFile containing CSV files
     :returns: Dictionary mapping filenames to lists of dictionaries representing CSV rows
@@ -135,8 +130,7 @@ def load_data(input_zip: ZipFile) -> dict[str, list[dict]]:
 
 
 def check_data_integrity():
-    """
-    Validates data integrity across all imported CSV files.
+    """Validates data integrity across all imported CSV files.
 
     Checks:
     - All user_ids in observations exist in users file
@@ -197,8 +191,7 @@ def check_data_integrity():
 
 
 def import_data(pathfile: str, year: int, bucket=None):
-    """
-    Main import function that processes WLD data from a ZIP file.
+    """Main import function that processes WLD data from a ZIP file.
 
     :param pathfile: Path to the ZIP file in cloud storage
     :param bucket: Optional GCS bucket (defaults to configured bucket)
@@ -223,8 +216,7 @@ def import_data(pathfile: str, year: int, bucket=None):
 
 @lru_cache
 def station_species() -> dict[str, set[str]]:
-    """
-    Creates a mapping of site IDs to sets of species present at each site.
+    """Creates a mapping of site IDs to sets of species present at each site.
 
     :returns: Dictionary mapping site_id to set of species codes
     """
@@ -236,8 +228,7 @@ def station_species() -> dict[str, set[str]]:
 
 @lru_cache
 def tree_species() -> dict[str, dict[str, str]]:
-    """
-    Creates a nested mapping of site IDs to tree IDs to species.
+    """Creates a nested mapping of site IDs to tree IDs to species.
 
     :returns: Dictionary mapping site_id -> tree_id -> species code
     """
@@ -251,8 +242,7 @@ def tree_species() -> dict[str, dict[str, str]]:
 
 @lru_cache
 def site_users() -> dict[str, dict[str, str]]:
-    """
-    Creates a mapping of site IDs to years to user IDs.
+    """Creates a mapping of site IDs to years to user IDs.
 
     :returns: Dictionary mapping site_id -> year -> user_id
     """
@@ -263,8 +253,7 @@ def site_users() -> dict[str, dict[str, str]]:
 
 
 def get_site_species(site_id: str) -> list[str]:
-    """
-    Gets list of species present at a specific site.
+    """Gets list of species present at a specific site.
 
     :param site_id: ID of the site
     :returns: List of species codes (filtered to remove None values)
@@ -273,8 +262,7 @@ def get_site_species(site_id: str) -> list[str]:
 
 
 def get_tree_species(site_id: str, tree_id: str) -> str:
-    """
-    Gets the species of a specific tree at a site.
+    """Gets the species of a specific tree at a site.
 
     :param site_id: ID of the site
     :param tree_id: ID of the tree
@@ -284,8 +272,7 @@ def get_tree_species(site_id: str, tree_id: str) -> str:
 
 
 def get_user(site_id: str, year: str) -> str:
-    """
-    Gets the user ID who made observations at a site in a specific year.
+    """Gets the user ID who made observations at a site in a specific year.
 
     :param site_id: ID of the site
     :param year: Year as string
@@ -295,8 +282,7 @@ def get_user(site_id: str, year: str) -> str:
 
 
 def wsl_user(user_id) -> str:
-    """
-    Formats a WSL user ID with the source prefix.
+    """Formats a WSL user ID with the source prefix.
 
     :param user_id: Original user ID
     :returns: Formatted user ID with 'wld_' prefix
@@ -305,18 +291,16 @@ def wsl_user(user_id) -> str:
 
 
 def map_species(wsl_species) -> str:
-    """
-    Maps WSL species ID to internal species code.
+    """Maps WSL species ID to internal species code.
 
     :param wsl_species: WSL species ID
     :returns: Internal species code or None if not mapped
     """
-    return SPECIES_MAP.get(wsl_species, None)
+    return SPECIES_MAP.get(wsl_species)
 
 
 def map_phenophase(wsl_observation_id):
-    """
-    Maps WSL observation ID to internal phenophase code.
+    """Maps WSL observation ID to internal phenophase code.
 
     :param wsl_observation_id: WSL observation ID
     :returns: Internal phenophase code
@@ -325,8 +309,7 @@ def map_phenophase(wsl_observation_id):
 
 
 def individuals(year: int):
-    """
-    Creates individual records for all sites with observations in the given year.
+    """Creates individual records for all sites with observations in the given year.
 
     :param year: Year to process
     :returns: List of individual dictionaries ready for Firestore insertion
@@ -350,8 +333,7 @@ def individuals(year: int):
 
 
 def observations(year: int):
-    """
-    Creates observation records for the given year.
+    """Creates observation records for the given year.
 
     :param year: Year to filter observations
     :returns: List of observation dictionaries ready for Firestore insertion
@@ -375,8 +357,7 @@ def observations(year: int):
 
 
 def users():
-    """
-    Creates user records from imported user data.
+    """Creates user records from imported user data.
 
     :returns: List of user dictionaries with formatted IDs and names
     """
@@ -392,8 +373,7 @@ def users():
 
 
 def public_users():
-    """
-    Creates public user records with limited information.
+    """Creates public user records with limited information.
 
     :returns: List of public user dictionaries with ID, nickname, and roles
     """
@@ -404,8 +384,7 @@ def public_users():
 
 
 def insert_data(collection: str, documents: list[dict]) -> None:
-    """
-    Batch inserts documents into a Firestore collection.
+    """Batch inserts documents into a Firestore collection.
 
     :param collection: Name of the Firestore collection
     :param documents: List of documents to insert

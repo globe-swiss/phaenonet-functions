@@ -18,10 +18,9 @@ def sentry_environment() -> tuple[str, float, float]:
     project = g.get_project()
     if project == "phaenonet":
         return ("production", 1.0, 0.0)
-    elif project == "phaenonet-test":
+    if project == "phaenonet-test":
         return ("test", 1.0, 0.0)
-    else:
-        return ("local", 0.0, 0.0)
+    return ("local", 0.0, 0.0)
 
 
 def before_send(
@@ -55,8 +54,7 @@ log: logging.Logger = None  # type: ignore # pylint: disable=invalid-name
 
 @contextmanager  # workaround as stackdriver fails to capture stackstraces
 def setup(data: str | dict | Request | None, context=None, level=logging.DEBUG):
-    """
-    Setup logging and and capture exceptions.
+    """Setup logging and and capture exceptions.
     :param data: May be a dict, a http request or None.
     """
     try:
@@ -99,9 +97,7 @@ def fs_observations_write(data, context):
 
 
 def fs_users_write(data, context):
-    """
-    Execute all functions to user related document changes (created, modified or deleted).
-    """
+    """Execute all functions to user related document changes (created, modified or deleted)."""
     with setup(data, context):
         with invoke():
             from phenoback.functions import users
@@ -114,23 +110,19 @@ def fs_users_write(data, context):
 
 
 def ps_import_meteoswiss_data(event, context):
-    """
-    Imports meteoswiss stations and observations.
-    """
+    """Imports meteoswiss stations and observations."""
     data = g.get_data(event)
-    with setup(data, context):
-        with invoke():
-            from phenoback.functions import meteoswiss_import
+    with setup(data, context), invoke():
+        from phenoback.functions import meteoswiss_import
 
-            meteoswiss_import.main(data, context)
+        meteoswiss_import.main(data, context)
 
 
 def fs_document_write(data, context):
-    with setup(data, context):
-        with invoke():
-            from phenoback.functions import documents
+    with setup(data, context), invoke():
+        from phenoback.functions import documents
 
-            documents.main(data, context)
+        documents.main(data, context)
 
 
 def st_appspot_finalize(data, context):
@@ -146,38 +138,32 @@ def st_appspot_finalize(data, context):
 
 
 def ps_rollover_phenoyear(event, context):
-    """
-    Rollover the phenoyear and creates data for meteoswiss export.
+    """Rollover the phenoyear and creates data for meteoswiss export.
     Rollover is based on the year defined in the dynamic configuration
     definition in firestore.
     """
     data = g.get_data(event)
-    with setup(data, context):
-        with invoke():
-            from phenoback.functions import meteoswiss_export, rollover
+    with setup(data, context), invoke():
+        from phenoback.functions import meteoswiss_export, rollover
 
-            meteoswiss_export.main(data, context)
-            rollover.main(data, context)
+        meteoswiss_export.main(data, context)
+        rollover.main(data, context)
 
 
 def ps_export_meteoswiss_data(event, context):
-    """
-    Manually trigger a meteoswiss export for a given year.
-    """
+    """Manually trigger a meteoswiss export for a given year."""
     data = g.get_data(event)
-    with setup(data, context):
-        with invoke():
-            from phenoback.functions import meteoswiss_export
+    with setup(data, context), invoke():
+        from phenoback.functions import meteoswiss_export
 
-            meteoswiss_export.main(data, context)
+        meteoswiss_export.main(data, context)
 
 
 def fs_invites_write(data, context):
-    with setup(data, context):
-        with invoke():
-            from phenoback.functions.invite import invite
+    with setup(data, context), invoke():
+        from phenoback.functions.invite import invite
 
-            invite.main(data, context)
+        invite.main(data, context)
 
 
 def fs_individuals_write(data, context):
@@ -193,46 +179,39 @@ def fs_individuals_write(data, context):
 
 
 def http_individuals_write__map(request: Request):
-    with setup(request):
-        with invoke():
-            import phenoback.functions.map
+    with setup(request), invoke():
+        import phenoback.functions.map
 
-            return phenoback.functions.map.main_process(request)
+        return phenoback.functions.map.main_process(request)
 
 
 def http_reset_e2e_data(request: Request):
-    with setup(request):
-        with invoke():
-            from phenoback.functions import e2e
+    with setup(request), invoke():
+        from phenoback.functions import e2e
 
-            return e2e.main_reset(request)
+        return e2e.main_reset(request)
 
 
 def http_restore_e2e_data(request: Request):
-    with setup(request):
-        with invoke():
-            from phenoback.functions import e2e
+    with setup(request), invoke():
+        from phenoback.functions import e2e
 
-            return e2e.main_restore(request)
+        return e2e.main_restore(request)
 
 
 def http_promote_ranger(request: Request):
-    """
-    Promotes a normal user to Ranger.
-    """
-    with setup(request):
-        with invoke():
-            from phenoback.functions import phenorangers
+    """Promotes a normal user to Ranger."""
+    with setup(request), invoke():
+        from phenoback.functions import phenorangers
 
-            return phenorangers.main(request)
+        return phenorangers.main(request)
 
 
 def http_iot_dragino(request: Request):
-    with setup(request):
-        with invoke():
-            from phenoback.functions.iot import dragino
+    with setup(request), invoke():
+        from phenoback.functions.iot import dragino
 
-            return dragino.main(request)
+        return dragino.main(request)
 
 
 def ps_iot_dragino(event, context):

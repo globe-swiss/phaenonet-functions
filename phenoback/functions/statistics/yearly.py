@@ -21,9 +21,7 @@ def main(data, context):  # pylint: disable=unused-argument
 
 
 def process_yearly_statistics(year: int) -> None:
-    """
-    Process yearly statistics for the given year.
-    """
+    """Process yearly statistics for the given year."""
     observations = datacache.get_observations(year, ANALYTIC_PHENOPHASES)
     species_statistics = get_species_statistics(observations)
     altitude_statistics = get_altitude_statistics(observations)

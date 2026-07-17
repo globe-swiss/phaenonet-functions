@@ -101,9 +101,7 @@ def setup_source(source: str, rolled_source: bool):
 
 @pytest.fixture(autouse=True)
 def setup() -> None:
-    """
-    Setup based on rollover 2012 -> 2013.
-    """
+    """Setup based on rollover 2012 -> 2013."""
     setup_source("globe", True)
     setup_source("meteoswiss", False)
     setup_source("wld", False)

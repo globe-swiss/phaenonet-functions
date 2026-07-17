@@ -1,8 +1,8 @@
 import logging
 
 from phenoback.functions import map as pheno_map
-from phenoback.functions.statistics import weekly
 from phenoback.functions.iot import app
+from phenoback.functions.statistics import weekly
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
 
@@ -36,8 +36,7 @@ def get_rollover_individuals(
     target_phenoyear: int,
     individual: str = None,
 ) -> list[dict]:
-    """
-    Copy individuals to a new phenoyear, removing all fields that are specific for the phenoyear.
+    """Copy individuals to a new phenoyear, removing all fields that are specific for the phenoyear.
     :param source_phenoyear:
     :param target_phenoyear:
     :return:
@@ -99,8 +98,7 @@ def rollover():
 
 
 def get_stale_individuals(year: int) -> list[str]:
-    """
-    Remove all individuals in Firestore that have no observations for any
+    """Remove all individuals in Firestore that have no observations for any
     sources or sensor data for the given phenoyear year.
     :param year: the phenoyear
     """

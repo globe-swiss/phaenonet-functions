@@ -1,6 +1,5 @@
 # pylint: disable=unused-argument
 import datetime
-from test.functions.iot.sample_data import DraginoData as dd
 
 import pytest
 
@@ -8,6 +7,7 @@ from phenoback.functions.iot import app
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
 from phenoback.utils import gcloud as g
+from test.functions.iot.sample_data import DraginoData as dd
 
 YEAR = 2000
 INDIVIDUAL = "individual"

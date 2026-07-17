@@ -19,12 +19,11 @@ def get_field(
     value_dict = data[value_type].get("fields", {}).get(fieldname)
     if value_dict is not None:
         return _get_field(value_dict)
-    else:
-        if expected:
-            log.warning(
-                "field %s not found in data %s, returning None", fieldname, str(data)
-            )
-        return None
+    if expected:
+        log.warning(
+            "field %s not found in data %s, returning None", fieldname, str(data)
+        )
+    return None
 
 
 def _get_field(
@@ -34,30 +33,29 @@ def _get_field(
     value_type = next(iter(value_dict.keys()))
     if value_type == "stringValue":
         return str(value)
-    elif value_type == "integerValue":
+    if value_type == "integerValue":
         return int(value)
-    elif value_type == "doubleValue":
+    if value_type == "doubleValue":
         return float(value)
-    elif value_type == "timestampValue":
+    if value_type == "timestampValue":
         return dateparser.parse(value)
-    elif value_type == "booleanValue":
+    if value_type == "booleanValue":
         return bool(value)
-    elif value_type == "mapValue":
+    if value_type == "mapValue":
         return dict(
             zip(
                 value["fields"].keys(),
                 [_get_field(v) for v in value["fields"].values()],
             )
         )
-    elif value_type == "arrayValue":
+    if value_type == "arrayValue":
         return [_get_field(v) for v in value["values"]]
-    else:
-        log.error(
-            "Unknown field type %s, returning str representation: %s",
-            value_type,
-            str(value),
-        )
-        return str(value)
+    log.error(
+        "Unknown field type %s, returning str representation: %s",
+        value_type,
+        str(value),
+    )
+    return str(value)
 
 
 def context2dict(context: Context) -> dict:

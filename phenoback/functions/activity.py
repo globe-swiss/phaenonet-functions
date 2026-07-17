@@ -9,8 +9,7 @@ log.setLevel(logging.DEBUG)
 
 
 def main(data, context):
-    """
-    Creates an activity when an observation is created, modified or deleted in
+    """Creates an activity when an observation is created, modified or deleted in
     Firestore **and** the user or individual of that observation is being followed.
     """
     observation_id = g.get_document_id(context)
@@ -81,11 +80,8 @@ def process_observation(
         }
         f.write_document("activities", event_id, data)
         return True
-    else:
-        log.debug(
-            "no activity written for observation %s, no followers", observation_id
-        )
-        return False
+    log.debug("no activity written for observation %s, no followers", observation_id)
+    return False
 
 
 def get_followers(individual: str, user_id: str) -> set[str]:

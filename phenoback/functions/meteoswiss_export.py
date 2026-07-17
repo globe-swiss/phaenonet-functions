@@ -1,5 +1,4 @@
-"""
-Meteoswiss phenology data export
+"""Meteoswiss phenology data export
 
 New PhaenoNet data mapped as good as possible to the previously existing export structure for meteoswiss.
 """

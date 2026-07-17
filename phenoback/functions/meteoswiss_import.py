@@ -37,10 +37,9 @@ def process_stations(year: int) -> bool:
     )
     if response.ok:
         return process_stations_response(year, response.text, response.elapsed)
-    else:
-        msg = f"Could not fetch station data ({response.status_code})"
-        log.error(msg)
-        raise ResourceNotFoundException(msg)
+    msg = f"Could not fetch station data ({response.status_code})"
+    log.error(msg)
+    raise ResourceNotFoundException(msg)
 
 
 def process_stations_response(
@@ -56,9 +55,8 @@ def process_stations_response(
             "stations", str(phenoyear) + csv_string
         )  # trigger re-import in new phenoyear
         return True
-    else:
-        log.info("Station file did not change.")
-        return False
+    log.info("Station file did not change.")
+    return False
 
 
 def _clean_station_csv(text):
@@ -92,10 +90,9 @@ def process_observations() -> bool:
     )
     if response.ok:
         return process_observations_response(response.text, response.elapsed)
-    else:
-        msg = f"Could not fetch observation data ({response.status_code})"
-        log.error(msg)
-        raise ResourceNotFoundException(msg)
+    msg = f"Could not fetch observation data ({response.status_code})"
+    log.error(msg)
+    raise ResourceNotFoundException(msg)
 
 
 def process_observations_response(response_text: str, response_elapsed: float) -> bool:
@@ -113,9 +110,8 @@ def process_observations_response(response_text: str, response_elapsed: float) -
         _update_station_species(_get_station_species(observations))
         _set_hash("observations", response_text)
         return True
-    else:
-        log.info("Observations file did not change.")
-        return False
+    log.info("Observations file did not change.")
+    return False
 
 
 def _get_observations_dicts(observations: csv.DictReader) -> list[dict]:
@@ -147,7 +143,7 @@ def _get_station_species(observations: list[dict]) -> dict[str, list[str] | None
 
 
 def _update_station_species(station_species: dict) -> None:
-    for key in station_species.keys():
+    for key in station_species:
         data = {"station_species": ArrayUnion(station_species[key])}
         d.update_individual(key, data)
 

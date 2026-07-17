@@ -40,10 +40,9 @@ def send_permarobotics(data: dict) -> bool:
     if resp.ok:
         log.debug("Send data permarobotics ok: %s", deveui)
         return True
-    else:
-        log.error(
-            "send data permarobotics error: code=%i, text=%s",
-            resp.status_code,
-            resp.text,
-        )
-        return False
+    log.error(
+        "send data permarobotics error: code=%i, text=%s",
+        resp.status_code,
+        resp.text,
+    )
+    return False

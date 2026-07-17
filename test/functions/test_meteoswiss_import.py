@@ -1,7 +1,6 @@
 # pylint: disable=protected-access
 import csv
 import json
-import test
 from collections import namedtuple
 from datetime import datetime
 from io import StringIO
@@ -9,6 +8,7 @@ from io import StringIO
 import pytest
 import pytz
 
+import test
 from phenoback.functions import meteoswiss_import as meteoswiss
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
@@ -40,8 +40,7 @@ def station_data() -> str:
 
 @pytest.fixture
 def meteoswiss_mapping() -> str:
-    """
-    Fixture to provide the mapping for meteoswiss.
+    """Fixture to provide the mapping for meteoswiss.
     Update see `maintenance/maintenance/test-env/extract_meteoswiss_mapping.py`
     """
     with open(

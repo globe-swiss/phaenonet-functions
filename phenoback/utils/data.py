@@ -11,7 +11,6 @@ from phenoback.utils.firestore import (  # pylint: disable=unused-import
     Transaction,
     delete_batch,
     delete_document,
-    get_count,
     get_document,
     query_collection,
     update_document,
@@ -193,8 +192,7 @@ def follow_user(
             transaction=transaction,
         )
         return True
-    else:
-        return False
+    return False
 
 
 def has_observations(individual: dict) -> bool:
@@ -210,13 +208,11 @@ def localtime(timestamp: datetime | None = None) -> datetime:
     timezone = pytz.timezone("Europe/Zurich")
     if not timestamp:
         return datetime.now().astimezone(timezone)
-    else:
-        if timestamp.tzinfo is None:
-            # For naive datetimes, assume they are already in Europe/Zurich time
-            return timezone.localize(timestamp)
-        else:
-            # For timezone-aware datetimes, convert to Europe/Zurich
-            return timestamp.astimezone(timezone)
+    if timestamp.tzinfo is None:
+        # For naive datetimes, assume they are already in Europe/Zurich time
+        return timezone.localize(timestamp)
+    # For timezone-aware datetimes, convert to Europe/Zurich
+    return timestamp.astimezone(timezone)
 
 
 def localdate(timestamp: datetime | None = None) -> date:
@@ -224,8 +220,7 @@ def localdate(timestamp: datetime | None = None) -> date:
 
 
 def to_id_array(data: dict[str, dict], key: str = "id") -> list[dict]:
-    """
-    Convert a dictionary to an array of dictionaries with an additional key.
+    """Convert a dictionary to an array of dictionaries with an additional key.
     Useful for writing data in batch mode.
     """
     return [{key: k, **v} for k, v in data.items()]

@@ -1,12 +1,12 @@
 # pylint: disable=unused-argument
 import io
-import test
 from zipfile import ZipFile
 
 import pytest
 
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
+import test
 from phenoback.functions import wld_import
 
 
@@ -17,12 +17,12 @@ def cache_clear():
     wld_import.tree_species.cache_clear()
 
 
-@pytest.fixture()
+@pytest.fixture
 def zippath():
     return test.get_resource_path("wld_import_test.zip")
 
 
-@pytest.fixture()
+@pytest.fixture
 def input_blob(mocker, zippath):
     with open(zippath, "rb") as input_file:
         file_bytes = input_file.read()
@@ -32,12 +32,12 @@ def input_blob(mocker, zippath):
     return mock
 
 
-@pytest.fixture()
+@pytest.fixture
 def input_io(input_blob):
     return io.BytesIO(input_blob.download_as_bytes())
 
 
-@pytest.fixture()
+@pytest.fixture
 def data_loaded(input_io):
     with ZipFile(input_io, mode="r") as input_zip:
         wld_import.loaded_data = wld_import.load_data(input_zip)
@@ -58,8 +58,7 @@ def data_loaded(input_io):
     ],
 )
 def test_main(mocker, context, pathfile, called):
-    """
-    Test all thumbnails storage triggers to correctly limit
+    """Test all thumbnails storage triggers to correctly limit
     the function invocation to specific folders.
     """
     mock = mocker.patch("phenoback.functions.wld_import.import_data")
@@ -115,7 +114,7 @@ def test_check_file_size__fail_size(mocker):
 def test_check_load_data(input_io):
     with ZipFile(input_io, mode="r") as input_zip:
         data = wld_import.load_data(input_zip)
-    assert wld_import.FILES == data.keys()
+    assert data.keys() == wld_import.FILES
     for filedata in data.values():
         assert len(filedata) > 0
 

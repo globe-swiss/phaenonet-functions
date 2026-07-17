@@ -23,11 +23,11 @@ class HTTPClient:
         log.debug("Client created on sending to %s dispatching to %s", queue, self.url)
 
     @property
-    def project(self):
+    def project(self) -> str:
         return gcloud.get_project()
 
     @property
-    def location(self):
+    def location(self) -> str:
         return gcloud.get_location()
 
     def send(
@@ -39,12 +39,13 @@ class HTTPClient:
         at: datetime.datetime | None = None,
         deadline: int | None = None,
     ) -> google.cloud.tasks_v2.types.task.Task:
+        service_account_email = f"gcf-invoker@{self.project}.iam.gserviceaccount.com"
         task: dict[str, Any] = {
             "http_request": {
                 "http_method": tasks_v2.HttpMethod.POST,
                 "url": f"{self.url}{self.encode_params(params)}",
                 "oidc_token": {
-                    "service_account_email": f"gcf-invoker@{self.project}.iam.gserviceaccount.com",
+                    "service_account_email": service_account_email,
                 },
             }
         }
@@ -99,10 +100,8 @@ class GCFClient:
         )
         self.target_function = target_function
         # default to current project's values
-        self.target_location = (
-            target_location if target_location else gcloud.get_location()
-        )
-        self.target_project = target_project if target_project else gcloud.get_project()
+        self.target_location = target_location or gcloud.get_location()
+        self.target_project = target_project or gcloud.get_project()
         self.http_client = HTTPClient(
             queue,
             f"https://{self.target_location}-{self.target_project}.cloudfunctions.net/{self.target_function}",
