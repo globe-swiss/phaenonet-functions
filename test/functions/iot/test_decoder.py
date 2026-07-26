@@ -41,7 +41,7 @@ def test_decode(decoder: Decoder):
 
 def test_decode__no_uplink():
     decoder = DecoderImpl({})
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="No uplink data"):
         decoder.decode()
 
 

@@ -93,7 +93,7 @@ def test_check_zip_archive__duplicates(mocker):
             "observation_phaeno.csv",
         ]
     )
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Duplicate files found"):
         wld_import.check_zip_archive(zip_file_mock)
 
 
@@ -160,7 +160,7 @@ def test_check_data_integrity__empty(data_loaded, caperrors, filename, fieldname
     assert data_loaded
     assert wld_import.loaded_data
     wld_import.loaded_data[filename] = []
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Data integrity check failed"):
         wld_import.check_data_integrity()
     assert f"{fieldname} not found" in caperrors.text, caperrors.text
 
@@ -181,7 +181,7 @@ def test_check_data_integrity__reference_error(
     assert data_loaded
     assert wld_import.loaded_data
     wld_import.loaded_data[filename][0][fieldname] = value
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Data integrity check failed"):
         wld_import.check_data_integrity()
     assert len(caperrors.records) >= 1
 
@@ -190,7 +190,7 @@ def test_check_data_integrity__duplicate_tree_error(data_loaded, caperrors):
     assert data_loaded
     assert wld_import.loaded_data
     wld_import.loaded_data["tree.csv"].append(wld_import.loaded_data["tree.csv"][0])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Data integrity check failed"):
         wld_import.check_data_integrity()
     assert len(caperrors.records) >= 1
 

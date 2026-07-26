@@ -104,7 +104,7 @@ def test_get_observations__comment_false(mocker):
 
 
 def test_get_observations__invalid_phenophase(mocker):
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Invalid phenophases requested"):
         datacache.get_observations(2000, {"xxx"})
 
 

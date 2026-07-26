@@ -114,7 +114,7 @@ def current_phenoyear():
     return year
 
 
-def get_amt(year: int, field: str = None):
+def get_amt(year: int, field: str | None = None):
     query = f.collection("individuals").where(filter=f.FieldFilter("year", "==", year))
     if field and field.startswith("_"):
         query = query.where(filter=f.FieldFilter(field, "==", True))
@@ -218,18 +218,18 @@ def test_rollover__sensor_field(current_phenoyear):
     for sensor_doc in (
         d.query_individuals("year", "==", current_phenoyear).order_by("sensor").stream()
     ):
-        assert sensor_doc.to_dict()["sensor"] == {}
+        assert sensor_doc.to_dict()["sensor"] == {}  # pyright: ignore[reportOptionalSubscript]
     for sensor_doc in (
         d.query_individuals("year", "==", current_phenoyear + 1)
         .order_by("sensor")
         .stream()
     ):
-        assert sensor_doc.to_dict()["sensor"] == {}
+        assert sensor_doc.to_dict()["sensor"] == {}  # pyright: ignore[reportOptionalSubscript]
 
 
 def test_rollover__invalid_source(caperrors):
     setup_source("invalid", False)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Rollover rule"):
         rollover.rollover()
     assert len(caperrors.records) == 1
 

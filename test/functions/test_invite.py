@@ -602,7 +602,7 @@ class TestMail:
             ],
         )
         reset_mock = mocker.patch("phenoback.utils.gsecrets.reset")
-        with pytest.raises(Exception):
+        with pytest.raises(Exception, match="invalid credentials"):
             envelopesmail.sendmail(invite_mail)
         assert send_mock.call_count == 2
         reset_mock.assert_called_once()
