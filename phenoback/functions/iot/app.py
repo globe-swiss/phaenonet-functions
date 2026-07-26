@@ -15,7 +15,7 @@ log.setLevel(logging.DEBUG)
 COLLECTION = "sensors"
 
 
-def main(data: dict, context: Context) -> None:  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # noqa: ARG001
     process_dragino(data)
 
 

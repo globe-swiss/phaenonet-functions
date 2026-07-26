@@ -7,6 +7,6 @@ def test_main(mocker, data, context):
     process_mock.assert_called()
 
 
-def test_process__nodata(phenoyear, caperrors):  # pylint: disable=unused-argument
+def test_process__nodata(phenoyear, caperrors):  # noqa: ARG001
     meteoswiss_export.process()
     assert len(caperrors.records) == 1  # no data received

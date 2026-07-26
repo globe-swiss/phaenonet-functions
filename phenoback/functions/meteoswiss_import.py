@@ -23,7 +23,7 @@ class ResourceNotFoundException(Exception):
     pass
 
 
-def main(data: dict, context: Context) -> None:  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # noqa: ARG001
     phenoyear = d.get_phenoyear()
     log.info("Import meteoswiss stations")
     process_stations(phenoyear)
@@ -61,7 +61,7 @@ def process_stations_response(
 
 
 def _clean_station_csv(text: str) -> str:
-    return text.split("\n\n")[0]
+    return text.split("\n\n", maxsplit=1)[0]
 
 
 def _get_individuals_dicts(phenoyear: int, stations: csv.DictReader) -> list[dict]:

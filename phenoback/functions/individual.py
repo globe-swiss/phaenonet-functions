@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def main(data: dict, context: Context) -> None:  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # noqa: ARG001
     if g.is_delete_event(data):
         individual_id = g.get_field(data, "individual_id", old_value=True)
     else:

@@ -25,7 +25,7 @@ def sentry_environment() -> tuple[str, float, float]:
 
 def before_send(
     event: Event,
-    hint: Hint,  # pylint: disable=unused-argument
+    hint: Hint,  # noqa: ARG001
 ) -> Event | None:
     """Filter out log messages containing #no-sentry marker."""
     if "logentry" in event and event["logentry"].get("message"):  # pragma: no cover

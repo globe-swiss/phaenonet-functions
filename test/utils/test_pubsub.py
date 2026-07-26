@@ -1,4 +1,3 @@
-# pylint: disable=unused-argument
 import json
 
 import google.cloud.pubsub_v1

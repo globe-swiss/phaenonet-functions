@@ -51,7 +51,7 @@ PHASES_MAP = {
 }
 
 
-def main(data: dict, context: Context) -> None:  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # noqa: ARG001
     """Import wld data on file upload to private/wld_import."""
     pathfile = data["name"]
     if pathfile.startswith("private/wld_import/"):

@@ -1,4 +1,3 @@
-# pylint: disable=unused-argument,protected-access
 from datetime import datetime
 
 import pytest

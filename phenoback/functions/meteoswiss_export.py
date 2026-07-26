@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 
-def main(event: dict, context: Context) -> None:  # pylint: disable=unused-argument
+def main(event: dict, context: Context) -> None:  # noqa: ARG001
     process()
 
 

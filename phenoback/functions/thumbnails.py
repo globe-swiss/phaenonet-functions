@@ -15,7 +15,7 @@ THUMBNAIL_WIDTH = 302
 THUMBNAIL_HEIGHT = 302
 
 
-def main(data: dict, context: Context) -> None:  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # noqa: ARG001
     """Creates thumbnails for images uploaded to google cloud storage."""
     pathfile = data["name"]
     if pathfile.startswith("images/"):

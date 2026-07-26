@@ -16,7 +16,7 @@ log.setLevel(logging.DEBUG)
 ANALYTIC_PHENOPHASES = {"BEA", "BLA", "BFA", "BVA", "FRA"}
 
 
-def main(data: dict, context: Context) -> None:  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # noqa: ARG001
     year = data["year"] if "year" in data else d.get_phenoyear()
     process_yearly_statistics(year)
 

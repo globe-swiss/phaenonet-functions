@@ -13,13 +13,13 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 
-def main_reset(request: Request):  # pylint: disable=unused-argument
+def main_reset(request: Request):  # noqa: ARG001
     """Clear all individuals for the e2e test user. This is used for assuring the firestore state before running e2e tests."""
     delete_user_data(["q7lgBm5nm7PUkof20UdZ9D4d0CV2", "JIcn8kFpI4fYYcbdi9QzPlrHomn1"])
     return Response("ok", HTTPStatus.OK)
 
 
-def main_restore(request: Request):  # pylint: disable=unused-argument
+def main_restore(request: Request):  # noqa: ARG001
     """Restore test users after database copyback."""
     restore_test_users()
     restore_sensor_test_data()

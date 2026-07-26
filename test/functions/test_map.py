@@ -1,4 +1,3 @@
-# pylint: disable=unused-argument,protected-access
 import pytest
 
 from phenoback.functions import map as pheno_map
