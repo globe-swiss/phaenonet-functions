@@ -13,6 +13,10 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 COLLECTION = "sensors"
+MIN_VALID_TEMPERATURE = -50
+MAX_VALID_TEMPERATURE = 50
+MIN_VALID_HUMIDITY = 0
+MAX_VALID_HUMIDITY = 100
 
 
 def main(data: dict, context: Context) -> None:  # noqa: ARG001
@@ -79,11 +83,11 @@ def update(data: dict, year: int, individual_id: str) -> None:
 
 
 def valid_temperature(temperature: float) -> bool:
-    return -50 <= temperature <= 50
+    return MIN_VALID_TEMPERATURE <= temperature <= MAX_VALID_TEMPERATURE
 
 
 def valid_humidity(humidity: float) -> bool:
-    return 0 <= humidity <= 100
+    return MIN_VALID_HUMIDITY <= humidity <= MAX_VALID_HUMIDITY
 
 
 # pylint: disable=too-many-positional-arguments

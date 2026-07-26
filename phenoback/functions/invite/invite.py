@@ -52,7 +52,7 @@ def process(
         register.register_user_invite(doc_id, invitee_user_id)
     elif sent_date is not None:
         delta = d.localtime() - sent_date
-        if delta.total_seconds() < 600:  # resent only every 10 minutes
+        if delta.total_seconds() < 600:  # resent only every 10 minutes  # noqa: PLR2004
             log.info(
                 "Invite %s by %s to %s failed: Resend time of %i seconds to short",
                 doc_id,

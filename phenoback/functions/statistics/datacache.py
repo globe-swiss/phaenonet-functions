@@ -23,13 +23,13 @@ def get_altitude_grp(individual_id: str) -> str:
         log.error("No altitude found for individual %s", individual_id)
         raise ValueError(individual_id)
 
-    if altitude < 500:
+    if altitude < 500:  # noqa: PLR2004
         return "alt1"
-    if altitude < 800:
+    if altitude < 800:  # noqa: PLR2004
         return "alt2"
-    if altitude < 1000:
+    if altitude < 1000:  # noqa: PLR2004
         return "alt3"
-    if altitude < 1200:
+    if altitude < 1200:  # noqa: PLR2004
         return "alt4"
     return "alt5"
 
