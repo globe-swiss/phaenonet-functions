@@ -83,8 +83,8 @@ def setup(  # noqa: ANN201
 def invoke():  # noqa: ANN201
     try:
         yield
-    except Exception as ex:  # pylint: disable=broad-except
-        log.error("Error in execution", exc_info=ex)
+    except Exception:  # pylint: disable=broad-except
+        log.exception("Error in execution")
 
 
 def fs_observations_write(data: dict, context: Context) -> None:
@@ -300,9 +300,9 @@ def test(data: dict, context: Context) -> None:  # pragma: no cover
             "test data: with setup/invoke: should log Key Error", "test context"
         ):
             with invoke():
-                raise KeyError("Should log - setup/invoke first")
+                raise KeyError("Should log - setup/invoke first")  # noqa: TRY003, EM101
             with invoke():
-                raise KeyError("Should log - setup/invoke second")
+                raise KeyError("Should log - setup/invoke second")  # noqa: TRY003, EM101
 
         with setup("test data: with setup: should log Key Error", "test context"):
-            raise KeyError("Should log - setup")
+            raise KeyError("Should log - setup")  # noqa: TRY003, EM101
