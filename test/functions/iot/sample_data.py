@@ -6,7 +6,7 @@ class DraginoData:
     PAYLOAD_HEX_KEY = "payload_hex"
     DECODED_PAYLOAD_KEY = "decoded_payload"
 
-    DECODED_PAYLOAD = {
+    DECODED_PAYLOAD = {  # noqa: RUF012
         "soilHumidity": {"value": 7.27, "unit": "%"},
         "soilTemperature": {"value": 33.2, "unit": "°C"},
         "airHumidity": {"value": 44.0, "unit": "%"},
@@ -14,7 +14,7 @@ class DraginoData:
         "batteryVoltage": {"value": 3.3, "unit": "V"},
     }
 
-    SAMPLE_DATA = {
+    SAMPLE_DATA = {  # noqa: RUF012
         UPLINK_KEY: {
             PAYLOAD_HEX_KEY: PAYLOAD_HEX,
             DEVEUI: DEVEUI,

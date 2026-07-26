@@ -27,7 +27,7 @@ OBSERVATION_COLLECTION = "observations"
 STATION_ID_KEY = "id"
 STATION_COLLECTION = "individuals"
 
-Response = namedtuple("response", "ok text elapsed status_code")
+Response = namedtuple("response", "ok text elapsed status_code")  # noqa: PYI024
 
 
 @pytest.fixture(autouse=True)

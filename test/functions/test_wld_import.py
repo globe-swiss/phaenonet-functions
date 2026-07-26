@@ -10,7 +10,7 @@ import test
 from phenoback.functions import wld_import
 
 
-@pytest.fixture(autouse=True, scope="function")
+@pytest.fixture(autouse=True)
 def cache_clear():
     wld_import.site_users.cache_clear()
     wld_import.station_species.cache_clear()

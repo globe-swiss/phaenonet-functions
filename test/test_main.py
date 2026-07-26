@@ -11,10 +11,10 @@ def test_invoke__exception(data, context):
         with main.setup(data, context):
             value = False
             with main.invoke():
-                raise KeyError("Some error")
+                raise KeyError("Some error")  # noqa: TRY003, EM101
             with main.invoke():
                 value = True
-            return value
+            return value  # noqa: RET504
 
     assert function()
 

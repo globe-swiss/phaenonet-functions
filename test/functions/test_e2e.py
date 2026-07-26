@@ -165,7 +165,7 @@ def test_generate_sensor_data():
     assert "2023-01-02" in result
     assert "2023-01-03" in result
 
-    for _, data in result.items():
+    for data in result.values():
         assert data["n"] == n
         assert data["ats"] == at * n
         assert data["sts"] == st * n

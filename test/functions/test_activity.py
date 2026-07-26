@@ -6,7 +6,7 @@ import pytest
 
 from phenoback.functions import activity
 
-User = namedtuple("user", "id")
+User = namedtuple("user", "id")  # noqa: PYI024
 
 
 @pytest.mark.parametrize(
