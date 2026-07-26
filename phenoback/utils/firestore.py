@@ -37,7 +37,7 @@ FieldFilter = _FieldFilter
 
 
 def firestore_client() -> Client:
-    global _db  # pylint: disable=invalid-name,global-statement
+    global _db  # noqa: PLW0603
     if not _db:  # pragma: no cover
         _db = firestore.client()
     return _db
@@ -84,7 +84,11 @@ def delete_collection(collection_name: str, batch_size: int = 1000) -> None:
 
 
 def delete_batch(
-    collection: str, field_path: str, op_string: str, value: Any, batch_size: int = 1000
+    collection: str,
+    field_path: str,
+    op_string: str,
+    value: Any,
+    batch_size: int = 1000,  # noqa: ANN401
 ) -> None:
     query = query_collection(collection, field_path, op_string, value)
     _delete_batch(query, batch_size=batch_size)

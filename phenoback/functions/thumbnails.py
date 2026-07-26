@@ -1,6 +1,6 @@
 import logging
-import os
 from io import BytesIO
+from pathlib import Path
 
 import tinify
 from google.cloud.functions.context import Context
@@ -24,9 +24,10 @@ def main(data: dict, context: Context) -> None:  # noqa: ARG001
 
 
 def process_new_image(pathfile: str, bucket: str | None = None) -> bool:
-    path = os.path.split(pathfile)[0]
-    filename_base = os.path.splitext(os.path.split(pathfile)[1])[0]
-    filename_ext = os.path.splitext(pathfile)[1]
+    p = Path(pathfile)
+    path = str(p.parent)
+    filename_base = p.stem
+    filename_ext = p.suffix
 
     if path.startswith("images/") and not filename_base.endswith("_tn"):
         log.debug("creating thumbnail for %s", pathfile)

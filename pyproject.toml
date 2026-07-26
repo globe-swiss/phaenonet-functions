@@ -8,6 +8,7 @@ ignore = [
     "D203",    # conflicts with D211 (blank line before class)
     "D205",    # noise
     "D213",    # conflicts with D212 (docstring summary position)
+    "E501",    # line too long - ruff format is checked separately
     "COM812",  # formatter handles trailing commas
     "SIM112",  # lower case environment variables
     "PLR0911", # too many return statements

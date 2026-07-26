@@ -79,11 +79,11 @@ def delete_individual(
     delete_document("individuals", individual_id, transaction=transaction)
 
 
-def delete_individuals(field_path: str, op_string: str, value: Any) -> None:
+def delete_individuals(field_path: str, op_string: str, value: Any) -> None:  # noqa: ANN401
     delete_batch("individuals", field_path, op_string, value)
 
 
-def query_individuals(field_path: str, op_string: str, value: Any) -> Query:
+def query_individuals(field_path: str, op_string: str, value: str | int) -> Query:
     return query_collection("individuals", field_path, op_string, value)
 
 
@@ -137,7 +137,7 @@ def write_observation(
     write_document("observations", observation_id, data, transaction=transaction)
 
 
-def query_observation(field_path: str, op_string: str, value: Any) -> Query:
+def query_observation(field_path: str, op_string: str, value: str | int) -> Query:
     return query_collection("observations", field_path, op_string, value)
 
 
@@ -171,9 +171,9 @@ def get_email(user_id: str) -> str:  # pragma: no cover
 def user_exists(email: str) -> bool:  # pragma: no cover
     try:
         auth.get_user_by_email(email)
-        return True
     except auth.UserNotFoundError:
         return False
+    return True
 
 
 def get_user_id_by_email(email: str) -> str:  # pragma: no cover

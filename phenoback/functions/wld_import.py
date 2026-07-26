@@ -1,9 +1,9 @@
 import csv
 import io
 import logging
-import os
 from datetime import datetime
 from functools import lru_cache
+from pathlib import Path
 from zipfile import ZipFile
 
 from google.cloud.functions.context import Context
@@ -77,7 +77,7 @@ def members_by_basename(z: ZipFile) -> dict[str, list[str]]:
     for m in z.namelist():
         if m.endswith("/"):
             continue
-        base = os.path.basename(m)
+        base = Path(m).name
         if not base:  # pragma: no cover - guard against empty basenames
             continue
         result.setdefault(base, []).append(m)
@@ -182,7 +182,7 @@ def check_data_integrity() -> None:
             error = True
         site_year_user.setdefault(site_id, {})[year] = user_id
         # tree_id is a composed key of ${statcode}_${tree_id}
-        if len(tree_id.split("_", 1)) != 2:
+        if len(tree_id.split("_", 1)) != 2:  # noqa: PLR2004
             log.error("wrong tree_id format: %s", tree_id)
             error = True
 
