@@ -37,7 +37,7 @@ def main_enqueue(data: dict, context: Context) -> None:
         delete(g.get_field(data, "year", old_value=True), g.get_document_id(context))
 
 
-def main_process(request: Request):
+def main_process(request: Request) -> Response:
     process_change(request.get_json(silent=True))
     return Response("ok", HTTPStatus.OK)
 

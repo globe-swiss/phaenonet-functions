@@ -33,15 +33,15 @@ env = Environment(
 )
 
 
-def subject(language: str):
+def subject(language: str) -> str:
     return subjects[language]
 
 
-def text_body(language: str, nickname: str, email: str):
+def text_body(language: str, nickname: str, email: str) -> str:
     return _render(language + ".txt.j2", nickname=nickname, email=email)
 
 
-def html_body(language: str, nickname: str, email: str):
+def html_body(language: str, nickname: str, email: str) -> str:
     return _render(
         language + ".html.j2",
         nickname=nickname,

@@ -43,12 +43,12 @@ def firestore_client() -> Client:
     return _db
 
 
-def get_transaction():
+def get_transaction() -> Transaction:
     return firestore_client().transaction()
 
 
 @contextmanager
-def transaction_commit():
+def transaction_commit():  # noqa: ANN201
     transaction = get_transaction()
     yield transaction
     transaction.commit()

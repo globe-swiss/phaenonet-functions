@@ -8,7 +8,7 @@ log.setLevel(logging.DEBUG)
 
 
 @lru_cache
-def client():
+def client() -> bigquery.Client:
     return bigquery.Client()  # pragma: no cover
 
 

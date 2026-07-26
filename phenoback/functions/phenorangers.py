@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def main(request: Request):
+def main(request: Request) -> Response:
     content_type = request.headers["content-type"]
     if content_type == "application/json":
         request_json = request.get_json(silent=True)

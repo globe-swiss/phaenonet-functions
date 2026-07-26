@@ -17,7 +17,7 @@ DOWNLINK_QUEUE = "swisscom-iot"
 DOWNLINK_URL = "https://proxy1.lpn.swisscom.ch/thingpark/lrc/rest/downlink"
 
 
-def main(request: Request):
+def main(request: Request) -> Response:
     if request.is_json and request.json:
         process_dragino(request.json)
     else:  # pragma: no cover

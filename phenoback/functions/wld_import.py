@@ -313,7 +313,7 @@ def map_phenophase(wsl_observation_id: str) -> str:
     return PHASES_MAP[wsl_observation_id]
 
 
-def individuals(year: int):
+def individuals(year: int) -> list[dict]:
     """Creates individual records for all sites with observations in the given year.
 
     :param year: Year to process
@@ -337,7 +337,7 @@ def individuals(year: int):
     ]
 
 
-def observations(year: int):
+def observations(year: int) -> list[dict]:
     """Creates observation records for the given year.
 
     :param year: Year to filter observations
@@ -361,7 +361,7 @@ def observations(year: int):
     ]
 
 
-def users():
+def users() -> list[dict]:
     """Creates user records from imported user data.
 
     :returns: List of user dictionaries with formatted IDs and names
@@ -377,7 +377,7 @@ def users():
     ]
 
 
-def public_users():
+def public_users() -> list[dict]:
     """Creates public user records with limited information.
 
     :returns: List of public user dictionaries with ID, nickname, and roles
