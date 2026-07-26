@@ -102,8 +102,8 @@ def get_altitude_statistics(observations: list[Any]) -> dict:
         results[key]["year"] = year
         results[key]["species"] = species
         results[key]["source"] = source
-        for phenophase, alt_grp in phases.items():
-            for alt_grp, observation_dates in alt_grp.items():
+        for phenophase, alt_groups in phases.items():
+            for alt_grp, observation_dates in alt_groups.items():
                 results[key]["data"][phenophase][alt_grp] = get_statistic_values(
                     observation_dates
                 )

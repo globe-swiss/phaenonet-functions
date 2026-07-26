@@ -68,7 +68,9 @@ def set_uplink_frequency(
 
 
 class DraginoDecoder(Decoder):
-    result = defaultdict(dict)
+    def __init__(self, data: dict) -> None:
+        super().__init__(data)
+        self.result = defaultdict(dict)
 
     def set(self, field: str, value: float, precision: int, unit: str) -> None:
         self.result[field]["value"] = round(value, precision)

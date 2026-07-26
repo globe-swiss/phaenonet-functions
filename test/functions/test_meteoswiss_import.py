@@ -171,7 +171,7 @@ class TestObservations:
         )
         try:
             meteoswiss.process_observations()
-        except meteoswiss.ResourceNotFoundException:
+        except meteoswiss.ResourceNotFoundError:
             pass  # expected
 
     @pytest.mark.parametrize(
@@ -282,7 +282,7 @@ class TestStations:
         )
         try:
             meteoswiss.process_stations(2000)
-        except meteoswiss.ResourceNotFoundException:
+        except meteoswiss.ResourceNotFoundError:
             pass  # expected
 
     def test_process_stations_response__write(self, station_data):

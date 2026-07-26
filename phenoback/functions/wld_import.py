@@ -202,7 +202,7 @@ def import_data(pathfile: str, year: int, bucket: str | None = None) -> None:
     :param bucket: Optional GCS bucket (defaults to configured bucket)
     :param year: Year to import data for (defaults to previous phenological year)
     """
-    global loaded_data  # pylint: disable=global-statement
+    global loaded_data  # noqa: PLW0603  # pylint: disable=global-statement
 
     log.info("importing year %i", year)
     blob = s.get_blob(bucket, pathfile)
@@ -352,7 +352,7 @@ def observations(year: int) -> list[dict]:
             "user": f"{SOURCE}_{o['user_id']}",
             "year": year,
             "tree_id": o["tree_id"].split("_", 1)[1],
-            "date": d.localtime(datetime.strptime(o["date"], "%Y-%m-%d")),
+            "date": d.localtime(datetime.strptime(o["date"], "%Y-%m-%d")),  # noqa: DTZ007
             "phenophase": map_phenophase(o["observation_id"]),
             "source": SOURCE,
         }

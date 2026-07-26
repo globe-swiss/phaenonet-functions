@@ -72,7 +72,6 @@ def register_user_invite(invite_id: str, user_id: str) -> None:
             },
         )
         invite = f.get_document(INVITE_COLLECTION, invite_id)
-        assert invite
         inviter_id = invite["user"]
         d.follow_user(inviter_id, user_id)
     except google.api_core.exceptions.NotFound:

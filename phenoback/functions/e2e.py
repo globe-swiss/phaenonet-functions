@@ -136,4 +136,4 @@ def generate_sensor_data(
 
 
 def firebasedate(year: int, month: int, day: int) -> datetime.datetime:
-    return d.localtime(datetime.datetime(year, month, day))
+    return d.localtime(datetime.datetime(year, month, day))  # noqa: DTZ001

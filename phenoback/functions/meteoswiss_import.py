@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-class ResourceNotFoundException(Exception):
+class ResourceNotFoundError(Exception):
     pass
 
 
@@ -40,7 +40,7 @@ def process_stations(year: int) -> bool:
         return process_stations_response(year, response.text, response.elapsed)
     msg = f"Could not fetch station data ({response.status_code})"
     log.error(msg)
-    raise ResourceNotFoundException(msg)
+    raise ResourceNotFoundError(msg)
 
 
 def process_stations_response(
@@ -93,7 +93,7 @@ def process_observations() -> bool:
         return process_observations_response(response.text, response.elapsed)
     msg = f"Could not fetch observation data ({response.status_code})"
     log.error(msg)
-    raise ResourceNotFoundException(msg)
+    raise ResourceNotFoundError(msg)
 
 
 def process_observations_response(response_text: str, response_elapsed: float) -> bool:
@@ -121,7 +121,7 @@ def _get_observations_dicts(observations: csv.DictReader) -> list[dict]:
         {
             "id": f"{observation['nat_abbr']}_{observation['reference_year']}_{mapping[observation['param_id']]['species']}_{mapping[observation['param_id']]['phenophase']}",
             "user": "meteoswiss",
-            "date": d.localtime(datetime.strptime(observation["value"], "%Y%m%d")),
+            "date": d.localtime(datetime.strptime(observation["value"], "%Y%m%d")),  # noqa: DTZ007
             "individual_id": f"{observation['reference_year']}_{observation['nat_abbr']}",
             "individual": observation["nat_abbr"],
             "source": "meteoswiss",
@@ -144,8 +144,8 @@ def _get_station_species(observations: list[dict]) -> dict[str, list[str] | None
 
 
 def _update_station_species(station_species: dict) -> None:
-    for key in station_species:
-        data = {"station_species": ArrayUnion(station_species[key])}
+    for key, species in station_species.items():
+        data = {"station_species": ArrayUnion(species)}
         d.update_individual(key, data)
 
 

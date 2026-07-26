@@ -15,7 +15,7 @@ log.setLevel(logging.DEBUG)
 QUEUE_NAME = "mapupdates"
 FUNCTION_NAME = "http_individuals_write__map"
 
-DELETE_TOKEN = "__DELETE__"  # nosec
+DELETE_TOKEN = "__DELETE__"  # nosec  # noqa: S105
 
 
 def main_enqueue(data: dict, context: Context) -> None:
