@@ -1,5 +1,6 @@
 import logging
 import urllib.parse
+from typing import BinaryIO
 
 from firebase_admin import storage
 from google.cloud.storage import Blob
@@ -20,7 +21,7 @@ def get_blob(bucket: str, path: str) -> Blob:  # pragma: no cover
 def upload_file(
     bucket: str,
     path: str,
-    file,
+    file: BinaryIO,
     content_type: str | None = None,
     cache_control: str | None = None,
 ) -> None:  # pragma: no cover
@@ -34,7 +35,7 @@ def upload_file(
 def upload_string(
     bucket: str,
     path: str,
-    string,
+    string: str,
     content_type: str = "text/plain",
     cache_control: str | None = None,
 ) -> None:  # pragma: no cover

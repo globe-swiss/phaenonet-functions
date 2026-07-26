@@ -4,11 +4,14 @@ line-length = 88
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-    "D101", "D102", "D103", "D107", # missing docstring
+    "D",       # missing docstring
     "D203",    # conflicts with D211 (blank line before class)
     "D205",    # noise
     "D213",    # conflicts with D212 (docstring summary position)
     "COM812",  # formatter handles trailing commas
+    "SIM112",  # lower case environment variables
+    "PLR0911", # too many return statements
+    "FBT001","FBT002", # positional boolean
 ]
 
 [tool.ruff.lint.per-file-ignores]

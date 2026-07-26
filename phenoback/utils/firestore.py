@@ -225,7 +225,10 @@ def collection(collection: str) -> CollectionReference:
 
 
 def query_collection(
-    collection: str, field_path: str, op_string: str, value: Any
+    collection: str,
+    field_path: str,
+    op_string: str,
+    value: Any,  # noqa: ANN401
 ) -> Query:
     log.debug("Query %s where %s %s %s", collection, field_path, op_string, value)
     return (

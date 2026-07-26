@@ -63,7 +63,7 @@ def context2dict(context: Context) -> dict:
     return context.__dict__
 
 
-def dict2context(context_dict) -> Context:
+def dict2context(context_dict: dict) -> Context:
     return Context(
         eventId=context_dict.get("event_id"),
         timestamp=context_dict.get("timestamp"),
@@ -72,11 +72,11 @@ def dict2context(context_dict) -> Context:
     )
 
 
-def get_document_id(context) -> str:
+def get_document_id(context: Context) -> str:
     return context.resource.split("/")[-1]
 
 
-def get_collection_path(context) -> str:
+def get_collection_path(context: Context) -> str:
     return "/".join(context.resource.split("/")[5:-1])
 
 
@@ -92,7 +92,7 @@ def is_delete_event(data: dict) -> bool:
     return len(data["value"]) == 0 and len(data["oldValue"]) > 0
 
 
-def is_field_updated(data: dict, fieldname) -> bool:
+def is_field_updated(data: dict, fieldname: str) -> bool:
     return fieldname in get_fields_updated(data)
 
 
@@ -123,7 +123,7 @@ def get_location() -> str:  # pragma: no cover
     return os.getenv("location", "Unknown")
 
 
-def get_data(pubsub_event) -> dict | None:
+def get_data(pubsub_event: dict) -> dict | None:
     try:
         data = pubsub_event["data"]
         return json.loads(base64.b64decode(data)) if data is not None else None
