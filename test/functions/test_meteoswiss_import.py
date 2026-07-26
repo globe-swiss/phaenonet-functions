@@ -2,6 +2,7 @@
 import csv
 import json
 from collections import namedtuple
+from contextlib import suppress
 from datetime import datetime
 from io import StringIO
 
@@ -76,10 +77,8 @@ class TestCommon:
     def test_get_hash(self):
         assert meteoswiss._get_hash("string1") == meteoswiss._get_hash("string1")
         assert meteoswiss._get_hash("string1") != meteoswiss._get_hash("string2")
-        try:
+        with suppress(AttributeError):
             meteoswiss._get_hash(None)
-        except AttributeError:
-            pass  # expected
 
     def test_set_hash(self, mocker):
         hash_key = "a_key"
@@ -169,10 +168,8 @@ class TestObservations:
             "phenoback.functions.meteoswiss_import.get",
             return_value=Response(ok=False, text=None, elapsed=None, status_code="5xx"),
         )
-        try:
+        with suppress(meteoswiss.ResourceNotFoundError):
             meteoswiss.process_observations()
-        except meteoswiss.ResourceNotFoundError:
-            pass  # expected
 
     @pytest.mark.parametrize(
         "data1, data2, is_processed_expected",
@@ -280,10 +277,8 @@ class TestStations:
             "phenoback.functions.meteoswiss_import.get",
             return_value=Response(ok=False, text=None, elapsed=None, status_code="5xx"),
         )
-        try:
+        with suppress(meteoswiss.ResourceNotFoundError):
             meteoswiss.process_stations(2000)
-        except meteoswiss.ResourceNotFoundError:
-            pass  # expected
 
     def test_process_stations_response__write(self, station_data):
         phenoyear = d.get_phenoyear(True)

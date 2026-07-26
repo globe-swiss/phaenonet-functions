@@ -1,3 +1,5 @@
+from contextlib import suppress
+
 import google.api_core.exceptions
 import pytest
 from google.cloud.firestore_v1._helpers import ReadAfterWriteError
@@ -77,10 +79,8 @@ def test_update_document(collection, doc_id, doc, doc2):
 
 def test_update_document__non_existing(collection, doc_id, doc, doc2):
     assert doc != doc2
-    try:
+    with suppress(google.api_core.exceptions.NotFound):
         f.update_document(collection, doc_id, doc2)
-    except google.api_core.exceptions.NotFound:
-        pass  # expected
 
 
 def test_collection(collection, doc_id, doc_id2, doc, doc2):
@@ -236,10 +236,8 @@ def test_get_document__transaction_fail(collection, doc_id, doc):
         f.write_document(collection, doc_id, doc, transaction=transaction)
         f.get_document(collection, doc_id, transaction=transaction)
 
-    try:
+    with suppress(ReadAfterWriteError):
         transactional__fail(f.get_transaction(), collection, doc_id)
-    except ReadAfterWriteError:
-        pass  # expected
 
 
 def test_get_collection_documents(collection):

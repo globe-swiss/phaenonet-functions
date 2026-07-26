@@ -1,5 +1,6 @@
 # pylint: disable=protected-access
 import json
+from contextlib import suppress
 from datetime import date, datetime
 
 import pytest
@@ -73,10 +74,8 @@ def test_get_species__cache(mocker):
 
 
 def test_follow_user__not_found():
-    try:
+    with suppress(ValueError):
         d.follow_user("follower_id", "followee_id")
-    except ValueError:
-        pass  # expected
 
 
 def test_follow_user__no_array():
