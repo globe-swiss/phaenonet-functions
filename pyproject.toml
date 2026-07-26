@@ -18,7 +18,8 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "main.py" = ["PLC0415"]   # allow import outside toplevel as not all modules need to be loaded for every function
-"test/**/*.py" = ["S101"]
+"test/**/*.py" = ["S101", "ANN", "ARG", "PLC0415", "PLR2004", "SLF001", "FBT003", "DTZ"]
+"test/functions/test_invite.py" = ["PGH003"]
 
 [tool.setuptools]
 py-modules = []

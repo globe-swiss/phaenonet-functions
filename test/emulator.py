@@ -25,7 +25,7 @@ def check():
 def start(xprocess, name):
     class EmulatorClass(ProcessStarter):
         @property
-        def args(self):  # type: ignore  # xprocess base abstract implementation returns void and does not define no return type
+        def args(self):  # pyright: ignore[reportIncompatibleMethodOverride] # xprocess base abstract implementation returns void and does not define no return type
             return [
                 _get_gcloud_cmd(),
                 "beta",
@@ -39,12 +39,12 @@ def start(xprocess, name):
             ]
 
         @property
-        def pattern(self):  # type: ignore  # xprocess base returns None and no type is defined
+        def pattern(self):  # pyright: ignore[reportIncompatibleMethodOverride] # xprocess base returns None and no type is defined
             return re.compile(".*is now running.*")
 
     logfile = xprocess.ensure(name, EmulatorClass)
     # assert environment
-    print("Check emulator at startup: ", check())
+    print("Check emulator at startup: ", check())  # noqa: T201
     assert check(), "Connecting to the live environment?"
 
     credentials = mock.Mock(spec=google.auth.credentials.Credentials)
@@ -57,7 +57,7 @@ def start(xprocess, name):
         # shutdown emulator
         xprocess.getinfo(name).terminate()
     except FileNotFoundError:
-        print(
+        print(  # noqa: T201
             "WARNING: procps not installed. you may need to manually kill the firestore emulator"
         )
 
