@@ -2,6 +2,7 @@
 import json
 from contextlib import suppress
 from datetime import date, datetime
+from pathlib import Path
 
 import pytest
 import pytz
@@ -17,18 +18,18 @@ def config_static():
     see maintenance repo @ maintenance/config/generate_config_static.py.
     """
     d._get_static_config.cache_clear()
-    with open(test.get_resource_path("config_static.json"), encoding="utf-8") as file:
-        data = json.loads(file.read())
-        f.write_document("definitions", "config_static", data)
-        return data
+    path = test.get_resource_path("config_static.json")
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    f.write_document("definitions", "config_static", data)
+    return data
 
 
 @pytest.fixture(autouse=True)
 def config_dynamic():
-    with open(test.get_resource_path("config_dynamic.json"), encoding="utf-8") as file:
-        data = json.loads(file.read())
-        f.write_document("definitions", "config_dynamic", data)
-        return data
+    path = test.get_resource_path("config_dynamic.json")
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    f.write_document("definitions", "config_dynamic", data)
+    return data
 
 
 def test_update_phenoyear(config_dynamic):

@@ -3,8 +3,9 @@ import csv
 import json
 from collections import namedtuple
 from contextlib import suppress
-from datetime import datetime
 from io import StringIO
+from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 import pytz
@@ -13,6 +14,9 @@ import test
 from phenoback.functions import meteoswiss_import as meteoswiss
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 HASH_COLLECTION = "definitions"
 HASH_DOCUMENT = "meteoswiss_import"
@@ -33,10 +37,8 @@ def set_phenoyear():
 
 @pytest.fixture
 def station_data() -> str:
-    with open(
-        test.get_resource_path("meteoswiss_stations.csv"), encoding="utf-8"
-    ) as csv_file:
-        return csv_file.read()
+    path = test.get_resource_path("meteoswiss_stations.csv")
+    return Path(path).read_text(encoding="utf-8")
 
 
 @pytest.fixture
@@ -44,20 +46,16 @@ def meteoswiss_mapping() -> str:
     """Fixture to provide the mapping for meteoswiss.
     Update see `maintenance/maintenance/test-env/extract_meteoswiss_mapping.py`
     """
-    with open(
-        test.get_resource_path("meteoswiss_mapping.json"), encoding="utf-8"
-    ) as file:
-        data = json.loads(file.read())
-        f.write_document("definitions", "meteoswiss_mapping", data)
-        return data
+    path = test.get_resource_path("meteoswiss_mapping.json")
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    f.write_document("definitions", "meteoswiss_mapping", data)
+    return data
 
 
 @pytest.fixture
 def observation_data() -> str:
-    with open(
-        test.get_resource_path("meteoswiss_observations.csv"), encoding="utf-8"
-    ) as csv_file:
-        return csv_file.read()
+    path = test.get_resource_path("meteoswiss_observations.csv")
+    return Path(path).read_text(encoding="utf-8")
 
 
 class TestCommon:

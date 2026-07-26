@@ -1,5 +1,6 @@
 # pylint: disable=import-outside-toplevel
 import logging
+from pathlib import Path
 
 import pytest
 import strictyaml as yaml
@@ -95,8 +96,7 @@ def pubsub_event_data():
 
 
 def readfile(filename: str):
-    with open(filename, encoding="utf-8") as file:
-        return file.read()
+    return Path(filename).read_text(encoding="utf-8")
 
 
 @pytest.fixture

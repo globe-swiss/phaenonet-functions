@@ -1,4 +1,5 @@
 import io
+from pathlib import Path
 from zipfile import ZipFile
 
 import pytest
@@ -23,8 +24,7 @@ def zippath():
 
 @pytest.fixture
 def input_blob(mocker, zippath):
-    with open(zippath, "rb") as input_file:
-        file_bytes = input_file.read()
+    file_bytes = Path(zippath).read_bytes()
     mock = mocker.Mock()
     mock.download_as_bytes = mocker.Mock(return_value=file_bytes)
     mock.size = 10000
