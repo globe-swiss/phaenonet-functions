@@ -101,7 +101,7 @@ def process(year: int | None = None) -> None:
                 }
             )
         except Exception:  # pylint: disable=broad-except
-            log.error("Error processing observation, skipping %s", o, exc_info=True)
+            log.exception("Error processing observation, skipping %s", o)
 
     if results:
         with io.StringIO() as csv_string:

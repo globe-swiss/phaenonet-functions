@@ -21,7 +21,7 @@ from google.cloud.firestore_v1.transaction import Transaction as _Transaction
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
-_db = None  # pylint: disable=invalid-name
+_db = None
 
 # exported
 DELETE_FIELD = _DELETE_FIELD
@@ -65,7 +65,9 @@ def delete_document(
         ref.delete()
 
 
-def _delete_batch(coll_ref: Query | CollectionReference, batch_size: int = 1000):
+def _delete_batch(
+    coll_ref: Query | CollectionReference, batch_size: int = 1000
+) -> None:
     docs = coll_ref.limit(batch_size).stream()
     deleted = 0
 
@@ -87,8 +89,8 @@ def delete_batch(
     collection: str,
     field_path: str,
     op_string: str,
-    value: Any,
-    batch_size: int = 1000,  # noqa: ANN401
+    value: Any,  # noqa: ANN401
+    batch_size: int = 1000,
 ) -> None:
     query = query_collection(collection, field_path, op_string, value)
     _delete_batch(query, batch_size=batch_size)

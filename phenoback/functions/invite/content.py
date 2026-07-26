@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
@@ -50,5 +51,5 @@ def html_body(language: str, nickname: str, email: str) -> str:
     )
 
 
-def _render(filename: str, **kwargs):
+def _render(filename: str, **kwargs: Any) -> str:  # noqa: ANN401
     return env.get_template(filename).render(kwargs)
