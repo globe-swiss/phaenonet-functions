@@ -76,7 +76,7 @@ def invitee_user():
 
 class TestInvite:
     @pytest.mark.parametrize(
-        "data, expected",
+        ("data", "expected"),
         [
             (
                 {
@@ -156,7 +156,7 @@ class TestInvite:
         assert invite_mock.called == expected
 
     @pytest.mark.parametrize(
-        "data, expected",
+        ("data", "expected"),
         [
             (
                 {
@@ -216,7 +216,7 @@ class TestInvite:
         mocker.patch("phenoback.utils.data.user_exists", return_value=False)
 
     @pytest.mark.parametrize(
-        "locale, expected",
+        ("locale", "expected"),
         [
             ("de-CH", "de"),
             ("fr-CH", "fr"),

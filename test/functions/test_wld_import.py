@@ -44,7 +44,7 @@ def data_loaded(input_io):
 
 
 @pytest.mark.parametrize(
-    "pathfile, called",
+    ("pathfile", "called"),
     [
         (
             "private/wld_import/anything_in_this_folder",
@@ -153,7 +153,7 @@ def test_check_data_integrity(data_loaded):
 
 
 @pytest.mark.parametrize(
-    "filename, fieldname",
+    ("filename", "fieldname"),
     [("user_id.csv", "user_id"), ("site.csv", "site_id")],
 )
 def test_check_data_integrity__empty(data_loaded, caperrors, filename, fieldname):
@@ -166,7 +166,7 @@ def test_check_data_integrity__empty(data_loaded, caperrors, filename, fieldname
 
 
 @pytest.mark.parametrize(
-    "filename, fieldname, value",
+    ("filename", "fieldname", "value"),
     [
         ("user_id.csv", "user_id", "unknown_id"),
         ("site.csv", "site_id", "unknown_id"),

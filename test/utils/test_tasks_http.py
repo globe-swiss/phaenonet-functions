@@ -99,7 +99,7 @@ def test_send__params(http_client: tasks.HTTPClient):
 
 
 @pytest.mark.parametrize(
-    "params, expected", [({"p1": "v1", "p2": "v2"}, "?p1=v1&p2=v2"), (None, "")]
+    ("params", "expected"), [({"p1": "v1", "p2": "v2"}, "?p1=v1&p2=v2"), (None, "")]
 )
 def test_encode_params(http_client, params, expected):
     assert http_client.encode_params(params) == expected

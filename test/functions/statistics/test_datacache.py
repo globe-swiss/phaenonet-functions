@@ -17,7 +17,7 @@ def cache_clear():
 
 
 @pytest.mark.parametrize(
-    "altitude_value, expected",
+    ("altitude_value", "expected"),
     [
         (499, "alt1"),
         (500, "alt2"),
@@ -43,7 +43,7 @@ def test_get_altitude_grp(mocker, altitude_value, expected):
 
 
 @pytest.mark.parametrize(
-    "individual_data, expected_error",
+    ("individual_data", "expected_error"),
     [
         (None, KeyError),
         ({"some": "attribute"}, ValueError),

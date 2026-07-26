@@ -29,7 +29,7 @@ def doc_ts():
 
 
 @pytest.mark.parametrize(
-    "called, data",
+    ("called", "data"),
     [
         (
             "updated",
@@ -104,7 +104,7 @@ def test_update_created_document(doc_nots):
 
 
 @pytest.mark.parametrize(
-    "updated_fields",
+    ("updated_fields"),
     [
         [documents.MODIFIED_KEY, documents.CREATED_KEY, "some_data"],
         [documents.MODIFIED_KEY, "some_data"],
@@ -121,7 +121,7 @@ def test_update_modified_document(doc_ts, updated_fields):
 
 
 @pytest.mark.parametrize(
-    "updated_fields",
+    ("updated_fields"),
     [
         [documents.MODIFIED_KEY, documents.CREATED_KEY, "some_data"],
         [documents.MODIFIED_KEY, "some_data"],
@@ -140,7 +140,7 @@ def test_update_modified_document__create_ts(doc_ts, updated_fields):
 
 
 @pytest.mark.parametrize(
-    "updated_fields",
+    ("updated_fields"),
     [
         [documents.MODIFIED_KEY],
         [documents.CREATED_KEY],

@@ -12,7 +12,7 @@ def url(path: str):
 
 
 @pytest.mark.parametrize(
-    "pathfile, called",
+    ("pathfile", "called"),
     [
         (
             "images/anything_in_this_folder",
@@ -34,7 +34,7 @@ def test_main(mocker, context, pathfile, called):
 
 
 @pytest.mark.parametrize(
-    "image_path",
+    ("image_path"),
     ["images/user_id/individuals/test.jpeg", "images/user_id/individuals/test"],
 )
 def test_process_new_image_infinite_loop(mocker, image_path):

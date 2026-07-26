@@ -48,7 +48,7 @@ def test_update_phenoyear__preserve_data(config_dynamic):
 
 
 @pytest.mark.parametrize(
-    "individual, expected",
+    ("individual", "expected"),
     [
         ({"some": "attribute", "last_observation_date": datetime.now()}, True),
         ({"some": "attribute"}, False),
@@ -120,7 +120,7 @@ def test_create_user():
 
 
 @pytest.mark.parametrize(
-    "input_data, expected_output",
+    ("input_data", "expected_output"),
     [
         ({}, []),
         ({"a": {"x": "y"}}, [{"id": "a", "x": "y"}]),
@@ -135,7 +135,7 @@ def test_to_id_array(input_data, expected_output):
 
 
 @pytest.mark.parametrize(
-    "comment, expected",
+    ("comment", "expected"),
     [
         ("None", True),
         ("Any Comment", True),

@@ -58,7 +58,7 @@ def test_main(mocker, pubsub_event_data, context):
 
 
 @pytest.mark.parametrize(
-    "action, data",
+    ("action", "data"),
     [
         (
             "add",
@@ -105,7 +105,7 @@ def test_main_individual_updated(
 
 
 @pytest.mark.parametrize(
-    "action, data",
+    ("action", "data"),
     [
         (
             "delete",
@@ -204,7 +204,7 @@ def test_update_history__two():
 
 
 @pytest.mark.parametrize(
-    "data",
+    ("data"),
     [(9999, 0, 0, 0), (0, 0, 9999, 0), (0, 9999, 0, 0), (0, 0, 0, 9999)],
 )
 def test_update_history__invalid_data(
@@ -294,7 +294,7 @@ def test_clear_sensors():
 
 
 @pytest.mark.parametrize(
-    "value, result",
+    ("value", "result"),
     [(-50, True), (0, True), (50, True), (-51, False), (51, False)],
 )
 def test_valid_temperature(value, result):
@@ -302,7 +302,7 @@ def test_valid_temperature(value, result):
 
 
 @pytest.mark.parametrize(
-    "value, result",
+    ("value", "result"),
     [(0, True), (50, True), (100, True), (-1, False), (101, False)],
 )
 def test_valid_humidity(value, result):

@@ -197,7 +197,7 @@ def test_process_change__new_value(mapdata, initialdata: dict):
 
 
 @pytest.mark.parametrize(
-    "station_species, last_phenophase, expected",
+    ("station_species", "last_phenophase", "expected"),
     [
         (["HS"], None, True),
         (None, "BLA", True),
@@ -211,7 +211,7 @@ def test_should_update__on_create(station_species, last_phenophase, expected):
 
 
 @pytest.mark.parametrize(
-    "updated_fields, expected",
+    ("updated_fields", "expected"),
     [
         (["geopos.lat"], True),
         (["geopos.lng"], True),

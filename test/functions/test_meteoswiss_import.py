@@ -172,7 +172,7 @@ class TestObservations:
             meteoswiss.process_observations()
 
     @pytest.mark.parametrize(
-        "data1, data2, is_processed_expected",
+        ("data1", "data2", "is_processed_expected"),
         [
             ("same", "same", False),
             ("old", "new", True),
@@ -187,7 +187,7 @@ class TestObservations:
         )
 
     @pytest.mark.parametrize(
-        "old_species, new_species, expected",
+        ("old_species", "new_species", "expected"),
         [
             ("None", ["s1", "s2"], ["s1", "s2"]),
             ([], ["s1", "s2"], ["s1", "s2"]),
@@ -298,7 +298,7 @@ class TestStations:
         assert station["year"] == phenoyear
 
     @pytest.mark.parametrize(
-        "data1, data2, is_processed_expected",
+        ("data1", "data2", "is_processed_expected"),
         [
             ("same", "same", False),
             ("old", "new", True),
