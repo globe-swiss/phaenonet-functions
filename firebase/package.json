@@ -1,0 +1,7 @@
+{
+  "name": "phaenonet-firebase",
+  "private": true,
+  "devDependencies": {
+    "firebase-tools": "15.19.1"
+  }
+}

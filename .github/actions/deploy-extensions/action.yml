@@ -22,7 +22,8 @@ runs:
         node-version: ${{ inputs.node-version }}
     - name: install firebase-tools
       shell: bash
-      run: npm i -g firebase-tools
+      working-directory: firebase
+      run: npm ci
     - id: auth
       name: Authenticate to Google Cloud
       uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
@@ -33,6 +34,6 @@ runs:
     - name: Deploy Firebase Extensions
       shell: bash
       working-directory: firebase
-      run: firebase deploy --force --only extensions --project ${INPUTS_PROJECT}
+      run: npx firebase deploy --force --only extensions --project ${INPUTS_PROJECT}
       env:
         INPUTS_PROJECT: ${{ inputs.project }}
