@@ -50,7 +50,7 @@ def is_actual_observation(comment: str | None) -> bool:
     return _get_static_config()["comments"].get(comment, {"stats": True})["stats"]
 
 
-def get_phenoyear(reset_cache=False) -> int:
+def get_phenoyear(reset_cache: bool = False) -> int:
     if reset_cache:
         _get_dynamic_config.cache_clear()
     return _get_dynamic_config()["phenoyear"]

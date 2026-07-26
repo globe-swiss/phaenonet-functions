@@ -3,6 +3,7 @@ import os
 from io import BytesIO
 
 import tinify
+from google.cloud.functions.context import Context
 
 from phenoback.utils import gsecrets
 from phenoback.utils.storage import get_public_firebase_url, upload_file
@@ -14,7 +15,7 @@ THUMBNAIL_WIDTH = 302
 THUMBNAIL_HEIGHT = 302
 
 
-def main(data, context) -> None:  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # pylint: disable=unused-argument
     """Creates thumbnails for images uploaded to google cloud storage."""
     pathfile = data["name"]
     if pathfile.startswith("images/"):
@@ -22,7 +23,7 @@ def main(data, context) -> None:  # pylint: disable=unused-argument
         process_new_image(pathfile)
 
 
-def process_new_image(pathfile: str, bucket=None) -> bool:
+def process_new_image(pathfile: str, bucket: str | None = None) -> bool:
     path = os.path.split(pathfile)[0]
     filename_base = os.path.splitext(os.path.split(pathfile)[1])[0]
     filename_ext = os.path.splitext(pathfile)[1]

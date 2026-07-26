@@ -13,7 +13,7 @@ log.setLevel(logging.INFO)
 
 
 def get_field(
-    data: dict, fieldname: str, old_value: bool = False, expected=True
+    data: dict, fieldname: str, old_value: bool = False, expected: bool = True
 ) -> str | int | float | datetime | bool | dict | list | None:
     value_type = "oldValue" if old_value else "value"
     value_dict = data[value_type].get("fields", {}).get(fieldname)

@@ -8,6 +8,8 @@ import csv
 import io
 import logging
 
+from google.cloud.functions.context import Context
+
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
 from phenoback.utils import storage
@@ -17,7 +19,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 
-def main(event, context) -> None:  # pylint: disable=unused-argument
+def main(event: dict, context: Context) -> None:  # pylint: disable=unused-argument
     process()
 
 

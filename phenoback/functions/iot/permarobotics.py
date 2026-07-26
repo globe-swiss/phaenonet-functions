@@ -2,6 +2,7 @@ import logging
 from collections import defaultdict
 
 import requests
+from google.cloud.functions.context import Context
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -9,7 +10,7 @@ log.setLevel(logging.DEBUG)
 REQUEST_TIMEOUT = 5
 
 
-def main(data, context) -> None:  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # pylint: disable=unused-argument
     send_permarobotics(data)
 
 

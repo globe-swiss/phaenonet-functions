@@ -59,7 +59,7 @@ def promote_transactional(transaction: f.Transaction, email: str) -> Response:
     return Response(msg, HTTPStatus.NOT_FOUND)
 
 
-def get_observation(user: str, year) -> str | None:
+def get_observation(user: str, year: int) -> str | None:
     for observation_doc in (
         d.query_observation("user", "==", user)
         .where(filter=f.FieldFilter("year", "==", year))

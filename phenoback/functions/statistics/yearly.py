@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Any
 
 import numpy as np
+from google.cloud.functions.context import Context
 
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
@@ -15,7 +16,7 @@ log.setLevel(logging.DEBUG)
 ANALYTIC_PHENOPHASES = {"BEA", "BLA", "BFA", "BVA", "FRA"}
 
 
-def main(data, context) -> None:  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # pylint: disable=unused-argument
     year = data["year"] if "year" in data else d.get_phenoyear()
     process_yearly_statistics(year)
 

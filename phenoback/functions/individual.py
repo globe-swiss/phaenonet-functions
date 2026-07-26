@@ -1,5 +1,7 @@
 import logging
 
+from google.cloud.functions.context import Context
+
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
 import phenoback.utils.gcloud as g
@@ -8,7 +10,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def main(data, context) -> None:  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # pylint: disable=unused-argument
     if g.is_delete_event(data):
         individual_id = g.get_field(data, "individual_id", old_value=True)
     else:

@@ -8,7 +8,9 @@ from phenoback.utils import gcloud
 @dataclass
 class InviteMail:
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, to_mail, from_mail, nickname, language) -> None:
+    def __init__(
+        self, to_mail: str, from_mail: str, nickname: str, language: str
+    ) -> None:
         self.from_name = "PhaenoNet"
         self.from_mail = "no-reply@phaenonet.ch"
         self.reply_to = "info@phaenonet.ch"

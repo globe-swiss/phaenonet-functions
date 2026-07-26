@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime
 
+from google.cloud.functions.context import Context
+
 from phenoback.utils import firestore as f
 from phenoback.utils import gcloud as g
 
@@ -11,7 +13,7 @@ MODIFIED_KEY = "modified"
 CREATED_KEY = "created"
 
 
-def main(data, context) -> None:
+def main(data: dict, context: Context) -> None:
     """Updates create and modified timestamps on documents."""
     collection_path = g.get_collection_path(context)
     document_id = g.get_document_id(context)

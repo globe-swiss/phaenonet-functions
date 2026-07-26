@@ -1,5 +1,7 @@
 import logging
 
+from google.cloud.functions.context import Context
+
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
 from phenoback.utils import gcloud as g
@@ -8,7 +10,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def main(data, context) -> None:
+def main(data: dict, context: Context) -> None:
     """Creates an activity when an observation is created, modified or deleted in
     Firestore **and** the user or individual of that observation is being followed.
     """
@@ -26,7 +28,7 @@ def main(data, context) -> None:
         log.debug("No activity to add")
 
 
-def _main(data, context, action) -> None:
+def _main(data: dict, context: Context, action: str) -> None:
     is_delete = action == "delete"
     process_observation(
         event_id=context.event_id,

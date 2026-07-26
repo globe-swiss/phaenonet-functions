@@ -5,7 +5,7 @@ class Decoder:
             self.int_pl = int(self.payload, 16)
             self.size = len(self.payload) * 4
 
-    def get_value(self, start, length, signed=False):
+    def get_value(self, start: int, length: int, signed: bool = False) -> int:
         shift = self.size - start - length
         mask = ((1 << length) - 1) << shift
         value = (self.int_pl & mask) >> shift

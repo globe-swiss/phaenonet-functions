@@ -6,6 +6,7 @@ from datetime import datetime
 from functools import lru_cache
 from zipfile import ZipFile
 
+from google.cloud.functions.context import Context
 from google.cloud.storage import Blob
 
 from phenoback.functions.statistics import weekly
@@ -50,7 +51,7 @@ PHASES_MAP = {
 }
 
 
-def main(data, context) -> None:  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # pylint: disable=unused-argument
     """Import wld data on file upload to private/wld_import."""
     pathfile = data["name"]
     if pathfile.startswith("private/wld_import/"):
@@ -194,7 +195,7 @@ def check_data_integrity() -> None:
         raise ValueError(msg)
 
 
-def import_data(pathfile: str, year: int, bucket=None) -> None:
+def import_data(pathfile: str, year: int, bucket: str | None = None) -> None:
     """Main import function that processes WLD data from a ZIP file.
 
     :param pathfile: Path to the ZIP file in cloud storage
@@ -285,7 +286,7 @@ def get_user(site_id: str, year: str) -> str:
     return site_users().get(site_id, {}).get(str(year))
 
 
-def wsl_user(user_id) -> str:
+def wsl_user(user_id: str) -> str:
     """Formats a WSL user ID with the source prefix.
 
     :param user_id: Original user ID
@@ -294,7 +295,7 @@ def wsl_user(user_id) -> str:
     return f"{SOURCE}_{user_id}"
 
 
-def map_species(wsl_species) -> str:
+def map_species(wsl_species: str) -> str | None:
     """Maps WSL species ID to internal species code.
 
     :param wsl_species: WSL species ID
@@ -303,7 +304,7 @@ def map_species(wsl_species) -> str:
     return SPECIES_MAP.get(wsl_species)
 
 
-def map_phenophase(wsl_observation_id):
+def map_phenophase(wsl_observation_id: str) -> str:
     """Maps WSL observation ID to internal phenophase code.
 
     :param wsl_observation_id: WSL observation ID

@@ -65,7 +65,7 @@ def delete_document(
         ref.delete()
 
 
-def _delete_batch(coll_ref, batch_size: int = 1000):
+def _delete_batch(coll_ref: Query | CollectionReference, batch_size: int = 1000):
     docs = coll_ref.limit(batch_size).stream()
     deleted = 0
 
@@ -242,7 +242,7 @@ def get_collection_documents(collection_name: str) -> list[dict]:
     return [location.to_dict() for location in collection(collection_name).stream()]
 
 
-def docs2str(docs):  # pragma: no cover
+def docs2str(docs: list) -> list[str]:  # pragma: no cover
     return [f"({doc.id}, {doc.to_dict()})" for doc in docs]
 
 

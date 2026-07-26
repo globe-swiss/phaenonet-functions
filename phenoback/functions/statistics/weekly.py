@@ -3,6 +3,8 @@ from collections import defaultdict
 from datetime import datetime
 from functools import cache
 
+from google.cloud.functions.context import Context
+
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
 from phenoback.functions.statistics import datacache
@@ -13,7 +15,7 @@ log.setLevel(logging.DEBUG)
 STATISTIC_PHENOPHASES = {"BEA", "BES", "BFA", "BLA", "BLB", "BVA", "BVS", "FRA"}
 
 
-def main(data, context) -> None:  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # pylint: disable=unused-argument
     year = data["year"] if "year" in data else d.get_phenoyear()
     process_1y_aggregate_statistics(year)
 
@@ -100,7 +102,7 @@ def get_1y_agg_statistics(start_year: int, end_year: int) -> list:
 
 
 def calculate_statistics_aggregates(
-    year_agg_statistics: list, year_range_start, year_range_end
+    year_agg_statistics: list, year_range_start: int, year_range_end: int
 ) -> dict:
     """Take the 1-year aggregate statistics and aggregate them over a range of years. (year_range_end is excluded)."""
     # Create a defaultdict to store the aggregated results

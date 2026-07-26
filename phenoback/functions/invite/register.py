@@ -1,6 +1,7 @@
 import logging
 
 import google.api_core.exceptions
+from google.cloud.functions.context import Context
 
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
@@ -13,7 +14,7 @@ INVITE_COLLECTION = "invites"
 LOOKUP_COLLECTION = "invites_lookup"
 
 
-def main(data, context) -> None:
+def main(data: dict, context: Context) -> None:
     """Processes invite related documents if a user is created, modified or deleted."""
     user_id = g.get_document_id(context)
     nickname = g.get_field(

@@ -3,6 +3,7 @@ from functools import lru_cache
 from http import HTTPStatus
 
 from flask import Request, Response
+from google.cloud.functions.context import Context
 
 from phenoback.utils import firestore as f
 from phenoback.utils import gcloud as g
@@ -17,7 +18,7 @@ FUNCTION_NAME = "http_individuals_write__map"
 DELETE_TOKEN = "__DELETE__"  # nosec
 
 
-def main_enqueue(data, context) -> None:
+def main_enqueue(data: dict, context: Context) -> None:
     if not g.is_delete_event(data):
         enqueue_change(
             individual_id=g.get_document_id(context),
@@ -107,7 +108,10 @@ def replace_delete_tokens(payload: dict) -> None:
 
 
 def _should_update(
-    updated_fields: list[str], is_create_event: bool, station_species, last_phenophase
+    updated_fields: list[str],
+    is_create_event: bool,
+    station_species: list[str] | None,
+    last_phenophase: str | None,
 ) -> bool:
     """Update if
     * a new individual/station is created which would be shown on the map

@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime
 
+from google.cloud.functions.context import Context
+
 from phenoback.functions.invite import envelopesmail as mailer
 from phenoback.functions.invite import register
 from phenoback.functions.invite.content import InviteMail
@@ -15,7 +17,7 @@ INVITE_COLLECTION = "invites"
 LOOKUP_COLLECTION = "invites_lookup"
 
 
-def main(data, context) -> None:
+def main(data: dict, context: Context) -> None:
     """Send email invites if invite is created or resend is set."""
     # process if new invite or resend was changed but not deleted
     if g.is_create_event(data) or (

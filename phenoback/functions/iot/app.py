@@ -1,6 +1,7 @@
 import logging
 
 import google.api_core.exceptions
+from google.cloud.functions.context import Context
 
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
@@ -14,11 +15,11 @@ log.setLevel(logging.DEBUG)
 COLLECTION = "sensors"
 
 
-def main(data, context) -> None:  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # pylint: disable=unused-argument
     process_dragino(data)
 
 
-def main_individual_updated(data, context) -> None:
+def main_individual_updated(data: dict, context: Context) -> None:
     if g.is_field_updated(data, "deveui"):
         log.debug("DevEUI updated")
         individual_id = g.get_document_id(context)
@@ -77,11 +78,11 @@ def update(data: dict, year: int, individual_id: str) -> None:
     )
 
 
-def valid_temperature(temperature):
+def valid_temperature(temperature: float) -> bool:
     return -50 <= temperature <= 50
 
 
-def valid_humidity(humidity):
+def valid_humidity(humidity: float) -> bool:
     return 0 <= humidity <= 100
 
 
@@ -156,7 +157,7 @@ def sensor_set(individual_id: str, individual: str, deveui: str) -> None:
     dragino.set_uplink_frequency(deveui, 3600)
 
 
-def remove_sensor(individual_id) -> None:
+def remove_sensor(individual_id: str) -> None:
     log.info("remove sensor from individual_id %s", individual_id)
     d.update_individual(
         individual_id,

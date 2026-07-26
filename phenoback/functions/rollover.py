@@ -1,5 +1,7 @@
 import logging
 
+from google.cloud.functions.context import Context
+
 from phenoback.functions import map as pheno_map
 from phenoback.functions.iot import app
 from phenoback.functions.statistics import weekly
@@ -17,7 +19,7 @@ SOURCE_ROLLOVER_MAPPING = {
 }
 
 
-def main(data, context) -> None:  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # pylint: disable=unused-argument
     rollover()
 
 
