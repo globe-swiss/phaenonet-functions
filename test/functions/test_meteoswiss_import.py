@@ -1,17 +1,22 @@
 # pylint: disable=protected-access
 import csv
 import json
-import test
 from collections import namedtuple
-from datetime import datetime
+from contextlib import suppress
 from io import StringIO
+from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 import pytz
 
+import test
 from phenoback.functions import meteoswiss_import as meteoswiss
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 HASH_COLLECTION = "definitions"
 HASH_DOCUMENT = "meteoswiss_import"
@@ -22,7 +27,7 @@ OBSERVATION_COLLECTION = "observations"
 STATION_ID_KEY = "id"
 STATION_COLLECTION = "individuals"
 
-Response = namedtuple("response", "ok text elapsed status_code")
+Response = namedtuple("response", "ok text elapsed status_code")  # noqa: PYI024
 
 
 @pytest.fixture(autouse=True)
@@ -32,32 +37,25 @@ def set_phenoyear():
 
 @pytest.fixture
 def station_data() -> str:
-    with open(
-        test.get_resource_path("meteoswiss_stations.csv"), encoding="utf-8"
-    ) as csv_file:
-        return csv_file.read()
+    path = test.get_resource_path("meteoswiss_stations.csv")
+    return Path(path).read_text(encoding="utf-8")
 
 
 @pytest.fixture
 def meteoswiss_mapping() -> str:
-    """
-    Fixture to provide the mapping for meteoswiss.
+    """Fixture to provide the mapping for meteoswiss.
     Update see `maintenance/maintenance/test-env/extract_meteoswiss_mapping.py`
     """
-    with open(
-        test.get_resource_path("meteoswiss_mapping.json"), encoding="utf-8"
-    ) as file:
-        data = json.loads(file.read())
-        f.write_document("definitions", "meteoswiss_mapping", data)
-        return data
+    path = test.get_resource_path("meteoswiss_mapping.json")
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    f.write_document("definitions", "meteoswiss_mapping", data)
+    return data
 
 
 @pytest.fixture
 def observation_data() -> str:
-    with open(
-        test.get_resource_path("meteoswiss_observations.csv"), encoding="utf-8"
-    ) as csv_file:
-        return csv_file.read()
+    path = test.get_resource_path("meteoswiss_observations.csv")
+    return Path(path).read_text(encoding="utf-8")
 
 
 class TestCommon:
@@ -77,10 +75,8 @@ class TestCommon:
     def test_get_hash(self):
         assert meteoswiss._get_hash("string1") == meteoswiss._get_hash("string1")
         assert meteoswiss._get_hash("string1") != meteoswiss._get_hash("string2")
-        try:
+        with suppress(AttributeError):
             meteoswiss._get_hash(None)
-        except AttributeError:
-            pass  # expected
 
     def test_set_hash(self, mocker):
         hash_key = "a_key"
@@ -101,7 +97,6 @@ class TestCommon:
 
 
 class TestObservations:
-
     def test_process_observations_response(
         self, mocker, observation_data, meteoswiss_mapping
     ):
@@ -171,13 +166,11 @@ class TestObservations:
             "phenoback.functions.meteoswiss_import.get",
             return_value=Response(ok=False, text=None, elapsed=None, status_code="5xx"),
         )
-        try:
+        with suppress(meteoswiss.ResourceNotFoundError):
             meteoswiss.process_observations()
-        except meteoswiss.ResourceNotFoundException:
-            pass  # expected
 
     @pytest.mark.parametrize(
-        "data1, data2, is_processed_expected",
+        ("data1", "data2", "is_processed_expected"),
         [
             ("same", "same", False),
             ("old", "new", True),
@@ -192,7 +185,7 @@ class TestObservations:
         )
 
     @pytest.mark.parametrize(
-        "old_species, new_species, expected",
+        ("old_species", "new_species", "expected"),
         [
             ("None", ["s1", "s2"], ["s1", "s2"]),
             ([], ["s1", "s2"], ["s1", "s2"]),
@@ -282,10 +275,8 @@ class TestStations:
             "phenoback.functions.meteoswiss_import.get",
             return_value=Response(ok=False, text=None, elapsed=None, status_code="5xx"),
         )
-        try:
+        with suppress(meteoswiss.ResourceNotFoundError):
             meteoswiss.process_stations(2000)
-        except meteoswiss.ResourceNotFoundException:
-            pass  # expected
 
     def test_process_stations_response__write(self, station_data):
         phenoyear = d.get_phenoyear(True)
@@ -305,7 +296,7 @@ class TestStations:
         assert station["year"] == phenoyear
 
     @pytest.mark.parametrize(
-        "data1, data2, is_processed_expected",
+        ("data1", "data2", "is_processed_expected"),
         [
             ("same", "same", False),
             ("old", "new", True),

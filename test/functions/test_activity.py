@@ -6,11 +6,11 @@ import pytest
 
 from phenoback.functions import activity
 
-User = namedtuple("user", "id")
+User = namedtuple("user", "id")  # noqa: PYI024
 
 
 @pytest.mark.parametrize(
-    "phenophase, is_create, date_updated, is_delete, expected",
+    ("phenophase", "is_create", "date_updated", "is_delete", "expected"),
     [
         ("XXX", True, False, False, True),
         ("XXX", False, True, False, True),
@@ -32,7 +32,7 @@ def test_main(
 
 
 @pytest.mark.parametrize(
-    "followers, expected",
+    ("followers", "expected"),
     [({"a_follower"}, True), ({"a_follower", "another_follower"}, True), ({}, False)],
 )
 def test_process_observation__status(mocker, followers, expected):
@@ -102,7 +102,7 @@ def test_process_observation__no_individual_found(mocker):
 
 
 @pytest.mark.parametrize(
-    "user_following, individuals_following",
+    ("user_following", "individuals_following"),
     [
         (["user1"], []),
         ([], ["user1"]),

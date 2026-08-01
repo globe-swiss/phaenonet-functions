@@ -1,5 +1,4 @@
-# type: ignore
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import ANY
 
 import pytest
@@ -20,8 +19,8 @@ def doc_ts():
         "collection",
         "doc_id",
         {
-            "created": datetime.now(timezone.utc),
-            "modified": datetime.now(timezone.utc),
+            "created": datetime.now(UTC),
+            "modified": datetime.now(UTC),
             "data": "some data",
         },
     )
@@ -29,21 +28,17 @@ def doc_ts():
 
 
 @pytest.mark.parametrize(
-    "called, data",
+    ("called", "data"),
     [
         (
             "updated",
             {
                 "updateMask": {"fieldPaths": ["modified"]},
                 "oldValue": {
-                    "fields": {
-                        "modified": {"timestampValue": str(datetime.now(timezone.utc))}
-                    }
+                    "fields": {"modified": {"timestampValue": str(datetime.now(UTC))}}
                 },
                 "value": {
-                    "fields": {
-                        "modified": {"timestampValue": str(datetime.now(timezone.utc))}
-                    }
+                    "fields": {"modified": {"timestampValue": str(datetime.now(UTC))}}
                 },
             },
         ),
@@ -53,9 +48,7 @@ def doc_ts():
                 "updateMask": {},
                 "oldValue": {},
                 "value": {
-                    "fields": {
-                        "modified": {"timestampValue": str(datetime.now(timezone.utc))}
-                    }
+                    "fields": {"modified": {"timestampValue": str(datetime.now(UTC))}}
                 },
             },
         ),
@@ -64,9 +57,7 @@ def doc_ts():
             {
                 "updateMask": {"fieldPaths": ["modified"]},
                 "oldValue": {
-                    "fields": {
-                        "modified": {"timestampValue": str(datetime.now(timezone.utc))}
-                    }
+                    "fields": {"modified": {"timestampValue": str(datetime.now(UTC))}}
                 },
                 "value": {},
             },
@@ -87,7 +78,7 @@ def test_main(mocker, called, data):
 
 
 def test_main__overwrite_created(mocker):
-    create_ts = datetime.now(timezone.utc)
+    create_ts = datetime.now(UTC)
     data = {
         "updateMask": {"fieldPaths": ["created", "somevalue"]},
         "oldValue": {"fields": {"created": {"timestampValue": str(create_ts)}}},
@@ -106,13 +97,13 @@ def test_main__overwrite_created(mocker):
 def test_update_created_document(doc_nots):
     documents.update_created_document(*doc_nots)
     updated_doc = f.get_document(*doc_nots)
-    assert isinstance(updated_doc[documents.CREATED_KEY], datetime)
-    assert isinstance(updated_doc[documents.MODIFIED_KEY], datetime)
-    assert updated_doc["data"]
+    assert isinstance(updated_doc[documents.CREATED_KEY], datetime)  # pyright: ignore[reportOptionalSubscript]
+    assert isinstance(updated_doc[documents.MODIFIED_KEY], datetime)  # pyright: ignore[reportOptionalSubscript]
+    assert updated_doc["data"]  # pyright: ignore[reportOptionalSubscript]
 
 
 @pytest.mark.parametrize(
-    "updated_fields",
+    ("updated_fields"),
     [
         [documents.MODIFIED_KEY, documents.CREATED_KEY, "some_data"],
         [documents.MODIFIED_KEY, "some_data"],
@@ -121,15 +112,15 @@ def test_update_created_document(doc_nots):
     ],
 )
 def test_update_modified_document(doc_ts, updated_fields):
-    initial_ts = f.get_document(*doc_ts)[documents.MODIFIED_KEY]
-    documents.update_modified_document(*doc_ts, updated_fields)
+    initial_ts = f.get_document(*doc_ts)[documents.MODIFIED_KEY]  # pyright: ignore[reportOptionalSubscript]
+    documents.update_modified_document(*doc_ts, updated_fields)  # pyright: ignore[reportCallIssue]
     updated_doc = f.get_document(*doc_ts)
-    assert updated_doc[documents.MODIFIED_KEY] > initial_ts
-    assert updated_doc["data"]
+    assert updated_doc[documents.MODIFIED_KEY] > initial_ts  # pyright: ignore[reportOptionalSubscript]
+    assert updated_doc["data"]  # pyright: ignore[reportOptionalSubscript]
 
 
 @pytest.mark.parametrize(
-    "updated_fields",
+    ("updated_fields"),
     [
         [documents.MODIFIED_KEY, documents.CREATED_KEY, "some_data"],
         [documents.MODIFIED_KEY, "some_data"],
@@ -138,17 +129,17 @@ def test_update_modified_document(doc_ts, updated_fields):
     ],
 )
 def test_update_modified_document__create_ts(doc_ts, updated_fields):
-    initial_ts = f.get_document(*doc_ts)[documents.MODIFIED_KEY]
-    created_ts = datetime.now(timezone.utc)
-    documents.update_modified_document(*doc_ts, updated_fields, created_ts)
+    initial_ts = f.get_document(*doc_ts)[documents.MODIFIED_KEY]  # pyright: ignore[reportOptionalSubscript]
+    created_ts = datetime.now(UTC)
+    documents.update_modified_document(*doc_ts, updated_fields, created_ts)  # pyright: ignore[reportCallIssue]
     updated_doc = f.get_document(*doc_ts)
-    assert updated_doc[documents.CREATED_KEY] == created_ts
-    assert updated_doc[documents.MODIFIED_KEY] > initial_ts
-    assert updated_doc["data"]
+    assert updated_doc[documents.CREATED_KEY] == created_ts  # pyright: ignore[reportOptionalSubscript]
+    assert updated_doc[documents.MODIFIED_KEY] > initial_ts  # pyright: ignore[reportOptionalSubscript]
+    assert updated_doc["data"]  # pyright: ignore[reportOptionalSubscript]
 
 
 @pytest.mark.parametrize(
-    "updated_fields",
+    ("updated_fields"),
     [
         [documents.MODIFIED_KEY],
         [documents.CREATED_KEY],
@@ -159,10 +150,10 @@ def test_update_modified_document__create_ts(doc_ts, updated_fields):
 def test_update_modified_document__skip_update(mocker, doc_ts, updated_fields):
     write_mock = mocker.patch("phenoback.utils.firestore.write_document")
     update_mock = mocker.patch("phenoback.utils.firestore.update_document")
-    initial_ts = f.get_document(*doc_ts)[documents.MODIFIED_KEY]
-    documents.update_modified_document(*doc_ts, updated_fields)
+    initial_ts = f.get_document(*doc_ts)[documents.MODIFIED_KEY]  # pyright: ignore[reportOptionalSubscript]
+    documents.update_modified_document(*doc_ts, updated_fields)  # pyright: ignore[reportCallIssue]
     updated_doc = f.get_document(*doc_ts)
     write_mock.assert_not_called()
     update_mock.assert_not_called()
-    assert updated_doc[documents.MODIFIED_KEY] == initial_ts
-    assert updated_doc["data"]
+    assert updated_doc[documents.MODIFIED_KEY] == initial_ts  # pyright: ignore[reportOptionalSubscript]
+    assert updated_doc["data"]  # pyright: ignore[reportOptionalSubscript]

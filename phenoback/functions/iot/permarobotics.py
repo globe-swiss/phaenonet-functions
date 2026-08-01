@@ -2,6 +2,7 @@ import logging
 from collections import defaultdict
 
 import requests
+from google.cloud.functions.context import Context
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -9,7 +10,7 @@ log.setLevel(logging.DEBUG)
 REQUEST_TIMEOUT = 5
 
 
-def main(data, context):  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # noqa: ARG001
     send_permarobotics(data)
 
 
@@ -40,10 +41,9 @@ def send_permarobotics(data: dict) -> bool:
     if resp.ok:
         log.debug("Send data permarobotics ok: %s", deveui)
         return True
-    else:
-        log.error(
-            "send data permarobotics error: code=%i, text=%s",
-            resp.status_code,
-            resp.text,
-        )
-        return False
+    log.error(
+        "send data permarobotics error: code=%i, text=%s",
+        resp.status_code,
+        resp.text,
+    )
+    return False

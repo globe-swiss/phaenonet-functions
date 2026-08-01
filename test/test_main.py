@@ -11,16 +11,16 @@ def test_invoke__exception(data, context):
         with main.setup(data, context):
             value = False
             with main.invoke():
-                raise KeyError("Some error")
+                raise KeyError("Some error")  # noqa: TRY003, EM101
             with main.invoke():
                 value = True
-            return value
+            return value  # noqa: RET504
 
     assert function()
 
 
 @pytest.mark.parametrize(
-    "entrypoint, functions",
+    ("entrypoint", "functions"),
     [
         (
             main.ps_import_meteoswiss_data,
@@ -68,7 +68,7 @@ def test_executes__pubsub(
 
 
 @pytest.mark.parametrize(
-    "project",
+    ("project"),
     ["phaenonet", "phaenonet-test", None],
 )
 def test_executes__ps_iot_dragino__environments(mocker, project, pubsub_event, context):
@@ -85,7 +85,7 @@ def test_executes__ps_iot_dragino__environments(mocker, project, pubsub_event, c
 
 
 @pytest.mark.parametrize(
-    "entrypoint, functions",
+    ("entrypoint", "functions"),
     [
         (
             main.fs_users_write,
@@ -127,7 +127,7 @@ def test_executes__firestore(mocker, entrypoint, functions, data, context):
 
 
 @pytest.mark.parametrize(
-    "entrypoint, functions",
+    ("entrypoint", "functions"),
     [
         (
             main.http_individuals_write__map,
@@ -176,7 +176,7 @@ def test_executes__http(mocker, entrypoint, functions):
 
 
 @pytest.mark.parametrize(
-    "entrypoint, functions",
+    ("entrypoint", "functions"),
     [
         (
             main.st_appspot_finalize,
@@ -199,7 +199,7 @@ def test_executes__storage(mocker, entrypoint, functions, data, context):
 
 
 @pytest.mark.parametrize(
-    "project, result",
+    ("project", "result"),
     [
         ("phaenonet", ("production", 1.0, ANY)),
         ("phaenonet-test", ("test", ANY, ANY)),

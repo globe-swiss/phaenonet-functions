@@ -13,18 +13,17 @@ log.setLevel(logging.INFO)
 
 
 def get_field(
-    data: dict, fieldname: str, old_value: bool = False, expected=True
+    data: dict, fieldname: str, old_value: bool = False, expected: bool = True
 ) -> str | int | float | datetime | bool | dict | list | None:
     value_type = "oldValue" if old_value else "value"
     value_dict = data[value_type].get("fields", {}).get(fieldname)
     if value_dict is not None:
         return _get_field(value_dict)
-    else:
-        if expected:
-            log.warning(
-                "field %s not found in data %s, returning None", fieldname, str(data)
-            )
-        return None
+    if expected:
+        log.warning(
+            "field %s not found in data %s, returning None", fieldname, str(data)
+        )
+    return None
 
 
 def _get_field(
@@ -34,37 +33,37 @@ def _get_field(
     value_type = next(iter(value_dict.keys()))
     if value_type == "stringValue":
         return str(value)
-    elif value_type == "integerValue":
+    if value_type == "integerValue":
         return int(value)
-    elif value_type == "doubleValue":
+    if value_type == "doubleValue":
         return float(value)
-    elif value_type == "timestampValue":
+    if value_type == "timestampValue":
         return dateparser.parse(value)
-    elif value_type == "booleanValue":
+    if value_type == "booleanValue":
         return bool(value)
-    elif value_type == "mapValue":
+    if value_type == "mapValue":
         return dict(
             zip(
                 value["fields"].keys(),
                 [_get_field(v) for v in value["fields"].values()],
+                strict=False,
             )
         )
-    elif value_type == "arrayValue":
+    if value_type == "arrayValue":
         return [_get_field(v) for v in value["values"]]
-    else:
-        log.error(
-            "Unknown field type %s, returning str representation: %s",
-            value_type,
-            str(value),
-        )
-        return str(value)
+    log.error(
+        "Unknown field type %s, returning str representation: %s",
+        value_type,
+        str(value),
+    )
+    return str(value)
 
 
 def context2dict(context: Context) -> dict:
     return context.__dict__
 
 
-def dict2context(context_dict) -> Context:
+def dict2context(context_dict: dict) -> Context:
     return Context(
         eventId=context_dict.get("event_id"),
         timestamp=context_dict.get("timestamp"),
@@ -73,11 +72,11 @@ def dict2context(context_dict) -> Context:
     )
 
 
-def get_document_id(context) -> str:
+def get_document_id(context: Context) -> str:
     return context.resource.split("/")[-1]
 
 
-def get_collection_path(context) -> str:
+def get_collection_path(context: Context) -> str:
     return "/".join(context.resource.split("/")[5:-1])
 
 
@@ -93,7 +92,7 @@ def is_delete_event(data: dict) -> bool:
     return len(data["value"]) == 0 and len(data["oldValue"]) > 0
 
 
-def is_field_updated(data: dict, fieldname) -> bool:
+def is_field_updated(data: dict, fieldname: str) -> bool:
     return fieldname in get_fields_updated(data)
 
 
@@ -124,7 +123,7 @@ def get_location() -> str:  # pragma: no cover
     return os.getenv("location", "Unknown")
 
 
-def get_data(pubsub_event) -> dict | None:
+def get_data(pubsub_event: dict) -> dict | None:
     try:
         data = pubsub_event["data"]
         return json.loads(base64.b64decode(data)) if data is not None else None

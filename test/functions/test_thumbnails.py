@@ -12,7 +12,7 @@ def url(path: str):
 
 
 @pytest.mark.parametrize(
-    "pathfile, called",
+    ("pathfile", "called"),
     [
         (
             "images/anything_in_this_folder",
@@ -25,8 +25,7 @@ def url(path: str):
     ],
 )
 def test_main(mocker, context, pathfile, called):
-    """
-    Test all thumbnails storage triggers to correctly limit
+    """Test all thumbnails storage triggers to correctly limit
     the function invocation to specific folders.
     """
     mock = mocker.patch("phenoback.functions.thumbnails.process_new_image")
@@ -35,7 +34,7 @@ def test_main(mocker, context, pathfile, called):
 
 
 @pytest.mark.parametrize(
-    "image_path",
+    ("image_path"),
     ["images/user_id/individuals/test.jpeg", "images/user_id/individuals/test"],
 )
 def test_process_new_image_infinite_loop(mocker, image_path):
@@ -56,6 +55,6 @@ def test_process_new_image_infinite_loop(mocker, image_path):
     upload_file_mock.assert_called()
     written_file = upload_file_mock.call_args[0][1]
     # assert the output of the function is not processed again
-    assert not thumbnails.process_new_image(
-        written_file, url(written_file)
-    ), written_file
+    assert not thumbnails.process_new_image(written_file, url(written_file)), (
+        written_file
+    )

@@ -4,6 +4,7 @@ import logging
 from datetime import datetime
 from hashlib import md5
 
+from google.cloud.functions.context import Context
 from requests import get
 
 import phenoback.utils.data as d
@@ -18,11 +19,11 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-class ResourceNotFoundException(Exception):
+class ResourceNotFoundError(Exception):
     pass
 
 
-def main(data, context):  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # noqa: ARG001
     phenoyear = d.get_phenoyear()
     log.info("Import meteoswiss stations")
     process_stations(phenoyear)
@@ -37,10 +38,9 @@ def process_stations(year: int) -> bool:
     )
     if response.ok:
         return process_stations_response(year, response.text, response.elapsed)
-    else:
-        msg = f"Could not fetch station data ({response.status_code})"
-        log.error(msg)
-        raise ResourceNotFoundException(msg)
+    msg = f"Could not fetch station data ({response.status_code})"
+    log.error(msg)
+    raise ResourceNotFoundError(msg)
 
 
 def process_stations_response(
@@ -56,13 +56,12 @@ def process_stations_response(
             "stations", str(phenoyear) + csv_string
         )  # trigger re-import in new phenoyear
         return True
-    else:
-        log.info("Station file did not change.")
-        return False
+    log.info("Station file did not change.")
+    return False
 
 
-def _clean_station_csv(text):
-    return text.split("\n\n")[0]
+def _clean_station_csv(text: str) -> str:
+    return text.split("\n\n", maxsplit=1)[0]
 
 
 def _get_individuals_dicts(phenoyear: int, stations: csv.DictReader) -> list[dict]:
@@ -92,10 +91,9 @@ def process_observations() -> bool:
     )
     if response.ok:
         return process_observations_response(response.text, response.elapsed)
-    else:
-        msg = f"Could not fetch observation data ({response.status_code})"
-        log.error(msg)
-        raise ResourceNotFoundException(msg)
+    msg = f"Could not fetch observation data ({response.status_code})"
+    log.error(msg)
+    raise ResourceNotFoundError(msg)
 
 
 def process_observations_response(response_text: str, response_elapsed: float) -> bool:
@@ -113,9 +111,8 @@ def process_observations_response(response_text: str, response_elapsed: float) -
         _update_station_species(_get_station_species(observations))
         _set_hash("observations", response_text)
         return True
-    else:
-        log.info("Observations file did not change.")
-        return False
+    log.info("Observations file did not change.")
+    return False
 
 
 def _get_observations_dicts(observations: csv.DictReader) -> list[dict]:
@@ -124,7 +121,7 @@ def _get_observations_dicts(observations: csv.DictReader) -> list[dict]:
         {
             "id": f"{observation['nat_abbr']}_{observation['reference_year']}_{mapping[observation['param_id']]['species']}_{mapping[observation['param_id']]['phenophase']}",
             "user": "meteoswiss",
-            "date": d.localtime(datetime.strptime(observation["value"], "%Y%m%d")),
+            "date": d.localtime(datetime.strptime(observation["value"], "%Y%m%d")),  # noqa: DTZ007
             "individual_id": f"{observation['reference_year']}_{observation['nat_abbr']}",
             "individual": observation["nat_abbr"],
             "source": "meteoswiss",
@@ -147,12 +144,12 @@ def _get_station_species(observations: list[dict]) -> dict[str, list[str] | None
 
 
 def _update_station_species(station_species: dict) -> None:
-    for key in station_species.keys():
-        data = {"station_species": ArrayUnion(station_species[key])}
+    for key, species in station_species.items():
+        data = {"station_species": ArrayUnion(species)}
         d.update_individual(key, data)
 
 
-def _set_hash(key: str, data: str):
+def _set_hash(key: str, data: str) -> None:
     hashed_data = _get_hash(data)
     write_document(
         "definitions", "meteoswiss_import", {f"hash_{key}": hashed_data}, merge=True

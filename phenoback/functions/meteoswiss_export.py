@@ -1,12 +1,14 @@
-"""
-Meteoswiss phenology data export
+"""Meteoswiss phenology data export.
 
-New PhaenoNet data mapped as good as possible to the previously existing export structure for meteoswiss.
+New PhaenoNet data mapped as good as possible to the
+previously existing export structure for meteoswiss.
 """
 
 import csv
 import io
 import logging
+
+from google.cloud.functions.context import Context
 
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
@@ -17,11 +19,11 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 
-def main(event, context):  # pylint: disable=unused-argument
+def main(event: dict, context: Context) -> None:  # noqa: ARG001
     process()
 
 
-def process(year: int = None):
+def process(year: int | None = None) -> None:
     if not year:
         year = d.get_phenoyear()
 
@@ -99,7 +101,7 @@ def process(year: int = None):
                 }
             )
         except Exception:  # pylint: disable=broad-except
-            log.error("Error processing observation, skipping %s", o, exc_info=True)
+            log.exception("Error processing observation, skipping %s", o)
 
     if results:
         with io.StringIO() as csv_string:

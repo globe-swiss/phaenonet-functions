@@ -1,11 +1,12 @@
 import csv
 import io
 import logging
-import os
 from datetime import datetime
 from functools import lru_cache
+from pathlib import Path
 from zipfile import ZipFile
 
+from google.cloud.functions.context import Context
 from google.cloud.storage import Blob
 
 from phenoback.functions.statistics import weekly
@@ -50,10 +51,8 @@ PHASES_MAP = {
 }
 
 
-def main(data, context):  # pylint: disable=unused-argument
-    """
-    Import wld data on file upload to private/wld_import
-    """
+def main(data: dict, context: Context) -> None:  # noqa: ARG001
+    """Import wld data on file upload to private/wld_import."""
     pathfile = data["name"]
     if pathfile.startswith("private/wld_import/"):
         # default to previous year if not specified
@@ -78,7 +77,7 @@ def members_by_basename(z: ZipFile) -> dict[str, list[str]]:
     for m in z.namelist():
         if m.endswith("/"):
             continue
-        base = os.path.basename(m)
+        base = Path(m).name
         if not base:  # pragma: no cover - guard against empty basenames
             continue
         result.setdefault(base, []).append(m)
@@ -86,8 +85,7 @@ def members_by_basename(z: ZipFile) -> dict[str, list[str]]:
 
 
 def check_zip_archive(input_zip: ZipFile) -> None:
-    """
-    Validates that the ZIP archive contains all required files.
+    """Validates that the ZIP archive contains all required files.
 
     :param input_zip: ZipFile object to validate
     :raises FileNotFoundError: If required files are missing from the archive
@@ -97,15 +95,16 @@ def check_zip_archive(input_zip: ZipFile) -> None:
     log.debug("Files found in zip: %s", str(members))
     missing = [f for f in FILES if f not in members]
     if missing:
-        raise FileNotFoundError(f"Missing files {missing} expected {FILES}")
+        msg = f"Missing files {missing} expected {FILES}"
+        raise FileNotFoundError(msg)
     duplicates = [f for f, v in members.items() if len(v) > 1 and f in FILES]
     if duplicates:
-        raise ValueError(f"Duplicate files found in archive: {duplicates}")
+        msg = f"Duplicate files found in archive: {duplicates}"
+        raise ValueError(msg)
 
 
 def check_file_size(blob: Blob) -> None:
-    """
-    Checks if the uploaded file size is within acceptable limits.
+    """Checks if the uploaded file size is within acceptable limits.
 
     :param blob: Google Cloud Storage blob to check
     :raises OverflowError: If file size exceeds MAX_ARCHIVE_BYTES
@@ -113,12 +112,12 @@ def check_file_size(blob: Blob) -> None:
     size = blob.size
     log.debug("Import file size %ib", size)
     if size > MAX_ARCHIVE_BYTES:
-        raise OverflowError(f"File bigger than {MAX_ARCHIVE_BYTES / 1000}kb")
+        msg = f"File bigger than {MAX_ARCHIVE_BYTES / 1000}kb"
+        raise OverflowError(msg)
 
 
 def load_data(input_zip: ZipFile) -> dict[str, list[dict]]:
-    """
-    Loads CSV data from the ZIP archive into a dictionary.
+    """Loads CSV data from the ZIP archive into a dictionary.
 
     :param input_zip: ZipFile containing CSV files
     :returns: Dictionary mapping filenames to lists of dictionaries representing CSV rows
@@ -134,9 +133,8 @@ def load_data(input_zip: ZipFile) -> dict[str, list[dict]]:
     return data
 
 
-def check_data_integrity():
-    """
-    Validates data integrity across all imported CSV files.
+def check_data_integrity() -> None:
+    """Validates data integrity across all imported CSV files.
 
     Checks:
     - All user_ids in observations exist in users file
@@ -184,7 +182,7 @@ def check_data_integrity():
             error = True
         site_year_user.setdefault(site_id, {})[year] = user_id
         # tree_id is a composed key of ${statcode}_${tree_id}
-        if len(tree_id.split("_", 1)) != 2:
+        if len(tree_id.split("_", 1)) != 2:  # noqa: PLR2004
             log.error("wrong tree_id format: %s", tree_id)
             error = True
 
@@ -193,18 +191,18 @@ def check_data_integrity():
         error = True
 
     if error:
-        raise ValueError("Data integrity check failed")
+        msg = "Data integrity check failed"
+        raise ValueError(msg)
 
 
-def import_data(pathfile: str, year: int, bucket=None):
-    """
-    Main import function that processes WLD data from a ZIP file.
+def import_data(pathfile: str, year: int, bucket: str | None = None) -> None:
+    """Main import function that processes WLD data from a ZIP file.
 
     :param pathfile: Path to the ZIP file in cloud storage
     :param bucket: Optional GCS bucket (defaults to configured bucket)
     :param year: Year to import data for (defaults to previous phenological year)
     """
-    global loaded_data  # pylint: disable=global-statement
+    global loaded_data  # noqa: PLW0603  # pylint: disable=global-statement
 
     log.info("importing year %i", year)
     blob = s.get_blob(bucket, pathfile)
@@ -223,8 +221,7 @@ def import_data(pathfile: str, year: int, bucket=None):
 
 @lru_cache
 def station_species() -> dict[str, set[str]]:
-    """
-    Creates a mapping of site IDs to sets of species present at each site.
+    """Creates a mapping of site IDs to sets of species present at each site.
 
     :returns: Dictionary mapping site_id to set of species codes
     """
@@ -236,8 +233,7 @@ def station_species() -> dict[str, set[str]]:
 
 @lru_cache
 def tree_species() -> dict[str, dict[str, str]]:
-    """
-    Creates a nested mapping of site IDs to tree IDs to species.
+    """Creates a nested mapping of site IDs to tree IDs to species.
 
     :returns: Dictionary mapping site_id -> tree_id -> species code
     """
@@ -251,8 +247,7 @@ def tree_species() -> dict[str, dict[str, str]]:
 
 @lru_cache
 def site_users() -> dict[str, dict[str, str]]:
-    """
-    Creates a mapping of site IDs to years to user IDs.
+    """Creates a mapping of site IDs to years to user IDs.
 
     :returns: Dictionary mapping site_id -> year -> user_id
     """
@@ -263,8 +258,7 @@ def site_users() -> dict[str, dict[str, str]]:
 
 
 def get_site_species(site_id: str) -> list[str]:
-    """
-    Gets list of species present at a specific site.
+    """Gets list of species present at a specific site.
 
     :param site_id: ID of the site
     :returns: List of species codes (filtered to remove None values)
@@ -273,8 +267,7 @@ def get_site_species(site_id: str) -> list[str]:
 
 
 def get_tree_species(site_id: str, tree_id: str) -> str:
-    """
-    Gets the species of a specific tree at a site.
+    """Gets the species of a specific tree at a site.
 
     :param site_id: ID of the site
     :param tree_id: ID of the tree
@@ -284,8 +277,7 @@ def get_tree_species(site_id: str, tree_id: str) -> str:
 
 
 def get_user(site_id: str, year: str) -> str:
-    """
-    Gets the user ID who made observations at a site in a specific year.
+    """Gets the user ID who made observations at a site in a specific year.
 
     :param site_id: ID of the site
     :param year: Year as string
@@ -294,9 +286,8 @@ def get_user(site_id: str, year: str) -> str:
     return site_users().get(site_id, {}).get(str(year))
 
 
-def wsl_user(user_id) -> str:
-    """
-    Formats a WSL user ID with the source prefix.
+def wsl_user(user_id: str) -> str:
+    """Formats a WSL user ID with the source prefix.
 
     :param user_id: Original user ID
     :returns: Formatted user ID with 'wld_' prefix
@@ -304,19 +295,17 @@ def wsl_user(user_id) -> str:
     return f"{SOURCE}_{user_id}"
 
 
-def map_species(wsl_species) -> str:
-    """
-    Maps WSL species ID to internal species code.
+def map_species(wsl_species: str) -> str | None:
+    """Maps WSL species ID to internal species code.
 
     :param wsl_species: WSL species ID
     :returns: Internal species code or None if not mapped
     """
-    return SPECIES_MAP.get(wsl_species, None)
+    return SPECIES_MAP.get(wsl_species)
 
 
-def map_phenophase(wsl_observation_id):
-    """
-    Maps WSL observation ID to internal phenophase code.
+def map_phenophase(wsl_observation_id: str) -> str:
+    """Maps WSL observation ID to internal phenophase code.
 
     :param wsl_observation_id: WSL observation ID
     :returns: Internal phenophase code
@@ -324,9 +313,8 @@ def map_phenophase(wsl_observation_id):
     return PHASES_MAP[wsl_observation_id]
 
 
-def individuals(year: int):
-    """
-    Creates individual records for all sites with observations in the given year.
+def individuals(year: int) -> list[dict]:
+    """Creates individual records for all sites with observations in the given year.
 
     :param year: Year to process
     :returns: List of individual dictionaries ready for Firestore insertion
@@ -349,9 +337,8 @@ def individuals(year: int):
     ]
 
 
-def observations(year: int):
-    """
-    Creates observation records for the given year.
+def observations(year: int) -> list[dict]:
+    """Creates observation records for the given year.
 
     :param year: Year to filter observations
     :returns: List of observation dictionaries ready for Firestore insertion
@@ -365,7 +352,7 @@ def observations(year: int):
             "user": f"{SOURCE}_{o['user_id']}",
             "year": year,
             "tree_id": o["tree_id"].split("_", 1)[1],
-            "date": d.localtime(datetime.strptime(o["date"], "%Y-%m-%d")),
+            "date": d.localtime(datetime.strptime(o["date"], "%Y-%m-%d")),  # noqa: DTZ007
             "phenophase": map_phenophase(o["observation_id"]),
             "source": SOURCE,
         }
@@ -374,9 +361,8 @@ def observations(year: int):
     ]
 
 
-def users():
-    """
-    Creates user records from imported user data.
+def users() -> list[dict]:
+    """Creates user records from imported user data.
 
     :returns: List of user dictionaries with formatted IDs and names
     """
@@ -391,9 +377,8 @@ def users():
     ]
 
 
-def public_users():
-    """
-    Creates public user records with limited information.
+def public_users() -> list[dict]:
+    """Creates public user records with limited information.
 
     :returns: List of public user dictionaries with ID, nickname, and roles
     """
@@ -404,8 +389,7 @@ def public_users():
 
 
 def insert_data(collection: str, documents: list[dict]) -> None:
-    """
-    Batch inserts documents into a Firestore collection.
+    """Batch inserts documents into a Firestore collection.
 
     :param collection: Name of the Firestore collection
     :param documents: List of documents to insert

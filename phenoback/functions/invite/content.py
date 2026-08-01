@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
@@ -8,7 +9,9 @@ from phenoback.utils import gcloud
 @dataclass
 class InviteMail:
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, to_mail, from_mail, nickname, language) -> None:
+    def __init__(
+        self, to_mail: str, from_mail: str, nickname: str, language: str
+    ) -> None:
         self.from_name = "PhaenoNet"
         self.from_mail = "no-reply@phaenonet.ch"
         self.reply_to = "info@phaenonet.ch"
@@ -31,15 +34,15 @@ env = Environment(
 )
 
 
-def subject(language: str):
+def subject(language: str) -> str:
     return subjects[language]
 
 
-def text_body(language: str, nickname: str, email: str):
+def text_body(language: str, nickname: str, email: str) -> str:
     return _render(language + ".txt.j2", nickname=nickname, email=email)
 
 
-def html_body(language: str, nickname: str, email: str):
+def html_body(language: str, nickname: str, email: str) -> str:
     return _render(
         language + ".html.j2",
         nickname=nickname,
@@ -48,5 +51,5 @@ def html_body(language: str, nickname: str, email: str):
     )
 
 
-def _render(filename: str, **kwargs):
+def _render(filename: str, **kwargs: Any) -> str:  # noqa: ANN401
     return env.get_template(filename).render(kwargs)

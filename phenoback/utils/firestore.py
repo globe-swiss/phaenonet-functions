@@ -21,7 +21,7 @@ from google.cloud.firestore_v1.transaction import Transaction as _Transaction
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
-_db = None  # pylint: disable=invalid-name
+_db = None
 
 # exported
 DELETE_FIELD = _DELETE_FIELD
@@ -37,18 +37,18 @@ FieldFilter = _FieldFilter
 
 
 def firestore_client() -> Client:
-    global _db  # pylint: disable=invalid-name,global-statement
+    global _db  # noqa: PLW0603
     if not _db:  # pragma: no cover
         _db = firestore.client()
     return _db
 
 
-def get_transaction():
+def get_transaction() -> Transaction:
     return firestore_client().transaction()
 
 
 @contextmanager
-def transaction_commit():
+def transaction_commit():  # noqa: ANN201
     transaction = get_transaction()
     yield transaction
     transaction.commit()
@@ -65,7 +65,9 @@ def delete_document(
         ref.delete()
 
 
-def _delete_batch(coll_ref, batch_size: int = 1000):
+def _delete_batch(
+    coll_ref: Query | CollectionReference, batch_size: int = 1000
+) -> None:
     docs = coll_ref.limit(batch_size).stream()
     deleted = 0
 
@@ -76,8 +78,7 @@ def _delete_batch(coll_ref, batch_size: int = 1000):
 
     if deleted >= batch_size:
         return _delete_batch(coll_ref, batch_size)
-    else:
-        return None
+    return None
 
 
 def delete_collection(collection_name: str, batch_size: int = 1000) -> None:
@@ -85,7 +86,11 @@ def delete_collection(collection_name: str, batch_size: int = 1000) -> None:
 
 
 def delete_batch(
-    collection: str, field_path: str, op_string: str, value: Any, batch_size: int = 1000
+    collection: str,
+    field_path: str,
+    op_string: str,
+    value: Any,  # noqa: ANN401
+    batch_size: int = 1000,
 ) -> None:
     query = query_collection(collection, field_path, op_string, value)
     _delete_batch(query, batch_size=batch_size)
@@ -226,7 +231,10 @@ def collection(collection: str) -> CollectionReference:
 
 
 def query_collection(
-    collection: str, field_path: str, op_string: str, value: Any
+    collection: str,
+    field_path: str,
+    op_string: str,
+    value: Any,  # noqa: ANN401
 ) -> Query:
     log.debug("Query %s where %s %s %s", collection, field_path, op_string, value)
     return (
@@ -240,7 +248,7 @@ def get_collection_documents(collection_name: str) -> list[dict]:
     return [location.to_dict() for location in collection(collection_name).stream()]
 
 
-def docs2str(docs):  # pragma: no cover
+def docs2str(docs: list) -> list[str]:  # pragma: no cover
     return [f"({doc.id}, {doc.to_dict()})" for doc in docs]
 
 

@@ -1,8 +1,9 @@
 import logging
-import os
 from io import BytesIO
+from pathlib import Path
 
 import tinify
+from google.cloud.functions.context import Context
 
 from phenoback.utils import gsecrets
 from phenoback.utils.storage import get_public_firebase_url, upload_file
@@ -14,20 +15,19 @@ THUMBNAIL_WIDTH = 302
 THUMBNAIL_HEIGHT = 302
 
 
-def main(data, context):  # pylint: disable=unused-argument
-    """
-    Creates thumbnails for images uploaded to google cloud storage.
-    """
+def main(data: dict, context: Context) -> None:  # noqa: ARG001
+    """Creates thumbnails for images uploaded to google cloud storage."""
     pathfile = data["name"]
     if pathfile.startswith("images/"):
         log.info("Process thumbnail for %s", pathfile)
         process_new_image(pathfile)
 
 
-def process_new_image(pathfile: str, bucket=None) -> bool:
-    path = os.path.split(pathfile)[0]
-    filename_base = os.path.splitext(os.path.split(pathfile)[1])[0]
-    filename_ext = os.path.splitext(pathfile)[1]
+def process_new_image(pathfile: str, bucket: str | None = None) -> bool:
+    p = Path(pathfile)
+    path = str(p.parent)
+    filename_base = p.stem
+    filename_ext = p.suffix
 
     if path.startswith("images/") and not filename_base.endswith("_tn"):
         log.debug("creating thumbnail for %s", pathfile)
@@ -46,9 +46,8 @@ def process_new_image(pathfile: str, bucket=None) -> bool:
             cache_control="public, max-age=31536000",
         )
         return True
-    else:
-        log.debug("skipping thumbnail creation for %s", pathfile)
-        return False
+    log.debug("skipping thumbnail creation for %s", pathfile)
+    return False
 
 
 def get_thumbnail(url: str, width: int, height: int) -> BytesIO:
@@ -58,7 +57,7 @@ def get_thumbnail(url: str, width: int, height: int) -> BytesIO:
     return BytesIO(resized.to_buffer())
 
 
-def setkey():
+def setkey() -> None:
     try:
         tinify.key = gsecrets.get_tinify_apikey()
         tinify.validate()  # pylint: disable=no-member

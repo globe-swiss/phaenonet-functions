@@ -1,6 +1,7 @@
 import logging
 
 import google.api_core.exceptions
+from google.cloud.functions.context import Context
 
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
@@ -13,10 +14,8 @@ INVITE_COLLECTION = "invites"
 LOOKUP_COLLECTION = "invites_lookup"
 
 
-def main(data, context):
-    """
-    Processes invite related documents if a user is created, modified or deleted.
-    """
+def main(data: dict, context: Context) -> None:
+    """Processes invite related documents if a user is created, modified or deleted."""
     user_id = g.get_document_id(context)
     nickname = g.get_field(
         data, "nickname", expected=False
@@ -40,26 +39,20 @@ def invite_id(user_id: str, email: str) -> str:
 
 
 def get_invite_ids(user_id: str) -> list[str]:
-    """
-    Get all invite ids that invited the given user.
-    """
+    """Get all invite ids that invited the given user."""
     email = d.get_email(user_id)
     lookup = f.get_document(LOOKUP_COLLECTION, email)
     return lookup["invites"] if lookup else []
 
 
 def register_user(user_id: str) -> None:
-    """
-    Register the given user on all invites pointing to him.
-    """
+    """Register the given user on all invites pointing to him."""
     for invite_id in get_invite_ids(user_id):
         register_user_invite(invite_id, user_id)
 
 
 def register_user_invite(invite_id: str, user_id: str) -> None:
-    """
-    Register an user on a specific invite.
-    """
+    """Register an user on a specific invite."""
     user = d.get_user(user_id)
     if not user:
         log.error("User not found %s", user_id)
@@ -79,7 +72,6 @@ def register_user_invite(invite_id: str, user_id: str) -> None:
             },
         )
         invite = f.get_document(INVITE_COLLECTION, invite_id)
-        assert invite
         inviter_id = invite["user"]
         d.follow_user(inviter_id, user_id)
     except google.api_core.exceptions.NotFound:

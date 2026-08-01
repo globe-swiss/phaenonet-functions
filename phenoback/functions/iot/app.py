@@ -1,6 +1,7 @@
 import logging
 
 import google.api_core.exceptions
+from google.cloud.functions.context import Context
 
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
@@ -12,13 +13,17 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 COLLECTION = "sensors"
+MIN_VALID_TEMPERATURE = -50
+MAX_VALID_TEMPERATURE = 50
+MIN_VALID_HUMIDITY = 0
+MAX_VALID_HUMIDITY = 100
 
 
-def main(data, context):  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # noqa: ARG001
     process_dragino(data)
 
 
-def main_individual_updated(data, context):
+def main_individual_updated(data: dict, context: Context) -> None:
     if g.is_field_updated(data, "deveui"):
         log.debug("DevEUI updated")
         individual_id = g.get_document_id(context)
@@ -54,7 +59,7 @@ def get_individual_id(year: int, deveui: str) -> str | None:
     return individual_id
 
 
-def update(data: dict, year: int, individual_id: str):
+def update(data: dict, year: int, individual_id: str) -> None:
     soil_humidity = data["soilHumidity"]["value"]
     soil_temperature = data["soilTemperature"]["value"]
     air_humidity = data["airHumidity"]["value"]
@@ -77,12 +82,12 @@ def update(data: dict, year: int, individual_id: str):
     )
 
 
-def valid_temperature(temperature):
-    return -50 <= temperature <= 50
+def valid_temperature(temperature: float) -> bool:
+    return MIN_VALID_TEMPERATURE <= temperature <= MAX_VALID_TEMPERATURE
 
 
-def valid_humidity(humidity):
-    return 0 <= humidity <= 100
+def valid_humidity(humidity: float) -> bool:
+    return MIN_VALID_HUMIDITY <= humidity <= MAX_VALID_HUMIDITY
 
 
 # pylint: disable=too-many-positional-arguments
@@ -93,7 +98,7 @@ def update_history(
     soil_temperature: float,
     air_humidity: float,
     air_temperature: float,
-):
+) -> None:
     if (
         valid_humidity(air_humidity)
         and valid_humidity(soil_humidity)
@@ -131,7 +136,7 @@ def update_individual(
     soil_temperature: float,
     air_humidity: float,
     air_temperature: float,
-):
+) -> None:
     d.update_individual(
         individual_id,
         {
@@ -156,7 +161,7 @@ def sensor_set(individual_id: str, individual: str, deveui: str) -> None:
     dragino.set_uplink_frequency(deveui, 3600)
 
 
-def remove_sensor(individual_id) -> None:
+def remove_sensor(individual_id: str) -> None:
     log.info("remove sensor from individual_id %s", individual_id)
     d.update_individual(
         individual_id,
@@ -168,7 +173,7 @@ def remove_sensor(individual_id) -> None:
 
 
 def clear_sensors(year: int) -> int:
-    """Clears all sensor data on individuals"""
+    """Clears all sensor data on individuals."""
     log.info("clear all sensors for %i", year)
     individual_ids = [
         doc.id

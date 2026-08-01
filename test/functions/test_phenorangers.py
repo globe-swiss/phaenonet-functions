@@ -1,5 +1,3 @@
-from test.util import Doc, get_random_string
-
 import pytest
 from flask import Request
 from werkzeug.test import EnvironBuilder
@@ -7,9 +5,10 @@ from werkzeug.test import EnvironBuilder
 from phenoback.functions import phenorangers
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
+from test.util import Doc, get_random_string
 
 
-@pytest.fixture()
+@pytest.fixture
 def public_user() -> Doc:
     doc_id = get_random_string(12)
     user = {"nickname": "nickname"}

@@ -1,12 +1,11 @@
-# allow import outside toplevel as not all modules need to be loaded for every function
-# pylint: disable=import-outside-toplevel
 import logging
 import os
 from contextlib import contextmanager
 
 import firebase_admin
 import sentry_sdk
-from flask import Request
+from flask import Request, Response
+from google.cloud.functions.context import Context
 from sentry_sdk.integrations.gcp import GcpIntegration
 from sentry_sdk.types import Event, Hint
 
@@ -18,14 +17,14 @@ def sentry_environment() -> tuple[str, float, float]:
     project = g.get_project()
     if project == "phaenonet":
         return ("production", 1.0, 0.0)
-    elif project == "phaenonet-test":
+    if project == "phaenonet-test":
         return ("test", 1.0, 0.0)
-    else:
-        return ("local", 0.0, 0.0)
+    return ("local", 0.0, 0.0)
 
 
 def before_send(
-    event: Event, hint: Hint  # pylint: disable=unused-argument
+    event: Event,
+    hint: Hint,  # noqa: ARG001
 ) -> Event | None:
     """Filter out log messages containing #no-sentry marker."""
     if "logentry" in event and event["logentry"].get("message"):  # pragma: no cover
@@ -49,17 +48,20 @@ firebase_admin.initialize_app(
     options={"storageBucket": os.environ.get("storageBucket")}
 )
 
-log: logging.Logger = None  # type: ignore # pylint: disable=invalid-name
+log: logging.Logger = None  # type: ignore  # noqa: PGH003
 
 
 @contextmanager  # workaround as stackdriver fails to capture stackstraces
-def setup(data: str | dict | Request | None, context=None, level=logging.DEBUG):
-    """
-    Setup logging and and capture exceptions.
+def setup(  # noqa: ANN201
+    data: str | dict | Request | None,
+    context: Context | None = None,
+    level: int = logging.DEBUG,
+):
+    """Setup logging and and capture exceptions.
     :param data: May be a dict, a http request or None.
     """
     try:
-        global log  # pylint: disable=global-statement,invalid-name
+        global log  # noqa: PLW0603
         glogging.init()
         log = logging.getLogger(__name__)
         log.setLevel(level)
@@ -78,14 +80,14 @@ def setup(data: str | dict | Request | None, context=None, level=logging.DEBUG):
 
 
 @contextmanager
-def invoke():
+def invoke():  # noqa: ANN201
     try:
         yield
-    except Exception as ex:  # pylint: disable=broad-except
-        log.error("Error in execution", exc_info=ex)
+    except Exception:  # pylint: disable=broad-except
+        log.exception("Error in execution")
 
 
-def fs_observations_write(data, context):
+def fs_observations_write(data: dict, context: Context) -> None:
     with setup(data, context):
         with invoke():
             from phenoback.functions import activity
@@ -97,10 +99,8 @@ def fs_observations_write(data, context):
             individual.main(data, context)
 
 
-def fs_users_write(data, context):
-    """
-    Execute all functions to user related document changes (created, modified or deleted).
-    """
+def fs_users_write(data: dict, context: Context) -> None:
+    """Execute all functions to user related document changes (created, modified or deleted)."""
     with setup(data, context):
         with invoke():
             from phenoback.functions import users
@@ -112,27 +112,23 @@ def fs_users_write(data, context):
             register.main(data, context)
 
 
-def ps_import_meteoswiss_data(event, context):
-    """
-    Imports meteoswiss stations and observations.
-    """
+def ps_import_meteoswiss_data(event: dict, context: Context) -> None:
+    """Imports meteoswiss stations and observations."""
     data = g.get_data(event)
-    with setup(data, context):
-        with invoke():
-            from phenoback.functions import meteoswiss_import
+    with setup(data, context), invoke():
+        from phenoback.functions import meteoswiss_import
 
-            meteoswiss_import.main(data, context)
-
-
-def fs_document_write(data, context):
-    with setup(data, context):
-        with invoke():
-            from phenoback.functions import documents
-
-            documents.main(data, context)
+        meteoswiss_import.main(data, context)
 
 
-def st_appspot_finalize(data, context):
+def fs_document_write(data: dict, context: Context) -> None:
+    with setup(data, context), invoke():
+        from phenoback.functions import documents
+
+        documents.main(data, context)
+
+
+def st_appspot_finalize(data: dict, context: Context) -> None:
     with setup(data, context):
         with invoke():
             from phenoback.functions import thumbnails
@@ -144,42 +140,36 @@ def st_appspot_finalize(data, context):
             wld_import.main(data, context)
 
 
-def ps_rollover_phenoyear(event, context):
-    """
-    Rollover the phenoyear and creates data for meteoswiss export.
+def ps_rollover_phenoyear(event: dict, context: Context) -> None:
+    """Rollover the phenoyear and creates data for meteoswiss export.
     Rollover is based on the year defined in the dynamic configuration
     definition in firestore.
     """
     data = g.get_data(event)
-    with setup(data, context):
-        with invoke():
-            from phenoback.functions import meteoswiss_export, rollover
+    with setup(data, context), invoke():
+        from phenoback.functions import meteoswiss_export, rollover
 
-            meteoswiss_export.main(data, context)
-            rollover.main(data, context)
+        meteoswiss_export.main(data, context)
+        rollover.main(data, context)
 
 
-def ps_export_meteoswiss_data(event, context):
-    """
-    Manually trigger a meteoswiss export for a given year.
-    """
+def ps_export_meteoswiss_data(event: dict, context: Context) -> None:
+    """Manually trigger a meteoswiss export for a given year."""
     data = g.get_data(event)
-    with setup(data, context):
-        with invoke():
-            from phenoback.functions import meteoswiss_export
+    with setup(data, context), invoke():
+        from phenoback.functions import meteoswiss_export
 
-            meteoswiss_export.main(data, context)
-
-
-def fs_invites_write(data, context):
-    with setup(data, context):
-        with invoke():
-            from phenoback.functions.invite import invite
-
-            invite.main(data, context)
+        meteoswiss_export.main(data, context)
 
 
-def fs_individuals_write(data, context):
+def fs_invites_write(data: dict, context: Context) -> None:
+    with setup(data, context), invoke():
+        from phenoback.functions.invite import invite
+
+        invite.main(data, context)
+
+
+def fs_individuals_write(data: dict, context: Context) -> None:
     with setup(data, context):
         with invoke():
             import phenoback.functions.map
@@ -191,50 +181,43 @@ def fs_individuals_write(data, context):
             phenoback.functions.iot.app.main_individual_updated(data, context)
 
 
-def http_individuals_write__map(request: Request):
-    with setup(request):
-        with invoke():
-            import phenoback.functions.map
+def http_individuals_write__map(request: Request) -> Response:
+    with setup(request), invoke():
+        import phenoback.functions.map
 
-            return phenoback.functions.map.main_process(request)
-
-
-def http_reset_e2e_data(request: Request):
-    with setup(request):
-        with invoke():
-            from phenoback.functions import e2e
-
-            return e2e.main_reset(request)
+        return phenoback.functions.map.main_process(request)
 
 
-def http_restore_e2e_data(request: Request):
-    with setup(request):
-        with invoke():
-            from phenoback.functions import e2e
+def http_reset_e2e_data(request: Request) -> Response:
+    with setup(request), invoke():
+        from phenoback.functions import e2e
 
-            return e2e.main_restore(request)
-
-
-def http_promote_ranger(request: Request):
-    """
-    Promotes a normal user to Ranger.
-    """
-    with setup(request):
-        with invoke():
-            from phenoback.functions import phenorangers
-
-            return phenorangers.main(request)
+        return e2e.main_reset(request)
 
 
-def http_iot_dragino(request: Request):
-    with setup(request):
-        with invoke():
-            from phenoback.functions.iot import dragino
+def http_restore_e2e_data(request: Request) -> Response:
+    with setup(request), invoke():
+        from phenoback.functions import e2e
 
-            return dragino.main(request)
+        return e2e.main_restore(request)
 
 
-def ps_iot_dragino(event, context):
+def http_promote_ranger(request: Request) -> Response:
+    """Promotes a normal user to Ranger."""
+    with setup(request), invoke():
+        from phenoback.functions import phenorangers
+
+        return phenorangers.main(request)
+
+
+def http_iot_dragino(request: Request) -> Response:
+    with setup(request), invoke():
+        from phenoback.functions.iot import dragino
+
+        return dragino.main(request)
+
+
+def ps_iot_dragino(event: dict, context: Context) -> None:
     data = g.get_data(event)
     with setup(data, context):
         with invoke():
@@ -253,7 +236,7 @@ def ps_iot_dragino(event, context):
             bq.main(data, context)
 
 
-def ps_process_statistics(event, context):
+def ps_process_statistics(event: dict, context: Context) -> None:
     data = g.get_data(event)
     with setup(data, context):
         with invoke():
@@ -266,7 +249,7 @@ def ps_process_statistics(event, context):
             yearly.main(data, context)
 
 
-def test(data, context):  # pragma: no cover
+def test(data: dict, context: Context) -> None:  # pragma: no cover
     from time import sleep
 
     with setup(data, context):
@@ -310,16 +293,16 @@ def test(data, context):  # pragma: no cover
         sleep(1)
         log.critical("L - critical")
         sleep(1)
-        log.exception("L - exception", exc_info=Exception("myException"))
+        log.exception("L - exception", exc_info=Exception("myException"))  # noqa: LOG004
         sleep(1)
 
         with setup(
             "test data: with setup/invoke: should log Key Error", "test context"
         ):
             with invoke():
-                raise KeyError("Should log - setup/invoke first")
+                raise KeyError("Should log - setup/invoke first")  # noqa: TRY003, EM101
             with invoke():
-                raise KeyError("Should log - setup/invoke second")
+                raise KeyError("Should log - setup/invoke second")  # noqa: TRY003, EM101
 
         with setup("test data: with setup: should log Key Error", "test context"):
-            raise KeyError("Should log - setup")
+            raise KeyError("Should log - setup")  # noqa: TRY003, EM101

@@ -1,6 +1,6 @@
 # pylint: disable=protected-access
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
@@ -8,24 +8,24 @@ import phenoback.utils.data as d
 from phenoback.functions import individual as i
 
 
-@pytest.fixture()
+@pytest.fixture
 def individual():
     individual_id = "individual_id"
     data = {
         "type": "individual",
         "last_phenophase": "old_pp",
-        "last_observation_date": datetime(2019, 1, 1, tzinfo=timezone.utc),
+        "last_observation_date": datetime(2019, 1, 1, tzinfo=UTC),
     }
     d.write_individual(individual_id, data)
     return individual_id, data
 
 
-@pytest.fixture()
+@pytest.fixture
 def station():
     station_id = "station_id"
     data = {
         "type": "station",
-        "last_observation_date": datetime(2019, 1, 1, tzinfo=timezone.utc),
+        "last_observation_date": datetime(2019, 1, 1, tzinfo=UTC),
     }
     d.write_individual(station_id, data)
     return station_id, data
@@ -36,7 +36,7 @@ def create_last_observation(individual_id):
         "obs_1",
         {
             "individual_id": individual_id,
-            "date": datetime(2020, 1, 1, tzinfo=timezone.utc),
+            "date": datetime(2020, 1, 1, tzinfo=UTC),
             "phenophase": "A",
         },
     )
@@ -44,7 +44,7 @@ def create_last_observation(individual_id):
         "obs_3",
         {
             "individual_id": individual_id,
-            "date": datetime(2020, 1, 3, tzinfo=timezone.utc),
+            "date": datetime(2020, 1, 3, tzinfo=UTC),
             "phenophase": "C",
         },
     )
@@ -52,7 +52,7 @@ def create_last_observation(individual_id):
         "obs_2",
         {
             "individual_id": individual_id,
-            "date": datetime(2020, 1, 2, tzinfo=timezone.utc),
+            "date": datetime(2020, 1, 2, tzinfo=UTC),
             "phenophase": "B",
         },
     )
@@ -60,7 +60,7 @@ def create_last_observation(individual_id):
         "obs_3",
         {
             "individual_id": individual_id,
-            "date": datetime(2020, 1, 3, tzinfo=timezone.utc),
+            "date": datetime(2020, 1, 3, tzinfo=UTC),
             "phenophase": "C",
         },
     )

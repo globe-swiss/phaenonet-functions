@@ -1,5 +1,6 @@
 import logging
 import urllib.parse
+from typing import BinaryIO
 
 from firebase_admin import storage
 from google.cloud.storage import Blob
@@ -12,14 +13,15 @@ def get_blob(bucket: str, path: str) -> Blob:  # pragma: no cover
     log.debug("Fetch blob %s from %s", path, bucket)
     blob = storage.bucket(bucket).get_blob(path)
     if not blob:  # pragma: no cover
-        raise ValueError(f"Blob {path} not found in {bucket}")
+        msg = f"Blob {path} not found in {bucket}"
+        raise ValueError(msg)
     return blob
 
 
 def upload_file(
     bucket: str,
     path: str,
-    file,
+    file: BinaryIO,
     content_type: str | None = None,
     cache_control: str | None = None,
 ) -> None:  # pragma: no cover
@@ -33,7 +35,7 @@ def upload_file(
 def upload_string(
     bucket: str,
     path: str,
-    string,
+    string: str,
     content_type: str = "text/plain",
     cache_control: str | None = None,
 ) -> None:  # pragma: no cover
@@ -46,7 +48,8 @@ def upload_string(
 def get_public_firebase_url(bucket: str, path: str) -> str:
     bucket_name = storage.bucket(bucket).name
     if not bucket_name:  # pragma: no cover
-        raise ValueError(f"Bucket {bucket} not found")
+        msg = f"Bucket {bucket} not found"
+        raise ValueError(msg)
     return (
         "https://firebasestorage.googleapis.com/v0/b/"
         + bucket_name

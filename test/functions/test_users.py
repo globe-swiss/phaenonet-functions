@@ -5,17 +5,17 @@ from phenoback.functions import users
 from phenoback.utils import firestore as f
 
 
-@pytest.fixture()
+@pytest.fixture
 def user_id():
     return "user_id"
 
 
-@pytest.fixture()
+@pytest.fixture
 def nickname():
     return "nick1"
 
 
-@pytest.fixture()
+@pytest.fixture
 def nickname2():
     return "nick2"
 

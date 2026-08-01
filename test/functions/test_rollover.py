@@ -1,4 +1,3 @@
-# pylint: disable=unused-argument
 import pytest
 
 import phenoback.functions.map
@@ -101,9 +100,7 @@ def setup_source(source: str, rolled_source: bool):
 
 @pytest.fixture(autouse=True)
 def setup() -> None:
-    """
-    Setup based on rollover 2012 -> 2013.
-    """
+    """Setup based on rollover 2012 -> 2013."""
     setup_source("globe", True)
     setup_source("meteoswiss", False)
     setup_source("wld", False)
@@ -117,7 +114,7 @@ def current_phenoyear():
     return year
 
 
-def get_amt(year: int, field: str = None):
+def get_amt(year: int, field: str | None = None):
     query = f.collection("individuals").where(filter=f.FieldFilter("year", "==", year))
     if field and field.startswith("_"):
         query = query.where(filter=f.FieldFilter(field, "==", True))
@@ -171,7 +168,7 @@ def test_get_rollover_individuals__single_individual(current_phenoyear):
     )
     assert len(roll_individuals) == 1
     for individual in roll_individuals:
-        assert individual["id"] == f'{current_phenoyear + 1}_{individual["individual"]}'
+        assert individual["id"] == f"{current_phenoyear + 1}_{individual['individual']}"
         assert individual["individual"] == "2_globe"
 
 
@@ -221,18 +218,18 @@ def test_rollover__sensor_field(current_phenoyear):
     for sensor_doc in (
         d.query_individuals("year", "==", current_phenoyear).order_by("sensor").stream()
     ):
-        assert sensor_doc.to_dict()["sensor"] == {}
+        assert sensor_doc.to_dict()["sensor"] == {}  # pyright: ignore[reportOptionalSubscript]
     for sensor_doc in (
         d.query_individuals("year", "==", current_phenoyear + 1)
         .order_by("sensor")
         .stream()
     ):
-        assert sensor_doc.to_dict()["sensor"] == {}
+        assert sensor_doc.to_dict()["sensor"] == {}  # pyright: ignore[reportOptionalSubscript]
 
 
 def test_rollover__invalid_source(caperrors):
     setup_source("invalid", False)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Rollover rule"):
         rollover.rollover()
     assert len(caperrors.records) == 1
 

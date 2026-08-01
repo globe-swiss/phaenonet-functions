@@ -11,7 +11,6 @@ from phenoback.utils.firestore import (  # pylint: disable=unused-import
     Transaction,
     delete_batch,
     delete_document,
-    get_count,
     get_document,
     query_collection,
     update_document,
@@ -24,7 +23,8 @@ from phenoback.utils.firestore import (  # pylint: disable=unused-import
 def _get_static_config() -> dict:
     config = get_document("definitions", "config_static")
     if not config:
-        raise ValueError("config_static not found")  # pragma: no cover
+        msg = "config_static not found"
+        raise ValueError(msg)  # pragma: no cover
     return config
 
 
@@ -32,7 +32,8 @@ def _get_static_config() -> dict:
 def _get_dynamic_config() -> dict:
     config = get_document("definitions", "config_dynamic")
     if not config:
-        raise ValueError("config_dynamic not found")  # pragma: no cover
+        msg = "config_dynamic not found"
+        raise ValueError(msg)  # pragma: no cover
     return config
 
 
@@ -49,7 +50,7 @@ def is_actual_observation(comment: str | None) -> bool:
     return _get_static_config()["comments"].get(comment, {"stats": True})["stats"]
 
 
-def get_phenoyear(reset_cache=False) -> int:
+def get_phenoyear(reset_cache: bool = False) -> int:
     if reset_cache:
         _get_dynamic_config.cache_clear()
     return _get_dynamic_config()["phenoyear"]
@@ -78,11 +79,11 @@ def delete_individual(
     delete_document("individuals", individual_id, transaction=transaction)
 
 
-def delete_individuals(field_path: str, op_string: str, value: Any) -> None:
+def delete_individuals(field_path: str, op_string: str, value: Any) -> None:  # noqa: ANN401
     delete_batch("individuals", field_path, op_string, value)
 
 
-def query_individuals(field_path: str, op_string: str, value: Any) -> Query:
+def query_individuals(field_path: str, op_string: str, value: str | int) -> Query:
     return query_collection("individuals", field_path, op_string, value)
 
 
@@ -136,7 +137,7 @@ def write_observation(
     write_document("observations", observation_id, data, transaction=transaction)
 
 
-def query_observation(field_path: str, op_string: str, value: Any) -> Query:
+def query_observation(field_path: str, op_string: str, value: str | int) -> Query:
     return query_collection("observations", field_path, op_string, value)
 
 
@@ -170,9 +171,9 @@ def get_email(user_id: str) -> str:  # pragma: no cover
 def user_exists(email: str) -> bool:  # pragma: no cover
     try:
         auth.get_user_by_email(email)
-        return True
     except auth.UserNotFoundError:
         return False
+    return True
 
 
 def get_user_id_by_email(email: str) -> str:  # pragma: no cover
@@ -184,7 +185,8 @@ def follow_user(
 ) -> bool:
     user = get_user(follower_id, transaction=transaction)
     if not user:
-        raise ValueError(f"User not found {follower_id}")
+        msg = f"User not found {follower_id}"
+        raise ValueError(msg)
     if followee_id not in user.get("following_users", []):
         update_document(
             "users",
@@ -193,8 +195,7 @@ def follow_user(
             transaction=transaction,
         )
         return True
-    else:
-        return False
+    return False
 
 
 def has_observations(individual: dict) -> bool:
@@ -210,13 +211,11 @@ def localtime(timestamp: datetime | None = None) -> datetime:
     timezone = pytz.timezone("Europe/Zurich")
     if not timestamp:
         return datetime.now().astimezone(timezone)
-    else:
-        if timestamp.tzinfo is None:
-            # For naive datetimes, assume they are already in Europe/Zurich time
-            return timezone.localize(timestamp)
-        else:
-            # For timezone-aware datetimes, convert to Europe/Zurich
-            return timestamp.astimezone(timezone)
+    if timestamp.tzinfo is None:
+        # For naive datetimes, assume they are already in Europe/Zurich time
+        return timezone.localize(timestamp)
+    # For timezone-aware datetimes, convert to Europe/Zurich
+    return timestamp.astimezone(timezone)
 
 
 def localdate(timestamp: datetime | None = None) -> date:
@@ -224,8 +223,7 @@ def localdate(timestamp: datetime | None = None) -> date:
 
 
 def to_id_array(data: dict[str, dict], key: str = "id") -> list[dict]:
-    """
-    Convert a dictionary to an array of dictionaries with an additional key.
+    """Convert a dictionary to an array of dictionaries with an additional key.
     Useful for writing data in batch mode.
     """
     return [{key: k, **v} for k, v in data.items()]

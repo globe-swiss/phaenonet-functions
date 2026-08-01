@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime
 
+from google.cloud.functions.context import Context
+
 from phenoback.functions.invite import envelopesmail as mailer
 from phenoback.functions.invite import register
 from phenoback.functions.invite.content import InviteMail
@@ -15,10 +17,8 @@ INVITE_COLLECTION = "invites"
 LOOKUP_COLLECTION = "invites_lookup"
 
 
-def main(data, context):
-    """
-    Send email invites if invite is created or resend is set
-    """
+def main(data: dict, context: Context) -> None:
+    """Send email invites if invite is created or resend is set."""
     # process if new invite or resend was changed but not deleted
     if g.is_create_event(data) or (
         g.is_field_updated(data, "resend")
@@ -34,7 +34,11 @@ def main(data, context):
 
 
 def process(
-    doc_id: str, to_mail: str, locale: str, user_id: str, sent_date: datetime = None
+    doc_id: str,
+    to_mail: str,
+    locale: str,
+    user_id: str,
+    sent_date: datetime | None = None,
 ) -> bool:
     send = False
     if d.user_exists(to_mail):
@@ -46,21 +50,20 @@ def process(
         )
         invitee_user_id = d.get_user_id_by_email(to_mail)
         register.register_user_invite(doc_id, invitee_user_id)
-    else:
-        if sent_date is not None:
-            delta = d.localtime() - sent_date
-            if delta.total_seconds() < 600:  # resent only every 10 minutes
-                log.info(
-                    "Invite %s by %s to %s failed: Resend time of %i seconds to short",
-                    doc_id,
-                    user_id,
-                    to_mail,
-                    delta.total_seconds(),
-                )
-            else:
-                send = True
+    elif sent_date is not None:
+        delta = d.localtime() - sent_date
+        if delta.total_seconds() < 600:  # resent only every 10 minutes  # noqa: PLR2004
+            log.info(
+                "Invite %s by %s to %s failed: Resend time of %i seconds to short",
+                doc_id,
+                user_id,
+                to_mail,
+                delta.total_seconds(),
+            )
         else:
             send = True
+    else:
+        send = True
 
     if send:
         send_invite(doc_id, to_mail, locale, user_id)

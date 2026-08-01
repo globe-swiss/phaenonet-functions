@@ -201,7 +201,5 @@ def test_get_statistic_values__single_date():
 
 
 def test_get_statistic_values__no_values():
-    with pytest.raises(ValueError):
-        yearly.get_statistic_values(
-            []
-        )  # pylint: disable=use-implicit-booleaness-not-comparison
+    with pytest.raises(ValueError, match="zero-size array"):
+        yearly.get_statistic_values([])  # pylint: disable=use-implicit-booleaness-not-comparison

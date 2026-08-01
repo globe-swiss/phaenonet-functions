@@ -31,7 +31,7 @@ def test_main__year(mocker, data, context):
 
 
 @pytest.mark.parametrize(
-    "year, date, expected",
+    ("year", "date", "expected"),
     [
         (2000, datetime(2000, 1, 1), 1),
         (2000, datetime(2000, 1, 7), 1),
@@ -144,7 +144,7 @@ def test_calculate_1y_agg_statistics(mocker):
 
 
 @pytest.mark.parametrize(
-    "start_year, end_year, expected",
+    ("start_year", "end_year", "expected"),
     [
         (2000, 2000, 0),
         (2000, 2001, 2),

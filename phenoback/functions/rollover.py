@@ -1,8 +1,10 @@
 import logging
 
+from google.cloud.functions.context import Context
+
 from phenoback.functions import map as pheno_map
-from phenoback.functions.statistics import weekly
 from phenoback.functions.iot import app
+from phenoback.functions.statistics import weekly
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
 
@@ -17,7 +19,7 @@ SOURCE_ROLLOVER_MAPPING = {
 }
 
 
-def main(data, context):  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # noqa: ARG001
     rollover()
 
 
@@ -27,17 +29,16 @@ def does_rollover(individual: dict) -> bool:
         return SOURCE_ROLLOVER_MAPPING[source]
     except KeyError as ex:
         msg = f"Rollover rule for source '{source}' is not defined for {individual}"
-        log.error(msg)
+        log.exception(msg)
         raise ValueError(msg) from ex
 
 
 def get_rollover_individuals(
     source_phenoyear: int,
     target_phenoyear: int,
-    individual: str = None,
+    individual: str | None = None,
 ) -> list[dict]:
-    """
-    Copy individuals to a new phenoyear, removing all fields that are specific for the phenoyear.
+    """Copy individuals to a new phenoyear, removing all fields that are specific for the phenoyear.
     :param source_phenoyear:
     :param target_phenoyear:
     :return:
@@ -49,7 +50,7 @@ def get_rollover_individuals(
     for individual_doc in query.stream():
         individual = individual_doc.to_dict()
         if does_rollover(individual):
-            individual["id"] = f'{target_phenoyear}_{individual["individual"]}'
+            individual["id"] = f"{target_phenoyear}_{individual['individual']}"
             individual["year"] = target_phenoyear
             for key in [
                 "last_phenophase",
@@ -66,7 +67,7 @@ def get_rollover_individuals(
     return new_individuals
 
 
-def rollover():
+def rollover() -> None:
     source_phenoyear = d.get_phenoyear()
     target_phenoyear = source_phenoyear + 1
     log.info(
@@ -99,10 +100,9 @@ def rollover():
 
 
 def get_stale_individuals(year: int) -> list[str]:
-    """
-    Remove all individuals in Firestore that have no observations for any
+    """Remove all individuals in Firestore that have no observations for any
     sources or sensor data for the given phenoyear year.
-    :param year: the phenoyear
+    :param year: the phenoyear.
     """
     stale_list = []
     for individual_doc in d.query_individuals("year", "==", year).stream():
@@ -112,7 +112,7 @@ def get_stale_individuals(year: int) -> list[str]:
     return stale_list
 
 
-def remove_stale_individuals(year: int = None):
+def remove_stale_individuals(year: int | None = None) -> None:
     # split querying and deleting to avoid stream timeouts
     if not year:
         year = d.get_phenoyear() - 1

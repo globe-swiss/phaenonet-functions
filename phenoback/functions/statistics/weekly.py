@@ -3,6 +3,8 @@ from collections import defaultdict
 from datetime import datetime
 from functools import cache
 
+from google.cloud.functions.context import Context
+
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
 from phenoback.functions.statistics import datacache
@@ -13,7 +15,7 @@ log.setLevel(logging.DEBUG)
 STATISTIC_PHENOPHASES = {"BEA", "BES", "BFA", "BLA", "BLB", "BVA", "BVS", "FRA"}
 
 
-def main(data, context):  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # noqa: ARG001
     year = data["year"] if "year" in data else d.get_phenoyear()
     process_1y_aggregate_statistics(year)
 
@@ -33,8 +35,7 @@ def write_statistics(data: dict) -> None:
 
 
 def calculate_1y_agg_statistics(observations: list) -> dict:
-    """
-    Calculate 1-year aggregate statistics from the given observations.
+    """Calculate 1-year aggregate statistics from the given observations.
     Observations for multiple years can be provided.
     """
     statistics_result = {}
@@ -69,19 +70,15 @@ def calculate_1y_agg_statistics(observations: list) -> dict:
             statistic_doc["obs_woy"][str(woy)] += 1
             statistic_doc["year_obs_sum"][str(year)] += 1
             statistic_doc["agg_obs_sum"] += 1
-        except (KeyError, TypeError, ValueError) as e:  # pragma: no cover
+        except (KeyError, TypeError, ValueError):  # pragma: no cover
             # Log the error and continue with the next observation
-            log.error(
-                "Unexpected error processing observation (skipping) %s: %s", obs, e
-            )
+            log.exception("Unexpected error processing observation (skipping) %s", obs)
     return statistics_result
 
 
 @cache  # needed only for initial processing of all years
 def get_1y_agg_statistics(start_year: int, end_year: int) -> list:
-    """
-    Retrieve preprocessed 1-year aggregate statistics for the given year range. (end_year is excluded)
-    """
+    """Retrieve preprocessed 1-year aggregate statistics for the given year range. (end_year is excluded)."""
     statistics = []
     for year in range(start_year, end_year):
         query_result = [
@@ -103,11 +100,9 @@ def get_1y_agg_statistics(start_year: int, end_year: int) -> list:
 
 
 def calculate_statistics_aggregates(
-    year_agg_statistics: list, year_range_start, year_range_end
+    year_agg_statistics: list, year_range_start: int, year_range_end: int
 ) -> dict:
-    """
-    Take the 1-year aggregate statistics and aggregate them over a range of years. (year_range_end is excluded)
-    """
+    """Take the 1-year aggregate statistics and aggregate them over a range of years. (year_range_end is excluded)."""
     # Create a defaultdict to store the aggregated results
     agg_statistics_result = {}
 
@@ -150,15 +145,13 @@ def calculate_statistics_aggregates(
             ]
 
     # After the loop, update "years" field with the count of unique years
-    for agg_key, data in agg_statistics_result.items():
+    for agg_key, data in agg_statistics_result.items():  # noqa: B007
         data["years"] = len(data["year_obs_sum"])  # Count of unique years with data
     return agg_statistics_result
 
 
 def process_1y_aggregate_statistics(year: int) -> None:
-    """
-    Process and write the 1-year aggregate statistics for the given year to statistics collection.
-    """
+    """Process and write the 1-year aggregate statistics for the given year to statistics collection."""
     observations = datacache.get_observations(year, STATISTIC_PHENOPHASES)
     statistics = calculate_1y_agg_statistics(observations)
 
@@ -177,8 +170,7 @@ def process_5y_30y_aggregate_statistics(
     stat_start_range: int | None = None,
     stat_end_range: int | None = None,
 ) -> None:
-    """
-    Process and write the 5-year and 30-year aggregates to the statistics collection. (current_year is excluded)
+    """Process and write the 5-year and 30-year aggregates to the statistics collection. (current_year is excluded)
     Invoked on phenoyear roll-over.
     Loaded statistics are cached. Override range for processing of multiple years.
     @param current_year: The current year for which the 5-year and 30-year aggregates are calculated.

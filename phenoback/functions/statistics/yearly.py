@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Any
 
 import numpy as np
+from google.cloud.functions.context import Context
 
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
@@ -15,15 +16,13 @@ log.setLevel(logging.DEBUG)
 ANALYTIC_PHENOPHASES = {"BEA", "BLA", "BFA", "BVA", "FRA"}
 
 
-def main(data, context):  # pylint: disable=unused-argument
+def main(data: dict, context: Context) -> None:  # noqa: ARG001
     year = data["year"] if "year" in data else d.get_phenoyear()
     process_yearly_statistics(year)
 
 
 def process_yearly_statistics(year: int) -> None:
-    """
-    Process yearly statistics for the given year.
-    """
+    """Process yearly statistics for the given year."""
     observations = datacache.get_observations(year, ANALYTIC_PHENOPHASES)
     species_statistics = get_species_statistics(observations)
     altitude_statistics = get_altitude_statistics(observations)
@@ -103,8 +102,8 @@ def get_altitude_statistics(observations: list[Any]) -> dict:
         results[key]["year"] = year
         results[key]["species"] = species
         results[key]["source"] = source
-        for phenophase, alt_grp in phases.items():
-            for alt_grp, observation_dates in alt_grp.items():
+        for phenophase, alt_groups in phases.items():
+            for alt_grp, observation_dates in alt_groups.items():
                 results[key]["data"][phenophase][alt_grp] = get_statistic_values(
                     observation_dates
                 )

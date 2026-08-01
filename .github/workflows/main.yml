@@ -33,15 +33,11 @@ jobs:
       - name: Check bandit
         run: uv run bandit -r test phenoback main.py -c .bandit
         if: always()
-      - name: Check pylint
-        run: uv run pylint --reports=y phenoback test main.py
+      - name: Check ruff lint
+        run: uv run ruff check --output-format=github
         if: always()
-      - name: Check black
-        uses: reviewdog/action-black@9b4feb439b707a9b7673086795cc53e417a03abe # v3.23.0
-        with:
-          reporter: github-check
-          verbose: True
-          fail_on_error: True
+      - name: Check ruff format
+        run: uv run ruff format --check
         if: always()
       - name: Check markdownlint
         uses: reviewdog/action-markdownlint@6f0e0e8703a9e840ffefa37a2775832c51c1c640 # v0.28.0

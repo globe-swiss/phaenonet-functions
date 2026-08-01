@@ -21,9 +21,9 @@ def github_deploy_options(deploy_yaml):
 
 
 def test_entrypoints(main_functions, github_entrypoints):
-    assert set(github_entrypoints).issubset(
-        main_functions
-    ), f"Entrypoints not found in main: {set(github_entrypoints) - set(main_functions)}"
+    assert set(github_entrypoints).issubset(main_functions), (
+        f"Entrypoints not found in main: {set(github_entrypoints) - set(main_functions)}"
+    )
 
 
 def test_function_names(gcf_names, github_deploy_options):
@@ -35,7 +35,6 @@ def test_function_names(gcf_names, github_deploy_options):
 
 def test_runtime__consistency(main_yaml, deploy_yaml):
     python_runtime = deploy_yaml["env"]["RUNTIME"][6:]
-    print(f"py{python_runtime[0]}.{python_runtime[1:]}")
     assert (
         f"py{python_runtime[0]}.{python_runtime[1:]}"
         in main_yaml["jobs"]["test"]["container"]

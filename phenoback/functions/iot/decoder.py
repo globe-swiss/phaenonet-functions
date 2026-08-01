@@ -1,11 +1,11 @@
 class Decoder:
-    def __init__(self, data: dict):
+    def __init__(self, data: dict) -> None:
         self._data = data
         if self.payload:
             self.int_pl = int(self.payload, 16)
             self.size = len(self.payload) * 4
 
-    def get_value(self, start, length, signed=False):
+    def get_value(self, start: int, length: int, signed: bool = False) -> int:
         shift = self.size - start - length
         mask = ((1 << length) - 1) << shift
         value = (self.int_pl & mask) >> shift
@@ -44,11 +44,12 @@ class Decoder:
     def time(self) -> str:
         return self.data.get("DevEUI_uplink", {}).get("Time")
 
-    def decode(self):
+    def decode(self) -> None:
         if self.is_uplink:
             self._set_decoded_payload(self.decode_impl())
         else:
-            raise ValueError("No uplink data")
+            msg = "No uplink data"
+            raise ValueError(msg)
 
     def decode_impl(self) -> dict:
-        raise NotImplementedError()  # pragma: no cover
+        raise NotImplementedError  # pragma: no cover

@@ -8,11 +8,11 @@ log.setLevel(logging.DEBUG)
 
 
 @lru_cache
-def client():
+def client() -> bigquery.Client:
     return bigquery.Client()  # pragma: no cover
 
 
-def insert_data(table: str, data: dict | list[dict]):
+def insert_data(table: str, data: dict | list[dict]) -> None:
     if isinstance(data, dict):
         data = [data]
     log.debug("Insert %i rows into %s", len(data), table)

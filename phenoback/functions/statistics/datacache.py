@@ -23,21 +23,20 @@ def get_altitude_grp(individual_id: str) -> str:
         log.error("No altitude found for individual %s", individual_id)
         raise ValueError(individual_id)
 
-    if altitude < 500:
+    if altitude < 500:  # noqa: PLR2004
         return "alt1"
-    elif altitude < 800:
+    if altitude < 800:  # noqa: PLR2004
         return "alt2"
-    elif altitude < 1000:
+    if altitude < 1000:  # noqa: PLR2004
         return "alt3"
-    elif altitude < 1200:
+    if altitude < 1200:  # noqa: PLR2004
         return "alt4"
     return "alt5"
 
 
 @cache
 def _load_observations(phenoyear: int) -> list[dict[str, Any]]:
-    """
-    Returns all observations for the given year that are relevant for statistics.
+    """Returns all observations for the given year that are relevant for statistics.
     Excludes observations with comments that should not be counted.
     """
     result = [
@@ -52,15 +51,13 @@ def _load_observations(phenoyear: int) -> list[dict[str, Any]]:
 
 
 def get_observations(phenoyear: int, phenophases: set[str]) -> list[dict[str, Any]]:
-    """
-    Returns observations for the given year and specified phenophases.
+    """Returns observations for the given year and specified phenophases.
     Only includes observations that are relevant for statistics and match the given phenophases.
     """
     invalid_phases = phenophases - set(AVAILABLE_PHENOPHASES)
     if invalid_phases:
-        raise ValueError(
-            f"Invalid phenophases requested: {invalid_phases}. Observations only loaded for: {AVAILABLE_PHENOPHASES}"
-        )
+        msg = f"Invalid phenophases requested: {invalid_phases}. Observations only loaded for: {AVAILABLE_PHENOPHASES}"
+        raise ValueError(msg)
     return [
         obs
         for obs in _load_observations(phenoyear)
@@ -68,6 +65,6 @@ def get_observations(phenoyear: int, phenophases: set[str]) -> list[dict[str, An
     ]
 
 
-def cache_clear():
+def cache_clear() -> None:
     get_altitude_grp.cache_clear()
     _load_observations.cache_clear()

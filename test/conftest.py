@@ -1,6 +1,6 @@
 # pylint: disable=import-outside-toplevel
 import logging
-from test import emulator
+from pathlib import Path
 
 import pytest
 import strictyaml as yaml
@@ -8,6 +8,7 @@ from requests import delete
 
 import phenoback.utils.firestore as f
 import phenoback.utils.gcloud as g
+from test import emulator
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -34,16 +35,14 @@ def mock_main(mocker):
     glogging.init = mocker.Mock()
     sentry_sdk.init = mocker.Mock()
 
-    import main  # pylint: disable=unused-import
 
-
-@pytest.fixture()
+@pytest.fixture
 def caperrors(caplog):
     caplog.set_level(logging.ERROR)
     return caplog
 
 
-@pytest.fixture()
+@pytest.fixture
 def capwarnings(caplog):
     caplog.set_level(logging.WARNING)
     return caplog
@@ -76,29 +75,28 @@ def mock_requests(mocker):
     mocker.patch("requests.get")
 
 
-@pytest.fixture()
+@pytest.fixture
 def context():
     return g.Context(eventId="ignored", resource="document_path/document_id")
 
 
-@pytest.fixture()
+@pytest.fixture
 def data():
     return {"foo": "bar"}
 
 
-@pytest.fixture()
+@pytest.fixture
 def pubsub_event():
     return {"data": b"eyJmb28iOiJiYXIifQ=="}  # {"foo": "bar"}
 
 
-@pytest.fixture()
+@pytest.fixture
 def pubsub_event_data():
     return g.get_data({"data": b"eyJmb28iOiJiYXIifQ=="})  # {"foo": "bar"}
 
 
 def readfile(filename: str):
-    with open(filename, encoding="utf-8") as file:
-        return file.read()
+    return Path(filename).read_text(encoding="utf-8")
 
 
 @pytest.fixture

@@ -3,6 +3,7 @@ from functools import lru_cache
 from http import HTTPStatus
 
 from flask import Request, Response
+from google.cloud.functions.context import Context
 
 from phenoback.utils import firestore as f
 from phenoback.utils import gcloud as g
@@ -14,10 +15,10 @@ log.setLevel(logging.DEBUG)
 QUEUE_NAME = "mapupdates"
 FUNCTION_NAME = "http_individuals_write__map"
 
-DELETE_TOKEN = "__DELETE__"  # nosec
+DELETE_TOKEN = "__DELETE__"  # nosec  # noqa: S105
 
 
-def main_enqueue(data, context):
+def main_enqueue(data: dict, context: Context) -> None:
     if not g.is_delete_event(data):
         enqueue_change(
             individual_id=g.get_document_id(context),
@@ -36,7 +37,7 @@ def main_enqueue(data, context):
         delete(g.get_field(data, "year", old_value=True), g.get_document_id(context))
 
 
-def main_process(request: Request):
+def main_process(request: Request) -> Response:
     process_change(request.get_json(silent=True))
     return Response("ok", HTTPStatus.OK)
 
@@ -70,13 +71,9 @@ def enqueue_change(
                 "so": source,
             }
         }
-        values[individual_id]["p"] = (
-            last_phenophase if last_phenophase else DELETE_TOKEN
-        )
-        values[individual_id]["sp"] = species if species else DELETE_TOKEN
-        values[individual_id]["ss"] = (
-            station_species if station_species else DELETE_TOKEN
-        )
+        values[individual_id]["p"] = last_phenophase or DELETE_TOKEN
+        values[individual_id]["sp"] = species or DELETE_TOKEN
+        values[individual_id]["ss"] = station_species or DELETE_TOKEN
         values[individual_id]["hs"] = True if deveui else DELETE_TOKEN
 
         payload = {"year": year, "values": values}
@@ -111,12 +108,14 @@ def replace_delete_tokens(payload: dict) -> None:
 
 
 def _should_update(
-    updated_fields: list[str], is_create_event: bool, station_species, last_phenophase
+    updated_fields: list[str],
+    is_create_event: bool,
+    station_species: list[str] | None,
+    last_phenophase: str | None,
 ) -> bool:
-    """
-    Update if
+    """Update if
     * a new individual/station is created which would be shown on the map
-    * data is updated that is relevant on the map
+    * data is updated that is relevant on the map.
     """
     return (
         is_create_event and (station_species is not None or last_phenophase is not None)

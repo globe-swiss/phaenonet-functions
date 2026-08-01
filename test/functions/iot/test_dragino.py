@@ -1,5 +1,4 @@
 from datetime import datetime
-from test.functions.iot.sample_data import DraginoData as dd
 from unittest.mock import ANY
 
 import pytest
@@ -7,6 +6,7 @@ from flask import Request
 from werkzeug.test import EnvironBuilder
 
 from phenoback.functions.iot import dragino
+from test.functions.iot.sample_data import DraginoData as dd  # noqa: N813
 
 
 @pytest.fixture(autouse=True)

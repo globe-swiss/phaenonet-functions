@@ -14,7 +14,7 @@ log.setLevel(logging.DEBUG)
 def sendmail(maildef: InviteMail) -> dict:
     try:
         return _sendmail(maildef)
-    except Exception:  # pylint: disable=broad-except
+    except Exception:  # pylint: disable=broad-except  # noqa: BLE001
         log.info("Send mail failed: refreshing credentials")
         gsecrets.reset()
         return _sendmail(maildef)
@@ -37,6 +37,4 @@ def _sendmail(maildef: InviteMail) -> dict:
         login=gsecrets.get_mailer_user(),
         password=gsecrets.get_mailer_pw(),
         tls=True,
-    )[
-        1
-    ]
+    )[1]

@@ -1,43 +1,42 @@
-# pylint: disable=unused-argument
 import io
-import test
+from pathlib import Path
 from zipfile import ZipFile
 
 import pytest
 
 import phenoback.utils.data as d
 import phenoback.utils.firestore as f
+import test
 from phenoback.functions import wld_import
 
 
-@pytest.fixture(autouse=True, scope="function")
+@pytest.fixture(autouse=True)
 def cache_clear():
     wld_import.site_users.cache_clear()
     wld_import.station_species.cache_clear()
     wld_import.tree_species.cache_clear()
 
 
-@pytest.fixture()
+@pytest.fixture
 def zippath():
     return test.get_resource_path("wld_import_test.zip")
 
 
-@pytest.fixture()
+@pytest.fixture
 def input_blob(mocker, zippath):
-    with open(zippath, "rb") as input_file:
-        file_bytes = input_file.read()
+    file_bytes = Path(zippath).read_bytes()
     mock = mocker.Mock()
     mock.download_as_bytes = mocker.Mock(return_value=file_bytes)
     mock.size = 10000
     return mock
 
 
-@pytest.fixture()
+@pytest.fixture
 def input_io(input_blob):
     return io.BytesIO(input_blob.download_as_bytes())
 
 
-@pytest.fixture()
+@pytest.fixture
 def data_loaded(input_io):
     with ZipFile(input_io, mode="r") as input_zip:
         wld_import.loaded_data = wld_import.load_data(input_zip)
@@ -45,7 +44,7 @@ def data_loaded(input_io):
 
 
 @pytest.mark.parametrize(
-    "pathfile, called",
+    ("pathfile", "called"),
     [
         (
             "private/wld_import/anything_in_this_folder",
@@ -58,8 +57,7 @@ def data_loaded(input_io):
     ],
 )
 def test_main(mocker, context, pathfile, called):
-    """
-    Test all thumbnails storage triggers to correctly limit
+    """Test all thumbnails storage triggers to correctly limit
     the function invocation to specific folders.
     """
     mock = mocker.patch("phenoback.functions.wld_import.import_data")
@@ -95,7 +93,7 @@ def test_check_zip_archive__duplicates(mocker):
             "observation_phaeno.csv",
         ]
     )
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Duplicate files found"):
         wld_import.check_zip_archive(zip_file_mock)
 
 
@@ -115,7 +113,7 @@ def test_check_file_size__fail_size(mocker):
 def test_check_load_data(input_io):
     with ZipFile(input_io, mode="r") as input_zip:
         data = wld_import.load_data(input_zip)
-    assert wld_import.FILES == data.keys()
+    assert data.keys() == wld_import.FILES
     for filedata in data.values():
         assert len(filedata) > 0
 
@@ -126,9 +124,9 @@ def test_members_by_basename(zippath):
 
     for filename in wld_import.FILES:
         assert filename in members
-        assert all(
-            p.endswith(filename) for p in members[filename]
-        ), f"filename: {filename}, not found in zip: {members[filename]}"
+        assert all(p.endswith(filename) for p in members[filename]), (
+            f"filename: {filename}, not found in zip: {members[filename]}"
+        )
 
 
 def test_members_by_basename__duplicates(mocker):
@@ -155,20 +153,20 @@ def test_check_data_integrity(data_loaded):
 
 
 @pytest.mark.parametrize(
-    "filename, fieldname",
+    ("filename", "fieldname"),
     [("user_id.csv", "user_id"), ("site.csv", "site_id")],
 )
 def test_check_data_integrity__empty(data_loaded, caperrors, filename, fieldname):
     assert data_loaded
     assert wld_import.loaded_data
     wld_import.loaded_data[filename] = []
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Data integrity check failed"):
         wld_import.check_data_integrity()
     assert f"{fieldname} not found" in caperrors.text, caperrors.text
 
 
 @pytest.mark.parametrize(
-    "filename, fieldname, value",
+    ("filename", "fieldname", "value"),
     [
         ("user_id.csv", "user_id", "unknown_id"),
         ("site.csv", "site_id", "unknown_id"),
@@ -183,7 +181,7 @@ def test_check_data_integrity__reference_error(
     assert data_loaded
     assert wld_import.loaded_data
     wld_import.loaded_data[filename][0][fieldname] = value
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Data integrity check failed"):
         wld_import.check_data_integrity()
     assert len(caperrors.records) >= 1
 
@@ -192,7 +190,7 @@ def test_check_data_integrity__duplicate_tree_error(data_loaded, caperrors):
     assert data_loaded
     assert wld_import.loaded_data
     wld_import.loaded_data["tree.csv"].append(wld_import.loaded_data["tree.csv"][0])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Data integrity check failed"):
         wld_import.check_data_integrity()
     assert len(caperrors.records) >= 1
 

@@ -41,12 +41,12 @@ def test_decode(decoder: Decoder):
 
 def test_decode__no_uplink():
     decoder = DecoderImpl({})
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="No uplink data"):
         decoder.decode()
 
 
 @pytest.mark.parametrize(
-    "data, expected",
+    ("data", "expected"),
     [
         ({UPLINK_KEY: {"foo": "bar"}}, True),
         ({"downlink": {"foo": "bar"}}, False),
@@ -58,7 +58,7 @@ def test_is_uplink(data, expected):
 
 
 @pytest.mark.parametrize(
-    "payload_hex, start, length, signed, expected",
+    ("payload_hex", "start", "length", "signed", "expected"),
     [
         ("00", 0, 8, False, 0),
         ("FF", 0, 8, False, 255),

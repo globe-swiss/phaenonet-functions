@@ -22,7 +22,8 @@ runs:
         node-version: ${{ inputs.node-version }}
     - name: install firebase-tools
       shell: bash
-      run: npm i -g firebase-tools
+      working-directory: firebase
+      run: npm ci
     - id: auth
       name: Authenticate to Google Cloud
       uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
@@ -39,7 +40,7 @@ runs:
 
         # Get list of installed extensions from Firebase server
         echo "Fetching list of installed extensions from ${INPUTS_PROJECT}..."
-        ext_list_json=$(firebase ext:list --project ${INPUTS_PROJECT} --json)
+        ext_list_json=$(npx firebase ext:list --project ${INPUTS_PROJECT} --json)
         installed_extensions=$(echo "$ext_list_json" | jq -r '.result[].instanceId' 2>/dev/null || echo "")
 
         if [ -z "$installed_extensions" ]; then
@@ -77,10 +78,10 @@ runs:
         for ext in $installed_extensions; do
           echo "Removing extension: $ext"
           # Uninstall from manifest (continue on error)
-          firebase ext:uninstall "$ext" --force --project ${INPUTS_PROJECT} || echo "Extension $ext may not exist, continuing..."
+          npx firebase ext:uninstall "$ext" --force --project ${INPUTS_PROJECT} || echo "Extension $ext may not exist, continuing..."
           # Deploy the removal immediately
           echo "Deploying removal of $ext"
-          firebase deploy --force --only extensions --project ${INPUTS_PROJECT} || echo "Deploy for $ext removal failed, continuing..."
+          npx firebase deploy --force --only extensions --project ${INPUTS_PROJECT} || echo "Deploy for $ext removal failed, continuing..."
           # Small delay to allow IAM propagation
           sleep 5
         done
@@ -94,7 +95,7 @@ runs:
       working-directory: firebase
       run: |
         echo "Checking for remaining extensions..."
-        remaining=$(firebase ext:list --project ${INPUTS_PROJECT} --json | jq -r '.result[].instanceId' 2>/dev/null || echo "")
+        remaining=$(npx firebase ext:list --project ${INPUTS_PROJECT} --json | jq -r '.result[].instanceId' 2>/dev/null || echo "")
 
         if [ -n "$remaining" ]; then
           echo "ERROR: The following extensions are still installed:"

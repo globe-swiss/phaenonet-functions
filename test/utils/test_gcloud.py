@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import PropertyMock
 
 import pytest
@@ -9,7 +9,7 @@ import phenoback.utils.gcloud as g
 
 
 @pytest.mark.parametrize(
-    "expected, resource",
+    ("expected", "resource"),
     [
         (
             "EDt26K5YIGoPe36z64vy_2020_BU_BFA",
@@ -32,7 +32,7 @@ def test_get_document_id(expected, resource):
 
 
 @pytest.mark.parametrize(
-    "expected, resource",
+    ("expected", "resource"),
     [
         (
             "observations",
@@ -54,7 +54,7 @@ def test_get_collection_path(expected, resource):
     assert g.get_collection_path(context) == expected
 
 
-@pytest.fixture()
+@pytest.fixture
 def request_data():
     return {
         "value": {
@@ -102,10 +102,10 @@ def request_data():
 
 
 @pytest.mark.parametrize(
-    "expected, fieldname",
+    ("expected", "fieldname"),
     [
-        (datetime(2020, 3, 8, 14, 33, 30, 162000, tzinfo=timezone.utc), "date1"),
-        (datetime(2020, 3, 18, 23, 0, tzinfo=timezone.utc), "date2"),
+        (datetime(2020, 3, 8, 14, 33, 30, 162000, tzinfo=UTC), "date1"),
+        (datetime(2020, 3, 18, 23, 0, tzinfo=UTC), "date2"),
         ("EDt26K5YIGoPe36z64vy", "individual"),
         (2020, "year"),
         (None, "not_present"),
@@ -126,7 +126,7 @@ def test_get_field__invalid(request_data, caperrors):
 
 
 @pytest.mark.parametrize(
-    "expected, data",
+    ("expected", "data"),
     [
         (True, {"oldValue": {}, "value": {"test": "create"}}),
         (False, {"oldValue": {"test": "delete"}, "value": {}}),
@@ -138,7 +138,7 @@ def test_is_create_event(expected, data):
 
 
 @pytest.mark.parametrize(
-    "expected, data",
+    ("expected", "data"),
     [
         (False, {"oldValue": {}, "value": {"test": "create"}}),
         (False, {"oldValue": {"test": "delete"}, "value": {}}),
@@ -150,7 +150,7 @@ def test_is_update_event(expected, data):
 
 
 @pytest.mark.parametrize(
-    "expected, data",
+    ("expected", "data"),
     [
         (False, {"oldValue": {}, "value": {"test": "create"}}),
         (True, {"oldValue": {"test": "delete"}, "value": {}}),
@@ -173,7 +173,7 @@ def test_get_app_host__env(mocker):
 
 
 @pytest.mark.parametrize(
-    "pubsub_event, expected",
+    ("pubsub_event", "expected"),
     [
         (None, None),
         (123, None),

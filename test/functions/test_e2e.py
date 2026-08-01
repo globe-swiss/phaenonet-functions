@@ -77,7 +77,7 @@ def test_remove_following():
 
 
 @pytest.mark.parametrize(
-    "user_id",
+    ("user_id"),
     [
         "q7lgBm5nm7PUkof20UdZ9D4d0CV2",
         "JIcn8kFpI4fYYcbdi9QzPlrHomn1",
@@ -88,18 +88,18 @@ def test_restore_test_users(user_id):
     e2e.restore_test_users()
     user = d.get_user(user_id)
     assert user, f"users document for user_id {user_id} not found"
-    assert f.get_document(
-        "public_users", user_id
-    ), f"public_users document for user_id {user_id} not found"
-    assert f.get_document(
-        "nicknames", user["nickname"]
-    ), f"nicknames document for nickname {user['nickname']} not found"
+    assert f.get_document("public_users", user_id), (
+        f"public_users document for user_id {user_id} not found"
+    )
+    assert f.get_document("nicknames", user["nickname"]), (
+        f"nicknames document for nickname {user['nickname']} not found"
+    )
     assert f.get_document("public_users", user_id)["nickname"] == user["nickname"]
     assert f.get_document("nicknames", user["nickname"]) == {"user": user_id}
 
 
 @pytest.mark.parametrize(
-    "user_id",
+    ("user_id"),
     ["JIcn8kFpI4fYYcbdi9QzPlrHomn1", "3NOG91ip31ZdzdIjEdhaoA925U72"],
 )
 def test_restore_test_users__ranger(user_id):
@@ -109,7 +109,7 @@ def test_restore_test_users__ranger(user_id):
 
 
 @pytest.mark.parametrize(
-    "base_date,months,expected_count",
+    ("base_date", "months", "expected_count"),
     [
         (datetime.date(2023, 1, 1), 1, 31),  # January has 31 days
         (datetime.date(2023, 2, 1), 1, 28),  # February 2023 has 28 days
@@ -130,7 +130,7 @@ def test_monthdates(base_date, months, expected_count):
 
 
 @pytest.mark.parametrize(
-    "year,quarter,expected_start,expected_count",
+    ("year", "quarter", "expected_start", "expected_count"),
     [
         (2023, 1, datetime.date(2023, 1, 1), 90),  # Q1: Jan-Mar (31+28+31)
         (2023, 2, datetime.date(2023, 4, 1), 91),  # Q2: Apr-Jun (30+31+30)
@@ -165,7 +165,7 @@ def test_generate_sensor_data():
     assert "2023-01-02" in result
     assert "2023-01-03" in result
 
-    for _, data in result.items():
+    for data in result.values():
         assert data["n"] == n
         assert data["ats"] == at * n
         assert data["sts"] == st * n
@@ -174,7 +174,7 @@ def test_generate_sensor_data():
 
 
 @pytest.mark.parametrize(
-    "year,month,day",
+    ("year", "month", "day"),
     [
         (2023, 1, 1),
         (2023, 12, 31),

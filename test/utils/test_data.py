@@ -1,34 +1,35 @@
 # pylint: disable=protected-access
 import json
-import test
-from datetime import datetime, date
+from contextlib import suppress
+from datetime import date, datetime
+from pathlib import Path
 
 import pytest
 import pytz
 
+import test
 from phenoback.utils import data as d
 from phenoback.utils import firestore as f
 
 
 @pytest.fixture(autouse=True)
 def config_static():
-    """
-    To update resource files needed for tests from phaenonet test instance
+    """To update resource files needed for tests from phaenonet test instance
     see maintenance repo @ maintenance/config/generate_config_static.py.
     """
     d._get_static_config.cache_clear()
-    with open(test.get_resource_path("config_static.json"), encoding="utf-8") as file:
-        data = json.loads(file.read())
-        f.write_document("definitions", "config_static", data)
-        return data
+    path = test.get_resource_path("config_static.json")
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    f.write_document("definitions", "config_static", data)
+    return data
 
 
 @pytest.fixture(autouse=True)
 def config_dynamic():
-    with open(test.get_resource_path("config_dynamic.json"), encoding="utf-8") as file:
-        data = json.loads(file.read())
-        f.write_document("definitions", "config_dynamic", data)
-        return data
+    path = test.get_resource_path("config_dynamic.json")
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    f.write_document("definitions", "config_dynamic", data)
+    return data
 
 
 def test_update_phenoyear(config_dynamic):
@@ -48,7 +49,7 @@ def test_update_phenoyear__preserve_data(config_dynamic):
 
 
 @pytest.mark.parametrize(
-    "individual, expected",
+    ("individual", "expected"),
     [
         ({"some": "attribute", "last_observation_date": datetime.now()}, True),
         ({"some": "attribute"}, False),
@@ -74,10 +75,8 @@ def test_get_species__cache(mocker):
 
 
 def test_follow_user__not_found():
-    try:
+    with suppress(ValueError):
         d.follow_user("follower_id", "followee_id")
-    except ValueError:
-        pass  # expected
 
 
 def test_follow_user__no_array():
@@ -122,7 +121,7 @@ def test_create_user():
 
 
 @pytest.mark.parametrize(
-    "input_data, expected_output",
+    ("input_data", "expected_output"),
     [
         ({}, []),
         ({"a": {"x": "y"}}, [{"id": "a", "x": "y"}]),
@@ -137,7 +136,7 @@ def test_to_id_array(input_data, expected_output):
 
 
 @pytest.mark.parametrize(
-    "comment, expected",
+    ("comment", "expected"),
     [
         ("None", True),
         ("Any Comment", True),

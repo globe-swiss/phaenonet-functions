@@ -1,4 +1,3 @@
-# pylint: disable=unused-argument,protected-access
 from datetime import datetime
 
 import google.cloud.tasks_v2
@@ -28,7 +27,7 @@ def test_init(http_client: tasks.HTTPClient, gcp_project, gcp_location):
     assert http_client.project == gcp_project
     assert http_client.location == gcp_location
     assert http_client.parent == PARENT
-    client_mock.queue_path.assert_called_with(gcp_project, gcp_location, QUEUE)  # type: ignore
+    client_mock.queue_path.assert_called_with(gcp_project, gcp_location, QUEUE)  # pyright: ignore[reportFunctionMemberAccess]
     assert http_client.url == URL
 
 
@@ -62,14 +61,14 @@ def test_send__json(http_client: tasks.HTTPClient):
 def test_send__named(http_client: tasks.HTTPClient):
     task_path = "task_path"
     task_name = "bar"
-    http_client.client.task_path.return_value = task_path  # type: ignore
+    http_client.client.task_path.return_value = task_path  # pyright: ignore[reportFunctionMemberAccess]
 
     http_client.send("foo", task_name=task_name)
     check_default_headers(http_client)
     task_req_arg = get_request_args(http_client)["task"]
 
     assert task_req_arg["name"] == task_path
-    http_client.client.task_path.assert_called_with(  # type: ignore
+    http_client.client.task_path.assert_called_with(  # pyright: ignore[reportFunctionMemberAccess]
         http_client.project, http_client.location, http_client.queue, task_name
     )
 
@@ -100,7 +99,7 @@ def test_send__params(http_client: tasks.HTTPClient):
 
 
 @pytest.mark.parametrize(
-    "params, expected", [({"p1": "v1", "p2": "v2"}, "?p1=v1&p2=v2"), (None, "")]
+    ("params", "expected"), [({"p1": "v1", "p2": "v2"}, "?p1=v1&p2=v2"), (None, "")]
 )
 def test_encode_params(http_client, params, expected):
     assert http_client.encode_params(params) == expected
@@ -108,7 +107,6 @@ def test_encode_params(http_client, params, expected):
 
 def check_default_headers(http_client) -> None:
     request_args = get_request_args(http_client)
-    print(request_args["task"])
     assert request_args.get("parent") == http_client.parent
     assert request_args.get("task")
     assert request_args["task"]
