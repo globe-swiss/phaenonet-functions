@@ -9,7 +9,7 @@
 # If you would like to upload your .git directory, .gitignore file or files
 # from your .gitignore file, remove the corresponding line
 # below:
-!include:.gitignore
+#!include:.gitignore
 test/
 docs/
 firebase/
@@ -17,4 +17,10 @@ firebase/
 *.yml
 *.yaml
 *.lock
-.*
+
+# .* does not work - excludes ALL files in root
+.git/
+.gitmodules
+.bandit
+.gcloudignore
+.gitignore
