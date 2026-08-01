@@ -11,9 +11,9 @@ ignore = [
     "E501",    # line too long - ruff format is checked separately
     "COM812",  # formatter handles trailing commas
     "SIM112",  # lower case environment variables
-    "PLR0911", # too many return statements
-    "PLR0913", # too many arguments on function
+    "PLR0911", "PLR0913", "PLR0917", # too many ... on function
     "FBT001","FBT002", # positional boolean
+    "CPY001",
 ]
 
 [tool.ruff.lint.per-file-ignores]

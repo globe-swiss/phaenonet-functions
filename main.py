@@ -293,7 +293,7 @@ def test(data: dict, context: Context) -> None:  # pragma: no cover
         sleep(1)
         log.critical("L - critical")
         sleep(1)
-        log.exception("L - exception", exc_info=Exception("myException"))
+        log.exception("L - exception", exc_info=Exception("myException"))  # noqa: LOG004
         sleep(1)
 
         with setup(
