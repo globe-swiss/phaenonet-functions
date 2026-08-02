@@ -3,9 +3,8 @@ credentials
 foto_uploads
 .xprocess
 *.pickle
-.claude
 .firebaserc
-CLAUDE*
+.ruff_cache
 
 # firebase cli
 logs
