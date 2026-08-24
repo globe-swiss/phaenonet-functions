@@ -129,7 +129,7 @@ grpcio-status==1.83.0
     # via
     #   google-api-core
     #   google-cloud-pubsub
-gunicorn==26.0.0
+gunicorn==26.1.0
     # via
     #   functions-framework
     #   uvicorn-worker
@@ -147,7 +147,7 @@ httpx==0.28.1
     # via firebase-admin
 hyperframe==6.1.0
     # via h2
-idna==3.18
+idna==3.19
     # via
     #   anyio
     #   httpx
@@ -181,7 +181,6 @@ packaging==26.3
     # via
     #   deprecation
     #   google-cloud-bigquery
-    #   gunicorn
 proto-plus==1.28.3
     # via
     #   google-api-core
@@ -191,7 +190,7 @@ proto-plus==1.28.3
     #   google-cloud-pubsub
     #   google-cloud-secret-manager
     #   google-cloud-tasks
-protobuf==7.35.1
+protobuf==7.36.0
     # via
     #   google-api-core
     #   google-cloud-appengine-logging
@@ -252,7 +251,7 @@ urllib3==2.7.0
     # via
     #   requests
     #   sentry-sdk
-uvicorn==0.52.3
+uvicorn==0.52.4
     # via
     #   functions-framework
     #   uvicorn-worker
