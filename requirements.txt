@@ -18,16 +18,14 @@ cffi==2.1.1 ; platform_python_implementation != 'PyPy'
     # via cryptography
 charset-normalizer==3.5.1
     # via requests
-click==8.4.2
+click==8.5.0
     # via
     #   flask
     #   functions-framework
     #   uvicorn
 cloudevents==1.12.0
     # via functions-framework
-colorama==0.4.6 ; sys_platform == 'win32'
-    # via click
-cryptography==50.0.0
+cryptography==50.0.1
     # via
     #   google-auth
     #   pyjwt
@@ -57,7 +55,7 @@ google-api-core==2.34.0
     #   google-cloud-secret-manager
     #   google-cloud-storage
     #   google-cloud-tasks
-google-auth==2.56.3
+google-auth==2.57.0
     # via
     #   google-api-core
     #   google-cloud-appengine-logging
@@ -71,21 +69,21 @@ google-auth==2.56.3
     #   google-cloud-tasks
 google-cloud-appengine-logging==1.10.0
     # via google-cloud-logging
-google-cloud-audit-log==0.6.1
+google-cloud-audit-log==0.6.2
     # via google-cloud-logging
-google-cloud-bigquery==3.43.0
+google-cloud-bigquery==3.44.0
     # via phaenonet-functions
-google-cloud-core==2.6.1
+google-cloud-core==2.7.0
     # via
     #   google-cloud-bigquery
     #   google-cloud-firestore
     #   google-cloud-logging
     #   google-cloud-storage
-google-cloud-firestore==2.28.1 ; platform_python_implementation != 'PyPy'
+google-cloud-firestore==2.29.0 ; platform_python_implementation != 'PyPy'
     # via firebase-admin
-google-cloud-logging==3.16.2
+google-cloud-logging==3.16.3
     # via phaenonet-functions
-google-cloud-pubsub==2.39.1
+google-cloud-pubsub==2.39.2
     # via phaenonet-functions
 google-cloud-secret-manager==2.30.0
     # via phaenonet-functions
@@ -97,11 +95,11 @@ google-crc32c==1.8.0
     # via
     #   google-cloud-storage
     #   google-resumable-media
-google-resumable-media==2.10.1
+google-resumable-media==2.10.2
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-googleapis-common-protos==1.75.1
+googleapis-common-protos==1.75.2
     # via
     #   google-api-core
     #   google-cloud-audit-log
@@ -113,7 +111,7 @@ grpc-google-iam-v1==0.14.5
     #   google-cloud-pubsub
     #   google-cloud-secret-manager
     #   google-cloud-tasks
-grpcio==1.83.0
+grpcio==1.83.1
     # via
     #   google-api-core
     #   google-cloud-appengine-logging
@@ -125,11 +123,11 @@ grpcio==1.83.0
     #   googleapis-common-protos
     #   grpc-google-iam-v1
     #   grpcio-status
-grpcio-status==1.83.0
+grpcio-status==1.83.1
     # via
     #   google-api-core
     #   google-cloud-pubsub
-gunicorn==26.1.0
+gunicorn==26.2.0
     # via
     #   functions-framework
     #   uvicorn-worker
@@ -163,7 +161,7 @@ markupsafe==3.0.3
     #   flask
     #   jinja2
     #   werkzeug
-msgpack==1.2.1
+msgpack==1.2.2
     # via cachecontrol
 numpy==2.5.2
     # via phaenonet-functions
@@ -181,7 +179,7 @@ packaging==26.3
     # via
     #   deprecation
     #   google-cloud-bigquery
-proto-plus==1.28.3
+proto-plus==1.28.4
     # via
     #   google-api-core
     #   google-cloud-appengine-logging
@@ -218,7 +216,7 @@ python-dateutil==2.9.0.post0
     #   google-cloud-bigquery
 pytz==2026.3.post1
     # via dateparser
-regex==2026.7.19
+regex==2026.8.31
     # via dateparser
 requests==2.34.2
     # via
@@ -227,7 +225,7 @@ requests==2.34.2
     #   google-cloud-bigquery
     #   google-cloud-storage
     #   tinify
-sentry-sdk==2.68.0
+sentry-sdk==2.68.1
     # via phaenonet-functions
 six==1.17.0
     # via python-dateutil
