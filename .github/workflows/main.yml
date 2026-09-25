@@ -17,7 +17,7 @@ jobs:
     permissions:
       contents: read # checkout
       pull-requests: write # reviewdog
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     container: globeswiss/cloud-sdk:py3.12.12-554.0.0@sha256:3db9a24c68fdafd462600db739da909cbb17eca502828f4d3696a9c2d0484790
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -49,7 +49,7 @@ jobs:
     permissions:
       id-token: write # codecov oidc
       contents: read # checkout
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     container: globeswiss/cloud-sdk:py3.12.12-554.0.0@sha256:3db9a24c68fdafd462600db739da909cbb17eca502828f4d3696a9c2d0484790
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -69,7 +69,7 @@ jobs:
           flags: unittests
         if: always()
   zizmor:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       security-events: write
       contents: read # only needed for private repos
