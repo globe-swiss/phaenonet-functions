@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 import logging
 from http import HTTPStatus
 
@@ -72,9 +72,7 @@ def restore_test_users() -> None:
 def restore_sensor_test_data() -> None:
     year = 2018
     data = (
-        generate_sensor_data(
-            monthdates(datetime.date(year - 1, 12, 1), 1), 1, 0, 40, 50, 100
-        )
+        generate_sensor_data(monthdates(dt.date(year - 1, 12, 1), 1), 1, 0, 40, 50, 100)
         | generate_sensor_data(quarterdates(year, 1), 1, -20, -10, 0, 25)
         | generate_sensor_data(quarterdates(year, 2), 2, -10, 0, 25, 50)
         | generate_sensor_data(quarterdates(year, 3), 3, 0, 10, 50, 75)
@@ -96,7 +94,7 @@ def restore_sensor_test_data() -> None:
     d.update_observation(f"721_{year}_HS_KNV", {"date": firebasedate(year, 12, 15)})
 
 
-def monthdates(basedt: datetime.date, months: int) -> list[datetime.date]:
+def monthdates(basedt: dt.date, months: int) -> list[dt.date]:
     """Generate a list of dates for a given number of months starting from a base date.
 
     Args:
@@ -115,13 +113,13 @@ def monthdates(basedt: datetime.date, months: int) -> list[datetime.date]:
     return result
 
 
-def quarterdates(year: int, quarter: int) -> list[datetime.date]:
-    basedt = datetime.date(year, quarter * 3 - 2, 1)
+def quarterdates(year: int, quarter: int) -> list[dt.date]:
+    basedt = dt.date(year, quarter * 3 - 2, 1)
     return monthdates(basedt, 3)
 
 
 def generate_sensor_data(
-    dates: list[datetime.date], n: int, at: float, st: float, ah: float, sh: float
+    dates: list[dt.date], n: int, at: float, st: float, ah: float, sh: float
 ) -> dict[str, dict[str, float]]:
     return {
         date.isoformat(): {
@@ -135,5 +133,5 @@ def generate_sensor_data(
     }
 
 
-def firebasedate(year: int, month: int, day: int) -> datetime.datetime:
-    return d.localtime(datetime.datetime(year, month, day))  # noqa: DTZ001
+def firebasedate(year: int, month: int, day: int) -> dt.datetime:
+    return d.localtime(dt.datetime(year, month, day))  # noqa: DTZ001
