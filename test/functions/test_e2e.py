@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 
 import pytest
 from flask import Response
@@ -111,46 +111,46 @@ def test_restore_test_users__ranger(user_id):
 @pytest.mark.parametrize(
     ("base_date", "months", "expected_count"),
     [
-        (datetime.date(2023, 1, 1), 1, 31),  # January has 31 days
-        (datetime.date(2023, 2, 1), 1, 28),  # February 2023 has 28 days
-        (datetime.date(2024, 2, 1), 1, 29),  # February 2024 has 29 days (leap year)
-        (datetime.date(2023, 4, 1), 1, 30),  # April has 30 days
-        (datetime.date(2023, 1, 1), 2, 59),  # Jan + Feb 2023 = 31 + 28
-        (datetime.date(2023, 11, 1), 2, 61),  # Nov + Dec = 30 + 31
+        (dt.date(2023, 1, 1), 1, 31),  # January has 31 days
+        (dt.date(2023, 2, 1), 1, 28),  # February 2023 has 28 days
+        (dt.date(2024, 2, 1), 1, 29),  # February 2024 has 29 days (leap year)
+        (dt.date(2023, 4, 1), 1, 30),  # April has 30 days
+        (dt.date(2023, 1, 1), 2, 59),  # Jan + Feb 2023 = 31 + 28
+        (dt.date(2023, 11, 1), 2, 61),  # Nov + Dec = 30 + 31
     ],
 )
 def test_monthdates(base_date, months, expected_count):
     result = e2e.monthdates(base_date, months)
     assert len(result) == expected_count
-    assert all(isinstance(d, datetime.date) for d in result)
+    assert all(isinstance(d, dt.date) for d in result)
     assert result[0] == base_date
     # Verify dates are in sequence
     for i in range(1, len(result)):
-        assert result[i] == result[i - 1] + datetime.timedelta(days=1)
+        assert result[i] == result[i - 1] + dt.timedelta(days=1)
 
 
 @pytest.mark.parametrize(
     ("year", "quarter", "expected_start", "expected_count"),
     [
-        (2023, 1, datetime.date(2023, 1, 1), 90),  # Q1: Jan-Mar (31+28+31)
-        (2023, 2, datetime.date(2023, 4, 1), 91),  # Q2: Apr-Jun (30+31+30)
-        (2023, 3, datetime.date(2023, 7, 1), 92),  # Q3: Jul-Sep (31+31+30)
-        (2023, 4, datetime.date(2023, 10, 1), 92),  # Q4: Oct-Dec (31+30+31)
-        (2024, 1, datetime.date(2024, 1, 1), 91),  # Q1 leap year (31+29+31)
+        (2023, 1, dt.date(2023, 1, 1), 90),  # Q1: Jan-Mar (31+28+31)
+        (2023, 2, dt.date(2023, 4, 1), 91),  # Q2: Apr-Jun (30+31+30)
+        (2023, 3, dt.date(2023, 7, 1), 92),  # Q3: Jul-Sep (31+31+30)
+        (2023, 4, dt.date(2023, 10, 1), 92),  # Q4: Oct-Dec (31+30+31)
+        (2024, 1, dt.date(2024, 1, 1), 91),  # Q1 leap year (31+29+31)
     ],
 )
 def test_quarterdates(year, quarter, expected_start, expected_count):
     result = e2e.quarterdates(year, quarter)
     assert len(result) == expected_count
-    assert all(isinstance(d, datetime.date) for d in result)
+    assert all(isinstance(d, dt.date) for d in result)
     assert result[0] == expected_start
 
 
 def test_generate_sensor_data():
     dates = [
-        datetime.date(2023, 1, 1),
-        datetime.date(2023, 1, 2),
-        datetime.date(2023, 1, 3),
+        dt.date(2023, 1, 1),
+        dt.date(2023, 1, 2),
+        dt.date(2023, 1, 3),
     ]
     n = 5
     at = 10.5
@@ -185,7 +185,7 @@ def test_generate_sensor_data():
 def test_firebasedate(year, month, day):
     result = e2e.firebasedate(year, month, day)
 
-    assert isinstance(result, datetime.datetime)
+    assert isinstance(result, dt.datetime)
     assert result.tzinfo is not None  # should be timezone-aware
     assert result.year == year
     assert result.month == month

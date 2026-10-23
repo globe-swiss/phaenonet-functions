@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 import json
 import logging
 import urllib.parse
@@ -36,7 +36,7 @@ class HTTPClient:
         *,
         params: dict | None = None,
         task_name: str | None = None,
-        at: datetime.datetime | None = None,
+        at: dt.datetime | None = None,
         deadline: int | None = None,
     ) -> google.cloud.tasks_v2.types.task.Task:
         service_account_email = f"gcf-invoker@{self.project}.iam.gserviceaccount.com"
@@ -111,7 +111,7 @@ class GCFClient:
         self,
         payload: dict | str,
         task_name: str | None = None,
-        at: datetime.datetime | None = None,
+        at: dt.datetime | None = None,
         deadline: int | None = None,
     ) -> google.cloud.tasks_v2.types.task.Task:
         return self.http_client.send(
