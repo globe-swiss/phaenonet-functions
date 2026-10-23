@@ -1,0 +1,12 @@
+# fixes for actionlint issues:
+# - https://github.com/rhysd/actionlint/issues/711
+# - https://github.com/rhysd/actionlint/issues/682
+self-hosted-runner:
+  labels:
+    - ubuntu-26.04
+    - ubuntu-26.04-arm
+
+paths:
+  .github/workflows/**/*.yml:
+    ignore:
+      - 'specifying action "\$/.+" in invalid format because ref is missing'

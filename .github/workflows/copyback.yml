@@ -79,7 +79,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Remove Firebase Extensions
-        uses: ./.github/actions/remove-extensions
+        uses: $/.github/actions/remove-extensions
         with:
           project: phaenonet-test
           workload-identity-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
@@ -164,7 +164,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Deploy Firebase Extensions
-        uses: ./.github/actions/deploy-extensions
+        uses: $/.github/actions/deploy-extensions
         with:
           project: phaenonet-test
           workload-identity-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}

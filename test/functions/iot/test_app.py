@@ -1,5 +1,3 @@
-import datetime
-
 import pytest
 
 from phenoback.functions.iot import app
@@ -46,7 +44,7 @@ def set_uplink_frequency_mock(mocker):
 
 
 def today() -> str:
-    return datetime.date.today().strftime("%Y-%m-%d")
+    return d.localdate().strftime("%Y-%m-%d")
 
 
 def test_main(mocker, pubsub_event_data, context):
