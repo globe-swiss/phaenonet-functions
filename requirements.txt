@@ -8,7 +8,7 @@ blinker==1.9.0
     # via flask
 cachecontrol==0.14.4
     # via firebase-admin
-certifi==2026.10.19
+certifi==2026.10.23
     # via
     #   httpcore
     #   httpx
@@ -230,7 +230,7 @@ sentry-sdk==2.73.0
     # via phaenonet-functions
 six==1.17.0
     # via python-dateutil
-starlette==1.9.0
+starlette==1.10.0
     # via functions-framework
 tinify==1.7.2
     # via phaenonet-functions
