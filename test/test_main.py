@@ -41,7 +41,7 @@ def test_invoke__exception(data, context):
             main.ps_iot_dragino,
             [
                 "phenoback.functions.iot.app.main",
-                "phenoback.functions.iot.bq.main",
+                # "phenoback.functions.iot.bq.main", -> pushing data to bigquery disabled
                 # "phenoback.functions.iot.permarobotics.main", -> not called: only for productive environment
             ],
         ),
@@ -80,7 +80,7 @@ def test_executes__ps_iot_dragino__environments(mocker, project, pubsub_event, c
     main.ps_iot_dragino(pubsub_event, context)
 
     assert mock_app_main.called
-    assert mock_bq_main.called
+    assert not mock_bq_main.called  # pushing data to bigquery disabled
     assert mock_permarobotics_main.called == (project == "phaenonet")
 
 
